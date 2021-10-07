@@ -15,7 +15,7 @@ import org.w3c.workers.*
 import org.w3c.xhr.*
 import ts.Diagnostic
 
-typealias OmitIndexSignature<T> = Any
+//typealias OmitIndexSignature<T> = Any
 
 external interface TransformerImport {
     var transform: String
@@ -31,10 +31,14 @@ external interface TransformerImport {
     var type: String? /* "program" | "config" | "checker" | "raw" | "compilerOptions" */
         get() = definedExternally
         set(value) = definedExternally
-    @nativeGetter
-    operator fun get(option: String): Any?
-    @nativeSetter
-    operator fun set(option: String, value: Any)
+}
+
+@Suppress("NOTHING_TO_INLINE")
+inline operator fun TransformerImport.get(option: String): Any? = asDynamic()[option]
+
+@Suppress("NOTHING_TO_INLINE")
+inline operator fun TransformerImport.set(option: String, value: Any) {
+    asDynamic()[option] = value
 }
 
 external interface LuaPluginImport {
@@ -42,10 +46,14 @@ external interface LuaPluginImport {
     var import: String?
         get() = definedExternally
         set(value) = definedExternally
-    @nativeGetter
-    operator fun get(option: String): Any?
-    @nativeSetter
-    operator fun set(option: String, value: Any)
+}
+
+@Suppress("NOTHING_TO_INLINE")
+inline operator fun LuaPluginImport.get(option: String): Any? = asDynamic()[option]
+
+@Suppress("NOTHING_TO_INLINE")
+inline operator fun LuaPluginImport.set(option: String, value: Any) {
+    asDynamic()[option] = value
 }
 
 external enum class LuaLibImportKind {

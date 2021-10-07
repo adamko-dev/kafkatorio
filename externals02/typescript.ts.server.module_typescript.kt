@@ -57,7 +57,7 @@ external interface InstallPackageRequest : TypingInstallerRequestWithProjectName
 
 external interface PackageInstalledResponse : ProjectResponse {
     override val kind: String /* "action::packageInstalled" */
-    val success: Boolean
+    val success: Boolean?
     val message: String
 }
 
@@ -89,7 +89,7 @@ external interface BeginInstallTypes : InstallTypes {
 
 external interface EndInstallTypes : InstallTypes {
     override val kind: String /* "event::endInstallTypes" */
-    val installSuccess: Boolean
+    val installSuccess: Boolean?
 }
 
 external interface SetTypings : ProjectResponse {

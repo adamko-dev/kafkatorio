@@ -1,7 +1,6 @@
 @file:JsModule("typescript")
 @file:JsNonModule
 @file:Suppress("INTERFACE_WITH_SUPERCLASS", "OVERRIDING_FINAL_MEMBER", "RETURN_TYPE_MISMATCH_ON_OVERRIDE", "CONFLICTING_OVERLOADS")
-
 package ts
 
 import kotlin.js.*
@@ -17,6 +16,8 @@ import org.w3c.notifications.*
 import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
+
+//@formatter:off
 
 external var versionMajorMinor: Any
 
@@ -67,28 +68,12 @@ external interface Set<T> : ReadonlySet<T>, Collection<T> {
   override fun delete(key: T): Boolean
 }
 
-external interface `T$1`<T> {
-  var value: T
-  var done: Boolean?
-    get() = definedExternally
-    set(value) = definedExternally
-}
-
-external interface `T$2` {
-  var value: Unit
-  var done: Boolean?
-}
-
 external interface Iterator<T> {
   fun next(): dynamic /* `T$1`<T> | `T$2` */
 }
 
 external interface Push<T> {
   fun push(vararg values: T)
-}
-
-external interface `T$3` {
-  var __pathBrand: Any
 }
 
 external interface TextRange {
@@ -164,306 +149,311 @@ external enum class SyntaxKind {
   AtToken /* = 59 */,
   QuestionQuestionToken /* = 60 */,
   BacktickToken /* = 61 */,
-  EqualsToken /* = 62 */,
-  PlusEqualsToken /* = 63 */,
-  MinusEqualsToken /* = 64 */,
-  AsteriskEqualsToken /* = 65 */,
-  AsteriskAsteriskEqualsToken /* = 66 */,
-  SlashEqualsToken /* = 67 */,
-  PercentEqualsToken /* = 68 */,
-  LessThanLessThanEqualsToken /* = 69 */,
-  GreaterThanGreaterThanEqualsToken /* = 70 */,
-  GreaterThanGreaterThanGreaterThanEqualsToken /* = 71 */,
-  AmpersandEqualsToken /* = 72 */,
-  BarEqualsToken /* = 73 */,
-  BarBarEqualsToken /* = 74 */,
-  AmpersandAmpersandEqualsToken /* = 75 */,
-  QuestionQuestionEqualsToken /* = 76 */,
-  CaretEqualsToken /* = 77 */,
-  Identifier /* = 78 */,
-  PrivateIdentifier /* = 79 */,
-  BreakKeyword /* = 80 */,
-  CaseKeyword /* = 81 */,
-  CatchKeyword /* = 82 */,
-  ClassKeyword /* = 83 */,
-  ConstKeyword /* = 84 */,
-  ContinueKeyword /* = 85 */,
-  DebuggerKeyword /* = 86 */,
-  DefaultKeyword /* = 87 */,
-  DeleteKeyword /* = 88 */,
-  DoKeyword /* = 89 */,
-  ElseKeyword /* = 90 */,
-  EnumKeyword /* = 91 */,
-  ExportKeyword /* = 92 */,
-  ExtendsKeyword /* = 93 */,
-  FalseKeyword /* = 94 */,
-  FinallyKeyword /* = 95 */,
-  ForKeyword /* = 96 */,
-  FunctionKeyword /* = 97 */,
-  IfKeyword /* = 98 */,
-  ImportKeyword /* = 99 */,
-  InKeyword /* = 100 */,
-  InstanceOfKeyword /* = 101 */,
-  NewKeyword /* = 102 */,
-  NullKeyword /* = 103 */,
-  ReturnKeyword /* = 104 */,
-  SuperKeyword /* = 105 */,
-  SwitchKeyword /* = 106 */,
-  ThisKeyword /* = 107 */,
-  ThrowKeyword /* = 108 */,
-  TrueKeyword /* = 109 */,
-  TryKeyword /* = 110 */,
-  TypeOfKeyword /* = 111 */,
-  VarKeyword /* = 112 */,
-  VoidKeyword /* = 113 */,
-  WhileKeyword /* = 114 */,
-  WithKeyword /* = 115 */,
-  ImplementsKeyword /* = 116 */,
-  InterfaceKeyword /* = 117 */,
-  LetKeyword /* = 118 */,
-  PackageKeyword /* = 119 */,
-  PrivateKeyword /* = 120 */,
-  ProtectedKeyword /* = 121 */,
-  PublicKeyword /* = 122 */,
-  StaticKeyword /* = 123 */,
-  YieldKeyword /* = 124 */,
-  AbstractKeyword /* = 125 */,
-  AsKeyword /* = 126 */,
-  AssertsKeyword /* = 127 */,
-  AnyKeyword /* = 128 */,
-  AsyncKeyword /* = 129 */,
-  AwaitKeyword /* = 130 */,
-  BooleanKeyword /* = 131 */,
-  ConstructorKeyword /* = 132 */,
-  DeclareKeyword /* = 133 */,
-  GetKeyword /* = 134 */,
-  InferKeyword /* = 135 */,
-  IntrinsicKeyword /* = 136 */,
-  IsKeyword /* = 137 */,
-  KeyOfKeyword /* = 138 */,
-  ModuleKeyword /* = 139 */,
-  NamespaceKeyword /* = 140 */,
-  NeverKeyword /* = 141 */,
-  ReadonlyKeyword /* = 142 */,
-  RequireKeyword /* = 143 */,
-  NumberKeyword /* = 144 */,
-  ObjectKeyword /* = 145 */,
-  SetKeyword /* = 146 */,
-  StringKeyword /* = 147 */,
-  SymbolKeyword /* = 148 */,
-  TypeKeyword /* = 149 */,
-  UndefinedKeyword /* = 150 */,
-  UniqueKeyword /* = 151 */,
-  UnknownKeyword /* = 152 */,
-  FromKeyword /* = 153 */,
-  GlobalKeyword /* = 154 */,
-  BigIntKeyword /* = 155 */,
-  OverrideKeyword /* = 156 */,
-  OfKeyword /* = 157 */,
-  QualifiedName /* = 158 */,
-  ComputedPropertyName /* = 159 */,
-  TypeParameter /* = 160 */,
-  Parameter /* = 161 */,
-  Decorator /* = 162 */,
-  PropertySignature /* = 163 */,
-  PropertyDeclaration /* = 164 */,
-  MethodSignature /* = 165 */,
-  MethodDeclaration /* = 166 */,
-  Constructor /* = 167 */,
-  GetAccessor /* = 168 */,
-  SetAccessor /* = 169 */,
-  CallSignature /* = 170 */,
-  ConstructSignature /* = 171 */,
-  IndexSignature /* = 172 */,
-  TypePredicate /* = 173 */,
-  TypeReference /* = 174 */,
-  FunctionType /* = 175 */,
-  ConstructorType /* = 176 */,
-  TypeQuery /* = 177 */,
-  TypeLiteral /* = 178 */,
-  ArrayType /* = 179 */,
-  TupleType /* = 180 */,
-  OptionalType /* = 181 */,
-  RestType /* = 182 */,
-  UnionType /* = 183 */,
-  IntersectionType /* = 184 */,
-  ConditionalType /* = 185 */,
-  InferType /* = 186 */,
-  ParenthesizedType /* = 187 */,
-  ThisType /* = 188 */,
-  TypeOperator /* = 189 */,
-  IndexedAccessType /* = 190 */,
-  MappedType /* = 191 */,
-  LiteralType /* = 192 */,
-  NamedTupleMember /* = 193 */,
-  TemplateLiteralType /* = 194 */,
-  TemplateLiteralTypeSpan /* = 195 */,
-  ImportType /* = 196 */,
-  ObjectBindingPattern /* = 197 */,
-  ArrayBindingPattern /* = 198 */,
-  BindingElement /* = 199 */,
-  ArrayLiteralExpression /* = 200 */,
-  ObjectLiteralExpression /* = 201 */,
-  PropertyAccessExpression /* = 202 */,
-  ElementAccessExpression /* = 203 */,
-  CallExpression /* = 204 */,
-  NewExpression /* = 205 */,
-  TaggedTemplateExpression /* = 206 */,
-  TypeAssertionExpression /* = 207 */,
-  ParenthesizedExpression /* = 208 */,
-  FunctionExpression /* = 209 */,
-  ArrowFunction /* = 210 */,
-  DeleteExpression /* = 211 */,
-  TypeOfExpression /* = 212 */,
-  VoidExpression /* = 213 */,
-  AwaitExpression /* = 214 */,
-  PrefixUnaryExpression /* = 215 */,
-  PostfixUnaryExpression /* = 216 */,
-  BinaryExpression /* = 217 */,
-  ConditionalExpression /* = 218 */,
-  TemplateExpression /* = 219 */,
-  YieldExpression /* = 220 */,
-  SpreadElement /* = 221 */,
-  ClassExpression /* = 222 */,
-  OmittedExpression /* = 223 */,
-  ExpressionWithTypeArguments /* = 224 */,
-  AsExpression /* = 225 */,
-  NonNullExpression /* = 226 */,
-  MetaProperty /* = 227 */,
-  SyntheticExpression /* = 228 */,
-  TemplateSpan /* = 229 */,
-  SemicolonClassElement /* = 230 */,
-  Block /* = 231 */,
-  EmptyStatement /* = 232 */,
-  VariableStatement /* = 233 */,
-  ExpressionStatement /* = 234 */,
-  IfStatement /* = 235 */,
-  DoStatement /* = 236 */,
-  WhileStatement /* = 237 */,
-  ForStatement /* = 238 */,
-  ForInStatement /* = 239 */,
-  ForOfStatement /* = 240 */,
-  ContinueStatement /* = 241 */,
-  BreakStatement /* = 242 */,
-  ReturnStatement /* = 243 */,
-  WithStatement /* = 244 */,
-  SwitchStatement /* = 245 */,
-  LabeledStatement /* = 246 */,
-  ThrowStatement /* = 247 */,
-  TryStatement /* = 248 */,
-  DebuggerStatement /* = 249 */,
-  VariableDeclaration /* = 250 */,
-  VariableDeclarationList /* = 251 */,
-  FunctionDeclaration /* = 252 */,
-  ClassDeclaration /* = 253 */,
-  InterfaceDeclaration /* = 254 */,
-  TypeAliasDeclaration /* = 255 */,
-  EnumDeclaration /* = 256 */,
-  ModuleDeclaration /* = 257 */,
-  ModuleBlock /* = 258 */,
-  CaseBlock /* = 259 */,
-  NamespaceExportDeclaration /* = 260 */,
-  ImportEqualsDeclaration /* = 261 */,
-  ImportDeclaration /* = 262 */,
-  ImportClause /* = 263 */,
-  NamespaceImport /* = 264 */,
-  NamedImports /* = 265 */,
-  ImportSpecifier /* = 266 */,
-  ExportAssignment /* = 267 */,
-  ExportDeclaration /* = 268 */,
-  NamedExports /* = 269 */,
-  NamespaceExport /* = 270 */,
-  ExportSpecifier /* = 271 */,
-  MissingDeclaration /* = 272 */,
-  ExternalModuleReference /* = 273 */,
-  JsxElement /* = 274 */,
-  JsxSelfClosingElement /* = 275 */,
-  JsxOpeningElement /* = 276 */,
-  JsxClosingElement /* = 277 */,
-  JsxFragment /* = 278 */,
-  JsxOpeningFragment /* = 279 */,
-  JsxClosingFragment /* = 280 */,
-  JsxAttribute /* = 281 */,
-  JsxAttributes /* = 282 */,
-  JsxSpreadAttribute /* = 283 */,
-  JsxExpression /* = 284 */,
-  CaseClause /* = 285 */,
-  DefaultClause /* = 286 */,
-  HeritageClause /* = 287 */,
-  CatchClause /* = 288 */,
-  PropertyAssignment /* = 289 */,
-  ShorthandPropertyAssignment /* = 290 */,
-  SpreadAssignment /* = 291 */,
-  EnumMember /* = 292 */,
-  UnparsedPrologue /* = 293 */,
-  UnparsedPrepend /* = 294 */,
-  UnparsedText /* = 295 */,
-  UnparsedInternalText /* = 296 */,
-  UnparsedSyntheticReference /* = 297 */,
-  SourceFile /* = 298 */,
-  Bundle /* = 299 */,
-  UnparsedSource /* = 300 */,
-  InputFiles /* = 301 */,
-  JSDocTypeExpression /* = 302 */,
-  JSDocNameReference /* = 303 */,
-  JSDocAllType /* = 304 */,
-  JSDocUnknownType /* = 305 */,
-  JSDocNullableType /* = 306 */,
-  JSDocNonNullableType /* = 307 */,
-  JSDocOptionalType /* = 308 */,
-  JSDocFunctionType /* = 309 */,
-  JSDocVariadicType /* = 310 */,
-  JSDocNamepathType /* = 311 */,
-  JSDocComment /* = 312 */,
-  JSDocText /* = 313 */,
-  JSDocTypeLiteral /* = 314 */,
-  JSDocSignature /* = 315 */,
-  JSDocLink /* = 316 */,
-  JSDocTag /* = 317 */,
-  JSDocAugmentsTag /* = 318 */,
-  JSDocImplementsTag /* = 319 */,
-  JSDocAuthorTag /* = 320 */,
-  JSDocDeprecatedTag /* = 321 */,
-  JSDocClassTag /* = 322 */,
-  JSDocPublicTag /* = 323 */,
-  JSDocPrivateTag /* = 324 */,
-  JSDocProtectedTag /* = 325 */,
-  JSDocReadonlyTag /* = 326 */,
-  JSDocOverrideTag /* = 327 */,
-  JSDocCallbackTag /* = 328 */,
-  JSDocEnumTag /* = 329 */,
-  JSDocParameterTag /* = 330 */,
-  JSDocReturnTag /* = 331 */,
-  JSDocThisTag /* = 332 */,
-  JSDocTypeTag /* = 333 */,
-  JSDocTemplateTag /* = 334 */,
-  JSDocTypedefTag /* = 335 */,
-  JSDocSeeTag /* = 336 */,
-  JSDocPropertyTag /* = 337 */,
-  SyntaxList /* = 338 */,
-  NotEmittedStatement /* = 339 */,
-  PartiallyEmittedExpression /* = 340 */,
-  CommaListExpression /* = 341 */,
-  MergeDeclarationMarker /* = 342 */,
-  EndOfDeclarationMarker /* = 343 */,
-  SyntheticReferenceExpression /* = 344 */,
-  Count /* = 345 */,
-  FirstAssignment /* = 62 */,
-  LastAssignment /* = 77 */,
-  FirstCompoundAssignment /* = 63 */,
-  LastCompoundAssignment /* = 77 */,
-  FirstReservedWord /* = 80 */,
-  LastReservedWord /* = 115 */,
-  FirstKeyword /* = 80 */,
-  LastKeyword /* = 157 */,
-  FirstFutureReservedWord /* = 116 */,
-  LastFutureReservedWord /* = 124 */,
-  FirstTypeNode /* = 173 */,
-  LastTypeNode /* = 196 */,
+  HashToken /* = 62 */,
+  EqualsToken /* = 63 */,
+  PlusEqualsToken /* = 64 */,
+  MinusEqualsToken /* = 65 */,
+  AsteriskEqualsToken /* = 66 */,
+  AsteriskAsteriskEqualsToken /* = 67 */,
+  SlashEqualsToken /* = 68 */,
+  PercentEqualsToken /* = 69 */,
+  LessThanLessThanEqualsToken /* = 70 */,
+  GreaterThanGreaterThanEqualsToken /* = 71 */,
+  GreaterThanGreaterThanGreaterThanEqualsToken /* = 72 */,
+  AmpersandEqualsToken /* = 73 */,
+  BarEqualsToken /* = 74 */,
+  BarBarEqualsToken /* = 75 */,
+  AmpersandAmpersandEqualsToken /* = 76 */,
+  QuestionQuestionEqualsToken /* = 77 */,
+  CaretEqualsToken /* = 78 */,
+  Identifier /* = 79 */,
+  PrivateIdentifier /* = 80 */,
+  BreakKeyword /* = 81 */,
+  CaseKeyword /* = 82 */,
+  CatchKeyword /* = 83 */,
+  ClassKeyword /* = 84 */,
+  ConstKeyword /* = 85 */,
+  ContinueKeyword /* = 86 */,
+  DebuggerKeyword /* = 87 */,
+  DefaultKeyword /* = 88 */,
+  DeleteKeyword /* = 89 */,
+  DoKeyword /* = 90 */,
+  ElseKeyword /* = 91 */,
+  EnumKeyword /* = 92 */,
+  ExportKeyword /* = 93 */,
+  ExtendsKeyword /* = 94 */,
+  FalseKeyword /* = 95 */,
+  FinallyKeyword /* = 96 */,
+  ForKeyword /* = 97 */,
+  FunctionKeyword /* = 98 */,
+  IfKeyword /* = 99 */,
+  ImportKeyword /* = 100 */,
+  InKeyword /* = 101 */,
+  InstanceOfKeyword /* = 102 */,
+  NewKeyword /* = 103 */,
+  NullKeyword /* = 104 */,
+  ReturnKeyword /* = 105 */,
+  SuperKeyword /* = 106 */,
+  SwitchKeyword /* = 107 */,
+  ThisKeyword /* = 108 */,
+  ThrowKeyword /* = 109 */,
+  TrueKeyword /* = 110 */,
+  TryKeyword /* = 111 */,
+  TypeOfKeyword /* = 112 */,
+  VarKeyword /* = 113 */,
+  VoidKeyword /* = 114 */,
+  WhileKeyword /* = 115 */,
+  WithKeyword /* = 116 */,
+  ImplementsKeyword /* = 117 */,
+  InterfaceKeyword /* = 118 */,
+  LetKeyword /* = 119 */,
+  PackageKeyword /* = 120 */,
+  PrivateKeyword /* = 121 */,
+  ProtectedKeyword /* = 122 */,
+  PublicKeyword /* = 123 */,
+  StaticKeyword /* = 124 */,
+  YieldKeyword /* = 125 */,
+  AbstractKeyword /* = 126 */,
+  AsKeyword /* = 127 */,
+  AssertsKeyword /* = 128 */,
+  AnyKeyword /* = 129 */,
+  AsyncKeyword /* = 130 */,
+  AwaitKeyword /* = 131 */,
+  BooleanKeyword /* = 132 */,
+  ConstructorKeyword /* = 133 */,
+  DeclareKeyword /* = 134 */,
+  GetKeyword /* = 135 */,
+  InferKeyword /* = 136 */,
+  IntrinsicKeyword /* = 137 */,
+  IsKeyword /* = 138 */,
+  KeyOfKeyword /* = 139 */,
+  ModuleKeyword /* = 140 */,
+  NamespaceKeyword /* = 141 */,
+  NeverKeyword /* = 142 */,
+  ReadonlyKeyword /* = 143 */,
+  RequireKeyword /* = 144 */,
+  NumberKeyword /* = 145 */,
+  ObjectKeyword /* = 146 */,
+  SetKeyword /* = 147 */,
+  StringKeyword /* = 148 */,
+  SymbolKeyword /* = 149 */,
+  TypeKeyword /* = 150 */,
+  UndefinedKeyword /* = 151 */,
+  UniqueKeyword /* = 152 */,
+  UnknownKeyword /* = 153 */,
+  FromKeyword /* = 154 */,
+  GlobalKeyword /* = 155 */,
+  BigIntKeyword /* = 156 */,
+  OverrideKeyword /* = 157 */,
+  OfKeyword /* = 158 */,
+  QualifiedName /* = 159 */,
+  ComputedPropertyName /* = 160 */,
+  TypeParameter /* = 161 */,
+  Parameter /* = 162 */,
+  Decorator /* = 163 */,
+  PropertySignature /* = 164 */,
+  PropertyDeclaration /* = 165 */,
+  MethodSignature /* = 166 */,
+  MethodDeclaration /* = 167 */,
+  ClassStaticBlockDeclaration /* = 168 */,
+  Constructor /* = 169 */,
+  GetAccessor /* = 170 */,
+  SetAccessor /* = 171 */,
+  CallSignature /* = 172 */,
+  ConstructSignature /* = 173 */,
+  IndexSignature /* = 174 */,
+  TypePredicate /* = 175 */,
+  TypeReference /* = 176 */,
+  FunctionType /* = 177 */,
+  ConstructorType /* = 178 */,
+  TypeQuery /* = 179 */,
+  TypeLiteral /* = 180 */,
+  ArrayType /* = 181 */,
+  TupleType /* = 182 */,
+  OptionalType /* = 183 */,
+  RestType /* = 184 */,
+  UnionType /* = 185 */,
+  IntersectionType /* = 186 */,
+  ConditionalType /* = 187 */,
+  InferType /* = 188 */,
+  ParenthesizedType /* = 189 */,
+  ThisType /* = 190 */,
+  TypeOperator /* = 191 */,
+  IndexedAccessType /* = 192 */,
+  MappedType /* = 193 */,
+  LiteralType /* = 194 */,
+  NamedTupleMember /* = 195 */,
+  TemplateLiteralType /* = 196 */,
+  TemplateLiteralTypeSpan /* = 197 */,
+  ImportType /* = 198 */,
+  ObjectBindingPattern /* = 199 */,
+  ArrayBindingPattern /* = 200 */,
+  BindingElement /* = 201 */,
+  ArrayLiteralExpression /* = 202 */,
+  ObjectLiteralExpression /* = 203 */,
+  PropertyAccessExpression /* = 204 */,
+  ElementAccessExpression /* = 205 */,
+  CallExpression /* = 206 */,
+  NewExpression /* = 207 */,
+  TaggedTemplateExpression /* = 208 */,
+  TypeAssertionExpression /* = 209 */,
+  ParenthesizedExpression /* = 210 */,
+  FunctionExpression /* = 211 */,
+  ArrowFunction /* = 212 */,
+  DeleteExpression /* = 213 */,
+  TypeOfExpression /* = 214 */,
+  VoidExpression /* = 215 */,
+  AwaitExpression /* = 216 */,
+  PrefixUnaryExpression /* = 217 */,
+  PostfixUnaryExpression /* = 218 */,
+  BinaryExpression /* = 219 */,
+  ConditionalExpression /* = 220 */,
+  TemplateExpression /* = 221 */,
+  YieldExpression /* = 222 */,
+  SpreadElement /* = 223 */,
+  ClassExpression /* = 224 */,
+  OmittedExpression /* = 225 */,
+  ExpressionWithTypeArguments /* = 226 */,
+  AsExpression /* = 227 */,
+  NonNullExpression /* = 228 */,
+  MetaProperty /* = 229 */,
+  SyntheticExpression /* = 230 */,
+  TemplateSpan /* = 231 */,
+  SemicolonClassElement /* = 232 */,
+  Block /* = 233 */,
+  EmptyStatement /* = 234 */,
+  VariableStatement /* = 235 */,
+  ExpressionStatement /* = 236 */,
+  IfStatement /* = 237 */,
+  DoStatement /* = 238 */,
+  WhileStatement /* = 239 */,
+  ForStatement /* = 240 */,
+  ForInStatement /* = 241 */,
+  ForOfStatement /* = 242 */,
+  ContinueStatement /* = 243 */,
+  BreakStatement /* = 244 */,
+  ReturnStatement /* = 245 */,
+  WithStatement /* = 246 */,
+  SwitchStatement /* = 247 */,
+  LabeledStatement /* = 248 */,
+  ThrowStatement /* = 249 */,
+  TryStatement /* = 250 */,
+  DebuggerStatement /* = 251 */,
+  VariableDeclaration /* = 252 */,
+  VariableDeclarationList /* = 253 */,
+  FunctionDeclaration /* = 254 */,
+  ClassDeclaration /* = 255 */,
+  InterfaceDeclaration /* = 256 */,
+  TypeAliasDeclaration /* = 257 */,
+  EnumDeclaration /* = 258 */,
+  ModuleDeclaration /* = 259 */,
+  ModuleBlock /* = 260 */,
+  CaseBlock /* = 261 */,
+  NamespaceExportDeclaration /* = 262 */,
+  ImportEqualsDeclaration /* = 263 */,
+  ImportDeclaration /* = 264 */,
+  ImportClause /* = 265 */,
+  NamespaceImport /* = 266 */,
+  NamedImports /* = 267 */,
+  ImportSpecifier /* = 268 */,
+  ExportAssignment /* = 269 */,
+  ExportDeclaration /* = 270 */,
+  NamedExports /* = 271 */,
+  NamespaceExport /* = 272 */,
+  ExportSpecifier /* = 273 */,
+  MissingDeclaration /* = 274 */,
+  ExternalModuleReference /* = 275 */,
+  JsxElement /* = 276 */,
+  JsxSelfClosingElement /* = 277 */,
+  JsxOpeningElement /* = 278 */,
+  JsxClosingElement /* = 279 */,
+  JsxFragment /* = 280 */,
+  JsxOpeningFragment /* = 281 */,
+  JsxClosingFragment /* = 282 */,
+  JsxAttribute /* = 283 */,
+  JsxAttributes /* = 284 */,
+  JsxSpreadAttribute /* = 285 */,
+  JsxExpression /* = 286 */,
+  CaseClause /* = 287 */,
+  DefaultClause /* = 288 */,
+  HeritageClause /* = 289 */,
+  CatchClause /* = 290 */,
+  PropertyAssignment /* = 291 */,
+  ShorthandPropertyAssignment /* = 292 */,
+  SpreadAssignment /* = 293 */,
+  EnumMember /* = 294 */,
+  UnparsedPrologue /* = 295 */,
+  UnparsedPrepend /* = 296 */,
+  UnparsedText /* = 297 */,
+  UnparsedInternalText /* = 298 */,
+  UnparsedSyntheticReference /* = 299 */,
+  SourceFile /* = 300 */,
+  Bundle /* = 301 */,
+  UnparsedSource /* = 302 */,
+  InputFiles /* = 303 */,
+  JSDocTypeExpression /* = 304 */,
+  JSDocNameReference /* = 305 */,
+  JSDocMemberName /* = 306 */,
+  JSDocAllType /* = 307 */,
+  JSDocUnknownType /* = 308 */,
+  JSDocNullableType /* = 309 */,
+  JSDocNonNullableType /* = 310 */,
+  JSDocOptionalType /* = 311 */,
+  JSDocFunctionType /* = 312 */,
+  JSDocVariadicType /* = 313 */,
+  JSDocNamepathType /* = 314 */,
+  JSDocComment /* = 315 */,
+  JSDocText /* = 316 */,
+  JSDocTypeLiteral /* = 317 */,
+  JSDocSignature /* = 318 */,
+  JSDocLink /* = 319 */,
+  JSDocLinkCode /* = 320 */,
+  JSDocLinkPlain /* = 321 */,
+  JSDocTag /* = 322 */,
+  JSDocAugmentsTag /* = 323 */,
+  JSDocImplementsTag /* = 324 */,
+  JSDocAuthorTag /* = 325 */,
+  JSDocDeprecatedTag /* = 326 */,
+  JSDocClassTag /* = 327 */,
+  JSDocPublicTag /* = 328 */,
+  JSDocPrivateTag /* = 329 */,
+  JSDocProtectedTag /* = 330 */,
+  JSDocReadonlyTag /* = 331 */,
+  JSDocOverrideTag /* = 332 */,
+  JSDocCallbackTag /* = 333 */,
+  JSDocEnumTag /* = 334 */,
+  JSDocParameterTag /* = 335 */,
+  JSDocReturnTag /* = 336 */,
+  JSDocThisTag /* = 337 */,
+  JSDocTypeTag /* = 338 */,
+  JSDocTemplateTag /* = 339 */,
+  JSDocTypedefTag /* = 340 */,
+  JSDocSeeTag /* = 341 */,
+  JSDocPropertyTag /* = 342 */,
+  SyntaxList /* = 343 */,
+  NotEmittedStatement /* = 344 */,
+  PartiallyEmittedExpression /* = 345 */,
+  CommaListExpression /* = 346 */,
+  MergeDeclarationMarker /* = 347 */,
+  EndOfDeclarationMarker /* = 348 */,
+  SyntheticReferenceExpression /* = 349 */,
+  Count /* = 350 */,
+  FirstAssignment /* = 63 */,
+  LastAssignment /* = 78 */,
+  FirstCompoundAssignment /* = 64 */,
+  LastCompoundAssignment /* = 78 */,
+  FirstReservedWord /* = 81 */,
+  LastReservedWord /* = 116 */,
+  FirstKeyword /* = 81 */,
+  LastKeyword /* = 158 */,
+  FirstFutureReservedWord /* = 117 */,
+  LastFutureReservedWord /* = 125 */,
+  FirstTypeNode /* = 175 */,
+  LastTypeNode /* = 198 */,
   FirstPunctuation /* = 18 */,
-  LastPunctuation /* = 77 */,
+  LastPunctuation /* = 78 */,
   FirstToken /* = 0 */,
-  LastToken /* = 157 */,
+  LastToken /* = 158 */,
   FirstTriviaToken /* = 2 */,
   LastTriviaToken /* = 7 */,
   FirstLiteralToken /* = 8 */,
@@ -471,14 +461,14 @@ external enum class SyntaxKind {
   FirstTemplateToken /* = 14 */,
   LastTemplateToken /* = 17 */,
   FirstBinaryOperator /* = 29 */,
-  LastBinaryOperator /* = 77 */,
-  FirstStatement /* = 233 */,
-  LastStatement /* = 249 */,
-  FirstNode /* = 158 */,
-  FirstJSDocNode /* = 302 */,
-  LastJSDocNode /* = 337 */,
-  FirstJSDocTagNode /* = 317 */,
-  LastJSDocTagNode /* = 337 */
+  LastBinaryOperator /* = 78 */,
+  FirstStatement /* = 235 */,
+  LastStatement /* = 251 */,
+  FirstNode /* = 159 */,
+  FirstJSDocNode /* = 304 */,
+  LastJSDocNode /* = 342 */,
+  FirstJSDocTagNode /* = 322 */,
+  LastJSDocTagNode /* = 342 */
 }
 
 external enum class NodeFlags {
@@ -575,7 +565,7 @@ external interface Token<TKind : SyntaxKind> : Node {
   override val kind: TKind
 }
 
-external interface PunctuationToken<TKind : SyntaxKind> : Token<TKind>
+external interface PunctuationToken<TKind:SyntaxKind> : Token<TKind>
 
 external interface KeywordToken<TKind : SyntaxKind> : Token<TKind>
 
@@ -884,6 +874,12 @@ external interface IndexSignatureDeclaration : SignatureDeclarationBase, ClassEl
     get() = definedExternally
   override val name: dynamic /* Identifier? | StringLiteral? | NumericLiteral? | ComputedPropertyName? | PrivateIdentifier? */
     get() = definedExternally
+}
+
+external interface ClassStaticBlockDeclaration : ClassElement, JSDocContainer {
+  override val parent: dynamic /* ClassDeclaration | ClassExpression */
+    get() = definedExternally
+  val body: Block
 }
 
 external interface TypeNode : Node {
@@ -1789,8 +1785,14 @@ external interface JSDocTypeExpression : TypeNode {
 }
 
 external interface JSDocNameReference : Node {
-  val name: dynamic /* Identifier | QualifiedName */
+  val name: dynamic /* Identifier | QualifiedName | JSDocMemberName */
     get() = definedExternally
+}
+
+external interface JSDocMemberName : Node {
+  val left: dynamic /* Identifier | QualifiedName | JSDocMemberName */
+    get() = definedExternally
+  val right: Identifier
 }
 
 external interface JSDocType : TypeNode {
@@ -1826,11 +1828,11 @@ external interface JSDocNamepathType : JSDocType {
 }
 
 external interface JSDoc : Node {
-  override val parent: dynamic /* ParameterDeclaration | CallSignatureDeclaration | ConstructSignatureDeclaration | MethodSignature | PropertySignature | ArrowFunction | ParenthesizedExpression | SpreadAssignment | ShorthandPropertyAssignment | PropertyAssignment | FunctionExpression | EmptyStatement | DebuggerStatement | Block | VariableStatement | ExpressionStatement | IfStatement | DoStatement | WhileStatement | ForStatement | ForInStatement | ForOfStatement | BreakStatement | ContinueStatement | ReturnStatement | WithStatement | SwitchStatement | LabeledStatement | ThrowStatement | TryStatement | FunctionDeclaration | ConstructorDeclaration | MethodDeclaration | VariableDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ClassDeclaration | ClassExpression | InterfaceDeclaration | TypeAliasDeclaration | EnumMember | EnumDeclaration | ModuleDeclaration | ImportEqualsDeclaration | ImportDeclaration | NamespaceExportDeclaration | ExportAssignment | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | JSDocFunctionType | ExportDeclaration | NamedTupleMember | Token<SyntaxKind.EndOfFileToken> & JSDocContainer */
+  override val parent: dynamic /* ParameterDeclaration | CallSignatureDeclaration | ClassStaticBlockDeclaration | ConstructSignatureDeclaration | MethodSignature | PropertySignature | ArrowFunction | ParenthesizedExpression | SpreadAssignment | ShorthandPropertyAssignment | PropertyAssignment | FunctionExpression | EmptyStatement | DebuggerStatement | Block | VariableStatement | ExpressionStatement | IfStatement | DoStatement | WhileStatement | ForStatement | ForInStatement | ForOfStatement | BreakStatement | ContinueStatement | ReturnStatement | WithStatement | SwitchStatement | LabeledStatement | ThrowStatement | TryStatement | FunctionDeclaration | ConstructorDeclaration | MethodDeclaration | VariableDeclaration | PropertyDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | ClassDeclaration | ClassExpression | InterfaceDeclaration | TypeAliasDeclaration | EnumMember | EnumDeclaration | ModuleDeclaration | ImportEqualsDeclaration | ImportDeclaration | NamespaceExportDeclaration | ExportAssignment | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | JSDocFunctionType | ExportDeclaration | NamedTupleMember | Token<SyntaxKind.EndOfFileToken> & JSDocContainer */
     get() = definedExternally
   val tags: NodeArray<JSDocTag>?
     get() = definedExternally
-  val comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink */>? */
+  val comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? */
     get() = definedExternally
 }
 
@@ -1838,12 +1840,24 @@ external interface JSDocTag : Node {
   override val parent: dynamic /* JSDoc | JSDocTypeLiteral */
     get() = definedExternally
   val tagName: Identifier
-  val comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink */>? */
+  val comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? */
     get() = definedExternally
 }
 
 external interface JSDocLink : Node {
-  val name: dynamic /* Identifier? | QualifiedName? */
+  val name: dynamic /* Identifier? | QualifiedName? | JSDocMemberName? */
+    get() = definedExternally
+  var text: String
+}
+
+external interface JSDocLinkCode : Node {
+  val name: dynamic /* Identifier? | QualifiedName? | JSDocMemberName? */
+    get() = definedExternally
+  var text: String
+}
+
+external interface JSDocLinkPlain : Node {
+  val name: dynamic /* Identifier? | QualifiedName? | JSDocMemberName? */
     get() = definedExternally
   var text: String
 }
@@ -1854,17 +1868,17 @@ external interface JSDocText : Node {
 
 external interface JSDocUnknownTag : JSDocTag
 
-external interface `T$4` {
+external interface `T$21` {
   val expression: dynamic /* Identifier | PropertyAccessEntityNameExpression */
     get() = definedExternally
 }
 
 external interface JSDocAugmentsTag : JSDocTag {
-  val `class`: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$4` */
+  val `class`: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$21` */
 }
 
 external interface JSDocImplementsTag : JSDocTag {
-  val `class`: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$4` */
+  val `class`: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$21` */
 }
 
 external interface JSDocAuthorTag : JSDocTag
@@ -2060,7 +2074,7 @@ external interface SourceFile : Declaration {
   fun getPositionOfLineAndCharacter(line: Number, character: Number): Number
   fun update(newText: String, textChangeRange: TextChangeRange): SourceFile
   val statements: NodeArray<Statement>
-  val endOfFileToken: Token<SyntaxKind>
+  val endOfFileToken: Token<dynamic>
   var fileName: String
   var text: String
   var amdDependencies: Array<AmdDependency>
@@ -2188,22 +2202,11 @@ external interface ParseConfigHost {
   val trace: ((s: String) -> Unit)?
 }
 
-external interface `T$5` {
-  var _isResolvedConfigFileName: Any
-}
-
-external open class OperationCanceledException
+open external class OperationCanceledException
 
 external interface CancellationToken {
   fun isCancellationRequested(): Boolean
   fun throwIfCancellationRequested()
-}
-
-external interface `T$6` {
-  var assignable: Number
-  var identity: Number
-  var subtype: Number
-  var strictSubtype: Number
 }
 
 external interface Program : ScriptReferenceHost {
@@ -2223,7 +2226,7 @@ external interface Program : ScriptReferenceHost {
   fun getSymbolCount(): Number
   fun getTypeCount(): Number
   fun getInstantiationCount(): Number
-  fun getRelationCacheSizes(): `T$6`
+//  fun getRelationCacheSizes(): `T$6`
   fun isSourceFileFromExternalLibrary(file: SourceFile): Boolean
   fun isSourceFileDefaultLibrary(file: SourceFile): Boolean
   fun getProjectReferences(): Array<ProjectReference>?
@@ -2283,7 +2286,7 @@ external interface EmitResult {
     set(value) = definedExternally
 }
 
-external interface `T$7` {
+external interface `T$22` {
   var typeArguments: NodeArray<TypeNode>?
     get() = definedExternally
     set(value) = definedExternally
@@ -2296,6 +2299,7 @@ external interface TypeChecker {
   fun getPropertyOfType(type: Type, propertyName: String): Symbol?
   fun getPrivateIdentifierPropertyOfType(leftType: Type, name: String, location: Node): Symbol?
   fun getIndexInfoOfType(type: Type, kind: IndexKind): IndexInfo?
+  fun getIndexInfosOfType(type: Type): Array<IndexInfo>
   fun getSignaturesOfType(type: Type, kind: SignatureKind): Array<Signature>
   fun getIndexTypeOfType(type: Type, kind: IndexKind): Type?
   fun getBaseTypes(type: InterfaceType): Array<dynamic /* ObjectType | IntersectionType | TypeParameter | IndexedAccessType */>
@@ -2307,7 +2311,7 @@ external interface TypeChecker {
   fun getTypeArguments(type: TypeReference): Array<Type>
   fun typeToTypeNode(type: Type, enclosingDeclaration: Node?, flags: NodeBuilderFlags?): TypeNode?
   fun signatureToSignatureDeclaration(signature: Signature, kind: SyntaxKind, enclosingDeclaration: Node?, flags: NodeBuilderFlags?): dynamic /* CallSignatureDeclaration | ConstructSignatureDeclaration | MethodSignature | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | JSDocFunctionType | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | FunctionExpression | ArrowFunction */
-  fun indexInfoToIndexSignatureDeclaration(indexInfo: IndexInfo, kind: IndexKind, enclosingDeclaration: Node?, flags: NodeBuilderFlags?): IndexSignatureDeclaration?
+  fun indexInfoToIndexSignatureDeclaration(indexInfo: IndexInfo, enclosingDeclaration: Node?, flags: NodeBuilderFlags?): IndexSignatureDeclaration?
   fun symbolToEntityName(symbol: Symbol, meaning: SymbolFlags, enclosingDeclaration: Node?, flags: NodeBuilderFlags?): dynamic /* Identifier? | QualifiedName? */
   fun symbolToExpression(symbol: Symbol, meaning: SymbolFlags, enclosingDeclaration: Node?, flags: NodeBuilderFlags?): Expression?
   fun symbolToTypeParameterDeclarations(symbol: Symbol, enclosingDeclaration: Node?, flags: NodeBuilderFlags?): NodeArray<TypeParameterDeclaration>?
@@ -2401,6 +2405,7 @@ external interface TypeChecker {
   fun isValidPropertyAccess(node: QualifiedName, propertyName: String): Boolean
   fun isValidPropertyAccess(node: ImportTypeNode, propertyName: String): Boolean
   fun getAliasedSymbol(symbol: Symbol): Symbol
+  fun getImmediateAliasedSymbol(symbol: Symbol): Symbol?
   fun getExportsOfModule(moduleSymbol: Symbol): Array<Symbol>
   fun getJsxIntrinsicTagNamesAt(location: Node): Array<Symbol>
   fun isOptionalParameter(node: ParameterDeclaration): Boolean
@@ -2626,10 +2631,6 @@ external enum class InternalSymbolName {
   This /* = "this" */
 }
 
-external interface `T$8` {
-  var __escapedIdentifier: Unit
-}
-
 external interface ReadonlyUnderscoreEscapedMap<T> : ReadonlyESMap<dynamic /* String & `T$8` | Unit & `T$8` | InternalSymbolName */, T>
 
 external interface UnderscoreEscapedMap<T> : ESMap<dynamic /* String & `T$8` | Unit & `T$8` | InternalSymbolName */, T>, ReadonlyUnderscoreEscapedMap<T>
@@ -2787,12 +2788,7 @@ external interface InterfaceTypeWithDeclaredMembers : InterfaceType {
   var declaredProperties: Array<Symbol>
   var declaredCallSignatures: Array<Signature>
   var declaredConstructSignatures: Array<Signature>
-  var declaredStringIndexInfo: IndexInfo?
-    get() = definedExternally
-    set(value) = definedExternally
-  var declaredNumberIndexInfo: IndexInfo?
-    get() = definedExternally
-    set(value) = definedExternally
+  var declaredIndexInfos: Array<IndexInfo>
 }
 
 external interface TypeReference : ObjectType {
@@ -2948,6 +2944,7 @@ external enum class IndexKind {
 }
 
 external interface IndexInfo {
+  var keyType: Type
   var type: Type
   var isReadonly: Boolean?
   var declaration: IndexSignatureDeclaration?
@@ -3143,6 +3140,9 @@ external interface CompilerOptions {
   var emitDecoratorMetadata: Boolean?
     get() = definedExternally
     set(value) = definedExternally
+  var exactOptionalPropertyTypes: Boolean?
+    get() = definedExternally
+    set(value) = definedExternally
   var experimentalDecorators: Boolean?
     get() = definedExternally
     set(value) = definedExternally
@@ -3336,6 +3336,9 @@ external interface CompilerOptions {
     get() = definedExternally
     set(value) = definedExternally
   var traceResolution: Boolean?
+    get() = definedExternally
+    set(value) = definedExternally
+  var useUnknownInCatchVariables: Boolean?
     get() = definedExternally
     set(value) = definedExternally
   var resolveJsonModule: Boolean?
@@ -3752,18 +3755,19 @@ external interface NodeFactory {
   fun createUniqueName(text: String, flags: GeneratedIdentifierFlags = definedExternally): Identifier
   fun getGeneratedNameForNode(node: Node?, flags: GeneratedIdentifierFlags = definedExternally): Identifier
   fun createPrivateIdentifier(text: String): PrivateIdentifier
-//  fun createToken(token: SyntaxKind = definedExternally): SuperExpression
-//  fun createToken(token: SyntaxKind = definedExternally): ThisExpression
-//  fun createToken(token: SyntaxKind = definedExternally): NullLiteral
-//  fun createToken(token: SyntaxKind = definedExternally): TrueLiteral
-//  fun createToken(token: SyntaxKind = definedExternally): FalseLiteral
-  fun <TKind: SyntaxKind> createToken(token: TKind): dynamic /* Token */
+  fun createToken(token: SyntaxKind): dynamic
+//  fun createToken(token: SyntaxKind.SuperKeyword): SuperExpression
+//  fun createToken(token: SyntaxKind.ThisKeyword): ThisExpression
+//  fun createToken(token: SyntaxKind.NullKeyword): NullLiteral
+//  fun createToken(token: SyntaxKind.TrueKeyword): TrueLiteral
+//  fun createToken(token: SyntaxKind.FalseKeyword): FalseLiteral
+  fun <TKind:SyntaxKind> createToken(token: TKind): dynamic /* Token */
   fun createSuper(): SuperExpression
   fun createThis(): ThisExpression
   fun createNull(): NullLiteral
   fun createTrue(): TrueLiteral
   fun createFalse(): FalseLiteral
-  fun <T : SyntaxKind> createModifier(kind: T): ModifierToken<T>
+  fun <T:SyntaxKind> createModifier(kind: T): ModifierToken<T>
   fun createModifiersFromModifierFlags(flags: ModifierFlags): Array<dynamic /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>
   fun createQualifiedName(left: Identifier, right: String): QualifiedName
   fun createQualifiedName(left: Identifier, right: Identifier): QualifiedName
@@ -3813,50 +3817,60 @@ external interface NodeFactory {
   fun updatePropertySignature(node: PropertySignature, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: NumericLiteral, questionToken: QuestionToken?, type: TypeNode?): PropertySignature
   fun updatePropertySignature(node: PropertySignature, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: ComputedPropertyName, questionToken: QuestionToken?, type: TypeNode?): PropertySignature
   fun updatePropertySignature(node: PropertySignature, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: PrivateIdentifier, questionToken: QuestionToken?, type: TypeNode?): PropertySignature
-
-  fun createPropertyDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: String, questionOrExclamationToken: SyntaxKind? = definedExternally, type: TypeNode?, initializer: Expression?): PropertyDeclaration
-  fun createPropertyDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: Identifier, questionOrExclamationToken: SyntaxKind? = definedExternally, type: TypeNode?, initializer: Expression?): PropertyDeclaration
-  fun createPropertyDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: StringLiteral, questionOrExclamationToken: SyntaxKind? = definedExternally, type: TypeNode?, initializer: Expression?): PropertyDeclaration
-  fun createPropertyDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: NumericLiteral, questionOrExclamationToken: SyntaxKind? = definedExternally, type: TypeNode?, initializer: Expression?): PropertyDeclaration
-  fun createPropertyDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: ComputedPropertyName, questionOrExclamationToken: SyntaxKind? = definedExternally, type: TypeNode?, initializer: Expression?): PropertyDeclaration
-  fun createPropertyDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: PrivateIdentifier, questionOrExclamationToken: SyntaxKind? = definedExternally, type: TypeNode?, initializer: Expression?): PropertyDeclaration
-
-  fun updatePropertyDeclaration(node: PropertyDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: String, questionOrExclamationToken: SyntaxKind? = definedExternally, type: TypeNode?, initializer: Expression?): PropertyDeclaration
-  fun updatePropertyDeclaration(node: PropertyDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: Identifier, questionOrExclamationToken: SyntaxKind? = definedExternally, type: TypeNode?, initializer: Expression?): PropertyDeclaration
-  fun updatePropertyDeclaration(node: PropertyDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: StringLiteral, questionOrExclamationToken: SyntaxKind? = definedExternally, type: TypeNode?, initializer: Expression?): PropertyDeclaration
-  fun updatePropertyDeclaration(node: PropertyDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: NumericLiteral, questionOrExclamationToken: SyntaxKind? = definedExternally, type: TypeNode?, initializer: Expression?): PropertyDeclaration
-  fun updatePropertyDeclaration(node: PropertyDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: ComputedPropertyName, questionOrExclamationToken: SyntaxKind? = definedExternally, type: TypeNode?, initializer: Expression?): PropertyDeclaration
-  fun updatePropertyDeclaration(node: PropertyDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: PrivateIdentifier, questionOrExclamationToken: SyntaxKind? = definedExternally, type: TypeNode?, initializer: Expression?): PropertyDeclaration
-
-  fun createMethodSignature(modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: String, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?): MethodSignature
-  fun createMethodSignature(modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: Identifier, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?): MethodSignature
-  fun createMethodSignature(modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: StringLiteral, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?): MethodSignature
-  fun createMethodSignature(modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: NumericLiteral, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?): MethodSignature
-  fun createMethodSignature(modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: ComputedPropertyName, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?): MethodSignature
-  fun createMethodSignature(modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: PrivateIdentifier, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?): MethodSignature
-
-  fun updateMethodSignature(node: MethodSignature, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: Identifier, questionToken: QuestionToken?, typeParameters: NodeArray<TypeParameterDeclaration>?, parameters: NodeArray<ParameterDeclaration>, type: TypeNode?): MethodSignature
-  fun updateMethodSignature(node: MethodSignature, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: StringLiteral, questionToken: QuestionToken?, typeParameters: NodeArray<TypeParameterDeclaration>?, parameters: NodeArray<ParameterDeclaration>, type: TypeNode?): MethodSignature
-  fun updateMethodSignature(node: MethodSignature, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: NumericLiteral, questionToken: QuestionToken?, typeParameters: NodeArray<TypeParameterDeclaration>?, parameters: NodeArray<ParameterDeclaration>, type: TypeNode?): MethodSignature
-  fun updateMethodSignature(node: MethodSignature, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: ComputedPropertyName, questionToken: QuestionToken?, typeParameters: NodeArray<TypeParameterDeclaration>?, parameters: NodeArray<ParameterDeclaration>, type: TypeNode?): MethodSignature
-  fun updateMethodSignature(node: MethodSignature, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: PrivateIdentifier, questionToken: QuestionToken?, typeParameters: NodeArray<TypeParameterDeclaration>?, parameters: NodeArray<ParameterDeclaration>, type: TypeNode?): MethodSignature
-
-  fun createMethodDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, asteriskToken: AsteriskToken?, name: String, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
-  fun createMethodDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, asteriskToken: AsteriskToken?, name: Identifier, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
-  fun createMethodDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, asteriskToken: AsteriskToken?, name: StringLiteral, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
-  fun createMethodDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, asteriskToken: AsteriskToken?, name: NumericLiteral, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
-  fun createMethodDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, asteriskToken: AsteriskToken?, name: ComputedPropertyName, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
-  fun createMethodDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, asteriskToken: AsteriskToken?, name: PrivateIdentifier, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
-
-  fun updateMethodDeclaration(node: MethodDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, asteriskToken: AsteriskToken?, name: Identifier, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
-  fun updateMethodDeclaration(node: MethodDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, asteriskToken: AsteriskToken?, name: StringLiteral, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
-  fun updateMethodDeclaration(node: MethodDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, asteriskToken: AsteriskToken?, name: NumericLiteral, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
-  fun updateMethodDeclaration(node: MethodDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, asteriskToken: AsteriskToken?, name: ComputedPropertyName, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
-  fun updateMethodDeclaration(node: MethodDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, asteriskToken: AsteriskToken?, name: PrivateIdentifier, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
-
+  fun createPropertyDeclaration(decorators: Array<Decorator>?, modifiers: Array<dynamic>?, name: dynamic, questionOrExclamationToken: dynamic?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun createPropertyDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: String, questionOrExclamationToken: QuestionToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun createPropertyDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: String, questionOrExclamationToken: ExclamationToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun createPropertyDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: Identifier, questionOrExclamationToken: QuestionToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun createPropertyDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: Identifier, questionOrExclamationToken: ExclamationToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun createPropertyDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: StringLiteral, questionOrExclamationToken: QuestionToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun createPropertyDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: StringLiteral, questionOrExclamationToken: ExclamationToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun createPropertyDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: NumericLiteral, questionOrExclamationToken: QuestionToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun createPropertyDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: NumericLiteral, questionOrExclamationToken: ExclamationToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun createPropertyDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: ComputedPropertyName, questionOrExclamationToken: QuestionToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun createPropertyDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: ComputedPropertyName, questionOrExclamationToken: ExclamationToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun createPropertyDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: PrivateIdentifier, questionOrExclamationToken: QuestionToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun createPropertyDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: PrivateIdentifier, questionOrExclamationToken: ExclamationToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+  fun updatePropertyDeclaration(node: PropertyDeclaration, decorators: Array<Decorator>?, modifiers: Array<dynamic>?, name: dynamic, questionOrExclamationToken: dynamic?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun updatePropertyDeclaration(node: PropertyDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: String, questionOrExclamationToken: QuestionToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun updatePropertyDeclaration(node: PropertyDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: String, questionOrExclamationToken: ExclamationToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun updatePropertyDeclaration(node: PropertyDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: Identifier, questionOrExclamationToken: QuestionToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun updatePropertyDeclaration(node: PropertyDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: Identifier, questionOrExclamationToken: ExclamationToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun updatePropertyDeclaration(node: PropertyDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: StringLiteral, questionOrExclamationToken: QuestionToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun updatePropertyDeclaration(node: PropertyDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: StringLiteral, questionOrExclamationToken: ExclamationToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun updatePropertyDeclaration(node: PropertyDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: NumericLiteral, questionOrExclamationToken: QuestionToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun updatePropertyDeclaration(node: PropertyDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: NumericLiteral, questionOrExclamationToken: ExclamationToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun updatePropertyDeclaration(node: PropertyDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: ComputedPropertyName, questionOrExclamationToken: QuestionToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun updatePropertyDeclaration(node: PropertyDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: ComputedPropertyName, questionOrExclamationToken: ExclamationToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun updatePropertyDeclaration(node: PropertyDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: PrivateIdentifier, questionOrExclamationToken: QuestionToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+//  fun updatePropertyDeclaration(node: PropertyDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: PrivateIdentifier, questionOrExclamationToken: ExclamationToken?, type: TypeNode?, initializer: Expression?): PropertyDeclaration
+  fun createMethodSignature(modifiers: Array<dynamic>?, name: dynamic, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?): MethodSignature
+//  fun createMethodSignature(modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: String, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?): MethodSignature
+//  fun createMethodSignature(modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: Identifier, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?): MethodSignature
+//  fun createMethodSignature(modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: StringLiteral, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?): MethodSignature
+//  fun createMethodSignature(modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: NumericLiteral, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?): MethodSignature
+//  fun createMethodSignature(modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: ComputedPropertyName, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?): MethodSignature
+//  fun createMethodSignature(modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: PrivateIdentifier, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?): MethodSignature
+  fun updateMethodSignature(node: MethodSignature, modifiers: Array<dynamic>?, name: dynamic, questionToken: QuestionToken?, typeParameters: NodeArray<TypeParameterDeclaration>?, parameters: NodeArray<ParameterDeclaration>, type: TypeNode?): MethodSignature
+//  fun updateMethodSignature(node: MethodSignature, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: Identifier, questionToken: QuestionToken?, typeParameters: NodeArray<TypeParameterDeclaration>?, parameters: NodeArray<ParameterDeclaration>, type: TypeNode?): MethodSignature
+//  fun updateMethodSignature(node: MethodSignature, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: StringLiteral, questionToken: QuestionToken?, typeParameters: NodeArray<TypeParameterDeclaration>?, parameters: NodeArray<ParameterDeclaration>, type: TypeNode?): MethodSignature
+//  fun updateMethodSignature(node: MethodSignature, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: NumericLiteral, questionToken: QuestionToken?, typeParameters: NodeArray<TypeParameterDeclaration>?, parameters: NodeArray<ParameterDeclaration>, type: TypeNode?): MethodSignature
+//  fun updateMethodSignature(node: MethodSignature, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: ComputedPropertyName, questionToken: QuestionToken?, typeParameters: NodeArray<TypeParameterDeclaration>?, parameters: NodeArray<ParameterDeclaration>, type: TypeNode?): MethodSignature
+//  fun updateMethodSignature(node: MethodSignature, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: PrivateIdentifier, questionToken: QuestionToken?, typeParameters: NodeArray<TypeParameterDeclaration>?, parameters: NodeArray<ParameterDeclaration>, type: TypeNode?): MethodSignature
+  fun createMethodDeclaration(decorators: Array<Decorator>?, modifiers: Array<dynamic>?, asteriskToken: AsteriskToken?, name: dynamic, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
+//  fun createMethodDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, asteriskToken: AsteriskToken?, name: String, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
+//  fun createMethodDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, asteriskToken: AsteriskToken?, name: Identifier, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
+//  fun createMethodDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, asteriskToken: AsteriskToken?, name: StringLiteral, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
+//  fun createMethodDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, asteriskToken: AsteriskToken?, name: NumericLiteral, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
+//  fun createMethodDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, asteriskToken: AsteriskToken?, name: ComputedPropertyName, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
+//  fun createMethodDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, asteriskToken: AsteriskToken?, name: PrivateIdentifier, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
+  fun updateMethodDeclaration(node: MethodDeclaration, decorators: Array<Decorator>?, modifiers: Array<dynamic>?, asteriskToken: AsteriskToken?, name: dynamic, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
+//  fun updateMethodDeclaration(node: MethodDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, asteriskToken: AsteriskToken?, name: Identifier, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
+//  fun updateMethodDeclaration(node: MethodDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, asteriskToken: AsteriskToken?, name: StringLiteral, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
+//  fun updateMethodDeclaration(node: MethodDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, asteriskToken: AsteriskToken?, name: NumericLiteral, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
+//  fun updateMethodDeclaration(node: MethodDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, asteriskToken: AsteriskToken?, name: ComputedPropertyName, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
+//  fun updateMethodDeclaration(node: MethodDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, asteriskToken: AsteriskToken?, name: PrivateIdentifier, questionToken: QuestionToken?, typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): MethodDeclaration
   fun createConstructorDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, parameters: Array<ParameterDeclaration>, body: Block?): ConstructorDeclaration
   fun updateConstructorDeclaration(node: ConstructorDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, parameters: Array<ParameterDeclaration>, body: Block?): ConstructorDeclaration
-
   fun createGetAccessorDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: String, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): GetAccessorDeclaration
   fun createGetAccessorDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: Identifier, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): GetAccessorDeclaration
   fun createGetAccessorDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: StringLiteral, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): GetAccessorDeclaration
@@ -3868,7 +3882,6 @@ external interface NodeFactory {
   fun updateGetAccessorDeclaration(node: GetAccessorDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: NumericLiteral, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): GetAccessorDeclaration
   fun updateGetAccessorDeclaration(node: GetAccessorDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: ComputedPropertyName, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): GetAccessorDeclaration
   fun updateGetAccessorDeclaration(node: GetAccessorDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: PrivateIdentifier, parameters: Array<ParameterDeclaration>, type: TypeNode?, body: Block?): GetAccessorDeclaration
-
   fun createSetAccessorDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: String, parameters: Array<ParameterDeclaration>, body: Block?): SetAccessorDeclaration
   fun createSetAccessorDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: Identifier, parameters: Array<ParameterDeclaration>, body: Block?): SetAccessorDeclaration
   fun createSetAccessorDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: StringLiteral, parameters: Array<ParameterDeclaration>, body: Block?): SetAccessorDeclaration
@@ -3880,22 +3893,19 @@ external interface NodeFactory {
   fun updateSetAccessorDeclaration(node: SetAccessorDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: NumericLiteral, parameters: Array<ParameterDeclaration>, body: Block?): SetAccessorDeclaration
   fun updateSetAccessorDeclaration(node: SetAccessorDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: ComputedPropertyName, parameters: Array<ParameterDeclaration>, body: Block?): SetAccessorDeclaration
   fun updateSetAccessorDeclaration(node: SetAccessorDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, name: PrivateIdentifier, parameters: Array<ParameterDeclaration>, body: Block?): SetAccessorDeclaration
-
   fun createCallSignature(typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?): CallSignatureDeclaration
   fun updateCallSignature(node: CallSignatureDeclaration, typeParameters: NodeArray<TypeParameterDeclaration>?, parameters: NodeArray<ParameterDeclaration>, type: TypeNode?): CallSignatureDeclaration
-
   fun createConstructSignature(typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?): ConstructSignatureDeclaration
   fun updateConstructSignature(node: ConstructSignatureDeclaration, typeParameters: NodeArray<TypeParameterDeclaration>?, parameters: NodeArray<ParameterDeclaration>, type: TypeNode?): ConstructSignatureDeclaration
-
   fun createIndexSignature(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, parameters: Array<ParameterDeclaration>, type: TypeNode): IndexSignatureDeclaration
   fun updateIndexSignature(node: IndexSignatureDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, parameters: Array<ParameterDeclaration>, type: TypeNode): IndexSignatureDeclaration
-
   fun createTemplateLiteralTypeSpan(type: TypeNode, literal: TemplateMiddle): TemplateLiteralTypeSpan
   fun createTemplateLiteralTypeSpan(type: TypeNode, literal: TemplateTail): TemplateLiteralTypeSpan
-
   fun updateTemplateLiteralTypeSpan(node: TemplateLiteralTypeSpan, type: TypeNode, literal: TemplateMiddle): TemplateLiteralTypeSpan
   fun updateTemplateLiteralTypeSpan(node: TemplateLiteralTypeSpan, type: TypeNode, literal: TemplateTail): TemplateLiteralTypeSpan
-  fun <TKind : SyntaxKind> createKeywordTypeNode(kind: TKind): KeywordTypeNode<TKind>
+  fun createClassStaticBlockDeclaration(decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, body: Block): ClassStaticBlockDeclaration
+  fun updateClassStaticBlockDeclaration(node: ClassStaticBlockDeclaration, decorators: Array<Decorator>?, modifiers: Array<Any /* AbstractKeyword | AsyncKeyword | ConstKeyword | DeclareKeyword | DefaultKeyword | ExportKeyword | PrivateKeyword | ProtectedKeyword | PublicKeyword | OverrideKeyword | ReadonlyKeyword | StaticKeyword */>?, body: Block): ClassStaticBlockDeclaration
+  fun <TKind:SyntaxKind> createKeywordTypeNode(kind: TKind): KeywordTypeNode<TKind>
   fun createTypePredicateNode(assertsModifier: AssertsKeyword?, parameterName: Identifier, type: TypeNode?): TypePredicateNode
   fun createTypePredicateNode(assertsModifier: AssertsKeyword?, parameterName: ThisTypeNode, type: TypeNode?): TypePredicateNode
   fun createTypePredicateNode(assertsModifier: AssertsKeyword?, parameterName: String, type: TypeNode?): TypePredicateNode
@@ -3953,15 +3963,33 @@ external interface NodeFactory {
   fun createParenthesizedType(type: TypeNode): ParenthesizedTypeNode
   fun updateParenthesizedType(node: ParenthesizedTypeNode, type: TypeNode): ParenthesizedTypeNode
   fun createThisTypeNode(): ThisTypeNode
-  fun createTypeOperatorNode(operator: SyntaxKind = definedExternally, type: TypeNode): TypeOperatorNode
+  fun createTypeOperatorNode(operator: SyntaxKind, type: TypeNode): dynamic
+//  fun createTypeOperatorNode(operator: SyntaxKind.KeyOfKeyword, type: TypeNode): TypeOperatorNode
+//  fun createTypeOperatorNode(operator: SyntaxKind.UniqueKeyword, type: TypeNode): TypeOperatorNode
+//  fun createTypeOperatorNode(operator: SyntaxKind.ReadonlyKeyword, type: TypeNode): TypeOperatorNode
   fun updateTypeOperatorNode(node: TypeOperatorNode, type: TypeNode): TypeOperatorNode
   fun createIndexedAccessTypeNode(objectType: TypeNode, indexType: TypeNode): IndexedAccessTypeNode
   fun updateIndexedAccessTypeNode(node: IndexedAccessTypeNode, objectType: TypeNode, indexType: TypeNode): IndexedAccessTypeNode
-
-  fun createMappedTypeNode(readonlyToken: SyntaxKind? = definedExternally, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: SyntaxKind? = definedExternally, type: TypeNode?): MappedTypeNode
-
-  fun updateMappedTypeNode(node: MappedTypeNode, readonlyToken: SyntaxKind? = definedExternally, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: SyntaxKind? = definedExternally, type: TypeNode?): MappedTypeNode
-
+  fun createMappedTypeNode(readonlyToken: dynamic, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: dynamic, type: TypeNode?): MappedTypeNode
+//  fun createMappedTypeNode(readonlyToken: ReadonlyKeyword?, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: QuestionToken?, type: TypeNode?): MappedTypeNode
+//  fun createMappedTypeNode(readonlyToken: ReadonlyKeyword?, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: PlusToken?, type: TypeNode?): MappedTypeNode
+//  fun createMappedTypeNode(readonlyToken: ReadonlyKeyword?, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: MinusToken?, type: TypeNode?): MappedTypeNode
+//  fun createMappedTypeNode(readonlyToken: PlusToken?, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: QuestionToken?, type: TypeNode?): MappedTypeNode
+//  fun createMappedTypeNode(readonlyToken: PlusToken?, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: PlusToken?, type: TypeNode?): MappedTypeNode
+//  fun createMappedTypeNode(readonlyToken: PlusToken?, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: MinusToken?, type: TypeNode?): MappedTypeNode
+//  fun createMappedTypeNode(readonlyToken: MinusToken?, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: QuestionToken?, type: TypeNode?): MappedTypeNode
+//  fun createMappedTypeNode(readonlyToken: MinusToken?, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: PlusToken?, type: TypeNode?): MappedTypeNode
+//  fun createMappedTypeNode(readonlyToken: MinusToken?, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: MinusToken?, type: TypeNode?): MappedTypeNode
+  fun updateMappedTypeNode(node: MappedTypeNode, readonlyToken: dynamic, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: dynamic, type: TypeNode?): MappedTypeNode
+//  fun updateMappedTypeNode(node: MappedTypeNode, readonlyToken: ReadonlyKeyword?, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: QuestionToken?, type: TypeNode?): MappedTypeNode
+//  fun updateMappedTypeNode(node: MappedTypeNode, readonlyToken: ReadonlyKeyword?, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: PlusToken?, type: TypeNode?): MappedTypeNode
+//  fun updateMappedTypeNode(node: MappedTypeNode, readonlyToken: ReadonlyKeyword?, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: MinusToken?, type: TypeNode?): MappedTypeNode
+//  fun updateMappedTypeNode(node: MappedTypeNode, readonlyToken: PlusToken?, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: QuestionToken?, type: TypeNode?): MappedTypeNode
+//  fun updateMappedTypeNode(node: MappedTypeNode, readonlyToken: PlusToken?, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: PlusToken?, type: TypeNode?): MappedTypeNode
+//  fun updateMappedTypeNode(node: MappedTypeNode, readonlyToken: PlusToken?, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: MinusToken?, type: TypeNode?): MappedTypeNode
+//  fun updateMappedTypeNode(node: MappedTypeNode, readonlyToken: MinusToken?, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: QuestionToken?, type: TypeNode?): MappedTypeNode
+//  fun updateMappedTypeNode(node: MappedTypeNode, readonlyToken: MinusToken?, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: PlusToken?, type: TypeNode?): MappedTypeNode
+//  fun updateMappedTypeNode(node: MappedTypeNode, readonlyToken: MinusToken?, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: MinusToken?, type: TypeNode?): MappedTypeNode
   fun createLiteralTypeNode(literal: NullLiteral): LiteralTypeNode
   fun createLiteralTypeNode(literal: TrueLiteral): LiteralTypeNode
   fun createLiteralTypeNode(literal: FalseLiteral): LiteralTypeNode
@@ -4054,23 +4082,20 @@ external interface NodeFactory {
   fun updateVoidExpression(node: VoidExpression, expression: Expression): VoidExpression
   fun createAwaitExpression(expression: Expression): AwaitExpression
   fun updateAwaitExpression(node: AwaitExpression, expression: Expression): AwaitExpression
-  fun createPrefixUnaryExpression(operator: SyntaxKind = definedExternally, operand: Expression): PrefixUnaryExpression
+  fun createPrefixUnaryExpression(operator: SyntaxKind, operand: Expression): PrefixUnaryExpression
+//  fun createPrefixUnaryExpression(operator: SyntaxKind.PlusPlusToken, operand: Expression): PrefixUnaryExpression
+//  fun createPrefixUnaryExpression(operator: SyntaxKind.MinusMinusToken, operand: Expression): PrefixUnaryExpression
+//  fun createPrefixUnaryExpression(operator: SyntaxKind.PlusToken, operand: Expression): PrefixUnaryExpression
+//  fun createPrefixUnaryExpression(operator: SyntaxKind.MinusToken, operand: Expression): PrefixUnaryExpression
+//  fun createPrefixUnaryExpression(operator: SyntaxKind.TildeToken, operand: Expression): PrefixUnaryExpression
+//  fun createPrefixUnaryExpression(operator: SyntaxKind.ExclamationToken, operand: Expression): PrefixUnaryExpression
   fun updatePrefixUnaryExpression(node: PrefixUnaryExpression, operand: Expression): PrefixUnaryExpression
-  fun createPostfixUnaryExpression(operand: Expression, operator: SyntaxKind = definedExternally): PostfixUnaryExpression
+  fun createPostfixUnaryExpression(operand: Expression, operator: SyntaxKind): PostfixUnaryExpression
+//  fun createPostfixUnaryExpression(operand: Expression, operator: SyntaxKind.PlusPlusToken): PostfixUnaryExpression
+//  fun createPostfixUnaryExpression(operand: Expression, operator: SyntaxKind.MinusMinusToken): PostfixUnaryExpression
   fun updatePostfixUnaryExpression(node: PostfixUnaryExpression, operand: Expression): PostfixUnaryExpression
-  fun createBinaryExpression(
-    left: Expression,
-    operator: Any /* SyntaxKind.QuestionQuestionToken | ExponentiationOperator | SyntaxKind.AsteriskToken | SyntaxKind.SlashToken | SyntaxKind.PercentToken | SyntaxKind.PlusToken | SyntaxKind.MinusToken | SyntaxKind.LessThanLessThanToken | SyntaxKind.GreaterThanGreaterThanToken | SyntaxKind.GreaterThanGreaterThanGreaterThanToken | SyntaxKind.LessThanToken | SyntaxKind.LessThanEqualsToken | SyntaxKind.GreaterThanToken | SyntaxKind.GreaterThanEqualsToken | SyntaxKind.InstanceOfKeyword | SyntaxKind.InKeyword | SyntaxKind.EqualsEqualsToken | SyntaxKind.EqualsEqualsEqualsToken | SyntaxKind.ExclamationEqualsEqualsToken | SyntaxKind.ExclamationEqualsToken | SyntaxKind.AmpersandToken | SyntaxKind.BarToken | SyntaxKind.CaretToken | SyntaxKind.AmpersandAmpersandToken | SyntaxKind.BarBarToken | SyntaxKind.EqualsToken | SyntaxKind.PlusEqualsToken | SyntaxKind.MinusEqualsToken | SyntaxKind.AsteriskAsteriskEqualsToken | SyntaxKind.AsteriskEqualsToken | SyntaxKind.SlashEqualsToken | SyntaxKind.PercentEqualsToken | SyntaxKind.AmpersandEqualsToken | SyntaxKind.BarEqualsToken | SyntaxKind.CaretEqualsToken | SyntaxKind.LessThanLessThanEqualsToken | SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken | SyntaxKind.GreaterThanGreaterThanEqualsToken | SyntaxKind.BarBarEqualsToken | SyntaxKind.AmpersandAmpersandEqualsToken | SyntaxKind.QuestionQuestionEqualsToken | SyntaxKind.CommaToken | BinaryOperatorToken */,
-    right: Expression
-  ): BinaryExpression
-
-  fun updateBinaryExpression(
-    node: BinaryExpression,
-    left: Expression,
-    operator: Any /* SyntaxKind.QuestionQuestionToken | ExponentiationOperator | SyntaxKind.AsteriskToken | SyntaxKind.SlashToken | SyntaxKind.PercentToken | SyntaxKind.PlusToken | SyntaxKind.MinusToken | SyntaxKind.LessThanLessThanToken | SyntaxKind.GreaterThanGreaterThanToken | SyntaxKind.GreaterThanGreaterThanGreaterThanToken | SyntaxKind.LessThanToken | SyntaxKind.LessThanEqualsToken | SyntaxKind.GreaterThanToken | SyntaxKind.GreaterThanEqualsToken | SyntaxKind.InstanceOfKeyword | SyntaxKind.InKeyword | SyntaxKind.EqualsEqualsToken | SyntaxKind.EqualsEqualsEqualsToken | SyntaxKind.ExclamationEqualsEqualsToken | SyntaxKind.ExclamationEqualsToken | SyntaxKind.AmpersandToken | SyntaxKind.BarToken | SyntaxKind.CaretToken | SyntaxKind.AmpersandAmpersandToken | SyntaxKind.BarBarToken | SyntaxKind.EqualsToken | SyntaxKind.PlusEqualsToken | SyntaxKind.MinusEqualsToken | SyntaxKind.AsteriskAsteriskEqualsToken | SyntaxKind.AsteriskEqualsToken | SyntaxKind.SlashEqualsToken | SyntaxKind.PercentEqualsToken | SyntaxKind.AmpersandEqualsToken | SyntaxKind.BarEqualsToken | SyntaxKind.CaretEqualsToken | SyntaxKind.LessThanLessThanEqualsToken | SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken | SyntaxKind.GreaterThanGreaterThanEqualsToken | SyntaxKind.BarBarEqualsToken | SyntaxKind.AmpersandAmpersandEqualsToken | SyntaxKind.QuestionQuestionEqualsToken | SyntaxKind.CommaToken | BinaryOperatorToken */,
-    right: Expression
-  ): BinaryExpression
-
+  fun createBinaryExpression(left: Expression, operator: Any /* SyntaxKind.QuestionQuestionToken | ExponentiationOperator | SyntaxKind.AsteriskToken | SyntaxKind.SlashToken | SyntaxKind.PercentToken | SyntaxKind.PlusToken | SyntaxKind.MinusToken | SyntaxKind.LessThanLessThanToken | SyntaxKind.GreaterThanGreaterThanToken | SyntaxKind.GreaterThanGreaterThanGreaterThanToken | SyntaxKind.LessThanToken | SyntaxKind.LessThanEqualsToken | SyntaxKind.GreaterThanToken | SyntaxKind.GreaterThanEqualsToken | SyntaxKind.InstanceOfKeyword | SyntaxKind.InKeyword | SyntaxKind.EqualsEqualsToken | SyntaxKind.EqualsEqualsEqualsToken | SyntaxKind.ExclamationEqualsEqualsToken | SyntaxKind.ExclamationEqualsToken | SyntaxKind.AmpersandToken | SyntaxKind.BarToken | SyntaxKind.CaretToken | SyntaxKind.AmpersandAmpersandToken | SyntaxKind.BarBarToken | SyntaxKind.EqualsToken | SyntaxKind.PlusEqualsToken | SyntaxKind.MinusEqualsToken | SyntaxKind.AsteriskAsteriskEqualsToken | SyntaxKind.AsteriskEqualsToken | SyntaxKind.SlashEqualsToken | SyntaxKind.PercentEqualsToken | SyntaxKind.AmpersandEqualsToken | SyntaxKind.BarEqualsToken | SyntaxKind.CaretEqualsToken | SyntaxKind.LessThanLessThanEqualsToken | SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken | SyntaxKind.GreaterThanGreaterThanEqualsToken | SyntaxKind.BarBarEqualsToken | SyntaxKind.AmpersandAmpersandEqualsToken | SyntaxKind.QuestionQuestionEqualsToken | SyntaxKind.CommaToken | BinaryOperatorToken */, right: Expression): BinaryExpression
+  fun updateBinaryExpression(node: BinaryExpression, left: Expression, operator: Any /* SyntaxKind.QuestionQuestionToken | ExponentiationOperator | SyntaxKind.AsteriskToken | SyntaxKind.SlashToken | SyntaxKind.PercentToken | SyntaxKind.PlusToken | SyntaxKind.MinusToken | SyntaxKind.LessThanLessThanToken | SyntaxKind.GreaterThanGreaterThanToken | SyntaxKind.GreaterThanGreaterThanGreaterThanToken | SyntaxKind.LessThanToken | SyntaxKind.LessThanEqualsToken | SyntaxKind.GreaterThanToken | SyntaxKind.GreaterThanEqualsToken | SyntaxKind.InstanceOfKeyword | SyntaxKind.InKeyword | SyntaxKind.EqualsEqualsToken | SyntaxKind.EqualsEqualsEqualsToken | SyntaxKind.ExclamationEqualsEqualsToken | SyntaxKind.ExclamationEqualsToken | SyntaxKind.AmpersandToken | SyntaxKind.BarToken | SyntaxKind.CaretToken | SyntaxKind.AmpersandAmpersandToken | SyntaxKind.BarBarToken | SyntaxKind.EqualsToken | SyntaxKind.PlusEqualsToken | SyntaxKind.MinusEqualsToken | SyntaxKind.AsteriskAsteriskEqualsToken | SyntaxKind.AsteriskEqualsToken | SyntaxKind.SlashEqualsToken | SyntaxKind.PercentEqualsToken | SyntaxKind.AmpersandEqualsToken | SyntaxKind.BarEqualsToken | SyntaxKind.CaretEqualsToken | SyntaxKind.LessThanLessThanEqualsToken | SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken | SyntaxKind.GreaterThanGreaterThanEqualsToken | SyntaxKind.BarBarEqualsToken | SyntaxKind.AmpersandAmpersandEqualsToken | SyntaxKind.QuestionQuestionEqualsToken | SyntaxKind.CommaToken | BinaryOperatorToken */, right: Expression): BinaryExpression
   fun createConditionalExpression(condition: Expression, questionToken: QuestionToken?, whenTrue: Expression, colonToken: ColonToken?, whenFalse: Expression): ConditionalExpression
   fun updateConditionalExpression(node: ConditionalExpression, condition: Expression, questionToken: QuestionToken, whenTrue: Expression, colonToken: ColonToken, whenFalse: Expression): ConditionalExpression
   fun createTemplateExpression(head: TemplateHead, templateSpans: Array<TemplateSpan>): TemplateExpression
@@ -4110,7 +4135,9 @@ external interface NodeFactory {
   fun updateNonNullExpression(node: NonNullExpression, expression: Expression): NonNullExpression
   fun createNonNullChain(expression: Expression): NonNullChain
   fun updateNonNullChain(node: NonNullChain, expression: Expression): NonNullChain
-  fun createMetaProperty(keywordToken: SyntaxKind = definedExternally, name: Identifier): MetaProperty
+  fun createMetaProperty(keywordToken: SyntaxKind, name: Identifier): MetaProperty
+//  fun createMetaProperty(keywordToken: SyntaxKind.NewKeyword, name: Identifier): MetaProperty
+//  fun createMetaProperty(keywordToken: SyntaxKind.ImportKeyword, name: Identifier): MetaProperty
   fun updateMetaProperty(node: MetaProperty, name: Identifier): MetaProperty
   fun createTemplateSpan(expression: Expression, literal: TemplateMiddle): TemplateSpan
   fun createTemplateSpan(expression: Expression, literal: TemplateTail): TemplateSpan
@@ -4290,176 +4317,198 @@ external interface NodeFactory {
   fun updateJSDocTypeExpression(node: JSDocTypeExpression, type: TypeNode): JSDocTypeExpression
   fun createJSDocNameReference(name: Identifier): JSDocNameReference
   fun createJSDocNameReference(name: QualifiedName): JSDocNameReference
+  fun createJSDocNameReference(name: JSDocMemberName): JSDocNameReference
   fun updateJSDocNameReference(node: JSDocNameReference, name: Identifier): JSDocNameReference
   fun updateJSDocNameReference(node: JSDocNameReference, name: QualifiedName): JSDocNameReference
+  fun updateJSDocNameReference(node: JSDocNameReference, name: JSDocMemberName): JSDocNameReference
+  fun createJSDocMemberName(left: Identifier, right: Identifier): JSDocMemberName
+  fun createJSDocMemberName(left: QualifiedName, right: Identifier): JSDocMemberName
+  fun createJSDocMemberName(left: JSDocMemberName, right: Identifier): JSDocMemberName
+  fun updateJSDocMemberName(node: JSDocMemberName, left: Identifier, right: Identifier): JSDocMemberName
+  fun updateJSDocMemberName(node: JSDocMemberName, left: QualifiedName, right: Identifier): JSDocMemberName
+  fun updateJSDocMemberName(node: JSDocMemberName, left: JSDocMemberName, right: Identifier): JSDocMemberName
   fun createJSDocLink(name: Identifier?, text: String): JSDocLink
   fun createJSDocLink(name: QualifiedName?, text: String): JSDocLink
+  fun createJSDocLink(name: JSDocMemberName?, text: String): JSDocLink
   fun updateJSDocLink(node: JSDocLink, name: Identifier?, text: String): JSDocLink
   fun updateJSDocLink(node: JSDocLink, name: QualifiedName?, text: String): JSDocLink
+  fun updateJSDocLink(node: JSDocLink, name: JSDocMemberName?, text: String): JSDocLink
+  fun createJSDocLinkCode(name: Identifier?, text: String): JSDocLinkCode
+  fun createJSDocLinkCode(name: QualifiedName?, text: String): JSDocLinkCode
+  fun createJSDocLinkCode(name: JSDocMemberName?, text: String): JSDocLinkCode
+  fun updateJSDocLinkCode(node: JSDocLinkCode, name: Identifier?, text: String): JSDocLinkCode
+  fun updateJSDocLinkCode(node: JSDocLinkCode, name: QualifiedName?, text: String): JSDocLinkCode
+  fun updateJSDocLinkCode(node: JSDocLinkCode, name: JSDocMemberName?, text: String): JSDocLinkCode
+  fun createJSDocLinkPlain(name: Identifier?, text: String): JSDocLinkPlain
+  fun createJSDocLinkPlain(name: QualifiedName?, text: String): JSDocLinkPlain
+  fun createJSDocLinkPlain(name: JSDocMemberName?, text: String): JSDocLinkPlain
+  fun updateJSDocLinkPlain(node: JSDocLinkPlain, name: Identifier?, text: String): JSDocLinkPlain
+  fun updateJSDocLinkPlain(node: JSDocLinkPlain, name: QualifiedName?, text: String): JSDocLinkPlain
+  fun updateJSDocLinkPlain(node: JSDocLinkPlain, name: JSDocMemberName?, text: String): JSDocLinkPlain
   fun createJSDocTypeLiteral(jsDocPropertyTags: Array<JSDocPropertyLikeTag> = definedExternally, isArrayType: Boolean = definedExternally): JSDocTypeLiteral
   fun updateJSDocTypeLiteral(node: JSDocTypeLiteral, jsDocPropertyTags: Array<JSDocPropertyLikeTag>?, isArrayType: Boolean?): JSDocTypeLiteral
   fun createJSDocSignature(typeParameters: Array<JSDocTemplateTag>?, parameters: Array<JSDocParameterTag>, type: JSDocReturnTag = definedExternally): JSDocSignature
   fun updateJSDocSignature(node: JSDocSignature, typeParameters: Array<JSDocTemplateTag>?, parameters: Array<JSDocParameterTag>, type: JSDocReturnTag?): JSDocSignature
   fun createJSDocTemplateTag(tagName: Identifier?, constraint: JSDocTypeExpression?, typeParameters: Array<TypeParameterDeclaration>, comment: String = definedExternally): JSDocTemplateTag
   fun createJSDocTemplateTag(tagName: Identifier?, constraint: JSDocTypeExpression?, typeParameters: Array<TypeParameterDeclaration>): JSDocTemplateTag
-  fun createJSDocTemplateTag(tagName: Identifier?, constraint: JSDocTypeExpression?, typeParameters: Array<TypeParameterDeclaration>, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocTemplateTag
+  fun createJSDocTemplateTag(tagName: Identifier?, constraint: JSDocTypeExpression?, typeParameters: Array<TypeParameterDeclaration>, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocTemplateTag
   fun updateJSDocTemplateTag(node: JSDocTemplateTag, tagName: Identifier?, constraint: JSDocTypeExpression?, typeParameters: Array<TypeParameterDeclaration>, comment: String?): JSDocTemplateTag
-  fun updateJSDocTemplateTag(node: JSDocTemplateTag, tagName: Identifier?, constraint: JSDocTypeExpression?, typeParameters: Array<TypeParameterDeclaration>, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocTemplateTag
+  fun updateJSDocTemplateTag(node: JSDocTemplateTag, tagName: Identifier?, constraint: JSDocTypeExpression?, typeParameters: Array<TypeParameterDeclaration>, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocTemplateTag
   fun createJSDocTypedefTag(tagName: Identifier?, typeExpression: JSDocTypeExpression = definedExternally, fullName: Identifier = definedExternally, comment: String = definedExternally): JSDocTypedefTag
   fun createJSDocTypedefTag(tagName: Identifier?): JSDocTypedefTag
   fun createJSDocTypedefTag(tagName: Identifier?, typeExpression: JSDocTypeExpression = definedExternally): JSDocTypedefTag
   fun createJSDocTypedefTag(tagName: Identifier?, typeExpression: JSDocTypeExpression = definedExternally, fullName: Identifier = definedExternally): JSDocTypedefTag
-  fun createJSDocTypedefTag(tagName: Identifier?, typeExpression: JSDocTypeExpression = definedExternally, fullName: Identifier = definedExternally, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocTypedefTag
+  fun createJSDocTypedefTag(tagName: Identifier?, typeExpression: JSDocTypeExpression = definedExternally, fullName: Identifier = definedExternally, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocTypedefTag
   fun createJSDocTypedefTag(tagName: Identifier?, typeExpression: JSDocTypeExpression = definedExternally, fullName: JSDocNamespaceDeclaration = definedExternally, comment: String = definedExternally): JSDocTypedefTag
   fun createJSDocTypedefTag(tagName: Identifier?, typeExpression: JSDocTypeExpression = definedExternally, fullName: JSDocNamespaceDeclaration = definedExternally): JSDocTypedefTag
-  fun createJSDocTypedefTag(tagName: Identifier?, typeExpression: JSDocTypeExpression = definedExternally, fullName: JSDocNamespaceDeclaration = definedExternally, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocTypedefTag
+  fun createJSDocTypedefTag(tagName: Identifier?, typeExpression: JSDocTypeExpression = definedExternally, fullName: JSDocNamespaceDeclaration = definedExternally, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocTypedefTag
   fun createJSDocTypedefTag(tagName: Identifier?, typeExpression: JSDocTypeLiteral = definedExternally, fullName: Identifier = definedExternally, comment: String = definedExternally): JSDocTypedefTag
   fun createJSDocTypedefTag(tagName: Identifier?, typeExpression: JSDocTypeLiteral = definedExternally): JSDocTypedefTag
   fun createJSDocTypedefTag(tagName: Identifier?, typeExpression: JSDocTypeLiteral = definedExternally, fullName: Identifier = definedExternally): JSDocTypedefTag
-  fun createJSDocTypedefTag(tagName: Identifier?, typeExpression: JSDocTypeLiteral = definedExternally, fullName: Identifier = definedExternally, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocTypedefTag
+  fun createJSDocTypedefTag(tagName: Identifier?, typeExpression: JSDocTypeLiteral = definedExternally, fullName: Identifier = definedExternally, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocTypedefTag
   fun createJSDocTypedefTag(tagName: Identifier?, typeExpression: JSDocTypeLiteral = definedExternally, fullName: JSDocNamespaceDeclaration = definedExternally, comment: String = definedExternally): JSDocTypedefTag
   fun createJSDocTypedefTag(tagName: Identifier?, typeExpression: JSDocTypeLiteral = definedExternally, fullName: JSDocNamespaceDeclaration = definedExternally): JSDocTypedefTag
-  fun createJSDocTypedefTag(tagName: Identifier?, typeExpression: JSDocTypeLiteral = definedExternally, fullName: JSDocNamespaceDeclaration = definedExternally, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocTypedefTag
+  fun createJSDocTypedefTag(tagName: Identifier?, typeExpression: JSDocTypeLiteral = definedExternally, fullName: JSDocNamespaceDeclaration = definedExternally, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocTypedefTag
   fun updateJSDocTypedefTag(node: JSDocTypedefTag, tagName: Identifier?, typeExpression: JSDocTypeExpression?, fullName: Identifier?, comment: String?): JSDocTypedefTag
-  fun updateJSDocTypedefTag(node: JSDocTypedefTag, tagName: Identifier?, typeExpression: JSDocTypeExpression?, fullName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocTypedefTag
+  fun updateJSDocTypedefTag(node: JSDocTypedefTag, tagName: Identifier?, typeExpression: JSDocTypeExpression?, fullName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocTypedefTag
   fun updateJSDocTypedefTag(node: JSDocTypedefTag, tagName: Identifier?, typeExpression: JSDocTypeExpression?, fullName: JSDocNamespaceDeclaration?, comment: String?): JSDocTypedefTag
-  fun updateJSDocTypedefTag(node: JSDocTypedefTag, tagName: Identifier?, typeExpression: JSDocTypeExpression?, fullName: JSDocNamespaceDeclaration?, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocTypedefTag
+  fun updateJSDocTypedefTag(node: JSDocTypedefTag, tagName: Identifier?, typeExpression: JSDocTypeExpression?, fullName: JSDocNamespaceDeclaration?, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocTypedefTag
   fun updateJSDocTypedefTag(node: JSDocTypedefTag, tagName: Identifier?, typeExpression: JSDocTypeLiteral?, fullName: Identifier?, comment: String?): JSDocTypedefTag
-  fun updateJSDocTypedefTag(node: JSDocTypedefTag, tagName: Identifier?, typeExpression: JSDocTypeLiteral?, fullName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocTypedefTag
+  fun updateJSDocTypedefTag(node: JSDocTypedefTag, tagName: Identifier?, typeExpression: JSDocTypeLiteral?, fullName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocTypedefTag
   fun updateJSDocTypedefTag(node: JSDocTypedefTag, tagName: Identifier?, typeExpression: JSDocTypeLiteral?, fullName: JSDocNamespaceDeclaration?, comment: String?): JSDocTypedefTag
-  fun updateJSDocTypedefTag(node: JSDocTypedefTag, tagName: Identifier?, typeExpression: JSDocTypeLiteral?, fullName: JSDocNamespaceDeclaration?, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocTypedefTag
+  fun updateJSDocTypedefTag(node: JSDocTypedefTag, tagName: Identifier?, typeExpression: JSDocTypeLiteral?, fullName: JSDocNamespaceDeclaration?, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocTypedefTag
   fun createJSDocParameterTag(tagName: Identifier?, name: Identifier, isBracketed: Boolean, typeExpression: JSDocTypeExpression = definedExternally, isNameFirst: Boolean = definedExternally, comment: String = definedExternally): JSDocParameterTag
   fun createJSDocParameterTag(tagName: Identifier?, name: Identifier, isBracketed: Boolean): JSDocParameterTag
   fun createJSDocParameterTag(tagName: Identifier?, name: Identifier, isBracketed: Boolean, typeExpression: JSDocTypeExpression = definedExternally): JSDocParameterTag
   fun createJSDocParameterTag(tagName: Identifier?, name: Identifier, isBracketed: Boolean, typeExpression: JSDocTypeExpression = definedExternally, isNameFirst: Boolean = definedExternally): JSDocParameterTag
-  fun createJSDocParameterTag(tagName: Identifier?, name: Identifier, isBracketed: Boolean, typeExpression: JSDocTypeExpression = definedExternally, isNameFirst: Boolean = definedExternally, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocParameterTag
+  fun createJSDocParameterTag(tagName: Identifier?, name: Identifier, isBracketed: Boolean, typeExpression: JSDocTypeExpression = definedExternally, isNameFirst: Boolean = definedExternally, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocParameterTag
   fun createJSDocParameterTag(tagName: Identifier?, name: QualifiedName, isBracketed: Boolean, typeExpression: JSDocTypeExpression = definedExternally, isNameFirst: Boolean = definedExternally, comment: String = definedExternally): JSDocParameterTag
   fun createJSDocParameterTag(tagName: Identifier?, name: QualifiedName, isBracketed: Boolean): JSDocParameterTag
   fun createJSDocParameterTag(tagName: Identifier?, name: QualifiedName, isBracketed: Boolean, typeExpression: JSDocTypeExpression = definedExternally): JSDocParameterTag
   fun createJSDocParameterTag(tagName: Identifier?, name: QualifiedName, isBracketed: Boolean, typeExpression: JSDocTypeExpression = definedExternally, isNameFirst: Boolean = definedExternally): JSDocParameterTag
-  fun createJSDocParameterTag(tagName: Identifier?, name: QualifiedName, isBracketed: Boolean, typeExpression: JSDocTypeExpression = definedExternally, isNameFirst: Boolean = definedExternally, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocParameterTag
+  fun createJSDocParameterTag(tagName: Identifier?, name: QualifiedName, isBracketed: Boolean, typeExpression: JSDocTypeExpression = definedExternally, isNameFirst: Boolean = definedExternally, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocParameterTag
   fun updateJSDocParameterTag(node: JSDocParameterTag, tagName: Identifier?, name: Identifier, isBracketed: Boolean, typeExpression: JSDocTypeExpression?, isNameFirst: Boolean, comment: String?): JSDocParameterTag
-  fun updateJSDocParameterTag(node: JSDocParameterTag, tagName: Identifier?, name: Identifier, isBracketed: Boolean, typeExpression: JSDocTypeExpression?, isNameFirst: Boolean, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocParameterTag
+  fun updateJSDocParameterTag(node: JSDocParameterTag, tagName: Identifier?, name: Identifier, isBracketed: Boolean, typeExpression: JSDocTypeExpression?, isNameFirst: Boolean, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocParameterTag
   fun updateJSDocParameterTag(node: JSDocParameterTag, tagName: Identifier?, name: QualifiedName, isBracketed: Boolean, typeExpression: JSDocTypeExpression?, isNameFirst: Boolean, comment: String?): JSDocParameterTag
-  fun updateJSDocParameterTag(node: JSDocParameterTag, tagName: Identifier?, name: QualifiedName, isBracketed: Boolean, typeExpression: JSDocTypeExpression?, isNameFirst: Boolean, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocParameterTag
+  fun updateJSDocParameterTag(node: JSDocParameterTag, tagName: Identifier?, name: QualifiedName, isBracketed: Boolean, typeExpression: JSDocTypeExpression?, isNameFirst: Boolean, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocParameterTag
   fun createJSDocPropertyTag(tagName: Identifier?, name: Identifier, isBracketed: Boolean, typeExpression: JSDocTypeExpression = definedExternally, isNameFirst: Boolean = definedExternally, comment: String = definedExternally): JSDocPropertyTag
   fun createJSDocPropertyTag(tagName: Identifier?, name: Identifier, isBracketed: Boolean): JSDocPropertyTag
   fun createJSDocPropertyTag(tagName: Identifier?, name: Identifier, isBracketed: Boolean, typeExpression: JSDocTypeExpression = definedExternally): JSDocPropertyTag
   fun createJSDocPropertyTag(tagName: Identifier?, name: Identifier, isBracketed: Boolean, typeExpression: JSDocTypeExpression = definedExternally, isNameFirst: Boolean = definedExternally): JSDocPropertyTag
-  fun createJSDocPropertyTag(tagName: Identifier?, name: Identifier, isBracketed: Boolean, typeExpression: JSDocTypeExpression = definedExternally, isNameFirst: Boolean = definedExternally, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocPropertyTag
+  fun createJSDocPropertyTag(tagName: Identifier?, name: Identifier, isBracketed: Boolean, typeExpression: JSDocTypeExpression = definedExternally, isNameFirst: Boolean = definedExternally, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocPropertyTag
   fun createJSDocPropertyTag(tagName: Identifier?, name: QualifiedName, isBracketed: Boolean, typeExpression: JSDocTypeExpression = definedExternally, isNameFirst: Boolean = definedExternally, comment: String = definedExternally): JSDocPropertyTag
   fun createJSDocPropertyTag(tagName: Identifier?, name: QualifiedName, isBracketed: Boolean): JSDocPropertyTag
   fun createJSDocPropertyTag(tagName: Identifier?, name: QualifiedName, isBracketed: Boolean, typeExpression: JSDocTypeExpression = definedExternally): JSDocPropertyTag
   fun createJSDocPropertyTag(tagName: Identifier?, name: QualifiedName, isBracketed: Boolean, typeExpression: JSDocTypeExpression = definedExternally, isNameFirst: Boolean = definedExternally): JSDocPropertyTag
-  fun createJSDocPropertyTag(tagName: Identifier?, name: QualifiedName, isBracketed: Boolean, typeExpression: JSDocTypeExpression = definedExternally, isNameFirst: Boolean = definedExternally, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocPropertyTag
+  fun createJSDocPropertyTag(tagName: Identifier?, name: QualifiedName, isBracketed: Boolean, typeExpression: JSDocTypeExpression = definedExternally, isNameFirst: Boolean = definedExternally, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocPropertyTag
   fun updateJSDocPropertyTag(node: JSDocPropertyTag, tagName: Identifier?, name: Identifier, isBracketed: Boolean, typeExpression: JSDocTypeExpression?, isNameFirst: Boolean, comment: String?): JSDocPropertyTag
-  fun updateJSDocPropertyTag(node: JSDocPropertyTag, tagName: Identifier?, name: Identifier, isBracketed: Boolean, typeExpression: JSDocTypeExpression?, isNameFirst: Boolean, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocPropertyTag
+  fun updateJSDocPropertyTag(node: JSDocPropertyTag, tagName: Identifier?, name: Identifier, isBracketed: Boolean, typeExpression: JSDocTypeExpression?, isNameFirst: Boolean, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocPropertyTag
   fun updateJSDocPropertyTag(node: JSDocPropertyTag, tagName: Identifier?, name: QualifiedName, isBracketed: Boolean, typeExpression: JSDocTypeExpression?, isNameFirst: Boolean, comment: String?): JSDocPropertyTag
-  fun updateJSDocPropertyTag(node: JSDocPropertyTag, tagName: Identifier?, name: QualifiedName, isBracketed: Boolean, typeExpression: JSDocTypeExpression?, isNameFirst: Boolean, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocPropertyTag
+  fun updateJSDocPropertyTag(node: JSDocPropertyTag, tagName: Identifier?, name: QualifiedName, isBracketed: Boolean, typeExpression: JSDocTypeExpression?, isNameFirst: Boolean, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocPropertyTag
   fun createJSDocTypeTag(tagName: Identifier?, typeExpression: JSDocTypeExpression, comment: String = definedExternally): JSDocTypeTag
   fun createJSDocTypeTag(tagName: Identifier?, typeExpression: JSDocTypeExpression): JSDocTypeTag
-  fun createJSDocTypeTag(tagName: Identifier?, typeExpression: JSDocTypeExpression, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocTypeTag
+  fun createJSDocTypeTag(tagName: Identifier?, typeExpression: JSDocTypeExpression, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocTypeTag
   fun updateJSDocTypeTag(node: JSDocTypeTag, tagName: Identifier?, typeExpression: JSDocTypeExpression, comment: String?): JSDocTypeTag
-  fun updateJSDocTypeTag(node: JSDocTypeTag, tagName: Identifier?, typeExpression: JSDocTypeExpression, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocTypeTag
+  fun updateJSDocTypeTag(node: JSDocTypeTag, tagName: Identifier?, typeExpression: JSDocTypeExpression, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocTypeTag
   fun createJSDocSeeTag(tagName: Identifier?, nameExpression: JSDocNameReference?, comment: String = definedExternally): JSDocSeeTag
   fun createJSDocSeeTag(tagName: Identifier?, nameExpression: JSDocNameReference?): JSDocSeeTag
-  fun createJSDocSeeTag(tagName: Identifier?, nameExpression: JSDocNameReference?, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocSeeTag
+  fun createJSDocSeeTag(tagName: Identifier?, nameExpression: JSDocNameReference?, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocSeeTag
   fun updateJSDocSeeTag(node: JSDocSeeTag, tagName: Identifier?, nameExpression: JSDocNameReference?, comment: String = definedExternally): JSDocSeeTag
   fun updateJSDocSeeTag(node: JSDocSeeTag, tagName: Identifier?, nameExpression: JSDocNameReference?): JSDocSeeTag
-  fun updateJSDocSeeTag(node: JSDocSeeTag, tagName: Identifier?, nameExpression: JSDocNameReference?, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocSeeTag
+  fun updateJSDocSeeTag(node: JSDocSeeTag, tagName: Identifier?, nameExpression: JSDocNameReference?, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocSeeTag
   fun createJSDocReturnTag(tagName: Identifier?, typeExpression: JSDocTypeExpression = definedExternally, comment: String = definedExternally): JSDocReturnTag
   fun createJSDocReturnTag(tagName: Identifier?): JSDocReturnTag
   fun createJSDocReturnTag(tagName: Identifier?, typeExpression: JSDocTypeExpression = definedExternally): JSDocReturnTag
-  fun createJSDocReturnTag(tagName: Identifier?, typeExpression: JSDocTypeExpression = definedExternally, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocReturnTag
+  fun createJSDocReturnTag(tagName: Identifier?, typeExpression: JSDocTypeExpression = definedExternally, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocReturnTag
   fun updateJSDocReturnTag(node: JSDocReturnTag, tagName: Identifier?, typeExpression: JSDocTypeExpression?, comment: String?): JSDocReturnTag
-  fun updateJSDocReturnTag(node: JSDocReturnTag, tagName: Identifier?, typeExpression: JSDocTypeExpression?, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocReturnTag
+  fun updateJSDocReturnTag(node: JSDocReturnTag, tagName: Identifier?, typeExpression: JSDocTypeExpression?, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocReturnTag
   fun createJSDocThisTag(tagName: Identifier?, typeExpression: JSDocTypeExpression, comment: String = definedExternally): JSDocThisTag
   fun createJSDocThisTag(tagName: Identifier?, typeExpression: JSDocTypeExpression): JSDocThisTag
-  fun createJSDocThisTag(tagName: Identifier?, typeExpression: JSDocTypeExpression, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocThisTag
+  fun createJSDocThisTag(tagName: Identifier?, typeExpression: JSDocTypeExpression, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocThisTag
   fun updateJSDocThisTag(node: JSDocThisTag, tagName: Identifier?, typeExpression: JSDocTypeExpression?, comment: String?): JSDocThisTag
-  fun updateJSDocThisTag(node: JSDocThisTag, tagName: Identifier?, typeExpression: JSDocTypeExpression?, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocThisTag
+  fun updateJSDocThisTag(node: JSDocThisTag, tagName: Identifier?, typeExpression: JSDocTypeExpression?, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocThisTag
   fun createJSDocEnumTag(tagName: Identifier?, typeExpression: JSDocTypeExpression, comment: String = definedExternally): JSDocEnumTag
   fun createJSDocEnumTag(tagName: Identifier?, typeExpression: JSDocTypeExpression): JSDocEnumTag
-  fun createJSDocEnumTag(tagName: Identifier?, typeExpression: JSDocTypeExpression, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocEnumTag
+  fun createJSDocEnumTag(tagName: Identifier?, typeExpression: JSDocTypeExpression, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocEnumTag
   fun updateJSDocEnumTag(node: JSDocEnumTag, tagName: Identifier?, typeExpression: JSDocTypeExpression, comment: String?): JSDocEnumTag
-  fun updateJSDocEnumTag(node: JSDocEnumTag, tagName: Identifier?, typeExpression: JSDocTypeExpression, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocEnumTag
+  fun updateJSDocEnumTag(node: JSDocEnumTag, tagName: Identifier?, typeExpression: JSDocTypeExpression, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocEnumTag
   fun createJSDocCallbackTag(tagName: Identifier?, typeExpression: JSDocSignature, fullName: Identifier = definedExternally, comment: String = definedExternally): JSDocCallbackTag
   fun createJSDocCallbackTag(tagName: Identifier?, typeExpression: JSDocSignature): JSDocCallbackTag
   fun createJSDocCallbackTag(tagName: Identifier?, typeExpression: JSDocSignature, fullName: Identifier = definedExternally): JSDocCallbackTag
-  fun createJSDocCallbackTag(tagName: Identifier?, typeExpression: JSDocSignature, fullName: Identifier = definedExternally, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocCallbackTag
+  fun createJSDocCallbackTag(tagName: Identifier?, typeExpression: JSDocSignature, fullName: Identifier = definedExternally, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocCallbackTag
   fun createJSDocCallbackTag(tagName: Identifier?, typeExpression: JSDocSignature, fullName: JSDocNamespaceDeclaration = definedExternally, comment: String = definedExternally): JSDocCallbackTag
   fun createJSDocCallbackTag(tagName: Identifier?, typeExpression: JSDocSignature, fullName: JSDocNamespaceDeclaration = definedExternally): JSDocCallbackTag
-  fun createJSDocCallbackTag(tagName: Identifier?, typeExpression: JSDocSignature, fullName: JSDocNamespaceDeclaration = definedExternally, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocCallbackTag
+  fun createJSDocCallbackTag(tagName: Identifier?, typeExpression: JSDocSignature, fullName: JSDocNamespaceDeclaration = definedExternally, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocCallbackTag
   fun updateJSDocCallbackTag(node: JSDocCallbackTag, tagName: Identifier?, typeExpression: JSDocSignature, fullName: Identifier?, comment: String?): JSDocCallbackTag
-  fun updateJSDocCallbackTag(node: JSDocCallbackTag, tagName: Identifier?, typeExpression: JSDocSignature, fullName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocCallbackTag
+  fun updateJSDocCallbackTag(node: JSDocCallbackTag, tagName: Identifier?, typeExpression: JSDocSignature, fullName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocCallbackTag
   fun updateJSDocCallbackTag(node: JSDocCallbackTag, tagName: Identifier?, typeExpression: JSDocSignature, fullName: JSDocNamespaceDeclaration?, comment: String?): JSDocCallbackTag
-  fun updateJSDocCallbackTag(node: JSDocCallbackTag, tagName: Identifier?, typeExpression: JSDocSignature, fullName: JSDocNamespaceDeclaration?, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocCallbackTag
-  fun createJSDocAugmentsTag(tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$4` */, comment: String = definedExternally): JSDocAugmentsTag
-  fun createJSDocAugmentsTag(tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$4` */): JSDocAugmentsTag
-  fun createJSDocAugmentsTag(tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$4` */, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocAugmentsTag
-  fun updateJSDocAugmentsTag(node: JSDocAugmentsTag, tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$4` */, comment: String?): JSDocAugmentsTag
-  fun updateJSDocAugmentsTag(node: JSDocAugmentsTag, tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$4` */, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocAugmentsTag
-  fun createJSDocImplementsTag(tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$4` */, comment: String = definedExternally): JSDocImplementsTag
-  fun createJSDocImplementsTag(tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$4` */): JSDocImplementsTag
-  fun createJSDocImplementsTag(tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$4` */, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocImplementsTag
-  fun updateJSDocImplementsTag(node: JSDocImplementsTag, tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$4` */, comment: String?): JSDocImplementsTag
-  fun updateJSDocImplementsTag(node: JSDocImplementsTag, tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$4` */, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocImplementsTag
+  fun updateJSDocCallbackTag(node: JSDocCallbackTag, tagName: Identifier?, typeExpression: JSDocSignature, fullName: JSDocNamespaceDeclaration?, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocCallbackTag
+  fun createJSDocAugmentsTag(tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$21` */, comment: String = definedExternally): JSDocAugmentsTag
+  fun createJSDocAugmentsTag(tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$21` */): JSDocAugmentsTag
+  fun createJSDocAugmentsTag(tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$21` */, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocAugmentsTag
+  fun updateJSDocAugmentsTag(node: JSDocAugmentsTag, tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$21` */, comment: String?): JSDocAugmentsTag
+  fun updateJSDocAugmentsTag(node: JSDocAugmentsTag, tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$21` */, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocAugmentsTag
+  fun createJSDocImplementsTag(tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$21` */, comment: String = definedExternally): JSDocImplementsTag
+  fun createJSDocImplementsTag(tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$21` */): JSDocImplementsTag
+  fun createJSDocImplementsTag(tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$21` */, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocImplementsTag
+  fun updateJSDocImplementsTag(node: JSDocImplementsTag, tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$21` */, comment: String?): JSDocImplementsTag
+  fun updateJSDocImplementsTag(node: JSDocImplementsTag, tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$21` */, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocImplementsTag
   fun createJSDocAuthorTag(tagName: Identifier?, comment: String = definedExternally): JSDocAuthorTag
   fun createJSDocAuthorTag(tagName: Identifier?): JSDocAuthorTag
-  fun createJSDocAuthorTag(tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocAuthorTag
+  fun createJSDocAuthorTag(tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocAuthorTag
   fun updateJSDocAuthorTag(node: JSDocAuthorTag, tagName: Identifier?, comment: String?): JSDocAuthorTag
-  fun updateJSDocAuthorTag(node: JSDocAuthorTag, tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocAuthorTag
+  fun updateJSDocAuthorTag(node: JSDocAuthorTag, tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocAuthorTag
   fun createJSDocClassTag(tagName: Identifier?, comment: String = definedExternally): JSDocClassTag
   fun createJSDocClassTag(tagName: Identifier?): JSDocClassTag
-  fun createJSDocClassTag(tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocClassTag
+  fun createJSDocClassTag(tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocClassTag
   fun updateJSDocClassTag(node: JSDocClassTag, tagName: Identifier?, comment: String?): JSDocClassTag
-  fun updateJSDocClassTag(node: JSDocClassTag, tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocClassTag
+  fun updateJSDocClassTag(node: JSDocClassTag, tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocClassTag
   fun createJSDocPublicTag(tagName: Identifier?, comment: String = definedExternally): JSDocPublicTag
   fun createJSDocPublicTag(tagName: Identifier?): JSDocPublicTag
-  fun createJSDocPublicTag(tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocPublicTag
+  fun createJSDocPublicTag(tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocPublicTag
   fun updateJSDocPublicTag(node: JSDocPublicTag, tagName: Identifier?, comment: String?): JSDocPublicTag
-  fun updateJSDocPublicTag(node: JSDocPublicTag, tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocPublicTag
+  fun updateJSDocPublicTag(node: JSDocPublicTag, tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocPublicTag
   fun createJSDocPrivateTag(tagName: Identifier?, comment: String = definedExternally): JSDocPrivateTag
   fun createJSDocPrivateTag(tagName: Identifier?): JSDocPrivateTag
-  fun createJSDocPrivateTag(tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocPrivateTag
+  fun createJSDocPrivateTag(tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocPrivateTag
   fun updateJSDocPrivateTag(node: JSDocPrivateTag, tagName: Identifier?, comment: String?): JSDocPrivateTag
-  fun updateJSDocPrivateTag(node: JSDocPrivateTag, tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocPrivateTag
+  fun updateJSDocPrivateTag(node: JSDocPrivateTag, tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocPrivateTag
   fun createJSDocProtectedTag(tagName: Identifier?, comment: String = definedExternally): JSDocProtectedTag
   fun createJSDocProtectedTag(tagName: Identifier?): JSDocProtectedTag
-  fun createJSDocProtectedTag(tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocProtectedTag
+  fun createJSDocProtectedTag(tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocProtectedTag
   fun updateJSDocProtectedTag(node: JSDocProtectedTag, tagName: Identifier?, comment: String?): JSDocProtectedTag
-  fun updateJSDocProtectedTag(node: JSDocProtectedTag, tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocProtectedTag
+  fun updateJSDocProtectedTag(node: JSDocProtectedTag, tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocProtectedTag
   fun createJSDocReadonlyTag(tagName: Identifier?, comment: String = definedExternally): JSDocReadonlyTag
   fun createJSDocReadonlyTag(tagName: Identifier?): JSDocReadonlyTag
-  fun createJSDocReadonlyTag(tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocReadonlyTag
+  fun createJSDocReadonlyTag(tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocReadonlyTag
   fun updateJSDocReadonlyTag(node: JSDocReadonlyTag, tagName: Identifier?, comment: String?): JSDocReadonlyTag
-  fun updateJSDocReadonlyTag(node: JSDocReadonlyTag, tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocReadonlyTag
+  fun updateJSDocReadonlyTag(node: JSDocReadonlyTag, tagName: Identifier?, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocReadonlyTag
   fun createJSDocUnknownTag(tagName: Identifier, comment: String = definedExternally): JSDocUnknownTag
   fun createJSDocUnknownTag(tagName: Identifier): JSDocUnknownTag
-  fun createJSDocUnknownTag(tagName: Identifier, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocUnknownTag
+  fun createJSDocUnknownTag(tagName: Identifier, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocUnknownTag
   fun updateJSDocUnknownTag(node: JSDocUnknownTag, tagName: Identifier, comment: String?): JSDocUnknownTag
-  fun updateJSDocUnknownTag(node: JSDocUnknownTag, tagName: Identifier, comment: NodeArray<Any /* JSDocText | JSDocLink */>?): JSDocUnknownTag
+  fun updateJSDocUnknownTag(node: JSDocUnknownTag, tagName: Identifier, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?): JSDocUnknownTag
   fun createJSDocDeprecatedTag(tagName: Identifier, comment: String = definedExternally): JSDocDeprecatedTag
   fun createJSDocDeprecatedTag(tagName: Identifier): JSDocDeprecatedTag
-  fun createJSDocDeprecatedTag(tagName: Identifier, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocDeprecatedTag
+  fun createJSDocDeprecatedTag(tagName: Identifier, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocDeprecatedTag
   fun updateJSDocDeprecatedTag(node: JSDocDeprecatedTag, tagName: Identifier, comment: String = definedExternally): JSDocDeprecatedTag
   fun updateJSDocDeprecatedTag(node: JSDocDeprecatedTag, tagName: Identifier): JSDocDeprecatedTag
-  fun updateJSDocDeprecatedTag(node: JSDocDeprecatedTag, tagName: Identifier, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocDeprecatedTag
+  fun updateJSDocDeprecatedTag(node: JSDocDeprecatedTag, tagName: Identifier, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocDeprecatedTag
   fun createJSDocOverrideTag(tagName: Identifier, comment: String = definedExternally): JSDocOverrideTag
   fun createJSDocOverrideTag(tagName: Identifier): JSDocOverrideTag
-  fun createJSDocOverrideTag(tagName: Identifier, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocOverrideTag
+  fun createJSDocOverrideTag(tagName: Identifier, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocOverrideTag
   fun updateJSDocOverrideTag(node: JSDocOverrideTag, tagName: Identifier, comment: String = definedExternally): JSDocOverrideTag
   fun updateJSDocOverrideTag(node: JSDocOverrideTag, tagName: Identifier): JSDocOverrideTag
-  fun updateJSDocOverrideTag(node: JSDocOverrideTag, tagName: Identifier, comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): JSDocOverrideTag
+  fun updateJSDocOverrideTag(node: JSDocOverrideTag, tagName: Identifier, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): JSDocOverrideTag
   fun createJSDocText(text: String): JSDocText
   fun updateJSDocText(node: JSDocText, text: String): JSDocText
   fun createJSDocComment(comment: String? = definedExternally, tags: Array<JSDocTag>? = definedExternally): JSDoc
   fun createJSDocComment(): JSDoc
   fun createJSDocComment(comment: String? = definedExternally): JSDoc
-  fun createJSDocComment(comment: NodeArray<Any /* JSDocText | JSDocLink */>? = definedExternally, tags: Array<JSDocTag>? = definedExternally): JSDoc
-  fun createJSDocComment(comment: NodeArray<Any /* JSDocText | JSDocLink */>? = definedExternally): JSDoc
+  fun createJSDocComment(comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? = definedExternally, tags: Array<JSDocTag>? = definedExternally): JSDoc
+  fun createJSDocComment(comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? = definedExternally): JSDoc
   fun updateJSDocComment(node: JSDoc, comment: String?, tags: Array<JSDocTag>?): JSDoc
-  fun updateJSDocComment(node: JSDoc, comment: NodeArray<Any /* JSDocText | JSDocLink */>?, tags: Array<JSDocTag>?): JSDoc
+  fun updateJSDocComment(node: JSDoc, comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>?, tags: Array<JSDocTag>?): JSDoc
   fun createJsxElement(openingElement: JsxOpeningElement, children: Array<Any /* JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment */>, closingElement: JsxClosingElement): JsxElement
   fun updateJsxElement(node: JsxElement, openingElement: JsxOpeningElement, children: Array<Any /* JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment */>, closingElement: JsxClosingElement): JsxElement
   fun createJsxSelfClosingElement(tagName: Identifier, typeArguments: Array<TypeNode>?, attributes: JsxAttributes): JsxSelfClosingElement
@@ -4500,7 +4549,9 @@ external interface NodeFactory {
   fun updateCaseClause(node: CaseClause, expression: Expression, statements: Array<Statement>): CaseClause
   fun createDefaultClause(statements: Array<Statement>): DefaultClause
   fun updateDefaultClause(node: DefaultClause, statements: Array<Statement>): DefaultClause
-  fun createHeritageClause(token: SyntaxKind = definedExternally, types: Array<ExpressionWithTypeArguments>): HeritageClause
+  fun createHeritageClause(token: SyntaxKind, types: Array<ExpressionWithTypeArguments>): HeritageClause
+//  fun createHeritageClause(token: SyntaxKind.ExtendsKeyword, types: Array<ExpressionWithTypeArguments>): HeritageClause
+//  fun createHeritageClause(token: SyntaxKind.ImplementsKeyword, types: Array<ExpressionWithTypeArguments>): HeritageClause
   fun updateHeritageClause(node: HeritageClause, types: Array<ExpressionWithTypeArguments>): HeritageClause
   fun createCatchClause(variableDeclaration: String?, block: Block): CatchClause
   fun createCatchClause(variableDeclaration: VariableDeclaration?, block: Block): CatchClause
@@ -4540,7 +4591,7 @@ external interface NodeFactory {
   fun updateEnumMember(node: EnumMember, name: NumericLiteral, initializer: Expression?): EnumMember
   fun updateEnumMember(node: EnumMember, name: ComputedPropertyName, initializer: Expression?): EnumMember
   fun updateEnumMember(node: EnumMember, name: PrivateIdentifier, initializer: Expression?): EnumMember
-  fun createSourceFile(statements: Array<Statement>, endOfFileToken: Token<SyntaxKind> /* Token<SyntaxKind.EndOfFileToken> & JSDocContainer */, flags: NodeFlags): SourceFile
+  fun createSourceFile(statements: Array<Statement>, endOfFileToken: Token<dynamic> /* Token<SyntaxKind.EndOfFileToken> & JSDocContainer */, flags: NodeFlags): SourceFile
   fun updateSourceFile(node: SourceFile, statements: Array<Statement>, isDeclarationFile: Boolean = definedExternally, referencedFiles: Array<FileReference> = definedExternally, typeReferences: Array<FileReference> = definedExternally, hasNoDefaultLib: Boolean = definedExternally, libReferences: Array<FileReference> = definedExternally): SourceFile
   fun createNotEmittedStatement(original: Node): NotEmittedStatement
   fun createPartiallyEmittedExpression(expression: Expression, original: Node = definedExternally): PartiallyEmittedExpression
@@ -4621,7 +4672,6 @@ external interface TransformationResult<T : Node> {
   var diagnostics: Array<DiagnosticWithLocation>?
     get() = definedExternally
     set(value) = definedExternally
-
   fun substituteNode(hint: EmitHint, node: Node): Node
   fun emitNodeWithNotification(hint: EmitHint, node: Node, emitCallback: (hint: EmitHint, node: Node) -> Unit)
   val isEmitNotificationEnabled: ((node: Node) -> Boolean)?
@@ -4795,6 +4845,8 @@ external interface UserPreferences {
     get() = definedExternally
   val includeCompletionsWithInsertText: Boolean?
     get() = definedExternally
+  val allowIncompleteCompletions: Boolean?
+    get() = definedExternally
   val importModuleSpecifierPreference: String? /* "shortest" | "project-relative" | "relative" | "non-relative" */
     get() = definedExternally
   val importModuleSpecifierEnding: String? /* "auto" | "minimal" | "index" | "js" */
@@ -4826,6 +4878,7 @@ external interface System {
   var useCaseSensitiveFileNames: Boolean?
   fun write(s: String)
   val writeOutputIsTTY: (() -> Boolean)?
+  val getWidthOfTerminal: (() -> Number)?
   fun readFile(path: String, encoding: String = definedExternally): String?
   val getFileSize: ((path: String) -> Number)?
   fun writeFile(path: String, data: String, writeByteOrderMark: Boolean = definedExternally)
@@ -4885,14 +4938,16 @@ external interface Scanner {
   fun reScanJsxAttributeValue(): SyntaxKind
   fun reScanJsxToken(allowMultilineJsxText: Boolean = definedExternally): dynamic /* SyntaxKind.LessThanSlashToken | SyntaxKind.EndOfFileToken | SyntaxKind.ConflictMarkerTrivia | SyntaxKind.JsxText | SyntaxKind.JsxTextAllWhiteSpaces | SyntaxKind.OpenBraceToken | SyntaxKind.LessThanToken */
   fun reScanLessThanToken(): SyntaxKind
+  fun reScanHashToken(): SyntaxKind
   fun reScanQuestionToken(): SyntaxKind
   fun reScanInvalidIdentifier(): SyntaxKind
   fun scanJsxToken(): dynamic /* SyntaxKind.LessThanSlashToken | SyntaxKind.EndOfFileToken | SyntaxKind.ConflictMarkerTrivia | SyntaxKind.JsxText | SyntaxKind.JsxTextAllWhiteSpaces | SyntaxKind.OpenBraceToken | SyntaxKind.LessThanToken */
-  fun scanJsDocToken(): dynamic /* SyntaxKind.EndOfFileToken | SyntaxKind.WhitespaceTrivia | SyntaxKind.AtToken | SyntaxKind.NewLineTrivia | SyntaxKind.AsteriskToken | SyntaxKind.OpenBraceToken | SyntaxKind.CloseBraceToken | SyntaxKind.LessThanToken | SyntaxKind.GreaterThanToken | SyntaxKind.OpenBracketToken | SyntaxKind.CloseBracketToken | SyntaxKind.EqualsToken | SyntaxKind.CommaToken | SyntaxKind.DotToken | SyntaxKind.Identifier | SyntaxKind.BacktickToken | SyntaxKind.Unknown | SyntaxKind.AbstractKeyword | SyntaxKind.AnyKeyword | SyntaxKind.AsKeyword | SyntaxKind.AssertsKeyword | SyntaxKind.AsyncKeyword | SyntaxKind.AwaitKeyword | SyntaxKind.BigIntKeyword | SyntaxKind.BooleanKeyword | SyntaxKind.BreakKeyword | SyntaxKind.CaseKeyword | SyntaxKind.CatchKeyword | SyntaxKind.ClassKeyword | SyntaxKind.ConstKeyword | SyntaxKind.ConstructorKeyword | SyntaxKind.ContinueKeyword | SyntaxKind.DebuggerKeyword | SyntaxKind.DeclareKeyword | SyntaxKind.DefaultKeyword | SyntaxKind.DeleteKeyword | SyntaxKind.DoKeyword | SyntaxKind.ElseKeyword | SyntaxKind.EnumKeyword | SyntaxKind.ExportKeyword | SyntaxKind.ExtendsKeyword | SyntaxKind.FalseKeyword | SyntaxKind.FinallyKeyword | SyntaxKind.ForKeyword | SyntaxKind.FromKeyword | SyntaxKind.FunctionKeyword | SyntaxKind.GetKeyword | SyntaxKind.GlobalKeyword | SyntaxKind.IfKeyword | SyntaxKind.ImplementsKeyword | SyntaxKind.ImportKeyword | SyntaxKind.InferKeyword | SyntaxKind.InKeyword | SyntaxKind.InstanceOfKeyword | SyntaxKind.InterfaceKeyword | SyntaxKind.IntrinsicKeyword | SyntaxKind.IsKeyword | SyntaxKind.KeyOfKeyword | SyntaxKind.LetKeyword | SyntaxKind.ModuleKeyword | SyntaxKind.NamespaceKeyword | SyntaxKind.NeverKeyword | SyntaxKind.NewKeyword | SyntaxKind.NullKeyword | SyntaxKind.NumberKeyword | SyntaxKind.ObjectKeyword | SyntaxKind.OfKeyword | SyntaxKind.PackageKeyword | SyntaxKind.PrivateKeyword | SyntaxKind.ProtectedKeyword | SyntaxKind.PublicKeyword | SyntaxKind.ReadonlyKeyword | SyntaxKind.OverrideKeyword | SyntaxKind.RequireKeyword | SyntaxKind.ReturnKeyword | SyntaxKind.SetKeyword | SyntaxKind.StaticKeyword | SyntaxKind.StringKeyword | SyntaxKind.SuperKeyword | SyntaxKind.SwitchKeyword | SyntaxKind.SymbolKeyword | SyntaxKind.ThisKeyword | SyntaxKind.ThrowKeyword | SyntaxKind.TrueKeyword | SyntaxKind.TryKeyword | SyntaxKind.TypeKeyword | SyntaxKind.TypeOfKeyword | SyntaxKind.UndefinedKeyword | SyntaxKind.UniqueKeyword | SyntaxKind.UnknownKeyword | SyntaxKind.VarKeyword | SyntaxKind.VoidKeyword | SyntaxKind.WhileKeyword | SyntaxKind.WithKeyword | SyntaxKind.YieldKeyword */
+  fun scanJsDocToken(): dynamic /* SyntaxKind.EndOfFileToken | SyntaxKind.WhitespaceTrivia | SyntaxKind.AtToken | SyntaxKind.NewLineTrivia | SyntaxKind.AsteriskToken | SyntaxKind.OpenBraceToken | SyntaxKind.CloseBraceToken | SyntaxKind.LessThanToken | SyntaxKind.GreaterThanToken | SyntaxKind.OpenBracketToken | SyntaxKind.CloseBracketToken | SyntaxKind.EqualsToken | SyntaxKind.CommaToken | SyntaxKind.DotToken | SyntaxKind.Identifier | SyntaxKind.BacktickToken | SyntaxKind.HashToken | SyntaxKind.Unknown | SyntaxKind.AbstractKeyword | SyntaxKind.AnyKeyword | SyntaxKind.AsKeyword | SyntaxKind.AssertsKeyword | SyntaxKind.AsyncKeyword | SyntaxKind.AwaitKeyword | SyntaxKind.BigIntKeyword | SyntaxKind.BooleanKeyword | SyntaxKind.BreakKeyword | SyntaxKind.CaseKeyword | SyntaxKind.CatchKeyword | SyntaxKind.ClassKeyword | SyntaxKind.ConstKeyword | SyntaxKind.ConstructorKeyword | SyntaxKind.ContinueKeyword | SyntaxKind.DebuggerKeyword | SyntaxKind.DeclareKeyword | SyntaxKind.DefaultKeyword | SyntaxKind.DeleteKeyword | SyntaxKind.DoKeyword | SyntaxKind.ElseKeyword | SyntaxKind.EnumKeyword | SyntaxKind.ExportKeyword | SyntaxKind.ExtendsKeyword | SyntaxKind.FalseKeyword | SyntaxKind.FinallyKeyword | SyntaxKind.ForKeyword | SyntaxKind.FromKeyword | SyntaxKind.FunctionKeyword | SyntaxKind.GetKeyword | SyntaxKind.GlobalKeyword | SyntaxKind.IfKeyword | SyntaxKind.ImplementsKeyword | SyntaxKind.ImportKeyword | SyntaxKind.InferKeyword | SyntaxKind.InKeyword | SyntaxKind.InstanceOfKeyword | SyntaxKind.InterfaceKeyword | SyntaxKind.IntrinsicKeyword | SyntaxKind.IsKeyword | SyntaxKind.KeyOfKeyword | SyntaxKind.LetKeyword | SyntaxKind.ModuleKeyword | SyntaxKind.NamespaceKeyword | SyntaxKind.NeverKeyword | SyntaxKind.NewKeyword | SyntaxKind.NullKeyword | SyntaxKind.NumberKeyword | SyntaxKind.ObjectKeyword | SyntaxKind.OfKeyword | SyntaxKind.PackageKeyword | SyntaxKind.PrivateKeyword | SyntaxKind.ProtectedKeyword | SyntaxKind.PublicKeyword | SyntaxKind.ReadonlyKeyword | SyntaxKind.OverrideKeyword | SyntaxKind.RequireKeyword | SyntaxKind.ReturnKeyword | SyntaxKind.SetKeyword | SyntaxKind.StaticKeyword | SyntaxKind.StringKeyword | SyntaxKind.SuperKeyword | SyntaxKind.SwitchKeyword | SyntaxKind.SymbolKeyword | SyntaxKind.ThisKeyword | SyntaxKind.ThrowKeyword | SyntaxKind.TrueKeyword | SyntaxKind.TryKeyword | SyntaxKind.TypeKeyword | SyntaxKind.TypeOfKeyword | SyntaxKind.UndefinedKeyword | SyntaxKind.UniqueKeyword | SyntaxKind.UnknownKeyword | SyntaxKind.VarKeyword | SyntaxKind.VoidKeyword | SyntaxKind.WhileKeyword | SyntaxKind.WithKeyword | SyntaxKind.YieldKeyword */
   fun scan(): SyntaxKind
   fun getText(): String
   fun setText(text: String?, start: Number = definedExternally, length: Number = definedExternally)
-  fun setOnError(onError: ErrorCallback?)
+//  fun setOnError(onError: ErrorCallback?) // TODO why isn't ErrorCallback defined?
+  fun setOnError(onError: dynamic?)
   fun setScriptTarget(scriptTarget: ScriptTarget)
   fun setLanguageVariant(variant: LanguageVariant)
   fun setTextPos(textPos: Number)
@@ -4937,7 +4992,7 @@ external fun isIdentifierStart(ch: Number, languageVersion: ScriptTarget?): Bool
 
 external fun isIdentifierPart(ch: Number, languageVersion: ScriptTarget?, identifierVariant: LanguageVariant = definedExternally): Boolean
 
-external fun createScanner(languageVersion: ScriptTarget, skipTrivia: Boolean, languageVariant: LanguageVariant = definedExternally, textInitial: String = definedExternally, onError: ErrorCallback = definedExternally, start: Number = definedExternally, length: Number = definedExternally): Scanner
+//external fun createScanner(languageVersion: ScriptTarget, skipTrivia: Boolean, languageVariant: LanguageVariant = definedExternally, textInitial: String = definedExternally, onError: ErrorCallback = definedExternally, start: Number = definedExternally, length: Number = definedExternally): Scanner
 
 external fun isExternalModuleNameRelative(moduleName: String): Boolean
 
@@ -4983,7 +5038,7 @@ external fun collapseTextChangeRangesAcrossMultipleVersions(changes: Array<TextC
 
 external fun getTypeParameterOwner(d: Declaration): Declaration?
 
-external interface `T$9` {
+external interface `T$23` {
   var parent: ConstructorDeclaration
   var name: Identifier
 }
@@ -5004,14 +5059,14 @@ external fun getCombinedModifierFlags(node: Declaration): ModifierFlags
 
 external fun getCombinedNodeFlags(node: Node): NodeFlags
 
-external interface `T$10` {
+external interface `T$24` {
   fun getExecutingFilePath(): String
   fun resolvePath(path: String): String
   fun fileExists(fileName: String): Boolean
   fun readFile(fileName: String): String?
 }
 
-external fun validateLocaleAndSetLanguage(locale: String, sys: `T$10`, errors: Push<Diagnostic> = definedExternally)
+external fun validateLocaleAndSetLanguage(locale: String, sys: `T$24`, errors: Push<Diagnostic> = definedExternally)
 
 external fun getOriginalNode(node: Node): Node
 
@@ -5127,7 +5182,7 @@ external fun getTextOfJSDocComment(comment: String = definedExternally): String?
 
 external fun getTextOfJSDocComment(): String?
 
-external fun getTextOfJSDocComment(comment: NodeArray<Any /* JSDocText | JSDocLink */> = definedExternally): String?
+external fun getTextOfJSDocComment(comment: NodeArray<Any /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */> = definedExternally): String?
 
 external fun getEffectiveTypeParameterDeclarations(node: Any /* CallSignatureDeclaration | ConstructSignatureDeclaration | MethodSignature | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | JSDocFunctionType | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | GetAccessorDeclaration | SetAccessorDeclaration | FunctionExpression | ArrowFunction | ClassDeclaration | ClassExpression | InterfaceDeclaration | TypeAliasDeclaration | JSDocTemplateTag | JSDocTypedefTag | JSDocCallbackTag | JSDocSignature */): Array<TypeParameterDeclaration>
 
@@ -5233,6 +5288,8 @@ external fun isObjectLiteralElement(node: Node): Boolean
 
 external fun isStringLiteralLike(node: Node): Boolean
 
+external fun isJSDocLinkLike(node: Node): Boolean
+
 external var factory: NodeFactory
 
 external fun createUnparsedSourceFile(text: String): UnparsedSource
@@ -5273,13 +5330,23 @@ external fun getSyntheticLeadingComments(node: Node): Array<SynthesizedComment>?
 
 external fun <T : Node> setSyntheticLeadingComments(node: T, comments: Array<SynthesizedComment>?): T
 
+external fun <T : Node> addSyntheticLeadingComment(node: T, kind: SyntaxKind, text: String, hasTrailingNewLine: Boolean = definedExternally): T
+external fun <T : Node> addSyntheticLeadingComment(node: T, kind: SyntaxKind, text: String): T
+//external fun <T : Node> addSyntheticLeadingComment(node: T, kind: SyntaxKind.SingleLineCommentTrivia, text: String, hasTrailingNewLine: Boolean = definedExternally): T
+//external fun <T : Node> addSyntheticLeadingComment(node: T, kind: SyntaxKind.SingleLineCommentTrivia, text: String): T
+//external fun <T : Node> addSyntheticLeadingComment(node: T, kind: SyntaxKind.MultiLineCommentTrivia, text: String, hasTrailingNewLine: Boolean = definedExternally): T
+//external fun <T : Node> addSyntheticLeadingComment(node: T, kind: SyntaxKind.MultiLineCommentTrivia, text: String): T
+
 external fun getSyntheticTrailingComments(node: Node): Array<SynthesizedComment>?
 
 external fun <T : Node> setSyntheticTrailingComments(node: T, comments: Array<SynthesizedComment>?): T
 
-external fun <T : Node> addSyntheticTrailingComment(node: T, kind: SyntaxKind = definedExternally, text: String, hasTrailingNewLine: Boolean = definedExternally): T
-
-external fun <T : Node> addSyntheticTrailingComment(node: T, kind: SyntaxKind = definedExternally, text: String): T
+external fun <T : Node> addSyntheticTrailingComment(node: T, kind: SyntaxKind, text: String, hasTrailingNewLine: Boolean = definedExternally): T
+external fun <T : Node> addSyntheticTrailingComment(node: T, kind: SyntaxKind, text: String): T
+//external fun <T : Node> addSyntheticTrailingComment(node: T, kind: SyntaxKind.SingleLineCommentTrivia, text: String, hasTrailingNewLine: Boolean = definedExternally): T
+//external fun <T : Node> addSyntheticTrailingComment(node: T, kind: SyntaxKind.SingleLineCommentTrivia, text: String): T
+//external fun <T : Node> addSyntheticTrailingComment(node: T, kind: SyntaxKind.MultiLineCommentTrivia, text: String, hasTrailingNewLine: Boolean = definedExternally): T
+//external fun <T : Node> addSyntheticTrailingComment(node: T, kind: SyntaxKind.MultiLineCommentTrivia, text: String): T
 
 external fun <T : Node> moveSyntheticComments(node: T, original: Node): T
 
@@ -5356,6 +5423,8 @@ external fun isPropertyDeclaration(node: Node): Boolean
 external fun isMethodSignature(node: Node): Boolean
 
 external fun isMethodDeclaration(node: Node): Boolean
+
+external fun isClassStaticBlockDeclaration(node: Node): Boolean
 
 external fun isConstructorDeclaration(node: Node): Boolean
 
@@ -5627,7 +5696,13 @@ external fun isJSDocTypeExpression(node: Node): Boolean
 
 external fun isJSDocNameReference(node: Node): Boolean
 
+external fun isJSDocMemberName(node: Node): Boolean
+
 external fun isJSDocLink(node: Node): Boolean
+
+external fun isJSDocLinkCode(node: Node): Boolean
+
+external fun isJSDocLinkPlain(node: Node): Boolean
 
 external fun isJSDocAllType(node: Node): Boolean
 
@@ -5719,7 +5794,7 @@ external interface ParseConfigFileHost : ParseConfigHost, ConfigFileDiagnosticsR
 
 external fun getParsedCommandLineOfConfigFile(configFileName: String, optionsToExtend: CompilerOptions?, host: ParseConfigFileHost, extendedConfigCache: Map<ExtendedConfigCacheEntry> = definedExternally, watchOptionsToExtend: WatchOptions = definedExternally, extraFileExtensions: Array<FileExtensionInfo> = definedExternally): ParsedCommandLine?
 
-external interface `T$11` {
+external interface `T$25` {
   var config: Any?
     get() = definedExternally
     set(value) = definedExternally
@@ -5728,9 +5803,9 @@ external interface `T$11` {
     set(value) = definedExternally
 }
 
-external fun readConfigFile(fileName: String, readFile: (path: String) -> String?): `T$11`
+external fun readConfigFile(fileName: String, readFile: (path: String) -> String?): `T$25`
 
-external fun parseConfigFileTextToJson(fileName: String, jsonText: String): `T$11`
+external fun parseConfigFileTextToJson(fileName: String, jsonText: String): `T$25`
 
 external fun readJsonConfigFile(fileName: String, readFile: (path: String) -> String?): TsConfigSourceFile
 
@@ -5761,19 +5836,19 @@ external interface ExtendedConfigCacheEntry {
   var extendedConfig: ParsedTsconfig?
 }
 
-external interface `T$12` {
+external interface `T$26` {
   var options: CompilerOptions
   var errors: Array<Diagnostic>
 }
 
-external fun convertCompilerOptionsFromJson(jsonOptions: Any, basePath: String, configFileName: String = definedExternally): `T$12`
+external fun convertCompilerOptionsFromJson(jsonOptions: Any, basePath: String, configFileName: String = definedExternally): `T$26`
 
-external interface `T$13` {
+external interface `T$27` {
   var options: TypeAcquisition
   var errors: Array<Diagnostic>
 }
 
-external fun convertTypeAcquisitionFromJson(jsonOptions: Any, basePath: String, configFileName: String = definedExternally): `T$13`
+external fun convertTypeAcquisitionFromJson(jsonOptions: Any, basePath: String, configFileName: String = definedExternally): `T$27`
 
 external fun getEffectiveTypeRoots(options: CompilerOptions, host: GetEffectiveTypeRootsHost): Array<String>?
 
@@ -5935,7 +6010,7 @@ external interface OutputFile {
   var text: String
 }
 
-external interface `T$14`<T> {
+external interface `T$28`<T> {
   var result: T
   var affected: dynamic /* SourceFile | Program */
     get() = definedExternally
@@ -5969,11 +6044,11 @@ external interface BuilderProgram {
 }
 
 external interface SemanticDiagnosticsBuilderProgram : BuilderProgram {
-  fun getSemanticDiagnosticsOfNextAffectedFile(cancellationToken: CancellationToken = definedExternally, ignoreSourceFile: (sourceFile: SourceFile) -> Boolean = definedExternally): `T$14`<Array<Diagnostic>>?
+  fun getSemanticDiagnosticsOfNextAffectedFile(cancellationToken: CancellationToken = definedExternally, ignoreSourceFile: (sourceFile: SourceFile) -> Boolean = definedExternally): `T$28`<Array<Diagnostic>>?
 }
 
 external interface EmitAndSemanticDiagnosticsBuilderProgram : SemanticDiagnosticsBuilderProgram {
-  fun emitNextAffectedFile(writeFile: WriteFileCallback = definedExternally, cancellationToken: CancellationToken = definedExternally, emitOnlyDtsFiles: Boolean = definedExternally, customTransformers: CustomTransformers = definedExternally): `T$14`<EmitResult>?
+  fun emitNextAffectedFile(writeFile: WriteFileCallback = definedExternally, cancellationToken: CancellationToken = definedExternally, emitOnlyDtsFiles: Boolean = definedExternally, customTransformers: CustomTransformers = definedExternally): `T$28`<EmitResult>?
 }
 
 external fun createSemanticDiagnosticsBuilderProgram(newProgram: Program, host: BuilderProgramHost, oldProgram: SemanticDiagnosticsBuilderProgram = definedExternally, configFileParsingDiagnostics: Array<Diagnostic> = definedExternally): SemanticDiagnosticsBuilderProgram
@@ -6046,9 +6121,9 @@ external interface IncrementalProgramOptions<T : BuilderProgram> {
   var host: CompilerHost?
     get() = definedExternally
     set(value) = definedExternally
-  var createProgram: CreateProgram<T>?
-    get() = definedExternally
-    set(value) = definedExternally
+//  var createProgram: CreateProgram<T>?
+//    get() = definedExternally
+//    set(value) = definedExternally
 }
 
 external fun <T : BuilderProgram> createIncrementalProgram(__0: IncrementalProgramOptions<T>): T
@@ -6061,56 +6136,56 @@ external interface WatchHost {
   val clearTimeout: ((timeoutId: Any) -> Unit)?
 }
 
-external interface ProgramHost<T : BuilderProgram> {
-  var createProgram: CreateProgram<T>
-  fun useCaseSensitiveFileNames(): Boolean
-  fun getNewLine(): String
-  fun getCurrentDirectory(): String
-  fun getDefaultLibFileName(options: CompilerOptions): String
-  val getDefaultLibLocation: (() -> String)?
-  val createHash: ((data: String) -> String)?
-  fun fileExists(path: String): Boolean
-  fun readFile(path: String, encoding: String = definedExternally): String?
-  val directoryExists: ((path: String) -> Boolean)?
-  val getDirectories: ((path: String) -> Array<String>)?
-  val readDirectory: ((path: String, extensions: Array<String>, exclude: Array<String>, include: Array<String>, depth: Number) -> Array<String>)?
-  val realpath: ((path: String) -> String)?
-  val trace: ((s: String) -> Unit)?
-  val getEnvironmentVariable: ((name: String) -> String?)?
-  val resolveModuleNames: ((moduleNames: Array<String>, containingFile: String, reusedNames: Array<String>?, redirectedReference: ResolvedProjectReference?, options: CompilerOptions) -> Array<ResolvedModule?>)?
-  val resolveTypeReferenceDirectives: ((typeReferenceDirectiveNames: Array<String>, containingFile: String, redirectedReference: ResolvedProjectReference?, options: CompilerOptions) -> Array<ResolvedTypeReferenceDirective?>)?
-}
+//external interface ProgramHost<T : BuilderProgram> {
+//  var createProgram: CreateProgram<T>
+//  fun useCaseSensitiveFileNames(): Boolean
+//  fun getNewLine(): String
+//  fun getCurrentDirectory(): String
+//  fun getDefaultLibFileName(options: CompilerOptions): String
+//  val getDefaultLibLocation: (() -> String)?
+//  val createHash: ((data: String) -> String)?
+//  fun fileExists(path: String): Boolean
+//  fun readFile(path: String, encoding: String = definedExternally): String?
+//  val directoryExists: ((path: String) -> Boolean)?
+//  val getDirectories: ((path: String) -> Array<String>)?
+//  val readDirectory: ((path: String, extensions: Array<String>, exclude: Array<String>, include: Array<String>, depth: Number) -> Array<String>)?
+//  val realpath: ((path: String) -> String)?
+//  val trace: ((s: String) -> Unit)?
+//  val getEnvironmentVariable: ((name: String) -> String?)?
+//  val resolveModuleNames: ((moduleNames: Array<String>, containingFile: String, reusedNames: Array<String>?, redirectedReference: ResolvedProjectReference?, options: CompilerOptions) -> Array<ResolvedModule?>)?
+//  val resolveTypeReferenceDirectives: ((typeReferenceDirectiveNames: Array<String>, containingFile: String, redirectedReference: ResolvedProjectReference?, options: CompilerOptions) -> Array<ResolvedTypeReferenceDirective?>)?
+//}
 
-external interface WatchCompilerHost<T : BuilderProgram> : ProgramHost<T>, WatchHost {
-  val useSourceOfProjectReferenceRedirect: (() -> Boolean)?
-  val getParsedCommandLine: ((fileName: String) -> ParsedCommandLine?)?
-  val afterProgramCreate: ((program: T) -> Unit)?
-}
+//external interface WatchCompilerHost<T : BuilderProgram> : ProgramHost<T>, WatchHost {
+//  val useSourceOfProjectReferenceRedirect: (() -> Boolean)?
+//  val getParsedCommandLine: ((fileName: String) -> ParsedCommandLine?)?
+//  val afterProgramCreate: ((program: T) -> Unit)?
+//}
 
-external interface WatchCompilerHostOfFilesAndCompilerOptions<T : BuilderProgram> : WatchCompilerHost<T> {
-  var rootFiles: Array<String>
-  var options: CompilerOptions
-  var watchOptions: WatchOptions?
-    get() = definedExternally
-    set(value) = definedExternally
-  var projectReferences: Array<ProjectReference>?
-    get() = definedExternally
-    set(value) = definedExternally
-}
-
-external interface WatchCompilerHostOfConfigFile<T : BuilderProgram> : WatchCompilerHost<T>, ConfigFileDiagnosticsReporter {
-  var configFileName: String
-  var optionsToExtend: CompilerOptions?
-    get() = definedExternally
-    set(value) = definedExternally
-  var watchOptionsToExtend: WatchOptions?
-    get() = definedExternally
-    set(value) = definedExternally
-  var extraFileExtensions: Array<FileExtensionInfo>?
-    get() = definedExternally
-    set(value) = definedExternally
-  override var readDirectory: (path: String, extensions: Array<String>, exclude: Array<String>, include: Array<String>, depth: Number) -> Array<String>
-}
+//external interface WatchCompilerHostOfFilesAndCompilerOptions<T : BuilderProgram> : WatchCompilerHost<T> {
+//  var rootFiles: Array<String>
+//  var options: CompilerOptions
+//  var watchOptions: WatchOptions?
+//    get() = definedExternally
+//    set(value) = definedExternally
+//  var projectReferences: Array<ProjectReference>?
+//    get() = definedExternally
+//    set(value) = definedExternally
+//}
+//
+//external interface WatchCompilerHostOfConfigFile<T : BuilderProgram> : WatchCompilerHost<T>, ConfigFileDiagnosticsReporter {
+//  var configFileName: String
+//  var optionsToExtend: CompilerOptions?
+//    get() = definedExternally
+//    set(value) = definedExternally
+//  var watchOptionsToExtend: WatchOptions?
+//    get() = definedExternally
+//    set(value) = definedExternally
+//  var extraFileExtensions: Array<FileExtensionInfo>?
+//    get() = definedExternally
+//    set(value) = definedExternally
+//  override var readDirectory: (path: String, extensions: Array<String>, exclude: Array<String>, include: Array<String>, depth: Number) -> Array<String>
+//}
 
 external interface Watch<T> {
   fun getProgram(): T
@@ -6123,33 +6198,23 @@ external interface WatchOfFilesAndCompilerOptions<T> : Watch<T> {
   fun updateRootFileNames(fileNames: Array<String>)
 }
 
-external fun <T : BuilderProgram> createWatchCompilerHost(configFileName: String, optionsToExtend: CompilerOptions?, system: System, createProgram: CreateProgram<T> = definedExternally, reportDiagnostic: DiagnosticReporter = definedExternally, reportWatchStatus: WatchStatusReporter = definedExternally, watchOptionsToExtend: WatchOptions = definedExternally, extraFileExtensions: Array<FileExtensionInfo> = definedExternally): WatchCompilerHostOfConfigFile<T>
+//external fun <T : BuilderProgram> createWatchCompilerHost(configFileName: String, optionsToExtend: CompilerOptions?, system: System, createProgram: CreateProgram<T> = definedExternally, reportDiagnostic: DiagnosticReporter = definedExternally, reportWatchStatus: WatchStatusReporter = definedExternally, watchOptionsToExtend: WatchOptions = definedExternally, extraFileExtensions: Array<FileExtensionInfo> = definedExternally): WatchCompilerHostOfConfigFile<T>
+//external fun <T : BuilderProgram> createWatchCompilerHost(configFileName: String, optionsToExtend: CompilerOptions?, system: System): WatchCompilerHostOfConfigFile<T>
+//external fun <T : BuilderProgram> createWatchCompilerHost(configFileName: String, optionsToExtend: CompilerOptions?, system: System, createProgram: CreateProgram<T> = definedExternally): WatchCompilerHostOfConfigFile<T>
+//external fun <T : BuilderProgram> createWatchCompilerHost(configFileName: String, optionsToExtend: CompilerOptions?, system: System, createProgram: CreateProgram<T> = definedExternally, reportDiagnostic: DiagnosticReporter = definedExternally): WatchCompilerHostOfConfigFile<T>
+//external fun <T : BuilderProgram> createWatchCompilerHost(configFileName: String, optionsToExtend: CompilerOptions?, system: System, createProgram: CreateProgram<T> = definedExternally, reportDiagnostic: DiagnosticReporter = definedExternally, reportWatchStatus: WatchStatusReporter = definedExternally): WatchCompilerHostOfConfigFile<T>
+//external fun <T : BuilderProgram> createWatchCompilerHost(configFileName: String, optionsToExtend: CompilerOptions?, system: System, createProgram: CreateProgram<T> = definedExternally, reportDiagnostic: DiagnosticReporter = definedExternally, reportWatchStatus: WatchStatusReporter = definedExternally, watchOptionsToExtend: WatchOptions = definedExternally): WatchCompilerHostOfConfigFile<T>
+//
+//external fun <T : BuilderProgram> createWatchCompilerHost(rootFiles: Array<String>, options: CompilerOptions, system: System, createProgram: CreateProgram<T> = definedExternally, reportDiagnostic: DiagnosticReporter = definedExternally, reportWatchStatus: WatchStatusReporter = definedExternally, projectReferences: Array<ProjectReference> = definedExternally, watchOptions: WatchOptions = definedExternally): WatchCompilerHostOfFilesAndCompilerOptions<T>
+//external fun <T : BuilderProgram> createWatchCompilerHost(rootFiles: Array<String>, options: CompilerOptions, system: System): WatchCompilerHostOfFilesAndCompilerOptions<T>
+//external fun <T : BuilderProgram> createWatchCompilerHost(rootFiles: Array<String>, options: CompilerOptions, system: System, createProgram: CreateProgram<T> = definedExternally): WatchCompilerHostOfFilesAndCompilerOptions<T>
+//external fun <T : BuilderProgram> createWatchCompilerHost(rootFiles: Array<String>, options: CompilerOptions, system: System, createProgram: CreateProgram<T> = definedExternally, reportDiagnostic: DiagnosticReporter = definedExternally): WatchCompilerHostOfFilesAndCompilerOptions<T>
+//external fun <T : BuilderProgram> createWatchCompilerHost(rootFiles: Array<String>, options: CompilerOptions, system: System, createProgram: CreateProgram<T> = definedExternally, reportDiagnostic: DiagnosticReporter = definedExternally, reportWatchStatus: WatchStatusReporter = definedExternally): WatchCompilerHostOfFilesAndCompilerOptions<T>
+//external fun <T : BuilderProgram> createWatchCompilerHost(rootFiles: Array<String>, options: CompilerOptions, system: System, createProgram: CreateProgram<T> = definedExternally, reportDiagnostic: DiagnosticReporter = definedExternally, reportWatchStatus: WatchStatusReporter = definedExternally, projectReferences: Array<ProjectReference> = definedExternally): WatchCompilerHostOfFilesAndCompilerOptions<T>
 
-external fun <T : BuilderProgram> createWatchCompilerHost(configFileName: String, optionsToExtend: CompilerOptions?, system: System): WatchCompilerHostOfConfigFile<T>
-
-external fun <T : BuilderProgram> createWatchCompilerHost(configFileName: String, optionsToExtend: CompilerOptions?, system: System, createProgram: CreateProgram<T> = definedExternally): WatchCompilerHostOfConfigFile<T>
-
-external fun <T : BuilderProgram> createWatchCompilerHost(configFileName: String, optionsToExtend: CompilerOptions?, system: System, createProgram: CreateProgram<T> = definedExternally, reportDiagnostic: DiagnosticReporter = definedExternally): WatchCompilerHostOfConfigFile<T>
-
-external fun <T : BuilderProgram> createWatchCompilerHost(configFileName: String, optionsToExtend: CompilerOptions?, system: System, createProgram: CreateProgram<T> = definedExternally, reportDiagnostic: DiagnosticReporter = definedExternally, reportWatchStatus: WatchStatusReporter = definedExternally): WatchCompilerHostOfConfigFile<T>
-
-external fun <T : BuilderProgram> createWatchCompilerHost(configFileName: String, optionsToExtend: CompilerOptions?, system: System, createProgram: CreateProgram<T> = definedExternally, reportDiagnostic: DiagnosticReporter = definedExternally, reportWatchStatus: WatchStatusReporter = definedExternally, watchOptionsToExtend: WatchOptions = definedExternally): WatchCompilerHostOfConfigFile<T>
-
-external fun <T : BuilderProgram> createWatchCompilerHost(rootFiles: Array<String>, options: CompilerOptions, system: System, createProgram: CreateProgram<T> = definedExternally, reportDiagnostic: DiagnosticReporter = definedExternally, reportWatchStatus: WatchStatusReporter = definedExternally, projectReferences: Array<ProjectReference> = definedExternally, watchOptions: WatchOptions = definedExternally): WatchCompilerHostOfFilesAndCompilerOptions<T>
-
-external fun <T : BuilderProgram> createWatchCompilerHost(rootFiles: Array<String>, options: CompilerOptions, system: System): WatchCompilerHostOfFilesAndCompilerOptions<T>
-
-external fun <T : BuilderProgram> createWatchCompilerHost(rootFiles: Array<String>, options: CompilerOptions, system: System, createProgram: CreateProgram<T> = definedExternally): WatchCompilerHostOfFilesAndCompilerOptions<T>
-
-external fun <T : BuilderProgram> createWatchCompilerHost(rootFiles: Array<String>, options: CompilerOptions, system: System, createProgram: CreateProgram<T> = definedExternally, reportDiagnostic: DiagnosticReporter = definedExternally): WatchCompilerHostOfFilesAndCompilerOptions<T>
-
-external fun <T : BuilderProgram> createWatchCompilerHost(rootFiles: Array<String>, options: CompilerOptions, system: System, createProgram: CreateProgram<T> = definedExternally, reportDiagnostic: DiagnosticReporter = definedExternally, reportWatchStatus: WatchStatusReporter = definedExternally): WatchCompilerHostOfFilesAndCompilerOptions<T>
-
-external fun <T : BuilderProgram> createWatchCompilerHost(rootFiles: Array<String>, options: CompilerOptions, system: System, createProgram: CreateProgram<T> = definedExternally, reportDiagnostic: DiagnosticReporter = definedExternally, reportWatchStatus: WatchStatusReporter = definedExternally, projectReferences: Array<ProjectReference> = definedExternally): WatchCompilerHostOfFilesAndCompilerOptions<T>
-
-external fun <T : BuilderProgram> createWatchProgram(host: WatchCompilerHostOfFilesAndCompilerOptions<T>): WatchOfFilesAndCompilerOptions<T>
-
-external fun <T : BuilderProgram> createWatchProgram(host: WatchCompilerHostOfConfigFile<T>): WatchOfConfigFile<T>
+//external fun <T : BuilderProgram> createWatchProgram(host: WatchCompilerHostOfFilesAndCompilerOptions<T>): WatchOfFilesAndCompilerOptions<T>
+//
+//external fun <T : BuilderProgram> createWatchProgram(host: WatchCompilerHostOfConfigFile<T>): WatchOfConfigFile<T>
 
 external interface BuildOptions {
   var dry: Boolean?
@@ -6190,29 +6255,28 @@ external interface BuildOptions {
   operator fun set(option: String, value: Array<ProjectReference>?)
 }
 
-external interface SolutionBuilderHostBase<T : BuilderProgram> : ProgramHost<T> {
-  val createDirectory: ((path: String) -> Unit)?
-  val writeFile: ((path: String, data: String, writeByteOrderMark: Boolean) -> Unit)?
-  var getCustomTransformers: ((project: String) -> CustomTransformers?)?
-    get() = definedExternally
-    set(value) = definedExternally
+//external interface SolutionBuilderHostBase<T : BuilderProgram> : ProgramHost<T> {
+//  val createDirectory: ((path: String) -> Unit)?
+//  val writeFile: ((path: String, data: String, writeByteOrderMark: Boolean) -> Unit)?
+//  var getCustomTransformers: ((project: String) -> CustomTransformers?)?
+//    get() = definedExternally
+//    set(value) = definedExternally
+//  fun getModifiedTime(fileName: String): Date?
+//  fun setModifiedTime(fileName: String, date: Date)
+//  fun deleteFile(fileName: String)
+//  val getParsedCommandLine: ((fileName: String) -> ParsedCommandLine?)?
+//  var reportDiagnostic: DiagnosticReporter
+//  var reportSolutionBuilderStatus: DiagnosticReporter
+//  val afterProgramEmitAndDiagnostics: ((program: T) -> Unit)?
+//}
 
-  fun getModifiedTime(fileName: String): Date?
-  fun setModifiedTime(fileName: String, date: Date)
-  fun deleteFile(fileName: String)
-  val getParsedCommandLine: ((fileName: String) -> ParsedCommandLine?)?
-  var reportDiagnostic: DiagnosticReporter
-  var reportSolutionBuilderStatus: DiagnosticReporter
-  val afterProgramEmitAndDiagnostics: ((program: T) -> Unit)?
-}
+//external interface SolutionBuilderHost<T : BuilderProgram> : SolutionBuilderHostBase<T> {
+//  var reportErrorSummary: ReportEmitErrorSummary?
+//    get() = definedExternally
+//    set(value) = definedExternally
+//}
 
-external interface SolutionBuilderHost<T : BuilderProgram> : SolutionBuilderHostBase<T> {
-  var reportErrorSummary: ReportEmitErrorSummary?
-    get() = definedExternally
-    set(value) = definedExternally
-}
-
-external interface SolutionBuilderWithWatchHost<T : BuilderProgram> : SolutionBuilderHostBase<T>, WatchHost
+//external interface SolutionBuilderWithWatchHost<T : BuilderProgram> : SolutionBuilderHostBase<T>, WatchHost
 
 external interface SolutionBuilder<T : BuilderProgram> {
   fun build(project: String = definedExternally, cancellationToken: CancellationToken = definedExternally, writeFile: WriteFileCallback = definedExternally, getCustomTransformers: (project: String) -> CustomTransformers = definedExternally): ExitStatus
@@ -6224,13 +6288,13 @@ external interface SolutionBuilder<T : BuilderProgram> {
 
 external fun createBuilderStatusReporter(system: System, pretty: Boolean = definedExternally): DiagnosticReporter
 
-external fun <T : BuilderProgram> createSolutionBuilderHost(system: System = definedExternally, createProgram: CreateProgram<T> = definedExternally, reportDiagnostic: DiagnosticReporter = definedExternally, reportSolutionBuilderStatus: DiagnosticReporter = definedExternally, reportErrorSummary: ReportEmitErrorSummary = definedExternally): SolutionBuilderHost<T>
+//external fun <T : BuilderProgram> createSolutionBuilderHost(system: System = definedExternally, createProgram: CreateProgram<T> = definedExternally, reportDiagnostic: DiagnosticReporter = definedExternally, reportSolutionBuilderStatus: DiagnosticReporter = definedExternally, reportErrorSummary: ReportEmitErrorSummary = definedExternally): SolutionBuilderHost<T>
+//
+//external fun <T : BuilderProgram> createSolutionBuilderWithWatchHost(system: System = definedExternally, createProgram: CreateProgram<T> = definedExternally, reportDiagnostic: DiagnosticReporter = definedExternally, reportSolutionBuilderStatus: DiagnosticReporter = definedExternally, reportWatchStatus: WatchStatusReporter = definedExternally): SolutionBuilderWithWatchHost<T>
+//
+//external fun <T : BuilderProgram> createSolutionBuilder(host: SolutionBuilderHost<T>, rootNames: Array<String>, defaultOptions: BuildOptions): SolutionBuilder<T>
 
-external fun <T : BuilderProgram> createSolutionBuilderWithWatchHost(system: System = definedExternally, createProgram: CreateProgram<T> = definedExternally, reportDiagnostic: DiagnosticReporter = definedExternally, reportSolutionBuilderStatus: DiagnosticReporter = definedExternally, reportWatchStatus: WatchStatusReporter = definedExternally): SolutionBuilderWithWatchHost<T>
-
-external fun <T : BuilderProgram> createSolutionBuilder(host: SolutionBuilderHost<T>, rootNames: Array<String>, defaultOptions: BuildOptions): SolutionBuilder<T>
-
-external fun <T : BuilderProgram> createSolutionBuilderWithWatch(host: SolutionBuilderWithWatchHost<T>, rootNames: Array<String>, defaultOptions: BuildOptions, baseWatchOptions: WatchOptions = definedExternally): SolutionBuilder<T>
+//external fun <T : BuilderProgram> createSolutionBuilderWithWatch(host: SolutionBuilderWithWatchHost<T>, rootNames: Array<String>, defaultOptions: BuildOptions, baseWatchOptions: WatchOptions = definedExternally): SolutionBuilder<T>
 
 external enum class InvalidatedProjectKind {
   Build /* = 0 */,
@@ -6261,7 +6325,7 @@ external interface BuildInvalidedProject<T : BuilderProgram> : InvalidatedProjec
   fun getSyntacticDiagnostics(sourceFile: SourceFile = definedExternally, cancellationToken: CancellationToken = definedExternally): Array<Diagnostic>
   fun getAllDependencies(sourceFile: SourceFile): Array<String>
   fun getSemanticDiagnostics(sourceFile: SourceFile = definedExternally, cancellationToken: CancellationToken = definedExternally): Array<Diagnostic>
-  fun getSemanticDiagnosticsOfNextAffectedFile(cancellationToken: CancellationToken = definedExternally, ignoreSourceFile: (sourceFile: SourceFile) -> Boolean = definedExternally): `T$14`<Array<Diagnostic>>?
+  fun getSemanticDiagnosticsOfNextAffectedFile(cancellationToken: CancellationToken = definedExternally, ignoreSourceFile: (sourceFile: SourceFile) -> Boolean = definedExternally): `T$28`<Array<Diagnostic>>?
   fun emit(targetSourceFile: SourceFile = definedExternally, writeFile: WriteFileCallback = definedExternally, cancellationToken: CancellationToken = definedExternally, emitOnlyDtsFiles: Boolean = definedExternally, customTransformers: CustomTransformers = definedExternally): EmitResult?
 }
 
@@ -6311,6 +6375,12 @@ external enum class LanguageServiceMode {
   Syntactic /* = 2 */
 }
 
+external interface IncompleteCompletionsCache {
+  fun get(): CompletionInfo?
+  fun set(response: CompletionInfo)
+  fun clear()
+}
+
 external interface LanguageServiceHost : GetEffectiveTypeRootsHost {
   fun getCompilationSettings(): CompilerOptions
   val getNewLine: (() -> String)?
@@ -6344,12 +6414,6 @@ external interface LanguageServiceHost : GetEffectiveTypeRootsHost {
   val getParsedCommandLine: ((fileName: String) -> ParsedCommandLine?)?
 }
 
-external interface `T$15` {
-  var metadata: Any?
-    get() = definedExternally
-    set(value) = definedExternally
-}
-
 external enum class SemanticClassificationFormat {
   Original /* = "original" */,
   TwentyTwenty /* = "2020" */
@@ -6367,7 +6431,7 @@ external interface LanguageService {
   fun getSemanticClassifications(fileName: String, span: TextSpan, format: SemanticClassificationFormat): dynamic /* Array<ClassifiedSpan> | Array<ClassifiedSpan2020> */
   fun getEncodedSyntacticClassifications(fileName: String, span: TextSpan): Classifications
   fun getEncodedSemanticClassifications(fileName: String, span: TextSpan, format: SemanticClassificationFormat = definedExternally): Classifications
-  fun getCompletionsAtPosition(fileName: String, position: Number, options: GetCompletionsAtPositionOptions?): CompletionInfo /* CompletionInfo & `T$15` */
+  fun getCompletionsAtPosition(fileName: String, position: Number, options: GetCompletionsAtPositionOptions?): CompletionInfo /* CompletionInfo & `T$12` */
   fun getCompletionEntryDetails(fileName: String, position: Number, entryName: String, formatOptions: FormatCodeOptions?, source: String?, preferences: UserPreferences?, data: CompletionEntryData?): CompletionEntryDetails?
   fun getCompletionEntryDetails(fileName: String, position: Number, entryName: String, formatOptions: FormatCodeSettings?, source: String?, preferences: UserPreferences?, data: CompletionEntryData?): CompletionEntryDetails?
   fun getCompletionEntrySymbol(fileName: String, position: Number, name: String, source: String?): Symbol?
@@ -6393,6 +6457,7 @@ external interface LanguageService {
   fun prepareCallHierarchy(fileName: String, position: Number): dynamic /* CallHierarchyItem? | Array<CallHierarchyItem>? */
   fun provideCallHierarchyIncomingCalls(fileName: String, position: Number): Array<CallHierarchyIncomingCall>
   fun provideCallHierarchyOutgoingCalls(fileName: String, position: Number): Array<CallHierarchyOutgoingCall>
+  fun provideInlayHints(fileName: String, span: TextSpan, preferences: UserPreferences?): Array<InlayHint>
   fun getOutliningSpans(fileName: String): Array<OutliningSpan>
   fun getTodoComments(fileName: String, descriptors: Array<TodoCommentDescriptor>): Array<TodoComment>
   fun getBraceMatchingAtPosition(fileName: String, position: Number): Array<TextSpan>
@@ -6451,8 +6516,17 @@ external interface OrganizeImportsArgs : CombinedCodeFixScope {
     set(value) = definedExternally
 }
 
+external enum class CompletionTriggerKind {
+  Invoked /* = 1 */,
+  TriggerCharacter /* = 2 */,
+  TriggerForIncompleteCompletions /* = 3 */
+}
+
 external interface GetCompletionsAtPositionOptions : UserPreferences {
   var triggerCharacter: String? /* "." | """ | "'" | "`" | "/" | "@" | "<" | "#" | " " */
+    get() = definedExternally
+    set(value) = definedExternally
+  var triggerKind: CompletionTriggerKind?
     get() = definedExternally
     set(value) = definedExternally
   var includeExternalModuleExports: Boolean?
@@ -6461,6 +6535,23 @@ external interface GetCompletionsAtPositionOptions : UserPreferences {
   var includeInsertTextCompletions: Boolean?
     get() = definedExternally
     set(value) = definedExternally
+}
+
+external interface InlayHintsOptions : UserPreferences {
+  val includeInlayParameterNameHints: String? /* "none" | "literals" | "all" */
+    get() = definedExternally
+  val includeInlayParameterNameHintsWhenArgumentMatchesName: Boolean?
+    get() = definedExternally
+  val includeInlayFunctionParameterTypeHints: Boolean?
+    get() = definedExternally
+  val includeInlayVariableTypeHints: Boolean?
+    get() = definedExternally
+  val includeInlayPropertyDeclarationTypeHints: Boolean?
+    get() = definedExternally
+  val includeInlayFunctionLikeReturnTypeHints: Boolean?
+    get() = definedExternally
+  val includeInlayEnumMemberValueHints: Boolean?
+    get() = definedExternally
 }
 
 external interface SignatureHelpItemsOptions {
@@ -6551,6 +6642,24 @@ external interface CallHierarchyIncomingCall {
 external interface CallHierarchyOutgoingCall {
   var to: CallHierarchyItem
   var fromSpans: Array<TextSpan>
+}
+
+external enum class InlayHintKind {
+  Type /* = "Type" */,
+  Parameter /* = "Parameter" */,
+  Enum /* = "Enum" */
+}
+
+external interface InlayHint {
+  var text: String
+  var position: Number
+  var kind: InlayHintKind
+  var whitespaceBefore: Boolean?
+    get() = definedExternally
+    set(value) = definedExternally
+  var whitespaceAfter: Boolean?
+    get() = definedExternally
+    set(value) = definedExternally
 }
 
 external interface TodoCommentDescriptor {
@@ -7246,6 +7355,15 @@ external enum class ClassificationType {
   bigintLiteral /* = 25 */
 }
 
+external interface InlayHintsContext {
+  var file: SourceFile
+  var program: Program
+  var cancellationToken: CancellationToken
+  var host: LanguageServiceHost
+  var span: TextSpan
+  var preferences: InlayHintsOptions
+}
+
 external fun createClassifier(): Classifier
 
 external interface DocumentHighlights {
@@ -7255,18 +7373,18 @@ external interface DocumentHighlights {
 
 external interface DocumentRegistry {
   fun acquireDocument(fileName: String, compilationSettings: CompilerOptions, scriptSnapshot: IScriptSnapshot, version: String, scriptKind: ScriptKind = definedExternally): SourceFile
-  fun acquireDocumentWithKey(fileName: String, path: String /* String & `T$3` */, compilationSettings: CompilerOptions, key: String /* String & `T$16` */, scriptSnapshot: IScriptSnapshot, version: String, scriptKind: ScriptKind = definedExternally): SourceFile
+  fun acquireDocumentWithKey(fileName: String, path: String /* String & `T$3` */, compilationSettings: CompilerOptions, key: String /* String & `T$29` */, scriptSnapshot: IScriptSnapshot, version: String, scriptKind: ScriptKind = definedExternally): SourceFile
   fun updateDocument(fileName: String, compilationSettings: CompilerOptions, scriptSnapshot: IScriptSnapshot, version: String, scriptKind: ScriptKind = definedExternally): SourceFile
-  fun updateDocumentWithKey(fileName: String, path: String /* String & `T$3` */, compilationSettings: CompilerOptions, key: String /* String & `T$16` */, scriptSnapshot: IScriptSnapshot, version: String, scriptKind: ScriptKind = definedExternally): SourceFile
-  fun getKeyForCompilationSettings(settings: CompilerOptions): String /* String & `T$16` */
+  fun updateDocumentWithKey(fileName: String, path: String /* String & `T$3` */, compilationSettings: CompilerOptions, key: String /* String & `T$29` */, scriptSnapshot: IScriptSnapshot, version: String, scriptKind: ScriptKind = definedExternally): SourceFile
+  fun getKeyForCompilationSettings(settings: CompilerOptions): String /* String & `T$29` */
   fun releaseDocument(fileName: String, compilationSettings: CompilerOptions)
   fun releaseDocument(fileName: String, compilationSettings: CompilerOptions, scriptKind: ScriptKind)
-  fun releaseDocumentWithKey(path: String /* String & `T$3` */, key: String /* String & `T$16` */)
-  fun releaseDocumentWithKey(path: String /* String & `T$3` */, key: String /* String & `T$16` */, scriptKind: ScriptKind)
+  fun releaseDocumentWithKey(path: String /* String & `T$3` */, key: String /* String & `T$29` */)
+  fun releaseDocumentWithKey(path: String /* String & `T$3` */, key: String /* String & `T$29` */, scriptKind: ScriptKind)
   fun reportStats(): String
 }
 
-external interface `T$16` {
+external interface `T$29` {
   var __bucketKey: Any
 }
 
@@ -7506,7 +7624,7 @@ external var createIndexedAccessTypeNode: (objectType: TypeNode, indexType: Type
 
 external var updateIndexedAccessTypeNode: (node: IndexedAccessTypeNode, objectType: TypeNode, indexType: TypeNode) -> IndexedAccessTypeNode
 
-//external var createMappedTypeNode: (readonlyToken: dynamic /* ReadonlyKeyword? | PlusToken? | MinusToken? */, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: dynamic /* QuestionToken? | PlusToken? | MinusToken? */, type: TypeNode?) -> MappedTypeNode
+external var createMappedTypeNode: (readonlyToken: dynamic /* ReadonlyKeyword? | PlusToken? | MinusToken? */, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: dynamic /* QuestionToken? | PlusToken? | MinusToken? */, type: TypeNode?) -> MappedTypeNode
 
 external var updateMappedTypeNode: (node: MappedTypeNode, readonlyToken: dynamic /* ReadonlyKeyword? | PlusToken? | MinusToken? */, typeParameter: TypeParameterDeclaration, nameType: TypeNode?, questionToken: dynamic /* QuestionToken? | PlusToken? | MinusToken? */, type: TypeNode?) -> MappedTypeNode
 
@@ -7598,9 +7716,7 @@ external var createPostfix: (operand: Expression, operator: dynamic /* SyntaxKin
 
 external var updatePostfix: (node: PostfixUnaryExpression, operand: Expression) -> PostfixUnaryExpression
 
-external var createBinary: (
-  left: Expression, operator: dynamic /* SyntaxKind.QuestionQuestionToken | ExponentiationOperator | SyntaxKind.AsteriskToken | SyntaxKind.SlashToken | SyntaxKind.PercentToken | SyntaxKind.PlusToken | SyntaxKind.MinusToken | SyntaxKind.LessThanLessThanToken | SyntaxKind.GreaterThanGreaterThanToken | SyntaxKind.GreaterThanGreaterThanGreaterThanToken | SyntaxKind.LessThanToken | SyntaxKind.LessThanEqualsToken | SyntaxKind.GreaterThanToken | SyntaxKind.GreaterThanEqualsToken | SyntaxKind.InstanceOfKeyword | SyntaxKind.InKeyword | SyntaxKind.EqualsEqualsToken | SyntaxKind.EqualsEqualsEqualsToken | SyntaxKind.ExclamationEqualsEqualsToken | SyntaxKind.ExclamationEqualsToken | SyntaxKind.AmpersandToken | SyntaxKind.BarToken | SyntaxKind.CaretToken | SyntaxKind.AmpersandAmpersandToken | SyntaxKind.BarBarToken | SyntaxKind.EqualsToken | SyntaxKind.PlusEqualsToken | SyntaxKind.MinusEqualsToken | SyntaxKind.AsteriskAsteriskEqualsToken | SyntaxKind.AsteriskEqualsToken | SyntaxKind.SlashEqualsToken | SyntaxKind.PercentEqualsToken | SyntaxKind.AmpersandEqualsToken | SyntaxKind.BarEqualsToken | SyntaxKind.CaretEqualsToken | SyntaxKind.LessThanLessThanEqualsToken | SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken | SyntaxKind.GreaterThanGreaterThanEqualsToken | SyntaxKind.BarBarEqualsToken | SyntaxKind.AmpersandAmpersandEqualsToken | SyntaxKind.QuestionQuestionEqualsToken | SyntaxKind.CommaToken | BinaryOperatorToken */, right: Expression
-) -> BinaryExpression
+external var createBinary: (left: Expression, operator: dynamic /* SyntaxKind.QuestionQuestionToken | ExponentiationOperator | SyntaxKind.AsteriskToken | SyntaxKind.SlashToken | SyntaxKind.PercentToken | SyntaxKind.PlusToken | SyntaxKind.MinusToken | SyntaxKind.LessThanLessThanToken | SyntaxKind.GreaterThanGreaterThanToken | SyntaxKind.GreaterThanGreaterThanGreaterThanToken | SyntaxKind.LessThanToken | SyntaxKind.LessThanEqualsToken | SyntaxKind.GreaterThanToken | SyntaxKind.GreaterThanEqualsToken | SyntaxKind.InstanceOfKeyword | SyntaxKind.InKeyword | SyntaxKind.EqualsEqualsToken | SyntaxKind.EqualsEqualsEqualsToken | SyntaxKind.ExclamationEqualsEqualsToken | SyntaxKind.ExclamationEqualsToken | SyntaxKind.AmpersandToken | SyntaxKind.BarToken | SyntaxKind.CaretToken | SyntaxKind.AmpersandAmpersandToken | SyntaxKind.BarBarToken | SyntaxKind.EqualsToken | SyntaxKind.PlusEqualsToken | SyntaxKind.MinusEqualsToken | SyntaxKind.AsteriskAsteriskEqualsToken | SyntaxKind.AsteriskEqualsToken | SyntaxKind.SlashEqualsToken | SyntaxKind.PercentEqualsToken | SyntaxKind.AmpersandEqualsToken | SyntaxKind.BarEqualsToken | SyntaxKind.CaretEqualsToken | SyntaxKind.LessThanLessThanEqualsToken | SyntaxKind.GreaterThanGreaterThanGreaterThanEqualsToken | SyntaxKind.GreaterThanGreaterThanEqualsToken | SyntaxKind.BarBarEqualsToken | SyntaxKind.AmpersandAmpersandEqualsToken | SyntaxKind.QuestionQuestionEqualsToken | SyntaxKind.CommaToken | BinaryOperatorToken */, right: Expression) -> BinaryExpression
 
 external var updateConditional: (node: ConditionalExpression, condition: Expression, questionToken: QuestionToken, whenTrue: Expression, colonToken: ColonToken, whenFalse: Expression) -> ConditionalExpression
 
@@ -7611,29 +7727,29 @@ external var updateTemplateExpression: (node: TemplateExpression, head: Template
 external object createTemplateHead {
   @nativeInvoke
   operator fun invoke(text: String, rawText: String? = definedExternally, templateFlags: TokenFlags? = definedExternally): TemplateHead
-  @nativeInvoke
-  operator fun invoke(text: String?, rawText: String, templateFlags: TokenFlags? = definedExternally): TemplateHead
+//  @nativeInvoke
+//  operator fun invoke(text: String?, rawText: String, templateFlags: TokenFlags? = definedExternally): TemplateHead
 }
 
 external object createTemplateMiddle {
   @nativeInvoke
   operator fun invoke(text: String, rawText: String? = definedExternally, templateFlags: TokenFlags? = definedExternally): TemplateMiddle
-  @nativeInvoke
-  operator fun invoke(text: String?, rawText: String, templateFlags: TokenFlags? = definedExternally): TemplateMiddle
+//  @nativeInvoke
+//  operator fun invoke(text: String?, rawText: String, templateFlags: TokenFlags? = definedExternally): TemplateMiddle
 }
 
 external object createTemplateTail {
   @nativeInvoke
   operator fun invoke(text: String, rawText: String? = definedExternally, templateFlags: TokenFlags? = definedExternally): TemplateTail
-  @nativeInvoke
-  operator fun invoke(text: String?, rawText: String, templateFlags: TokenFlags? = definedExternally): TemplateTail
+//  @nativeInvoke
+//  operator fun invoke(text: String?, rawText: String, templateFlags: TokenFlags? = definedExternally): TemplateTail
 }
 
 external object createNoSubstitutionTemplateLiteral {
   @nativeInvoke
   operator fun invoke(text: String, rawText: String? = definedExternally): NoSubstitutionTemplateLiteral
-  @nativeInvoke
-  operator fun invoke(text: String?, rawText: String): NoSubstitutionTemplateLiteral
+//  @nativeInvoke
+//  operator fun invoke(text: String?, rawText: String): NoSubstitutionTemplateLiteral
 }
 
 external var updateYield: (node: YieldExpression, asteriskToken: AsteriskToken?, expression: Expression?) -> YieldExpression
@@ -7820,47 +7936,47 @@ external var updateExternalModuleReference: (node: ExternalModuleReference, expr
 
 external var createJSDocTypeExpression: (type: TypeNode) -> JSDocTypeExpression
 
-external var createJSDocTypeTag: (tagName: Identifier?, typeExpression: JSDocTypeExpression, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink */>? */) -> JSDocTypeTag
+external var createJSDocTypeTag: (tagName: Identifier?, typeExpression: JSDocTypeExpression, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? */) -> JSDocTypeTag
 
-external var createJSDocReturnTag: (tagName: Identifier?, typeExpression: JSDocTypeExpression?, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink */>? */) -> JSDocReturnTag
+external var createJSDocReturnTag: (tagName: Identifier?, typeExpression: JSDocTypeExpression?, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? */) -> JSDocReturnTag
 
-external var createJSDocThisTag: (tagName: Identifier?, typeExpression: JSDocTypeExpression, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink */>? */) -> JSDocThisTag
+external var createJSDocThisTag: (tagName: Identifier?, typeExpression: JSDocTypeExpression, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? */) -> JSDocThisTag
 
-external var createJSDocComment: (comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink */>? */, tags: Array<JSDocTag>?) -> JSDoc
+external var createJSDocComment: (comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? */, tags: Array<JSDocTag>?) -> JSDoc
 
-external var createJSDocParameterTag: (tagName: Identifier?, name: dynamic /* Identifier | QualifiedName */, isBracketed: Boolean, typeExpression: JSDocTypeExpression?, isNameFirst: Boolean?, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink */>? */) -> JSDocParameterTag
+external var createJSDocParameterTag: (tagName: Identifier?, name: dynamic /* Identifier | QualifiedName */, isBracketed: Boolean, typeExpression: JSDocTypeExpression?, isNameFirst: Boolean?, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? */) -> JSDocParameterTag
 
-external var createJSDocClassTag: (tagName: Identifier?, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink */>? */) -> JSDocClassTag
+external var createJSDocClassTag: (tagName: Identifier?, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? */) -> JSDocClassTag
 
-external var createJSDocAugmentsTag: (tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$4` */, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink */>? */) -> JSDocAugmentsTag
+external var createJSDocAugmentsTag: (tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$21` */, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? */) -> JSDocAugmentsTag
 
-external var createJSDocEnumTag: (tagName: Identifier?, typeExpression: JSDocTypeExpression, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink */>? */) -> JSDocEnumTag
+external var createJSDocEnumTag: (tagName: Identifier?, typeExpression: JSDocTypeExpression, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? */) -> JSDocEnumTag
 
-external var createJSDocTemplateTag: (tagName: Identifier?, constraint: JSDocTypeExpression?, typeParameters: Array<TypeParameterDeclaration>, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink */>? */) -> JSDocTemplateTag
+external var createJSDocTemplateTag: (tagName: Identifier?, constraint: JSDocTypeExpression?, typeParameters: Array<TypeParameterDeclaration>, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? */) -> JSDocTemplateTag
 
-external var createJSDocTypedefTag: (tagName: Identifier?, typeExpression: dynamic /* JSDocTypeLiteral? | JSDocTypeExpression? */, fullName: dynamic /* Identifier? | JSDocNamespaceDeclaration? */, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink */>? */) -> JSDocTypedefTag
+external var createJSDocTypedefTag: (tagName: Identifier?, typeExpression: dynamic /* JSDocTypeLiteral? | JSDocTypeExpression? */, fullName: dynamic /* Identifier? | JSDocNamespaceDeclaration? */, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? */) -> JSDocTypedefTag
 
-external var createJSDocCallbackTag: (tagName: Identifier?, typeExpression: JSDocSignature, fullName: dynamic /* Identifier? | JSDocNamespaceDeclaration? */, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink */>? */) -> JSDocCallbackTag
+external var createJSDocCallbackTag: (tagName: Identifier?, typeExpression: JSDocSignature, fullName: dynamic /* Identifier? | JSDocNamespaceDeclaration? */, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? */) -> JSDocCallbackTag
 
 external var createJSDocSignature: (typeParameters: Array<JSDocTemplateTag>?, parameters: Array<JSDocParameterTag>, type: JSDocReturnTag?) -> JSDocSignature
 
-external var createJSDocPropertyTag: (tagName: Identifier?, name: dynamic /* Identifier | QualifiedName */, isBracketed: Boolean, typeExpression: JSDocTypeExpression?, isNameFirst: Boolean?, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink */>? */) -> JSDocPropertyTag
+external var createJSDocPropertyTag: (tagName: Identifier?, name: dynamic /* Identifier | QualifiedName */, isBracketed: Boolean, typeExpression: JSDocTypeExpression?, isNameFirst: Boolean?, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? */) -> JSDocPropertyTag
 
 external var createJSDocTypeLiteral: (jsDocPropertyTags: Array<JSDocPropertyLikeTag>?, isArrayType: Boolean?) -> JSDocTypeLiteral
 
-external var createJSDocImplementsTag: (tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$4` */, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink */>? */) -> JSDocImplementsTag
+external var createJSDocImplementsTag: (tagName: Identifier?, className: ExpressionWithTypeArguments /* ExpressionWithTypeArguments & `T$21` */, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? */) -> JSDocImplementsTag
 
-external var createJSDocAuthorTag: (tagName: Identifier?, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink */>? */) -> JSDocAuthorTag
+external var createJSDocAuthorTag: (tagName: Identifier?, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? */) -> JSDocAuthorTag
 
-external var createJSDocPublicTag: (tagName: Identifier?, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink */>? */) -> JSDocPublicTag
+external var createJSDocPublicTag: (tagName: Identifier?, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? */) -> JSDocPublicTag
 
-external var createJSDocPrivateTag: (tagName: Identifier?, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink */>? */) -> JSDocPrivateTag
+external var createJSDocPrivateTag: (tagName: Identifier?, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? */) -> JSDocPrivateTag
 
-external var createJSDocProtectedTag: (tagName: Identifier?, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink */>? */) -> JSDocProtectedTag
+external var createJSDocProtectedTag: (tagName: Identifier?, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? */) -> JSDocProtectedTag
 
-external var createJSDocReadonlyTag: (tagName: Identifier?, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink */>? */) -> JSDocReadonlyTag
+external var createJSDocReadonlyTag: (tagName: Identifier?, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? */) -> JSDocReadonlyTag
 
-external var createJSDocTag: (tagName: Identifier, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink */>? */) -> JSDocUnknownTag
+external var createJSDocTag: (tagName: Identifier, comment: dynamic /* String? | NodeArray<dynamic /* JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain */>? */) -> JSDocUnknownTag
 
 external var createJsxElement: (openingElement: JsxOpeningElement, children: Array<dynamic /* JsxText | JsxExpression | JsxElement | JsxSelfClosingElement | JsxFragment */>, closingElement: JsxClosingElement) -> JsxElement
 
@@ -7997,14 +8113,14 @@ external var createTypePredicateNode: (parameterName: dynamic /* Identifier | Th
 external var updateTypePredicateNode: (node: TypePredicateNode, parameterName: dynamic /* Identifier | ThisTypeNode */, type: TypeNode) -> TypePredicateNode
 
 external object createLiteral {
+//  @nativeInvoke
+//  operator fun invoke(value: Any /* String | StringLiteral | NoSubstitutionTemplateLiteral | NumericLiteral | Identifier */): StringLiteral
+//  @nativeInvoke
+//  operator fun invoke(value: Any /* Number | PseudoBigInt */): NumericLiteral
   @nativeInvoke
-  operator fun invoke(value: Any /* String | StringLiteral | NoSubstitutionTemplateLiteral | NumericLiteral | Identifier */): StringLiteral
-  @nativeInvoke
-  operator fun invoke(value: Any /* Number | PseudoBigInt */): NumericLiteral
-  @nativeInvoke
-  operator fun invoke(value: Boolean): dynamic /* TrueLiteral | FalseLiteral */
-  @nativeInvoke
-  operator fun invoke(value: Any /* String | Number | PseudoBigInt | Boolean */): PrimaryExpression
+  operator fun invoke(value: dynamic): dynamic /* TrueLiteral | FalseLiteral */
+//  @nativeInvoke
+//  operator fun invoke(value: Any /* String | Number | PseudoBigInt | Boolean */): PrimaryExpression
 }
 
 external var createMethodSignature: (typeParameters: Array<TypeParameterDeclaration>?, parameters: Array<ParameterDeclaration>, type: TypeNode?, name: dynamic /* String | Identifier | StringLiteral | NumericLiteral | ComputedPropertyName | PrivateIdentifier */, questionToken: QuestionToken?) -> MethodSignature

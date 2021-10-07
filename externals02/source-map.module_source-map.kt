@@ -104,8 +104,8 @@ external interface CodeWithSourceMap {
 
 external interface SourceMapConsumer {
     fun computeColumnSpans()
-    fun originalPositionFor(generatedPosition: Position /* Position & `T$23` */): NullableMappedPosition
-    fun generatedPositionFor(originalPosition: MappedPosition /* MappedPosition & `T$23` */): NullablePosition
+    fun originalPositionFor(generatedPosition: Position /* Position & `T$19` */): NullableMappedPosition
+    fun generatedPositionFor(originalPosition: MappedPosition /* MappedPosition & `T$19` */): NullablePosition
     fun allGeneratedPositionsFor(originalPosition: MappedPosition): Array<NullablePosition>
     fun hasContentsOfAllSources(): Boolean
     fun sourceContentFor(source: String, returnNullOnMissing: Boolean = definedExternally): String?
@@ -145,7 +145,7 @@ external interface IndexedSourceMapConsumerConstructor {
     var prototype: IndexedSourceMapConsumer
 }
 
-external open class SourceMapGenerator(startOfSourceMap: StartOfSourceMap = definedExternally) {
+open external class SourceMapGenerator(startOfSourceMap: StartOfSourceMap = definedExternally) {
     open fun addMapping(mapping: Mapping)
     open fun setSourceContent(sourceFile: String, sourceContent: String)
     open fun applySourceMap(sourceMapConsumer: SourceMapConsumer, sourceFile: String = definedExternally, sourceMapPath: String = definedExternally)
@@ -157,7 +157,7 @@ external open class SourceMapGenerator(startOfSourceMap: StartOfSourceMap = defi
     }
 }
 
-external open class SourceNode {
+open external class SourceNode {
     open var children: Array<SourceNode>
     open var sourceContents: Any
     open var line: Number

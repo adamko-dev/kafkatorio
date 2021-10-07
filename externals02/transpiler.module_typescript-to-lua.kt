@@ -30,18 +30,18 @@ external interface EmitOptions : TranspileOptions {
 }
 
 external interface EmitResult {
-    var emitSkipped: Boolean
+    var emitSkipped: Boolean?
     var diagnostics: Array<Diagnostic>
 }
 
-external interface `T$24` {
+external interface `T$20` {
     var emitPlan: Array<EmitFile>
 }
 
-external open class Transpiler(__0: TranspilerOptions = definedExternally) {
+open external class Transpiler(__0: TranspilerOptions = definedExternally) {
     open var emitHost: EmitHost
     open fun emit(emitOptions: EmitOptions): EmitResult
-    open fun getEmitPlan(program: Program, diagnostics: Array<Diagnostic>, files: Array<ProcessedFile>): `T$24`
+    open fun getEmitPlan(program: Program, diagnostics: Array<Diagnostic>, files: Array<ProcessedFile>): `T$20`
 }
 
 external fun getEmitPath(file: String, program: Program): String

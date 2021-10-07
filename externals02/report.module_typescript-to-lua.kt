@@ -20,7 +20,7 @@ import ts.Diagnostic
 import ts.System
 import ts.DiagnosticReporter
 
-external interface `T$17` {
+external interface `T$13` {
     var code: Any
     var reportsUnnecessary: Any?
         get() = definedExternally
@@ -43,6 +43,6 @@ external interface `T$17` {
         set(value) = definedExternally
 }
 
-external var prepareDiagnosticForFormatting: (diagnostic: Diagnostic) -> `T$17`
+external var prepareDiagnosticForFormatting: (diagnostic: Diagnostic) -> `T$13`
 
 external fun createDiagnosticReporter(pretty: Boolean, system: System = definedExternally): DiagnosticReporter

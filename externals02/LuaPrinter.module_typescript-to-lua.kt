@@ -29,7 +29,7 @@ external interface PrintResult {
 
 external fun createPrinter(printers: Array<Printer>): Printer
 
-external open class LuaPrinter(emitHost: EmitHost, program: Program, fileName: String) {
+open external class LuaPrinter(emitHost: EmitHost, program: Program, fileName: String) {
     open var emitHost: Any
     open var currentIndent: Any
     open var sourceFile: Any

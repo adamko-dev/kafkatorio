@@ -1,6 +1,5 @@
 @file:JsQualifier("tsstdlib.Intl")
 @file:Suppress("INTERFACE_WITH_SUPERCLASS", "OVERRIDING_FINAL_MEMBER", "RETURN_TYPE_MISMATCH_ON_OVERRIDE", "CONFLICTING_OVERLOADS")
-package tsstdlib.Intl
 
 import kotlin.js.*
 import org.khronos.webgl.*
@@ -41,10 +40,10 @@ external interface ResolvedCollatorOptions {
     var locale: String
     var usage: String
     var sensitivity: String
-    var ignorePunctuation: Boolean
+    var ignorePunctuation: Boolean?
     var collation: String
     var caseFirst: String
-    var numeric: Boolean
+    var numeric: Boolean?
 }
 
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
@@ -111,7 +110,7 @@ external interface ResolvedNumberFormatOptions {
     var maximumSignificantDigits: Number?
         get() = definedExternally
         set(value) = definedExternally
-    var useGrouping: Boolean
+    var useGrouping: Boolean?
 }
 
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")

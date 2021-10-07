@@ -395,9 +395,9 @@ external interface UnaryExpression : Expression {
 
 external fun isUnaryExpression(node: Node): Boolean
 
-external fun createUnaryExpression(operand: Expression, operator: SyntaxKind = definedExternally, tsOriginal: ts.Node = definedExternally): UnaryExpression
+external fun createUnaryExpression(operand: Expression, operator: dynamic, tsOriginal: ts.Node = definedExternally): UnaryExpression
 
-external fun createUnaryExpression(operand: Expression, operator: SyntaxKind = definedExternally): UnaryExpression
+external fun createUnaryExpression(operand: Expression, operator: dynamic): UnaryExpression
 
 external interface BinaryExpression : Expression {
     var operator: dynamic /* SyntaxKind.AdditionOperator | SyntaxKind.SubtractionOperator | SyntaxKind.MultiplicationOperator | SyntaxKind.DivisionOperator | SyntaxKind.FloorDivisionOperator | SyntaxKind.ModuloOperator | SyntaxKind.PowerOperator | SyntaxKind.ConcatOperator | SyntaxKind.EqualityOperator | SyntaxKind.InequalityOperator | SyntaxKind.LessThanOperator | SyntaxKind.LessEqualOperator | SyntaxKind.GreaterThanOperator | SyntaxKind.GreaterEqualOperator | SyntaxKind.AndOperator | SyntaxKind.OrOperator | SyntaxKind.BitwiseAndOperator | SyntaxKind.BitwiseOrOperator | SyntaxKind.BitwiseExclusiveOrOperator | SyntaxKind.BitwiseRightShiftOperator | SyntaxKind.BitwiseLeftShiftOperator */
@@ -431,19 +431,19 @@ external fun isMethodCallExpression(node: Node): Boolean
 external fun createMethodCallExpression(prefixExpression: Expression, name: Identifier, params: Array<Expression>, tsOriginal: ts.Node = definedExternally): MethodCallExpression
 
 external interface Identifier : Expression {
-    var exportable: Boolean
+    var exportable: Boolean?
     var text: String
     var originalName: String?
         get() = definedExternally
         set(value) = definedExternally
-    var symbolId: Number? /* Number? & `T$18`? */
+    var symbolId: Number? /* Number? & `T$14`? */
         get() = definedExternally
         set(value) = definedExternally
 }
 
 external fun isIdentifier(node: Node): Boolean
 
-external fun createIdentifier(text: String, tsOriginal: ts.Node = definedExternally, symbolId: Number /* Number & `T$18` */ = definedExternally, originalName: String = definedExternally): Identifier
+external fun createIdentifier(text: String, tsOriginal: ts.Node = definedExternally, symbolId: Number /* Number & `T$14` */ = definedExternally, originalName: String = definedExternally): Identifier
 
 external fun cloneIdentifier(identifier: Identifier, tsOriginal: ts.Node = definedExternally): Identifier
 
@@ -464,7 +464,7 @@ external fun isFunctionDefinition(statement: VariableDeclarationStatement): Bool
 
 external fun isFunctionDefinition(statement: AssignmentStatement): Boolean
 
-external interface `T$21` {
+external interface `T$17` {
     var statements: dynamic /* JsTuple<ReturnStatement> */
         get() = definedExternally
         set(value) = definedExternally

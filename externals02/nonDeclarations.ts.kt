@@ -14,6 +14,7 @@ import org.w3c.notifications.*
 import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
+import ts.*
 
 typealias SortedReadonlyArray<T> = Array<T>
 
@@ -21,59 +22,59 @@ typealias SortedArray<T> = Array<T>
 
 typealias NodeArray<T> = Array<T>
 
-typealias DotToken = PunctuationToken<SyntaxKind>
+typealias DotToken = PunctuationToken<dynamic> // SyntaxKind.DotToken
 
-typealias DotDotDotToken = PunctuationToken<SyntaxKind>
+typealias DotDotDotToken = PunctuationToken<dynamic> // SyntaxKind.DotDotDotToken
 
-typealias QuestionToken = PunctuationToken<SyntaxKind>
+typealias QuestionToken = PunctuationToken<dynamic> // SyntaxKind.QuestionToken
 
-typealias ExclamationToken = PunctuationToken<SyntaxKind>
+typealias ExclamationToken = PunctuationToken<dynamic> // SyntaxKind.ExclamationToken
 
-typealias ColonToken = PunctuationToken<SyntaxKind>
+typealias ColonToken = PunctuationToken<dynamic> // SyntaxKind.ColonToken
 
-typealias EqualsToken = PunctuationToken<SyntaxKind>
+typealias EqualsToken = PunctuationToken<dynamic> // SyntaxKind.EqualsToken
 
-typealias AsteriskToken = PunctuationToken<SyntaxKind>
+typealias AsteriskToken = PunctuationToken<dynamic> // SyntaxKind.AsteriskToken
 
-typealias EqualsGreaterThanToken = PunctuationToken<SyntaxKind>
+typealias EqualsGreaterThanToken = PunctuationToken<dynamic> // SyntaxKind.EqualsGreaterThanToken
 
-typealias PlusToken = PunctuationToken<SyntaxKind>
+typealias PlusToken = PunctuationToken<dynamic> // SyntaxKind.PlusToken
 
-typealias MinusToken = PunctuationToken<SyntaxKind>
+typealias MinusToken = PunctuationToken<dynamic> // SyntaxKind.MinusToken
 
-typealias QuestionDotToken = PunctuationToken<SyntaxKind>
+typealias QuestionDotToken = PunctuationToken<dynamic> // SyntaxKind.QuestionDotToken
 
-typealias AssertsKeyword = KeywordToken<SyntaxKind>
+typealias AssertsKeyword = KeywordToken<dynamic> // SyntaxKind.AssertsKeyword
 
-typealias AwaitKeyword = KeywordToken<SyntaxKind>
+typealias AwaitKeyword = KeywordToken<dynamic> // SyntaxKind.AwaitKeyword
 
 typealias AwaitKeywordToken = AwaitKeyword
 
 typealias AssertsToken = AssertsKeyword
 
-typealias AbstractKeyword = ModifierToken<SyntaxKind>
+typealias AbstractKeyword = ModifierToken<dynamic> // SyntaxKind.AbstractKeyword
 
-typealias AsyncKeyword = ModifierToken<SyntaxKind>
+typealias AsyncKeyword = ModifierToken<dynamic> // SyntaxKind.AsyncKeyword
 
-typealias ConstKeyword = ModifierToken<SyntaxKind>
+typealias ConstKeyword = ModifierToken<dynamic> // SyntaxKind.ConstKeyword
 
-typealias DeclareKeyword = ModifierToken<SyntaxKind>
+typealias DeclareKeyword = ModifierToken<dynamic> // SyntaxKind.DeclareKeyword
 
-typealias DefaultKeyword = ModifierToken<SyntaxKind>
+typealias DefaultKeyword = ModifierToken<dynamic> // SyntaxKind.DefaultKeyword
 
-typealias ExportKeyword = ModifierToken<SyntaxKind>
+typealias ExportKeyword = ModifierToken<dynamic> // SyntaxKind.ExportKeyword
 
-typealias PrivateKeyword = ModifierToken<SyntaxKind>
+typealias PrivateKeyword = ModifierToken<dynamic> // SyntaxKind.PrivateKeyword
 
-typealias ProtectedKeyword = ModifierToken<SyntaxKind>
+typealias ProtectedKeyword = ModifierToken<dynamic> // SyntaxKind.ProtectedKeyword
 
-typealias PublicKeyword = ModifierToken<SyntaxKind>
+typealias PublicKeyword = ModifierToken<dynamic> // SyntaxKind.PublicKeyword
 
-typealias ReadonlyKeyword = ModifierToken<SyntaxKind>
+typealias ReadonlyKeyword = ModifierToken<dynamic> // SyntaxKind.ReadonlyKeyword
 
-typealias OverrideKeyword = ModifierToken<SyntaxKind>
+typealias OverrideKeyword = ModifierToken<dynamic> // SyntaxKind.OverrideKeyword
 
-typealias StaticKeyword = ModifierToken<SyntaxKind>
+typealias StaticKeyword = ModifierToken<dynamic> // SyntaxKind.StaticKeyword
 
 typealias ReadonlyToken = ReadonlyKeyword
 
@@ -109,14 +110,6 @@ typealias FileWatcherCallback = (fileName: String, eventKind: FileWatcherEventKi
 
 typealias DirectoryWatcherCallback = (fileName: String) -> Unit
 
-typealias ErrorCallback = (message: DiagnosticMessage, length: Number) -> Unit
-
 typealias DiagnosticReporter = (diagnostic: Diagnostic) -> Unit
-
-typealias WatchStatusReporter = (diagnostic: Diagnostic, newLine: String, options: CompilerOptions, errorCount: Number) -> Unit
-
-typealias CreateProgram<T> = (rootNames: Array<String>?, options: CompilerOptions?, host: CompilerHost, oldProgram: T, configFileParsingDiagnostics: Array<Diagnostic>, projectReferences: Array<ProjectReference>?) -> T
-
-typealias ReportEmitErrorSummary = (errorCount: Number) -> Unit
 
 typealias CodeActionCommand = InstallPackageAction
