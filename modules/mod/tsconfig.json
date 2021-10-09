@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "lib": [
+      "esnext"
+    ],
+    "moduleResolution": "node",
+    "types": [
+      "typed-factorio/runtime"
+    ],
+    "strict": true
+  },
+  "tstl": {
+    "luaTarget": "JIT",
+    "tstlVerbose": true
+  }
+}

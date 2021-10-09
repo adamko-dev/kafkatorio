@@ -1,0 +1,143 @@
+# @formatter:off
+
+##########
+[versions]
+##########
+
+## compilation ##
+jvm        = "11"
+kotlin     = "1.5.31"
+
+## libs ##
+http4k     = "4.13.1.0"
+slf4j      = "1.7.30"
+log4j2     = "2.14.1"
+qosLogback = "1.2.5"
+
+## test ##
+junit      = "5.8.0"
+kotest     = "4.6.3"
+
+
+#########
+[plugins]
+#########
+
+kotlinJvm           = { id = "org.jetbrains.kotlin.jvm",                    version.ref  = "kotlin" }
+kotlinJs            = { id = "org.jetbrains.kotlin.js",                     version.ref  = "kotlin" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.kotlin-serialization",   version.ref  = "kotlin" }
+
+loggingCapabilities = { id = "dev.jacomet.logging-capabilities",            version      = "0.9.0"  }
+shadowJar           = { id = "com.github.jengelman.gradle.plugins.shadow",  version      = "6.1.0"  }
+dependencyCheck     = { id = "com.github.ben-manes.versions",               version      = "0.39.0" }
+axionRelease        = { id = "pl.allegro.tech.build.axion-release",         version      = "1.13.3" }
+
+
+###########
+[libraries]
+###########
+
+twilio-sdk = { group = "com.twilio.sdk",        name = "twilio",         version = "8.19.1" }
+faker      = { group = "com.github.javafaker",  name = "javafaker",      version = "1.0.2"  }
+sendgrid   = { group = "com.sendgrid",          name = "sendgrid-java",  version = "4.7.4"  }
+
+## kotlin ##
+kotlin-bom         = { group = "org.jetbrains.kotlin",   name = "kotlin-bom",                  version.ref = "kotlin" }
+
+kotlinx-serde      = { group = "org.jetbrains.kotlinx",  name = "kotlinx-serialization-json",  version     = "1.2.2"  }
+kotlinx-coroutines = { group = "org.jetbrains.kotlinx",  name = "kotlinx-coroutines-core",     version     = "1.5.2"  }
+kotlinx-html       = { group = "org.jetbrains.kotlinx",  name = "kotlinx-html",                version     = "0.7.3"  }
+
+## http4k ##
+http4k-bom         = { group = "org.http4k",  name = "http4k-bom",                          version.ref = "http4k" }
+http4k-core        = { group = "org.http4k",  name = "http4k-core"                          }
+http4k-contract    = { group = "org.http4k",  name = "http4k-contract"                      }
+http4k-client      = { group = "org.http4k",  name = "http4k-client-okhttp"                 }
+http4k-server      = { group = "org.http4k",  name = "http4k-server-undertow"               }
+http4k-cloudnative = { group = "org.http4k",  name = "http4k-cloudnative"                   }
+#http4k-kotlinx     = { group = "org.http4k",  name = "http4k-format-kotlinx-serialization"  }
+http4k-format-json = { group = "org.http4k",  name = "http4k-format-jackson"                }
+http4k-format-xml  = { group = "org.http4k",  name = "http4k-format-jackson-xml"            }
+http4k-format-yaml = { group = "org.http4k",  name = "http4k-format-jackson-yaml"           }
+
+## logging ##
+slf4j-api       = { group = "org.slf4j",             name = "slf4j-api",                 version.ref = "slf4j"      }
+kotlin-logging  = { group = "io.github.microutils",  name = "kotlin-logging-jvm",        version     = "2.0.11"     }
+logback-core    = { group = "ch.qos.logback",        name = "logback-core",              version.ref = "qosLogback" }
+logback-classic = { group = "ch.qos.logback",        name = "logback-classic",           version.ref = "qosLogback" }
+logback-encoder = { group = "net.logstash.logback",  name = "logstash-logback-encoder",  version     = "6.6"        }
+
+## gcp ##
+gcp-bom    = { group = "com.google.cloud",  name = "libraries-bom",       version = "23.1.0" }
+gcp-pubsub = { group = "com.google.cloud",  name = "google-cloud-pubsub"                     }
+gcp-speech = { group = "com.google.cloud",  name = "google-cloud-speech"                     }
+
+
+#############
+### test  ###
+#############
+
+mockk = { group = "io.mockk", name = "mockk", version = "1.12.0" }
+
+## junit ##
+junit-bom      = { group = "org.junit",          name = "junit-bom",                version.ref = "junit"  }
+junit-api      = { group = "org.junit.jupiter",  name = "junit-jupiter-api",        version.ref = "junit"  }
+junit-engine   = { group = "org.junit.jupiter",  name = "junit-jupiter-engine",     version.ref = "junit"  }
+junit-launcher = { group = "org.junit.platform", name = "junit-platform-launcher",  version     = "1.7.2"  }
+
+## kotest ##
+kotest-core     = { group = "io.kotest",  name = "kotest-assertions-core-jvm",  version.ref = "kotest"  }
+kotest-datatest = { group = "io.kotest",  name = "kotest-framework-datatest",   version.ref = "kotest"  }
+kotest-runner   = { group = "io.kotest",  name = "kotest-runner-junit5-jvm",    version.ref = "kotest"  }
+kotest-prop     = { group = "io.kotest",  name = "kotest-property-jvm",         version.ref = "kotest"  }
+kotest-json     = { group = "io.kotest",  name = "kotest-assertions-json",      version.ref = "kotest"  }
+
+## http4k ##
+http4k-test-chaos    = { group = "org.http4k",  name = "http4k-testing-chaos",     version.ref = "http4k"  }
+http4k-test-approval = { group = "org.http4k",  name = "http4k-testing-approval",  version.ref = "http4k"  }
+http4k-test-kotest   = { group = "org.http4k",  name = "http4k-testing-kotest",    version.ref = "http4k"  }
+
+
+#########
+[bundles]
+#########
+
+logging = [
+    "slf4j-api",
+    "kotlin-logging",
+    "logback-core",
+    "logback-classic",
+    "logback-encoder",
+]
+
+kt-testing = [
+    "kotest-core",
+    "kotest-datatest",
+    "kotest-runner",
+    "kotest-prop",
+    "kotest-json",
+    "mockk",
+]
+
+junit-runtime = [
+    "junit-engine",
+    "junit-launcher",
+]
+
+http4k = [
+    "http4k-core",
+    "http4k-contract",
+    "http4k-client",
+    "http4k-server",
+    #    "http4k-kotlinx",
+    "http4k-cloudnative",
+    "http4k-format-xml",
+    "http4k-format-json",
+    "http4k-format-yaml",
+]
+
+http4k-test = [
+    "http4k-test-chaos",
+    "http4k-test-approval",
+    "http4k-test-kotest",
+]
