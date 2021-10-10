@@ -21,7 +21,7 @@ external interface LuaFile {
     fun flush(): Boolean
     fun <T : Array<dynamic /* "*n" | "*l" | "*a" | "*L" | Number */>> lines(vararg formats: T): Iterable<Any /* Any & LuaExtension<String /* "__luaMultiReturnBrand" */> */> /* Iterable<Any /* Any & LuaExtension<String /* "__luaMultiReturnBrand" */> */> & LuaIterator<Any /* Any & LuaExtension<String /* "__luaMultiReturnBrand" */> */, undefined> & LuaExtension<String /* "__luaIterableBrand" */> */
     fun read(): FileReadFormatToType<String /* "*l" */>?
-    fun <T> read(format: T): FileReadFormatToType? /* Any & LuaExtension<String /* "__luaMultiReturnBrand" */> */
+    fun <T> read(format: T): FileReadFormatToType<T>? /* Any & LuaExtension<String /* "__luaMultiReturnBrand" */> */
     fun seek(whence: String /* "set" | "cur" | "end" */ = definedExternally, offset: Number = definedExternally): dynamic /* JsTuple<Number> | JsTuple<Nothing?, String> */
     fun setvbuf(mode: String /* "no" | "full" | "line" */, size: Number = definedExternally)
     fun write(vararg args: Any /* String | Number */): dynamic /* JsTuple<LuaFile> | JsTuple<Nothing?, String> */

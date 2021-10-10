@@ -15,8 +15,8 @@ import org.w3c.workers.*
 import org.w3c.xhr.*
 import tsstdlib.Record
 
-external var _ENV: Record<String, Any>
+//external var _ENV: Record<String, Any>
 
-external fun collectgarbage(opt: String /* "isrunning" */): Boolean
+//external fun collectgarbage(opt: String /* "isrunning" */): Boolean
 
-external fun module(name: String, vararg options: Function<*>)
+//external fun module(name: String, vararg options: Function<*>)

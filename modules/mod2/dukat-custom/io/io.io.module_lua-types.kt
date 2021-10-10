@@ -42,7 +42,7 @@ external fun popen(prog: String, mode: String /* "r" | "w" */ = definedExternall
 
 external fun read(): FileReadFormatToType<String /* "*l" */>?
 
-external fun <T> read(format: T): FileReadFormatToType? /* Any & LuaExtension<String /* "__luaMultiReturnBrand" */> */
+external fun <T> read(format: T): FileReadFormatToType<T>? /* Any & LuaExtension<String /* "__luaMultiReturnBrand" */> */
 
 external var stderr: LuaFile
 

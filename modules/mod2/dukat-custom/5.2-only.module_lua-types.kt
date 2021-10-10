@@ -14,4 +14,4 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-external fun collectgarbage(opt: String /* "count" | "generational" | "incremental" */): dynamic /* Unit */
+//external fun collectgarbage(opt: String /* "count" | "generational" | "incremental" */): dynamic /* Unit */

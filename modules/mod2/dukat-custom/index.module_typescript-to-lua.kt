@@ -22,7 +22,8 @@ external interface AnyNotNil
 
 typealias LuaExtension<TBrand> = Any
 
-external var `$multi`: (values: T) -> T /* (values: T) -> T & LuaExtension<String /* "__luaMultiFunctionBrand" */> */
+//external var `$multi`: (values: T) -> T /* (values: T) -> T & LuaExtension<String /* "__luaMultiFunctionBrand" */> */
+external fun <T> `$multi`(values: T): T /* (values: T) -> T & LuaExtension<String /* "__luaMultiFunctionBrand" */> */
 
 external var `$range`: (start: Number, limit: Number, step: Number) -> Iterable<Number> /* (start: Number, limit: Number, step: Number) -> Iterable<Number> & LuaExtension<String /* "__luaRangeFunctionBrand" */> */
 
@@ -38,5 +39,5 @@ external interface LuaTable<TKey : AnyNotNil, TValue> {
     var has: (key: TKey) -> Boolean /* (key: TKey) -> Boolean & LuaExtension<String /* "__luaTableHasMethodBrand" */> */
     var delete: (key: TKey) -> Boolean /* (key: TKey) -> Boolean & LuaExtension<String /* "__luaTableDeleteMethodBrand" */> */
 
-    companion object : Any by definedExternally
+//    companion object : Any by definedExternally
 }

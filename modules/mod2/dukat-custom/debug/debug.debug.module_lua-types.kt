@@ -27,8 +27,8 @@ external fun gethook(thread: LuaThread = definedExternally): dynamic /* JsTuple<
 
 external interface FunctionInfo<T : Function<*>> {
     var nparams: Number
-    var isvararg: Boolean
-    var istailcall: Boolean
+    var isvararg: Boolean?
+    var istailcall: Boolean?
     var func: T
     var name: String?
         get() = definedExternally

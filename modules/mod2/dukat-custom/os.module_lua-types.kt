@@ -39,7 +39,7 @@ external interface LuaDateInfoResult {
     var hour: Number
     var min: Number
     var sec: Number
-    var isdst: Boolean
+    var isdst: Boolean?
     var yday: Number
     var wday: Number
 }

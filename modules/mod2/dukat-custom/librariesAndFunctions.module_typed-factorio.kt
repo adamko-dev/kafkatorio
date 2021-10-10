@@ -30,15 +30,15 @@ external interface SerpentOptions {
     var sortkeys: dynamic /* Boolean | (this: Unit, keys: Array<Any>, table: Any) -> Unit */
         get() = definedExternally
         set(value) = definedExternally
-    var sparse: Boolean
-    var compact: Boolean
-    var fatal: Boolean
-    var nocode: Boolean
-    var nohuge: Boolean
+    var sparse: Boolean?
+    var compact: Boolean?
+    var fatal: Boolean?
+    var nocode: Boolean?
+    var nohuge: Boolean?
     var maxlevel: Number
     var maxnum: Number
     var maxlength: Number
-    var metatostring: Boolean
+    var metatostring: Boolean?
     var numformat: String
     var valignore: Array<String>
     var keyallow: Array<String>

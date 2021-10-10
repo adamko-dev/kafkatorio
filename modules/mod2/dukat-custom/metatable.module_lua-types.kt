@@ -15,8 +15,10 @@ import org.w3c.workers.*
 import org.w3c.xhr.*
 
 external interface LuaMetatable<T, TIndex> {
-    val <T> __pairs: ((t: T) -> dynamic)?
-    val <T : Any?> __ipairs: ((t: T) -> dynamic)?
+//    val <T> __pairs: ((t: T) -> dynamic)?
+//    val <T : Any?> __ipairs: ((t: T) -> dynamic)?
+    fun <T> __pairs(t: T): dynamic
+    fun <T : Any?> __ipairs(t: T): dynamic
     val __add: ((operand: Any) -> Any)?
     val __sub: ((operand: Any) -> Any)?
     val __mul: ((operand: Any) -> Any)?

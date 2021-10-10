@@ -3,6 +3,7 @@
 @file:Suppress("INTERFACE_WITH_SUPERCLASS", "OVERRIDING_FINAL_MEMBER", "RETURN_TYPE_MISMATCH_ON_OVERRIDE", "CONFLICTING_OVERLOADS")
 package util
 
+import AnyNotNil
 import kotlin.js.*
 import org.khronos.webgl.*
 import org.w3c.dom.*
@@ -49,15 +50,13 @@ external fun multiply_color(c1: ColorTable, n: Number): dynamic /* JsTuple<Any, 
 
 external fun multiply_color(c1: Any /* JsTuple<Any, float, Any, float, Any, float, Any, float> */, n: Number): dynamic /* JsTuple<Any, float, Any, float, Any, float, Any, float> */
 
-external fun moveposition(position: Position, direction: defines.direction.north, distance: Number): Position
+external fun moveposition(position: Position, direction: defines.direction, distance: Number): Position?
+//external fun moveposition(position: Position, direction: defines.direction.north, distance: Number): Position
+//external fun moveposition(position: Position, direction: defines.direction.east, distance: Number): Position
+//external fun moveposition(position: Position, direction: defines.direction.south, distance: Number): Position
+//external fun moveposition(position: Position, direction: defines.direction.west, distance: Number): Position
 
-external fun moveposition(position: Position, direction: defines.direction.east, distance: Number): Position
-
-external fun moveposition(position: Position, direction: defines.direction.south, distance: Number): Position
-
-external fun moveposition(position: Position, direction: defines.direction.west, distance: Number): Position
-
-external fun moveposition(position: Position, direction: direction, distance: Number): Position?
+//external fun moveposition(position: Position, direction: direction, distance: Number): Position?
 
 external fun oppositedirection(direction: direction): direction
 
@@ -108,4 +107,4 @@ external fun <T> remove_from_list(list: Array<T>, value: T): Boolean
 
 external fun <T : Any> list_to_map(list: Array<T>): dynamic /* Record | LuaTable */
 
-external fun <T> list_to_map(list: T): LuaTable<Any, Boolean>
+external fun <T> list_to_map(list: T): LuaTable<AnyNotNil, Boolean>

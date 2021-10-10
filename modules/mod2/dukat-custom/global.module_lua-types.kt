@@ -48,7 +48,7 @@ external fun <T> ipairs(t: Record<Number, T>): Iterable<dynamic /* JsTuple<Numbe
 
 external fun next(table: Any?, index: Any = definedExternally): dynamic /* JsTuple<Any, Any> | JsTuple<> */
 
-external fun <TKey, TValue> pairs(t: LuaTable<TKey, TValue>): Iterable<dynamic /* JsTuple<TKey, NonNullable<TValue>> */> /* Iterable<dynamic /* JsTuple<TKey, NonNullable<TValue>> */> & LuaIterator<dynamic /* JsTuple<TKey, NonNullable<TValue>> */, undefined> & LuaExtension<String /* "__luaIterableBrand" */> */
+external fun <TKey : AnyNotNil, TValue> pairs(t: LuaTable<TKey, TValue>): Iterable<dynamic /* JsTuple<TKey, NonNullable<TValue>> */> /* Iterable<dynamic /* JsTuple<TKey, NonNullable<TValue>> */> & LuaIterator<dynamic /* JsTuple<TKey, NonNullable<TValue>> */, undefined> & LuaExtension<String /* "__luaIterableBrand" */> */
 
 external fun <T> pairs(t: T): Iterable<dynamic /* JsTuple<Any, NonNullable<Any>> */> /* Iterable<dynamic /* JsTuple<Any, NonNullable<Any>> */> & LuaIterator<dynamic /* JsTuple<Any, NonNullable<Any>> */, undefined> & LuaExtension<String /* "__luaIterableBrand" */> */
 

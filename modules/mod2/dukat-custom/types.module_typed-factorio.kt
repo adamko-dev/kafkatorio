@@ -35,7 +35,7 @@ external interface BaseSettingDefinition {
 
 external interface BoolSettingDefinition : BaseSettingDefinition {
     override var type: String /* "bool-setting" */
-    var default_value: Boolean
+    var default_value: Boolean?
     var forced_value: Boolean?
         get() = definedExternally
         set(value) = definedExternally

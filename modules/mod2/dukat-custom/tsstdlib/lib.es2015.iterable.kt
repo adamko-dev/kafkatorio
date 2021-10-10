@@ -23,7 +23,7 @@ external interface IteratorYieldResult<TYield> {
 }
 
 external interface IteratorReturnResult<TReturn> {
-    var done: Boolean
+    var done: Boolean?
     var value: TReturn
 }
 

@@ -37,7 +37,7 @@ external interface CustomInputEvent {
 external interface OnAiCommandCompletedEvent {
     var unit_number: uint
     var result: behavior_result
-    var was_distracted: Boolean
+    var was_distracted: Boolean?
     var name: Any
     var tick: uint
 }
@@ -54,11 +54,11 @@ external interface OnAreaClonedEvent {
     var destination_force: LuaForce?
         get() = definedExternally
         set(value) = definedExternally
-    var clone_tiles: Boolean
-    var clone_entities: Boolean
-    var clone_decoratives: Boolean
-    var clear_destination_entities: Boolean
-    var clear_destination_decoratives: Boolean
+    var clone_tiles: Boolean?
+    var clone_entities: Boolean?
+    var clone_decoratives: Boolean?
+    var clear_destination_entities: Boolean?
+    var clear_destination_decoratives: Boolean?
     var name: Any
     var tick: uint
 }
@@ -82,11 +82,11 @@ external interface OnBrushClonedEvent {
     var destination_force: LuaForce?
         get() = definedExternally
         set(value) = definedExternally
-    var clone_tiles: Boolean
-    var clone_entities: Boolean
-    var clone_decoratives: Boolean
-    var clear_destination_entities: Boolean
-    var clear_destination_decoratives: Boolean
+    var clone_tiles: Boolean?
+    var clone_entities: Boolean?
+    var clone_decoratives: Boolean?
+    var clear_destination_entities: Boolean?
+    var clear_destination_decoratives: Boolean?
     var name: Any
     var tick: uint
 }
@@ -319,7 +319,7 @@ external interface OnEntityRenamedEvent {
     var player_index: uint?
         get() = definedExternally
         set(value) = definedExternally
-    var by_script: Boolean
+    var by_script: Boolean?
     var entity: LuaEntity
     var old_name: String
     var name: Any
@@ -359,7 +359,7 @@ external interface OnEquipmentRemovedEvent {
 external interface OnForceCeaseFireChangedEvent {
     var force: LuaForce
     var other_force: LuaForce
-    var added: Boolean
+    var added: Boolean?
     var name: Any
     var tick: uint
 }
@@ -373,7 +373,7 @@ external interface OnForceCreatedEvent {
 external interface OnForceFriendsChangedEvent {
     var force: LuaForce
     var other_force: LuaForce
-    var added: Boolean
+    var added: Boolean?
     var name: Any
     var tick: uint
 }
@@ -419,9 +419,9 @@ external interface OnGuiClickEvent {
         set(value) = definedExternally
     var player_index: uint
     var button: mouse_button_type
-    var alt: Boolean
-    var control: Boolean
-    var shift: Boolean
+    var alt: Boolean?
+    var control: Boolean?
+    var shift: Boolean?
     var name: Any
     var tick: uint
 }
@@ -459,9 +459,9 @@ external interface OnGuiConfirmedEvent {
         get() = definedExternally
         set(value) = definedExternally
     var player_index: uint
-    var alt: Boolean
-    var control: Boolean
-    var shift: Boolean
+    var alt: Boolean?
+    var control: Boolean?
+    var shift: Boolean?
     var name: Any
     var tick: uint
 }
@@ -789,7 +789,7 @@ external interface OnPlayerDeconstructedAreaEvent {
         get() = definedExternally
         set(value) = definedExternally
     var item: String
-    var alt: Boolean
+    var alt: Boolean?
     var name: Any
     var tick: uint
 }
@@ -842,7 +842,7 @@ external interface OnPlayerDroppedItemEvent {
 external interface OnPlayerFastTransferredEvent {
     var player_index: uint
     var entity: LuaEntity
-    var from_player: Boolean
+    var from_player: Boolean?
     var name: Any
     var tick: uint
 }
@@ -852,7 +852,7 @@ external interface OnPlayerFlushedFluidEvent {
     var fluid: String
     var amount: double
     var entity: LuaEntity
-    var only_this_entity: Boolean
+    var only_this_entity: Boolean?
     var name: Any
     var tick: uint
 }
@@ -928,7 +928,7 @@ external interface OnPlayerMutedEvent {
 external interface OnPlayerPipetteEvent {
     var player_index: uint
     var item: LuaItemPrototype
-    var used_cheat_mode: Boolean
+    var used_cheat_mode: Boolean?
     var name: Any
     var tick: uint
 }
@@ -1012,7 +1012,7 @@ external interface OnPlayerSetupBlueprintEvent {
         get() = definedExternally
         set(value) = definedExternally
     var item: String
-    var alt: Boolean
+    var alt: Boolean?
     var mapping: LuaLazyLoadedValue<Record<uint, LuaEntity>>
     var name: Any
     var tick: uint
@@ -1020,7 +1020,7 @@ external interface OnPlayerSetupBlueprintEvent {
 
 external interface OnPlayerToggledAltModeEvent {
     var player_index: uint
-    var alt_mode: Boolean
+    var alt_mode: Boolean?
     var name: Any
     var tick: uint
 }
@@ -1070,7 +1070,7 @@ external interface OnPlayerUsedSpiderRemoteEvent {
     var player_index: uint
     var vehicle: LuaEntity
     var position: Position
-    var success: Boolean
+    var success: Boolean?
     var name: Any
     var tick: uint
 }
@@ -1099,11 +1099,11 @@ external interface OnPostEntityDiedEvent {
 external interface OnPreBuildEvent {
     var player_index: uint
     var position: Position
-    var shift_build: Boolean
+    var shift_build: Boolean?
     var direction: direction
-    var flip_horizontal: Boolean
-    var flip_vertical: Boolean
-    var created_by_moving: Boolean
+    var flip_horizontal: Boolean?
+    var flip_vertical: Boolean?
+    var created_by_moving: Boolean?
     var name: Any
     var tick: uint
 }
@@ -1223,14 +1223,14 @@ external interface OnPreSurfaceDeletedEvent {
 
 external interface OnResearchFinishedEvent {
     var research: LuaTechnology
-    var by_script: Boolean
+    var by_script: Boolean?
     var name: Any
     var tick: uint
 }
 
 external interface OnResearchReversedEvent {
     var research: LuaTechnology
-    var by_script: Boolean
+    var by_script: Boolean?
     var name: Any
     var tick: uint
 }
@@ -1361,7 +1361,7 @@ external interface OnScriptPathRequestFinishedEvent {
         get() = definedExternally
         set(value) = definedExternally
     var id: uint
-    var try_again_later: Boolean
+    var try_again_later: Boolean?
     var name: Any
     var tick: uint
 }
@@ -1418,7 +1418,7 @@ external interface OnStringTranslatedEvent {
         get() = definedExternally
         set(value) = definedExternally
     var result: String
-    var translated: Boolean
+    var translated: Boolean?
     var name: Any
     var tick: uint
 }
