@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  factorio:
+    image: factoriotools/factorio:1.1.41
+#    logging:
+#      driver: "json-file"
+    container_name: "factorio"
+    restart: "unless-stopped"
+    ports:
+      - "34197:34197/udp"
+      - "27015:27015/tcp"
+    volumes:
+      - "./data:/factorio"
+#    environment:
+#      - PUID=1000
+#      - PGID=1000
+#      - UPDATE_MODS_ON_START=true
+#      - USERNAME=FactorioUsername
+#      - TOKEN=FactorioToken

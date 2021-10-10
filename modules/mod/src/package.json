@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "react": "17.0.2",
-    "react-dom": "17.0.2",
     "typescript-to-lua": "1.0.1",
     "typed-factorio": "0.7.1",
     "lua-types": "2.11.0",
@@ -24,5 +23,8 @@
   },
   "peerDependencies": {},
   "optionalDependencies": {},
-  "bundledDependencies": []
+  "bundledDependencies": [],
+  "//": {
+    "react-dom": "17.0.2"
+  }
 }
