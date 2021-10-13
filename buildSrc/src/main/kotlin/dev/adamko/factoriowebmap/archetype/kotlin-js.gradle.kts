@@ -12,9 +12,10 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 
 plugins {
   kotlin("js")
-  id("com.github.node-gradle.node")
-  id("dev.adamko.factoriowebmap.archetype.base")
+  id("dev.adamko.factoriowebmap.archetype.node")
 }
+
+
 
 kotlin {
   js(IR) {
@@ -47,16 +48,18 @@ val rootPackageJson by rootProject.tasks.getting(RootPackageJsonTask::class)
 //fun NpmTask.setNodeModulesPath(folder: File): Unit =
 //    setNodeModulesPath(folder.normalize().absolutePath)
 
+// https://github.com/node-gradle/gradle-node-plugin/issues/150
+// https://github.com/lamba92/kotlingram/blob/master/examples/js-bot/build.gradle.kts
 
 val nodePath: Directory by extra {
   val file = rootPackageJson.rootPackageJson.parentFile.normalize()
-  logger.lifecycle("Found root NODE_PATH: $file")
+  logger.lifecycle("Kotlin/JS NODE_PATH: $file")
   project.layout.dir(provider { file }).get()
 }
 
 val nodeModulesDir: Directory by extra {
   val file = nodePath.dir(NpmProject.NODE_MODULES)
-  logger.lifecycle("Found root NODE_MODULES: $file")
+  logger.lifecycle("Kotlin/JS NODE_MODULES: $file")
   file
 }
 
@@ -66,7 +69,7 @@ node {
 
   distBaseUrl.set(null as String?) // set by dependencyResolutionManagement
 
-  nodeProjectDir.set(nodePath)
+//  nodeProjectDir.set(nodePath)
 //  nodeProjectDir.set(packageJson.packageJson.parentFile.normalize())
 }
 

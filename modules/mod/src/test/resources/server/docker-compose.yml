@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   factorio:
-    image: factoriotools/factorio:1.1.41
+    image: factoriotools/factorio:1.1.42
 #    logging:
 #      driver: "json-file"
     container_name: "factorio"

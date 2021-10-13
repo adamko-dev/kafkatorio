@@ -2,6 +2,8 @@
 @file:Suppress("INTERFACE_WITH_SUPERCLASS", "OVERRIDING_FINAL_MEMBER", "RETURN_TYPE_MISMATCH_ON_OVERRIDE", "CONFLICTING_OVERLOADS")
 package defines.events
 
+import EventId
+import OnTickEvent
 import kotlin.js.*
 import org.khronos.webgl.*
 import org.w3c.dom.*
@@ -17,7 +19,7 @@ import org.w3c.workers.*
 import org.w3c.xhr.*
 import uint
 
-external var on_tick: uint /* uint & `T$93`<OnTickEvent, Unit> */
+external var on_tick: EventId<OnTickEvent> /* uint & `T$93`<OnTickEvent, Unit> */
 
 external var on_gui_click: uint /* uint & `T$93`<OnGuiClickEvent, Unit> */
 

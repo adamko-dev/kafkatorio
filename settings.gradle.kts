@@ -1,8 +1,8 @@
 rootProject.name = "factorio-web-map"
 
 include(
-//    ":modules:mod",
-    ":modules:mod2",
+    ":modules:mod",
+//    ":modules:mod2",
     ":modules:server",
 )
 

@@ -157,3 +157,9 @@ tasks {
     }
   }
 }
+
+
+configure<NodeJsRootExtension> {
+  versions.dukat.version = "0.5.8-rc.4-dev.20211001"
+//  versions.dukat.version = "0.5.8-rc.4"
+}

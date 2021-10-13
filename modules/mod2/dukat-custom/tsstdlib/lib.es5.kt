@@ -63,7 +63,9 @@ typealias Partial<T> = Any
 
 typealias Pick<T, K> = Any
 
-typealias Record<K, T> = Any
+@Deprecated("use Kotlin Wrapper", ReplaceWith("kotlinext.js.Record<K, T>"))
+typealias Record<K, T> = kotlinext.js.Record<K, T>
+
 
 typealias Exclude<T, U> = Any
 
