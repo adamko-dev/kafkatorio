@@ -4,6 +4,7 @@ include(
     ":modules:mod",
 //    ":modules:mod2",
     ":modules:server",
+    ":modules:kt-rcon",
 )
 
 enableFeaturePreview("VERSION_CATALOGS")
