@@ -72,7 +72,7 @@ class KtRconClient2(
 //      bb.order(ByteOrder.LITTLE_ENDIAN)
 
       println("writing bb to client")
-      bb.compact()
+
       val future = client.write(bb)
 
       delay(2000)
