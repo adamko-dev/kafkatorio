@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+
+  kafka:
+    image: dev-adamko/kafka
+    container_name: "kafka-factorio"
+    build:
+      dockerfile: "kafka.Dockerfile"
+      args:
+        KAFKA_DL_URL: "https://dlcdn.apache.org/kafka/3.0.0/kafka_2.13-3.0.0.tgz"
+    ports:
+      - "9092:9092"
+      - "9093:9093"
