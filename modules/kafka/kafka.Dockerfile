@@ -15,6 +15,8 @@ RUN echo "Downloading Kafka from $KAFKA_DL_URL" \
  && ls -la
 
 
+# KRaft (aka KIP-500) mode Preview Release
+# https://github.com/apache/kafka/blob/041b76dc57f096be2a2d7532d917122992bff6e2/config/kraft/README.md
 FROM openjdk:11
 
 WORKDIR /kafka
@@ -27,20 +29,15 @@ VOLUME /tmp/kraft-combined-logs
 # listeners, controller.quorum.voters
 EXPOSE 9092, 9093
 
-# KRaft (aka KIP-500) mode Preview Release
-# https://github.com/apache/kafka/blob/041b76dc57f096be2a2d7532d917122992bff6e2/config/kraft/README.md
-
 # Generate a cluster ID
 RUN echo "$(./bin/kafka-storage.sh random-uuid)" > cluster_id \
  && echo "Generated a Kafka Cluster ID: $(cat cluster_id)"
 
 # Format storage directories
-RUN ./bin/kafka-storage.sh format -t "$(cat cluster_id)" -c ./config/kraft/server.properties
-
-# launch the broker in KRaft mode, which means that it runs without ZooKeeper
 RUN ./bin/kafka-storage.sh format \
   --ignore-formatted \
   --config ./config/kraft/server.properties \
   --cluster-id "$(cat cluster_id)"
 
+# launch the broker in KRaft mode, which means that it runs without ZooKeeper
 ENTRYPOINT ["./bin/kafka-server-start.sh", "./config/kraft/server.properties"]
