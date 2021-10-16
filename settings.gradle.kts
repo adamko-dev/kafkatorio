@@ -5,6 +5,7 @@ include(
 //    ":modules:mod2",
     ":modules:server",
     ":modules:kt-rcon",
+    ":modules:kafka",
 )
 
 enableFeaturePreview("VERSION_CATALOGS")
