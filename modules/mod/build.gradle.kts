@@ -25,7 +25,7 @@ val tstlTask = tasks.register<NpmTask>("typescriptToLua") {
 
   npmCommand.set(listOf("run", "build"))
 
-  inputs.dir(node.nodeProjectDir.asFileTree)
+  inputs.dir(node.nodeProjectDir)
       .skipWhenEmpty()
       .withPropertyName("sourceFiles")
       .withPathSensitivity(PathSensitivity.RELATIVE)
@@ -35,8 +35,12 @@ val tstlTask = tasks.register<NpmTask>("typescriptToLua") {
   outputs.dir(outputDir)
       .withPropertyName("outputDir")
 
-
   ignoreExitValue.set(false)
+
+  doFirst("clean") {
+    delete(outputDir)
+  }
+
 }
 
 //val typescriptSrc =
@@ -63,7 +67,7 @@ val modPackageTask = tasks.register<Zip>("package") {
   from(
       layout.projectDirectory.dir("src/main/resources/mod-data"),
       rootProject.layout.projectDirectory.file("LICENSE"),
-      tstlTask.get().outputs.files.filter { it.extension == "lua" },
+      tstlTask,
   )
 
   into(rootProject.name)
@@ -87,13 +91,23 @@ val copyModToServerTask = tasks.register<Copy>("copyModToServer") {
   into(layout.projectDirectory.dir("src/test/resources/server/data/mods").asFile)
 }
 
+val serverStopTask = tasks.register<Exec>("dockerStop") {
+  group = "$projectId.factorioServer"
+
+  mustRunAfter(copyModToServerTask)
+
+  workingDir = layout.projectDirectory.dir("src/test/resources/server/").asFile
+  commandLine = parseSpaceSeparatedArgs("docker-compose stop")
+}
+
 val serverUpTask = tasks.register<Exec>("dockerUp") {
   group = "$projectId.factorioServer"
 
-  workingDir = layout.projectDirectory.dir("src/test/resources/server/").asFile
-  commandLine = parseSpaceSeparatedArgs("docker-compose up")
-}
+  dependsOn(copyModToServerTask, serverStopTask)
 
+  workingDir = layout.projectDirectory.dir("src/test/resources/server/").asFile
+  commandLine = parseSpaceSeparatedArgs("docker-compose up -d")
+}
 
 //val serverRestartTask = tasks.register<Exec>("dockerRestart") {
 //  group = "$projectId.factorioServer"
@@ -101,13 +115,6 @@ val serverUpTask = tasks.register<Exec>("dockerUp") {
 //  workingDir = layout.projectDirectory.dir("src/test/resources/server/").asFile
 //  commandLine = parseSpaceSeparatedArgs("docker-compose restart")
 //}
-
-tasks.register<Exec>("dockerStop") {
-  group = "$projectId.factorioServer"
-
-  workingDir = layout.projectDirectory.dir("src/test/resources/server/").asFile
-  commandLine = parseSpaceSeparatedArgs("docker-compose stop")
-}
 
 val copyModToClientTask = tasks.register<Copy>("copyModToClient") {
   description = "Copy the mod to the Factorio client"

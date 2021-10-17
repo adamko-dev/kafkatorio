@@ -8,11 +8,11 @@ services:
     restart: "unless-stopped"
     ports:
       - "34197:34197/udp" # factorio
-      - "27715:27715/tcp" # rcon
+      - "27015:27015/tcp" # rcon
     volumes:
       - "./data:/factorio"
-    environment:
-      RCON_PORT: 27715
+#    environment:
+#      RCON_PORT: 27715
 #    environment:
 #      - PUID=1000
 #      - PGID=1000

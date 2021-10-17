@@ -1,17 +1,60 @@
 {
+  "$schema": "https://raw.githubusercontent.com/TypeScriptToLua/vscode-typescript-to-lua/master/tsconfig-schema.json",
   "compilerOptions": {
-    "target": "esnext",
+    "target": "es2019",
     "lib": [
-      "esnext"
+      "es2019"
     ],
+    "module": "commonjs",
     "moduleResolution": "node",
     "types": [
+      "typescript-to-lua/language-extensions",
+      "lua-types/5.2",
       "typed-factorio/runtime"
     ],
-    "strict": true
+    "explainFiles": true,
+    "forceConsistentCasingInFileNames": true,
+    "listEmittedFiles": true,
+    "listFiles": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "sourceMap": false,
+    "strict": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "traceResolution": true,
   },
   "tstl": {
-    "luaTarget": "JIT",
-    "tstlVerbose": true
+    "luaTarget": "5.2",
+    "tstlVerbose": true,
+    "noHeader": true,
+    "luaLibImport" : "require",
+  },
+  "//": {
+    "noResolve": true,
+    "newLine": "lf",
+    "exclude": [
+      "node_modules"
+    ],
+    "exactOptionalPropertyTypes": true,
+    "luaTarget": "5.2",
+  "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "types": [
+      "node",
+      "typed-factorio/runtime",
+      "lua-types/5.2"
+    ],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "//": "lua-types/5.2",
+    "luaLibImport" : "inline",
+    "noImplicitSelf": true,
+
+    "sourceMapTraceback": true,
+
+    "luaBundle " : "bundle.lua",
+    "luaBundleEntry " : "bundleEntry.lua"
   }
 }
