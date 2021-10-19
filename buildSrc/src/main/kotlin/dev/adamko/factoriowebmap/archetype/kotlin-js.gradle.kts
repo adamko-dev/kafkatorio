@@ -19,25 +19,20 @@ plugins {
 
 kotlin {
   js(IR) {
-
     binaries.executable()
 
     useCommonJs()
     nodejs()
-//
-////    compilations.all {
-//    compilations["main"].apply {
-//      packageJson {
-//        customField(
-//            "scripts",
-//            mapOf(
-//                "build" to "tstl",
-//                "dev" to "tstl --watch",
-//            )
-//        )
-//      }
-//    }
   }
+}
+
+dependencies {
+  val kotlinWrappersVersion = "0.0.1-pre.259-kotlin-1.5.31"
+  implementation(
+      project.dependencies.enforcedPlatform(
+          "org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:${kotlinWrappersVersion}"
+      )
+  )
 }
 
 val rootPackageJson by rootProject.tasks.getting(RootPackageJsonTask::class)

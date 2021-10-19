@@ -22,12 +22,13 @@
     "strict": true,
     "strictFunctionTypes": true,
     "strictNullChecks": true,
-    "traceResolution": true,
+    "traceResolution": true
   },
   "tstl": {
     "luaTarget": "5.2",
     "tstlVerbose": true,
     "noHeader": true,
+    "noImplicitSelf": true,
     "luaLibImport" : "require",
   },
   "//": {

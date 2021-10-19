@@ -62,12 +62,9 @@ kotlin {
 }
 
 dependencies {
-  val kotlinWrappersVersion = "0.0.1-pre.254-kotlin-1.5.31"
-  implementation(
-      project.dependencies.enforcedPlatform(
-          "org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:${kotlinWrappersVersion}"
-      )
-  )
+
+
+  // bom is defined in archetype.kotlin-js
 
   implementation("org.jetbrains.kotlin-wrappers:kotlin-react")
 //  implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom")

@@ -103,7 +103,8 @@ val serverStopTask = tasks.register<Exec>("dockerStop") {
 val serverUpTask = tasks.register<Exec>("dockerUp") {
   group = "$projectId.factorioServer"
 
-  dependsOn(copyModToServerTask, serverStopTask)
+  mustRunAfter(copyModToServerTask)
+  dependsOn(serverStopTask)
 
   workingDir = layout.projectDirectory.dir("src/test/resources/server/").asFile
   commandLine = parseSpaceSeparatedArgs("docker-compose up -d")
