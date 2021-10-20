@@ -6,6 +6,7 @@ include(
     ":modules:server",
     ":modules:kt-rcon",
     ":modules:kafka",
+    ":modules:data-model",
 )
 
 enableFeaturePreview("VERSION_CATALOGS")
