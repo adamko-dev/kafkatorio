@@ -1,7 +1,3 @@
-// import {Kafka, Producer} from "kafkajs";
-
-// const {Kafka} = require("kafkajs")
-// import {Kafka, Producer} from "kafkajs/types"
 // import {Data, Mods} from "typed-factorio/settings/types"
 // import { events } from "typed-factorio/generated"
 
@@ -17,44 +13,57 @@ import {JsonTable, Serdes} from "./serdes/serdes"
 // const SERVER_ID: uint = 0
 // const EVENT_FILE_DIR: string = "events"
 
-function playerEvent(tick: uint, player_index: uint, eventType: string) {
+function createFactorioEvent(tick: uint, object_name: string, eventType: string, data: JsonTable): JsonTable {
+  return {
+    tick,
+    object_name,
+    eventType,
+    data,
+  }
+
+}
+
+function handlePlayerUpdate(tick: uint, player_index: uint, eventType: string) {
+  let player: LuaPlayer = game.players[player_index]
+  let table = Serdes.Player.playerToTable(player)
+  let event = createFactorioEvent(tick, player.object_name, eventType, table)
+  emitEvent(event)
+
+  handleCharactersEvent(tick, player_index, eventType)
+}
+
+function handleCharactersEvent(tick: uint, player_index: uint, eventType: string) {
+
   let player: LuaPlayer = game.players[player_index]
 
-  let filename: string = table.concat([player.index, eventType, tick], "_")
-  let data = Serdes.Player.playerToTable(player)
-  outputEventFile(player.object_name + "/" + filename, data)
-
   if (player.character != undefined) {
-    entityEvent(tick, player.character, eventType)
+    handleEntityUpdate(tick, player.character, eventType)
 
     for (const char of player.get_associated_characters()) {
       if (char != undefined) {
-        entityEvent(tick, char, eventType)
+        handleEntityUpdate(tick, char, eventType)
       }
     }
-
   }
 }
 
-function entityEvent(tick: uint, entity: LuaEntity, eventType: string) {
-  if (entity.unit_number != undefined && entity.unit_number != 0) {
-    let filename: string = table.concat([entity.unit_number, eventType, tick], "_")
-    let data = Serdes.Entity.entityToTable(entity)
-    outputEventFile(entity.object_name + "/" + filename, data)
-  }
+function handleEntityUpdate(tick: uint, entity: LuaEntity, eventType: string) {
+  let table = Serdes.Entity.entityToTable(entity)
+  let event = createFactorioEvent(tick, entity.object_name, eventType, table)
+  emitEvent(event)
 }
 
 function surfaceEvent(tick: uint, surface: LuaSurface, eventType: string) {
-  let filename: string =
-      surface.object_name + "/" + table.concat([surface.index, eventType, tick], "_")
-  let data = Serdes.Surface.surfaceToTable(surface)
-  outputEventFile(filename, data)
+  let table = Serdes.Surface.surfaceToTable(surface)
+  let event = createFactorioEvent(tick, surface.object_name, eventType, table)
+  emitEvent(event)
 }
 
-function outputEventFile(filename: string, obj: JsonTable) {
-  let data = game.table_to_json(obj)
+/** Emit a serialised event */
+function emitEvent(event: JsonTable) {
+  let data = game.table_to_json(event)
   // game.write_file(EVENT_FILE_DIR + "/" + filename, data, false, SERVER_ID)
-  localised_print(`!===== ${filename} | ${data} =====!`)
+  localised_print(`FactorioWebMapJsonEvent: ${data}`)
 }
 
 // script.on_event(
@@ -67,21 +76,22 @@ function outputEventFile(filename: string, obj: JsonTable) {
 script.on_event(
     defines.events.on_player_mined_entity,
     (e: OnPlayerMinedEntityEvent) => {
-      entityEvent(e.tick, e.entity, "on_player_mined_entity")
-      playerEvent(e.tick, e.player_index, "on_player_mined_entity")
+      handlePlayerUpdate(e.tick, e.player_index, "on_player_mined_entity")
+      handleEntityUpdate(e.tick, e.entity, "on_player_mined_entity")
     }
 )
 script.on_event(
     defines.events.on_player_joined_game,
     (e: OnPlayerJoinedGameEvent) => {
-      playerEvent(e.tick, e.player_index, "on_player_joined_game")
+      handlePlayerUpdate(e.tick, e.player_index, "on_player_joined_game")
     }
 )
 
 script.on_event(
     defines.events.on_player_changed_position,
+    // this is actually a character update, not a player update?
     (e: OnPlayerChangedPositionEvent) => {
-      playerEvent(e.tick, e.player_index, "on_player_changed_position")
+      handlePlayerUpdate(e.tick, e.player_index, "on_player_changed_position")
     }
 )
 
@@ -89,8 +99,6 @@ script.on_event(
     defines.events.on_tick,
     (e: OnTickEvent) => {
       if (e.tick % 60 == 0) {
-
-        game.surfaces
 
         for (const [index,] of pairs(game.surfaces)) {
           let surface = game.surfaces[index]

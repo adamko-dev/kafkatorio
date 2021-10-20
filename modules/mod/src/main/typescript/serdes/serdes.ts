@@ -1,25 +1,46 @@
-export type PrimitiveType = number | string | boolean
-export type JsonArray<TValue extends PrimitiveType> = TValue[]
-export type JsonTableValueType =
-    PrimitiveType
-    | JsonTable
-    | JsonArray<PrimitiveType>
-export type JsonTable = LuaTable<string, JsonTableValueType>  // & table
-// export type JsonArray = LuaArray<PrimitiveType>               // & table
+export type JsonPrimitiveType = number | string | boolean | undefined | null | void
 
+// export type JsonArray<TValue extends JsonPrimitiveType> = TValue[]
+// export class JsonArray extends Array<JsonPrimitiveTypes> {
+// }
+
+// export type JsonArray = Array<JsonPrimitiveTypes>
+// declare type  JsonArrayConstructor = (new  () => JsonArray)
+// declare const JsonArray: JsonArrayConstructor
+
+export type JsonArray<T extends JsonPrimitiveType = void> = T[]
+
+export type JsonTableValueType =
+    JsonPrimitiveType
+    | JsonTable
+    | JsonArray<JsonPrimitiveType>
+    | undefined
+    | null
+
+// export class JsonTable extends LuaTable<string, JsonTableValueType> {
+// }
+// export  type JsonTable = LuaTable<string, JsonTableValueType>
+// const JsonTable = () => new LuaTable<string, JsonTableValueType>()
+// export type JsonTableConstructor = (new  () => JsonTable)
+// declare const JsonTable: JsonTableConstructor
+
+
+export interface JsonTable {
+  [key: string]: JsonTableValueType
+}
 
 export namespace Serdes {
 
   export namespace Player {
 
     export function playerToTable(player: LuaPlayer): JsonTable {
-      let table = new LuaTable<string, JsonTableValueType>()
-
-      table.set("name", player.name)
-      let charIds: JsonArray<number> = Entity.entitiesToUnitNumbers(player.get_associated_characters())
-      table.set("characterIds", charIds)
-
-      return table
+      let charIds = Entity.entitiesToUnitNumbers(player.get_associated_characters())
+      return {
+        "name": player.name,
+        "characterId": player.character?.unit_number,
+        "associatedCharacterIds": charIds,
+        "position": DataClasses.positionTableToTable(player.position),
+      }
     }
 
   }
@@ -27,34 +48,32 @@ export namespace Serdes {
   export namespace Entity {
 
     export function entityToTable(entity: LuaEntity): JsonTable {
-      let table = new LuaTable<string, JsonTableValueType>()
 
-      if (entity.player?.index != null) {
-        table.set("playerId", entity.player?.index)
+      let player: JsonTable =
+          entity.is_player() ? {
+            "playerId": entity.player?.index,
+          } : {}
+
+      return {
+        player,
+        "name": entity.name,
+        "type": entity.type,
+        "active": entity.active,
+        "health": entity.health,
+        "surfaceId": entity.surface.index,
+        "unit_number": entity.unit_number,
+        "position": DataClasses.positionTableToTable(entity.position),
       }
-      table.set("type", entity.type)
-      table.set("active", entity.active)
-
-      if (entity.health != null) {
-        table.set("health", entity.health)
-      }
-
-      table.set("surfaceId", entity.surface.index)
-      table.set("position", DataClasses.positionTableToTable(entity.position))
-
-      return table
     }
 
     export function entitiesToUnitNumbers(entities: LuaEntity[]): JsonArray<number> {
-      let array: number[] = []
-      let j: number = 0
-      for (let i = 0; i < entities.length; i++) {
-        let unitNum = entities[i].unit_number
-        if (unitNum != null) {
-          array[j++] = unitNum
+      let result: (number) [] = []
+      for (let entity of entities) {
+        if (entity.unit_number != null) {
+          result[result.length] = entity.unit_number
         }
       }
-      return array
+      return result
     }
 
   }
@@ -62,13 +81,11 @@ export namespace Serdes {
   export namespace Surface {
 
     export function surfaceToTable(surface: LuaSurface): JsonTable {
-      let table = new LuaTable<string, JsonTableValueType>()
-
-      table.set("name", surface.name)
-      table.set("index", surface.index)
-      table.set("daytime", surface.daytime)
-
-      return table
+      return {
+        "name": surface.name,
+        "index": surface.index,
+        "daytime": surface.daytime,
+      }
     }
 
   }
@@ -76,10 +93,10 @@ export namespace Serdes {
   export namespace DataClasses {
 
     export function positionTableToTable(positionTable: PositionTable): JsonTable {
-      let table = new LuaTable<string, JsonTableValueType>()
-      table.set("x", positionTable.x)
-      table.set("y", positionTable.y)
-      return table
+      return {
+        "x": positionTable.x,
+        "y": positionTable.y,
+      }
     }
 
   }

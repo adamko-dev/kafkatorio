@@ -29,7 +29,7 @@
     "tstlVerbose": true,
     "noHeader": true,
     "noImplicitSelf": true,
-    "luaLibImport" : "require",
+    "luaLibImport": "inline"
   },
   "//": {
     "noResolve": true,
@@ -39,7 +39,7 @@
     ],
     "exactOptionalPropertyTypes": true,
     "luaTarget": "5.2",
-  "skipLibCheck": true,
+    "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "types": [
       "node",
@@ -50,12 +50,10 @@
       "node_modules/@types"
     ],
     "//": "lua-types/5.2",
-    "luaLibImport" : "inline",
+    "luaLibImport": "inline",
     "noImplicitSelf": true,
-
     "sourceMapTraceback": true,
-
-    "luaBundle " : "bundle.lua",
-    "luaBundleEntry " : "bundleEntry.lua"
+    "luaBundle ": "bundle.lua",
+    "luaBundleEntry ": "bundleEntry.lua"
   }
 }
