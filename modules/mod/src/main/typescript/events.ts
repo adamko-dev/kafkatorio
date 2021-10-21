@@ -20,7 +20,6 @@ function createFactorioEvent(tick: uint, object_name: string, eventType: string,
     eventType,
     data,
   }
-
 }
 
 function handlePlayerUpdate(tick: uint, player_index: uint, eventType: string) {
@@ -63,7 +62,7 @@ function surfaceEvent(tick: uint, surface: LuaSurface, eventType: string) {
 function emitEvent(event: JsonTable) {
   let data = game.table_to_json(event)
   // game.write_file(EVENT_FILE_DIR + "/" + filename, data, false, SERVER_ID)
-  localised_print(`FactorioWebMapJsonEvent: ${data}`)
+  localised_print(`FactorioEvent: ${data}`)
 }
 
 // script.on_event(
