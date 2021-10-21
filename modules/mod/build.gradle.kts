@@ -1,5 +1,4 @@
 import com.github.gradle.node.npm.task.NpmTask
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
@@ -88,7 +87,7 @@ val copyModToServerTask = tasks.register<Copy>("copyModToServer") {
   dependsOn(modPackageTask)
 
   from(modPackageTask)
-  into(layout.projectDirectory.dir("src/test/resources/server/data/mods").asFile)
+  into(layout.projectDirectory.dir("infra/factorio-server/data/mods").asFile)
 }
 
 val serverStopTask = tasks.register<Exec>("dockerStop") {
@@ -96,8 +95,8 @@ val serverStopTask = tasks.register<Exec>("dockerStop") {
 
   mustRunAfter(copyModToServerTask)
 
-  workingDir = layout.projectDirectory.dir("src/test/resources/server/").asFile
-  commandLine = parseSpaceSeparatedArgs("docker-compose stop")
+  workingDir = layout.projectDirectory.dir("infra/factorio-server").asFile
+  commandLine = parseSpaceSeparatedArgs("docker-compose stop factorio-server")
 }
 
 val serverUpTask = tasks.register<Exec>("dockerUp") {
@@ -106,8 +105,8 @@ val serverUpTask = tasks.register<Exec>("dockerUp") {
   mustRunAfter(copyModToServerTask)
   dependsOn(serverStopTask)
 
-  workingDir = layout.projectDirectory.dir("src/test/resources/server/").asFile
-  commandLine = parseSpaceSeparatedArgs("docker-compose up -d")
+  workingDir = layout.projectDirectory.dir("infra/factorio-server").asFile
+  commandLine = parseSpaceSeparatedArgs("docker-compose up -d factorio-server")
 }
 
 //val serverRestartTask = tasks.register<Exec>("dockerRestart") {

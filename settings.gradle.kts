@@ -5,9 +5,9 @@ include(
 //    ":modules:mod2",
     ":modules:server",
     ":modules:kt-rcon",
-    ":modules:kafka",
     ":modules:data-model",
 )
+
 
 enableFeaturePreview("VERSION_CATALOGS")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

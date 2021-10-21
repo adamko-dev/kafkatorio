@@ -1,5 +1,6 @@
 ARG KAFKA_DL_URL=https://dlcdn.apache.org/kafka/3.0.0/kafka_2.13-3.0.0.tgz
 
+## builder ##
 FROM debian:11-slim as Kafka-Download
 ARG KAFKA_DL_URL
 
@@ -15,21 +16,22 @@ RUN echo "Downloading Kafka from $KAFKA_DL_URL" \
  && ls -la
 
 
+## Kafka ##
 # KRaft (aka KIP-500) mode Preview Release
 # https://github.com/apache/kafka/blob/041b76dc57f096be2a2d7532d917122992bff6e2/config/kraft/README.md
-FROM openjdk:11
+FROM openjdk:11 as kafka-kraft
 
 WORKDIR /kafka
 
-COPY --from=Kafka-Download /kafka /kafka
+COPY --from=Kafka-Download /kafka .
 
 # hardcoded for now, based on values from './config/kraft/server.properties'
 # log.dirs
 VOLUME /tmp/kraft-combined-logs
 # listeners, controller.quorum.voters
-EXPOSE 9092, 9093
+EXPOSE 9092 9093
 
-# Generate a cluster ID
+# Generate a cluster ID (must use this .sh to generate a UUID)
 RUN echo "$(./bin/kafka-storage.sh random-uuid)" > cluster_id \
  && echo "Generated a Kafka Cluster ID: $(cat cluster_id)"
 
@@ -41,3 +43,22 @@ RUN ./bin/kafka-storage.sh format \
 
 # launch the broker in KRaft mode, which means that it runs without ZooKeeper
 ENTRYPOINT ["./bin/kafka-server-start.sh", "./config/kraft/server.properties"]
+
+
+### Kafka Connect ##
+#FROM openjdk:11 as kafka-connect
+## https://github.com/confluentinc/cp-docker-images/blob/5.3.3-post/debian/kafka-connect-base/Dockerfile
+#
+#ENV COMPONENT=kafka-connect
+#
+#WORKDIR /kafka-connect
+#
+#COPY --from=Kafka-Download /kafka .
+#
+## Default kafka-connect rest.port
+#EXPOSE 8083
+#
+#VOLUME ["/etc/${COMPONENT}/jars", "/etc/${COMPONENT}/secrets"]
+#
+## launch the broker in KRaft mode, which means that it runs without ZooKeeper
+#ENTRYPOINT ["./bin/connect-standalone.sh", "./config/connect-standalone.properties"]

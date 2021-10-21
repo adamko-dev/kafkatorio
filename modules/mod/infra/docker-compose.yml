@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+
+  factorio-server:
+    image: factoriotools/factorio:1.1.42
+    #    logging:
+    #      driver: "json-file"
+    container_name: "factorio"
+    restart: "unless-stopped"
+    ports:
+      - "34197:34197/udp" # factorio
+      - "27015:27015/tcp" # rcon
+    volumes:
+      - "./data:/factorio"
+#    logging:
+#      driver: "mickyg/kafka-logdriver:latest"
+#      options:
+#        KAFKA_BROKER_ADDR: "kafka-kraft"
+#        LOG_TOPIC: "dockerlogs-factorio-server"
+#        LOG_TAG: "factorio-server"
+
+  #    environment:
+  #      RCON_PORT: 27715
+  #    environment:
+  #      - PUID=1000
+  #      - PGID=1000
+  #      - UPDATE_MODS_ON_START=true
+  #      - USERNAME=FactorioUsername
+  #      - TOKEN=FactorioToken
+
+  kafka-kraft:
+    image: dev-adamko/kafka-kraft
+    container_name: "kafka-factorio"
+    build:
+      dockerfile: "kafka.Dockerfile"
+      target: "kafka-kraft"
+      args:
+        KAFKA_DL_URL: "https://dlcdn.apache.org/kafka/3.0.0/kafka_2.13-3.0.0.tgz"
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+
+#  kafka-connect:
+#    image: dev-adamko/kafka-connect
+#    container_name: "kafka-connect"
+#    build:
+#      dockerfile: "kafka.Dockerfile"
+#      target: "kafka-connect"
+#      args:
+#        KAFKA_DL_URL: "https://dlcdn.apache.org/kafka/3.0.0/kafka_2.13-3.0.0.tgz"
+#    depends_on:
+#      - kafka-kraft
+#    ports:
+#      - "8083:8083"
+#
