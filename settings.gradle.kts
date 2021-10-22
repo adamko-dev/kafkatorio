@@ -5,7 +5,8 @@ include(
 //    ":modules:mod2",
     ":modules:server",
     ":modules:kt-rcon",
-    ":modules:data-model",
+    ":modules:factorio-events-data-model",
+    ":modules:factorio-events-processor",
 )
 
 
