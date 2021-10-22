@@ -8,15 +8,9 @@
 //   thingType: Object.values(defines.events)
 // }
 
-import {JsonTable, Serdes} from "./serdes/serdes"
+import {Serdes} from "./serdes/serdes"
+import {FactorioEvent, JsonTable} from "./model/model";
 
-
-interface FactorioEvent extends JsonTable {
-  tick: uint
-  object_name: string,
-  event_type: string,
-  data: JsonTable,
-}
 
 const FactorioEvent = ((tick: uint, objectName: string, eventType: string, data: JsonTable) => {
       return {

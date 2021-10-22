@@ -1,18 +1,3 @@
-export type JsonPrimitiveType = number | string | boolean | undefined | null | void
-
-export type JsonArray<T extends JsonPrimitiveType = void> = T[]
-
-export type JsonTableValueType =
-    JsonPrimitiveType
-    | JsonTable
-    | JsonArray<JsonPrimitiveType>
-    | undefined
-    | null
-
-export interface JsonTable {
-  [key: string]: JsonTableValueType
-}
-
 // export type JsonArray<TValue extends JsonPrimitiveType> = TValue[]
 // export class JsonArray extends Array<JsonPrimitiveTypes> {
 // }
@@ -28,6 +13,8 @@ export interface JsonTable {
 // export type JsonTableConstructor = (new  () => JsonTable)
 // declare const JsonTable: JsonTableConstructor
 
+
+import {JsonTable, JsonArray} from "../model/model";
 
 export namespace Serdes {
 
