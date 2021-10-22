@@ -10,54 +10,64 @@
 
 import {JsonTable, Serdes} from "./serdes/serdes"
 
-// const SERVER_ID: uint = 0
-// const EVENT_FILE_DIR: string = "events"
 
-function createFactorioEvent(tick: uint, object_name: string, eventType: string, data: JsonTable): JsonTable {
-  return {
-    tick,
-    object_name,
-    eventType,
-    data,
-  }
+interface FactorioEvent extends JsonTable {
+  tick: uint
+  object_name: string,
+  event_type: string,
+  data: JsonTable,
 }
 
-function handlePlayerUpdate(tick: uint, player_index: uint, eventType: string) {
-  let player: LuaPlayer = game.players[player_index]
+const FactorioEvent = ((tick: uint, objectName: string, eventType: string, data: JsonTable) => {
+      return {
+        tick: tick,
+        object_name: objectName,
+        event_type: eventType,
+        data: data,
+      } as FactorioEvent
+    }
+)
+
+// function createFactorioEvent(tick: uint, object_name: string, eventType: string, data:
+// JsonTable): FactorioEvent { return { tick, object_name, eventType, data, } }
+
+function handlePlayerUpdate(tick: uint, playerIndex: uint, eventType: string) {
+  let player: LuaPlayer = game.players[playerIndex]
   let table = Serdes.Player.playerToTable(player)
-  let event = createFactorioEvent(tick, player.object_name, eventType, table)
+  let event = FactorioEvent(tick, player.object_name, eventType, table)
   emitEvent(event)
 
-  handleCharactersEvent(tick, player_index, eventType)
+  handleCharactersEvent(tick, playerIndex, eventType)
 }
 
-function handleCharactersEvent(tick: uint, player_index: uint, eventType: string) {
+function handleCharactersEvent(tick: uint, playerIndex: uint, eventType: string) {
 
-  let player: LuaPlayer = game.players[player_index]
+  let player: LuaPlayer = game.players[playerIndex]
 
   if (player.character != undefined) {
     handleEntityUpdate(tick, player.character, eventType)
-
-    for (const char of player.get_associated_characters()) {
-      if (char != undefined) {
-        handleEntityUpdate(tick, char, eventType)
-      }
+  }
+  for (const character of player.get_associated_characters()) {
+    if (character != undefined) {
+      handleEntityUpdate(tick, character, eventType)
     }
   }
 }
 
 function handleEntityUpdate(tick: uint, entity: LuaEntity, eventType: string) {
   let table = Serdes.Entity.entityToTable(entity)
-  let event = createFactorioEvent(tick, entity.object_name, eventType, table)
+  let event = FactorioEvent(tick, entity.object_name, eventType, table)
   emitEvent(event)
 }
 
 function surfaceEvent(tick: uint, surface: LuaSurface, eventType: string) {
   let table = Serdes.Surface.surfaceToTable(surface)
-  let event = createFactorioEvent(tick, surface.object_name, eventType, table)
+  let event = FactorioEvent(tick, surface.object_name, eventType, table)
   emitEvent(event)
 }
 
+// const SERVER_ID: uint = 0
+// const EVENT_FILE_DIR: string = "events"
 /** Emit a serialised event */
 function emitEvent(event: JsonTable) {
   let data = game.table_to_json(event)

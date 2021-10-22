@@ -6,13 +6,13 @@ services:
     image: factoriotools/factorio:1.1.42
     #    logging:
     #      driver: "json-file"
-    container_name: "factorio"
+    container_name: "factorio-server"
     restart: "unless-stopped"
     ports:
       - "34197:34197/udp" # factorio
       - "27015:27015/tcp" # rcon
     volumes:
-      - "./data:/factorio"
+      - "./factorio-server:/factorio"
 #    logging:
 #      driver: "mickyg/kafka-logdriver:latest"
 #      options:
@@ -31,7 +31,7 @@ services:
 
   kafka-kraft:
     image: dev-adamko/kafka-kraft
-    container_name: "kafka-factorio"
+    container_name: "kafka-kraft"
     build:
       dockerfile: "kafka.Dockerfile"
       target: "kafka-kraft"

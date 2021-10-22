@@ -80,6 +80,9 @@ val modPackageTask = tasks.register<Zip>("package") {
 
 //tasks.build { dependsOn(tstlTask, modPackageTask) }
 
+val modInfraDir = layout.projectDirectory.dir("infra")
+val factorioServerDataDir = modInfraDir.dir("factorio-server")
+
 val copyModToServerTask = tasks.register<Copy>("copyModToServer") {
   description = "Copy the mod to the Factorio Docker server"
   group = "$projectId.factorioServer"
@@ -87,7 +90,11 @@ val copyModToServerTask = tasks.register<Copy>("copyModToServer") {
   dependsOn(modPackageTask)
 
   from(modPackageTask)
-  into(layout.projectDirectory.dir("infra/factorio-server/data/mods").asFile)
+  into(factorioServerDataDir.dir("mods"))
+
+  doLast {
+    logger.lifecycle("Copying mod from ${source.files} to $destinationDir")
+  }
 }
 
 val serverStopTask = tasks.register<Exec>("dockerStop") {
@@ -95,7 +102,7 @@ val serverStopTask = tasks.register<Exec>("dockerStop") {
 
   mustRunAfter(copyModToServerTask)
 
-  workingDir = layout.projectDirectory.dir("infra/factorio-server").asFile
+  workingDir(modInfraDir)
   commandLine = parseSpaceSeparatedArgs("docker-compose stop factorio-server")
 }
 
@@ -105,7 +112,7 @@ val serverUpTask = tasks.register<Exec>("dockerUp") {
   mustRunAfter(copyModToServerTask)
   dependsOn(serverStopTask)
 
-  workingDir = layout.projectDirectory.dir("infra/factorio-server").asFile
+  workingDir(modInfraDir)
   commandLine = parseSpaceSeparatedArgs("docker-compose up -d factorio-server")
 }
 
@@ -124,6 +131,10 @@ val copyModToClientTask = tasks.register<Copy>("copyModToClient") {
 
   from(modPackageTask)
   into("""D:\Users\Adam\AppData\Roaming\Factorio\mods""")
+
+  doLast {
+    logger.lifecycle("Copying mod from ${source.files} to $destinationDir")
+  }
 }
 
 //val factorioClientLaunch = tasks.register<Exec>("launch") {
