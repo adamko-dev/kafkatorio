@@ -11,16 +11,10 @@
 import {Serdes} from "./serdes/serdes"
 import {FactorioEvent, JsonTable} from "./model/model";
 
-
-const FactorioEvent = ((tick: uint, objectName: string, eventType: string, data: JsonTable) => {
-      return {
-        tick: tick,
-        object_name: objectName,
-        event_type: eventType,
-        data: data,
-      } as FactorioEvent
-    }
-)
+const mapEventIdToName = new LuaTable<defines.events, keyof typeof defines.events>()
+for (const [k, v] of pairs(defines.events)) {
+  mapEventIdToName.set(v, k)
+}
 
 // function createFactorioEvent(tick: uint, object_name: string, eventType: string, data:
 // JsonTable): FactorioEvent { return { tick, object_name, eventType, data, } }
@@ -105,7 +99,8 @@ script.on_event(
 
         for (const [index,] of pairs(game.surfaces)) {
           let surface = game.surfaces[index]
-          surfaceEvent(e.tick, surface, "on_tick")
+          surfaceEvent(e.tick, surface, mapEventIdToName.get(e.name))
+          // surfaceEvent(e.tick, surface, "on_tick")
         }
 
         // let filename: string = table.concat([entity.unit_number, eventType, tick], "_")
