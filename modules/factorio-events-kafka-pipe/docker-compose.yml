@@ -12,41 +12,10 @@ services:
       FACTORIO_SERVER_CONTAINER_NAME: "factorio-server"
       KAFKA_HOST: "kafka:29092"
     volumes:
-      # Unix and Windows?
-      #      - "//./pipe/docker_engine:/var/run/docker.sock"
-      #      - "//./pipe/docker_engine:/pipe/docker_engine"
+      # Windows (requires privileged/root)
       - "//var/run/docker.sock:/var/run/docker.sock"
-      #      - "/var/run/docker.sock:/var/run/docker.sock"
-      # Windows?
-      #      - "\\.\\pipe\\docker_engine:\\.\\pipe\\docker_engine"
-      # Windows?
-      #      - "/usr/local/bin/docker:/usr/bin/docker"
-
-
-#  kp3:
-#    image: edenhill/kcat:1.7.0
-#    container_name: kafka-pipe3
-#    networks:
-#      - "factorio-events-nw"
-#    volumes:
-#      - "./kafka-pipe.sh:/kafka-pipe.sh"
-#    entrypoint:
-#      #      - "ls"
-#      #      - "-la"
-#      #      - "&&"
-#      - "/bin/sh"
-#      - "./kafka-pipe.sh"
-#      - "factorio-server"
-#      - "kafka-kraft"
-
-###
-
-#    volumes:
-#      - "./build/libs/:/app"
-#    command:
-#      - "java"
-#      - "-jar"
-#      - "/app/pipe-docker-logs-to-kafka-0.0.2.jar"
+      # Unix?
+      # - "/var/run/docker.sock:/var/run/docker.sock"
 
 networks:
   factorio-events-nw:
