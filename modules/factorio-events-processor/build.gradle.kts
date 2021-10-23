@@ -12,4 +12,3 @@ description =
 val projectId: String by project.extra
 val buildDir: Directory = layout.buildDirectory.dir(projectId).get()
 
-

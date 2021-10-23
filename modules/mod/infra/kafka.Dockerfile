@@ -41,8 +41,10 @@ RUN ./bin/kafka-storage.sh format \
   --config ./config/kraft/server.properties \
   --cluster-id "$(cat cluster_id)"
 
+COPY ./kafka-server.properties ./server.properties
+
 # launch the broker in KRaft mode, which means that it runs without ZooKeeper
-ENTRYPOINT ["./bin/kafka-server-start.sh", "./config/kraft/server.properties"]
+ENTRYPOINT ["./bin/kafka-server-start.sh", "./server.properties"]
 
 
 ### Kafka Connect ##

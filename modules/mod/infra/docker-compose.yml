@@ -8,6 +8,8 @@ services:
     #      driver: "json-file"
     container_name: "factorio-server"
     restart: "unless-stopped"
+    networks:
+      - "factorio-events-nw"
     ports:
       - "34197:34197/udp" # factorio
       - "27015:27015/tcp" # rcon
@@ -29,17 +31,27 @@ services:
   #      - USERNAME=FactorioUsername
   #      - TOKEN=FactorioToken
 
-  kafka-kraft:
+  kafka:
     image: dev-adamko/kafka-kraft
-    container_name: "kafka-kraft"
+    container_name: "kafka"
+    restart: "unless-stopped"
     build:
       dockerfile: "kafka.Dockerfile"
       target: "kafka-kraft"
       args:
         KAFKA_DL_URL: "https://dlcdn.apache.org/kafka/3.0.0/kafka_2.13-3.0.0.tgz"
+    networks:
+      - "factorio-events-nw"
     ports:
       - "9092:9092"
       - "9093:9093"
+
+#    environment:
+#      KAFKA_LISTENERS: "PLAINTEXT://kafka-kraft:29092,PLAINTEXT_HOST://localhost:9092,CONTROLLER_HOST://localhost:9093" # ,CONTROLLER://kafka-kraft:29093
+#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT" #,CONTROLLER_HOST:PLAINTEXT
+#      KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+#      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-kraft:29092,PLAINTEXT_HOST://localhost:9092"
+#      KAKFA_CONTROLLER_LISTENER_NAMES: "CONTROLLER" #,CONTROLLER_HOST
 
 #  kafka-connect:
 #    image: dev-adamko/kafka-connect
@@ -54,3 +66,9 @@ services:
 #    ports:
 #      - "8083:8083"
 #
+
+
+networks:
+  factorio-events-nw:
+    name: "factorio-events-nw"
+

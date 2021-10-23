@@ -8,6 +8,9 @@ plugins {
 }
 
 kotlin {
+  jvmToolchain {
+    (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(11)) // "8"
+  }
 }
 
 dependencies {
@@ -16,8 +19,9 @@ dependencies {
 
 tasks.withType<KotlinCompile>().configureEach {
   kotlinOptions.freeCompilerArgs += listOf(
-      "-Xopt-in=kotlin.OptIn",
-      "-Xopt-in=kotlin.ExperimentalStdlibApi",
-      "-Xopt-in=kotlin.time.ExperimentalTime",
+    "-Xopt-in=kotlin.OptIn",
+    "-Xopt-in=kotlin.ExperimentalStdlibApi",
+    "-Xopt-in=kotlin.time.ExperimentalTime",
+    "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
   )
 }

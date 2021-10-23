@@ -7,6 +7,7 @@ include(
     ":modules:kt-rcon",
     ":modules:factorio-events-data-model",
     ":modules:factorio-events-processor",
+    ":modules:factorio-events-kafka-pipe",
 )
 
 
