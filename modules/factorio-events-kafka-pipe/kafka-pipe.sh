@@ -13,7 +13,7 @@ endProcess() {
 while :; do
   docker logs --tail 0 -f "$FACTORIO_SERVER_CONTAINER_NAME" |
     sed -n -e 's/^FactorioEvent: //p' |
-    kafkacat -P -b "$KAFKA_HOST" -t factorio-server-log
+    kafkacat -P -T -b "$KAFKA_HOST" -t factorio-server-log
 
   echo "Error - retrying in 10 seconds"
 
