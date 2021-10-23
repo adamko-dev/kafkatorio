@@ -7,8 +7,8 @@ plugins {
 
 val projectId: String by project.extra
 
-val tsSrcDir = layout.projectDirectory.dir("src/main/typescript")
-val modBuildDir = layout.buildDirectory.dir(projectId).get()
+val tsSrcDir: Directory = layout.projectDirectory.dir("src/main/typescript")
+val modBuildDir: Directory = layout.buildDirectory.dir(projectId).get()
 
 node {
   nodeProjectDir.set(tsSrcDir)
@@ -25,19 +25,27 @@ val tstlTask = tasks.register<NpmTask>("typescriptToLua") {
   npmCommand.set(listOf("run", "build"))
 
   inputs.dir(node.nodeProjectDir)
-      .skipWhenEmpty()
-      .withPropertyName("sourceFiles")
-      .withPathSensitivity(PathSensitivity.RELATIVE)
+    .skipWhenEmpty()
+    .withPropertyName("sourceFiles")
+    .withPathSensitivity(PathSensitivity.RELATIVE)
 
+  val intermediateOutputDir = temporaryDir
+  args.set(parseSpaceSeparatedArgs("-- --outDir $intermediateOutputDir"))
   val outputDir = modBuildDir.dir("typescriptToLua")
-  args.set(parseSpaceSeparatedArgs("-- --outDir $outputDir"))
   outputs.dir(outputDir)
-      .withPropertyName("outputDir")
+    .withPropertyName("outputDir")
 
   ignoreExitValue.set(false)
 
   doFirst("clean") {
-    delete(outputDir)
+    delete(intermediateOutputDir)
+  }
+
+  doLast("syncTstlOutput") {
+    sync {
+      from(intermediateOutputDir)
+      into(outputDir)
+    }
   }
 
 }
@@ -57,16 +65,16 @@ val tstlTask = tasks.register<NpmTask>("typescriptToLua") {
 //      }
 //    }
 
-val modPackageTask = tasks.register<Zip>("package") {
+val modPackageTask = tasks.register<Zip>("packageMod") {
   description = "Package mod files into ZIP"
   group = projectId
 
   dependsOn(tstlTask)
 
   from(
-      layout.projectDirectory.dir("src/main/resources/mod-data"),
-      rootProject.layout.projectDirectory.file("LICENSE"),
-      tstlTask,
+    layout.projectDirectory.dir("src/main/resources/mod-data"),
+    rootProject.layout.projectDirectory.file("LICENSE"),
+    tstlTask,
   )
 
   into(rootProject.name)
@@ -80,8 +88,8 @@ val modPackageTask = tasks.register<Zip>("package") {
 
 //tasks.build { dependsOn(tstlTask, modPackageTask) }
 
-val modInfraDir = layout.projectDirectory.dir("infra")
-val factorioServerDataDir = modInfraDir.dir("factorio-server")
+val modInfraDir: Directory = layout.projectDirectory.dir("infra")
+val factorioServerDataDir: Directory = modInfraDir.dir("factorio-server")
 
 val copyModToServerTask = tasks.register<Copy>("copyModToServer") {
   description = "Copy the mod to the Factorio Docker server"
@@ -97,7 +105,7 @@ val copyModToServerTask = tasks.register<Copy>("copyModToServer") {
   }
 }
 
-val serverStopTask = tasks.register<Exec>("dockerStop") {
+val factorioServerStop = tasks.register<Exec>("factorioServerStop") {
   group = "$projectId.factorioServer"
 
   mustRunAfter(copyModToServerTask)
@@ -106,14 +114,20 @@ val serverStopTask = tasks.register<Exec>("dockerStop") {
   commandLine = parseSpaceSeparatedArgs("docker-compose stop factorio-server")
 }
 
-val serverUpTask = tasks.register<Exec>("dockerUp") {
+val factorioServerUp = tasks.register<Exec>("factorioServerUp") {
   group = "$projectId.factorioServer"
 
   mustRunAfter(copyModToServerTask)
-  dependsOn(serverStopTask)
+  dependsOn(factorioServerStop)
 
   workingDir(modInfraDir)
   commandLine = parseSpaceSeparatedArgs("docker-compose up -d factorio-server")
+}
+
+val factorioServerRestart: Task by tasks.creating {
+  group = "$projectId.factorioServer"
+
+  dependsOn(factorioServerStop, factorioServerUp)
 }
 
 //val serverRestartTask = tasks.register<Exec>("dockerRestart") {
@@ -156,9 +170,9 @@ val launch = tasks.register("modLauncher") {
   description = "Build the mod, upload to Server and Client, and start both"
   group = projectId
   dependsOn(
-      copyModToServerTask,
-      copyModToClientTask,
-      serverUpTask,
+    copyModToServerTask,
+    copyModToClientTask,
+    factorioServerRestart,
 //      factorioClientLaunch,
   )
 }
@@ -175,11 +189,13 @@ tasks.register("downloadFactorioApiDocs") {
 
   doLast {
 
-    ant.invokeMethod("get", mapOf(
+    ant.invokeMethod(
+      "get", mapOf(
         "src" to target,
         "dest" to downloadedFile,
         "verbose" to true,
-    ))
+      )
+    )
 
     val json = downloadedFile.readText()
     val prettyJson = groovy.json.JsonOutput.prettyPrint(json)
