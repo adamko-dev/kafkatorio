@@ -1,8 +1,6 @@
-
 ### Setup notes
 
-Kafka must be connectable from both `localhost` (for cli) and `kafa` (the docker container name). 
-
+Kafka must be connectable from both `localhost` (for cli) and `kafa` (the docker container name).
 
 ### Useful commands
 
@@ -43,5 +41,12 @@ curl --no-buffer -sS --unix-socket /var/run/docker.sock \
 # get logs from Kafka
 kafkacat -u -C -b localhost -t factorio-server-log | jq --unbuffered   
 
-```
+# stream logs, and try trimming first 8 bytes (the header) but it doesn't work
+curl \
+  -sS \
+  --unix-socket /var/run/docker.sock \
+  -X POST \
+  --insecure "http://localhost/v1.41/containers/factorio-server/attach?logs=true&stream=true&stdout=true&follow=true" |
+  tail -c+9
 
+```

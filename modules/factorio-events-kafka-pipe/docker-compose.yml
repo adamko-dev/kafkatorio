@@ -6,6 +6,7 @@ services:
     container_name: "factorio-events-kafka-pipe"
     build:
       dockerfile: "kafka-pipe.Dockerfile"
+    privileged: true
     networks:
       - "factorio-events-nw"
     environment:
