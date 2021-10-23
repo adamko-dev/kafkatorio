@@ -7,7 +7,7 @@ plugins {
 group = "${rootProject.group}.${project.name}"
 version = rootProject.version
 
-val projectId by extra("${rootProject.name}-${project.name}")
+val projectId by extra("fwm-${project.name}")
 //val modBuildDir by extra(layout.buildDirectory.dir(projectId).get())
 
 //group = "dev.adamko.factoriowebmap"
