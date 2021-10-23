@@ -13,7 +13,7 @@ export interface JsonTable {
   [key: string]: JsonTableValueType
 }
 
-const MOD_VERSION = script.active_mods["factorio_web_map"]
+const MOD_VERSION = script.active_mods["factorio-web-map"]
 
 export interface FactorioEvent extends JsonTable {
   /** Schema versioning */
