@@ -15,12 +15,12 @@ services:
       - "27015:27015/tcp" # rcon
     volumes:
       - "./factorio-server:/factorio"
-#    logging:
-#      driver: "mickyg/kafka-logdriver:latest"
-#      options:
-#        KAFKA_BROKER_ADDR: "kafka-kraft"
-#        LOG_TOPIC: "dockerlogs-factorio-server"
-#        LOG_TAG: "factorio-server"
+  #    logging:
+  #      driver: "mickyg/kafka-logdriver:latest"
+  #      options:
+  #        KAFKA_BROKER_ADDR: "kafka-kraft"
+  #        LOG_TOPIC: "dockerlogs-factorio-server"
+  #        LOG_TAG: "factorio-server"
 
   #    environment:
   #      RCON_PORT: 27715
@@ -41,17 +41,24 @@ services:
       args:
         KAFKA_DL_URL: "https://dlcdn.apache.org/kafka/3.0.0/kafka_2.13-3.0.0.tgz"
     networks:
+      - "kafka-nw"
       - "factorio-events-nw"
     ports:
       - "9092:9092"
       - "9093:9093"
 
-#    environment:
-#      KAFKA_LISTENERS: "PLAINTEXT://kafka-kraft:29092,PLAINTEXT_HOST://localhost:9092,CONTROLLER_HOST://localhost:9093" # ,CONTROLLER://kafka-kraft:29093
-#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT" #,CONTROLLER_HOST:PLAINTEXT
-#      KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
-#      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-kraft:29092,PLAINTEXT_HOST://localhost:9092"
-#      KAKFA_CONTROLLER_LISTENER_NAMES: "CONTROLLER" #,CONTROLLER_HOST
+  kafka-ui:
+    image: provectuslabs/kafka-ui:0.2.1
+    container_name: kafka-ui
+    restart: "unless-stopped"
+    networks:
+      - "kafka-nw"
+    ports:
+      - "8080:8080"
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=factorio-events
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:29092
+#      - KAFKA_CLUSTERS_0_ZOOKEEPER=kafka:9093
 
 #  kafka-connect:
 #    image: dev-adamko/kafka-connect
@@ -69,6 +76,8 @@ services:
 
 
 networks:
+  kafka-nw:
+    name: "kafka-nw"
   factorio-events-nw:
     name: "factorio-events-nw"
 
