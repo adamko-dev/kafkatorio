@@ -1,7 +1,7 @@
 version: "3.9"
 
 services:
-  kp2:
+  factorio-events-kafka-pipe:
     image: openjdk:11-jre-buster
     container_name: "factorio-events-kafka-pipe"
     build:
