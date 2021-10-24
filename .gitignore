@@ -1,4 +1,7 @@
 
+# ignore any files that start with '.secret'
+.secret.*
+
 .idea
 
 node_modules

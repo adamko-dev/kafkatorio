@@ -9,13 +9,14 @@ jvm        = "11"
 kotlin     = "1.5.31"
 
 ## libs ##
-http4k     = "4.13.1.0"
+http4k     = "4.16.1.0"
 slf4j      = "1.7.30"
 log4j2     = "2.14.1"
 qosLogback = "1.2.5"
+kafka      = "3.0.0"
 
 ## test ##
-junit      = "5.8.0"
+junit      = "5.8.1"
 kotest     = "4.6.3"
 
 
@@ -59,6 +60,7 @@ http4k-cloudnative = { group = "org.http4k",  name = "http4k-cloudnative"       
 http4k-format-json = { group = "org.http4k",  name = "http4k-format-jackson"                }
 http4k-format-xml  = { group = "org.http4k",  name = "http4k-format-jackson-xml"            }
 http4k-format-yaml = { group = "org.http4k",  name = "http4k-format-jackson-yaml"           }
+http4k-graphql     = { group = "org.http4k",  name = "http4k-graphql"                       }
 
 ## logging ##
 slf4j-api       = { group = "org.slf4j",             name = "slf4j-api",                 version.ref = "slf4j"      }
@@ -71,6 +73,14 @@ logback-encoder = { group = "net.logstash.logback",  name = "logstash-logback-en
 gcp-bom    = { group = "com.google.cloud",  name = "libraries-bom",       version = "23.1.0" }
 gcp-pubsub = { group = "com.google.cloud",  name = "google-cloud-pubsub"                     }
 gcp-speech = { group = "com.google.cloud",  name = "google-cloud-speech"                     }
+
+
+## kafka ##
+
+kafka-streams = { group = "org.apache.kafka",     name = "kafka-streams", version.ref = "kafka" }
+
+# kafka helpers
+kotka         = { group = "com.github.blueanvil", name = "kotka",         version =     "1.1.1" }
 
 
 #############
@@ -86,6 +96,7 @@ junit-engine   = { group = "org.junit.jupiter",  name = "junit-jupiter-engine", 
 junit-launcher = { group = "org.junit.platform", name = "junit-platform-launcher",  version     = "1.7.2"  }
 
 ## kotest ##
+kotest-bom      = { group = "io.kotest",  name = "kotest-bom",                  version.ref = "kotest"  }
 kotest-core     = { group = "io.kotest",  name = "kotest-assertions-core-jvm",  version.ref = "kotest"  }
 kotest-datatest = { group = "io.kotest",  name = "kotest-framework-datatest",   version.ref = "kotest"  }
 kotest-runner   = { group = "io.kotest",  name = "kotest-runner-junit5-jvm",    version.ref = "kotest"  }
