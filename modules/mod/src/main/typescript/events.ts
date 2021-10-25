@@ -4,9 +4,6 @@
 // declare const factorioData: Data
 // declare const factorioMods: Mods
 
-// const eventEnum = {
-//   thingType: Object.values(defines.events)
-// }
 
 import {Serdes} from "./serdes/serdes"
 import {FactorioEvent, JsonTable} from "./model/model";
@@ -16,13 +13,10 @@ for (const [k, v] of pairs(defines.events)) {
   mapEventIdToName.set(v, k)
 }
 
-// function createFactorioEvent(tick: uint, object_name: string, eventType: string, data:
-// JsonTable): FactorioEvent { return { tick, object_name, eventType, data, } }
-
 function handlePlayerUpdate(tick: uint, playerIndex: uint, eventType: string) {
   let player: LuaPlayer = game.players[playerIndex]
   let table = Serdes.Player.playerToTable(player)
-  let event = FactorioEvent(tick, player.object_name, eventType, table)
+  let event = FactorioEvent(tick, eventType, table)
   emitEvent(event)
 
   handleCharactersEvent(tick, playerIndex, eventType)
@@ -44,13 +38,13 @@ function handleCharactersEvent(tick: uint, playerIndex: uint, eventType: string)
 
 function handleEntityUpdate(tick: uint, entity: LuaEntity, eventType: string) {
   let table = Serdes.Entity.entityToTable(entity)
-  let event = FactorioEvent(tick, entity.object_name, eventType, table)
+  let event = FactorioEvent(tick, eventType, table)
   emitEvent(event)
 }
 
 function surfaceEvent(tick: uint, surface: LuaSurface, eventType: string) {
   let table = Serdes.Surface.surfaceToTable(surface)
-  let event = FactorioEvent(tick, surface.object_name, eventType, table)
+  let event = FactorioEvent(tick, eventType, table)
   emitEvent(event)
 }
 
