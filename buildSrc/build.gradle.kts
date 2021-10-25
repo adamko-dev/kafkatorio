@@ -13,6 +13,7 @@ dependencies {
 //  implementation("org.gradle.kotlin:gradle-kotlin-dsl-plugins:${kotlinVersion}")
 
   implementation(platform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion"))
+  implementation("org.jetbrains.kotlin:kotlin-serialization")
 
   implementation("org.jetbrains.kotlin:kotlin-gradle-plugin")
 
