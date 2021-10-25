@@ -5,7 +5,7 @@ plugins {
 //  kotlin("jvm")
   id("io.kvision") version  "5.4.1"
   kotlin("js")
-  kotlin("plugin.serialization") version "1.5.31"
+  kotlin("plugin.serialization")
 }
 
 group = "${rootProject.group}.server"
