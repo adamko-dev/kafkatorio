@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "dev.adamko.factoriowebmap"
-version = "0.0.2"
+version = "0.0.3"
 
 tasks.wrapper {
   gradleVersion = "7.2"

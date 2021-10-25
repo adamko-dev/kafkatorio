@@ -1,11 +1,13 @@
 import com.github.gradle.node.npm.task.NpmTask
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
+import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
   id("dev.adamko.factoriowebmap.archetype.node")
 }
 
 val projectId: String by project.extra
+val tokens: Map<String, String> by project.extra
 
 val tsSrcDir: Directory = layout.projectDirectory.dir("src/main/typescript")
 val modBuildDir: Directory = layout.buildDirectory.dir(projectId).get()
@@ -71,8 +73,13 @@ val modPackageTask = tasks.register<Zip>("packageMod") {
 
   dependsOn(tstlTask)
 
+  inputs.properties(tokens)
+
+  from(layout.projectDirectory.dir("src/main/resources/mod-data")) {
+    include("**/**")
+    filter<ReplaceTokens>("tokens" to tokens)
+  }
   from(
-    layout.projectDirectory.dir("src/main/resources/mod-data"),
     rootProject.layout.projectDirectory.file("LICENSE"),
     tstlTask,
   )
@@ -82,8 +89,14 @@ val modPackageTask = tasks.register<Zip>("packageMod") {
   // Factorio required format is:
   // - filename: `mod-name_version.zip`
   // - zip contains one directory, `mod-name`
-  archiveFileName.set("${rootProject.name}_${rootProject.version}.zip")
+  archiveFileName.set("${rootProject.name}_${project.version}.zip")
   destinationDirectory.set(modBuildDir.dir("dist"))
+
+  doLast {
+    val outDir = destinationDirectory.asFile.get().toRelativeString(layout.projectDirectory.asFile)
+    val outZip = "${archiveFileName.orNull}"
+    logger.lifecycle("Creating mod zip $outDir/$outZip")
+  }
 }
 
 //tasks.build { dependsOn(tstlTask, modPackageTask) }
