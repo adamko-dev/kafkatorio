@@ -19,4 +19,11 @@ to investigate:
 
 * https://github.com/starwing/lua-protobuf
 * https://github.com/grafi-tt/lunajson
+* http://lua-users.org/wiki/CompressionAndArchiving
+* https://luapower.com/zlib
 
+* https://square.github.io/okio/#communicate-on-a-socket-javakotlin
+
+* https://github.com/cloudhut/kowl
+* https://opensource.expediagroup.com/graphql-kotlin/docs/server/spring-server/spring-subscriptions
+* https://github.com/YousefED/typescript-json-schema
