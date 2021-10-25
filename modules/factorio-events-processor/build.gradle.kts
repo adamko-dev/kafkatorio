@@ -1,6 +1,6 @@
-
 plugins {
   id("dev.adamko.factoriowebmap.archetype.kotlin-jvm")
+  kotlin("plugin.serialization")
   application
 }
 
@@ -18,6 +18,8 @@ val buildDir: Directory = layout.buildDirectory.dir(projectId).get()
 dependencies {
 
   implementation("org.apache.kafka:kafka-streams:3.0.0")
+
+  implementation(libs.kotlinx.serialization)
 
   implementation(platform(libs.http4k.bom))
   implementation(libs.http4k.core)
