@@ -6,6 +6,6 @@ import org.apache.kafka.streams.errors.StreamsUncaughtExceptionHandler.StreamThr
 class StreamsExceptionHandler : StreamsUncaughtExceptionHandler {
   override fun handle(exception: Throwable): StreamThreadExceptionResponse {
     println("${exception.message} - ${exception.stackTrace}")
-    return StreamThreadExceptionResponse.REPLACE_THREAD
+    return StreamThreadExceptionResponse.SHUTDOWN_APPLICATION
   }
 }
