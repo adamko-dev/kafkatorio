@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+option optimize_for = LITE_RUNTIME;
+option java_multiple_files = true;
+
+package dev.adamko.factorioevents;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+
+message FactorioServerLogRecord {
+  string mod_version = 1;
+  uint32 tick = 2;
+  string event_type = 3;
+  FactorioLuaObject data = 4;
+
+}
+
+message FactorioLuaObject {
+  string object_name = 1;
+  oneof data {
+    LuaControl lua_control = 2;
+  }
+}
+
+// https://lua-api.factorio.com/next/LuaControl.html
+message LuaControl {
+  bool is_player = 2;
+  uint32 surface_index = 3;
+  Position position = 4;
+  uint32 force_index = 5;
+
+  oneof subtype {
+    LuaPlayer player = 10;
+    LuaEntity entity = 11;
+  }
+}
+
+// https://lua-api.factorio.com/next/LuaPlayer.html
+message LuaPlayer {
+  uint32 index = 1; // unique ID
+  string name = 2;
+  repeated int32 data = 4 [packed = true];
+
+  Colour colour = 8;
+
+  bool is_connected = 10;
+  bool is_admin = 11;
+
+  uint32 afk_time_ticks = 100;
+  uint32 online_time_ticks = 101;
+  uint32 last_online_ticks = 102;
+}
+
+// https://lua-api.factorio.com/next/LuaEntity.html
+message LuaEntity {
+  uint32 unit_number = 1; // (optional) unique ID
+  string name = 2;
+  string type = 3;
+  string status = 4; // https://lua-api.factorio.com/next/defines.html#defines.entity_status
+
+  bool is_active = 8;
+  bool is_moving = 9;
+
+  uint32 player_index = 50; // (optional) The player connected to this character or nil if none.
+  uint32 last_user_index = 51; // (optional) The last player that changed any setting on this entity.
+
+  Colour colour = 100; // (optional)
+}
+
+message LuaSurface {
+  uint32 index = 1; // unique ID
+  string name = 2;
+  float daytime = 3;
+}
+
+message LuaForce {
+  uint32 index = 1; // unique ID
+  string force_name = 2;
+
+  repeated uint32 player_ids = 100 [packed = true];
+}
+
+message Position {
+  int32 x = 1;
+  int32  y = 2;
+}
+
+message Colour {
+  float red = 1;
+  float green = 2;
+  float blue = 3;
+  float alpha = 4;
+}

@@ -1,13 +1,17 @@
 rootProject.name = "factorio-web-map"
 
+
+includeBuild("modules/protoc-gradle-plugin")
+
 include(
-    ":modules:mod",
+  ":modules:mod",
 //    ":modules:mod2",
-    ":modules:server",
-    ":modules:kt-rcon",
-    ":modules:factorio-events-data-model",
-    ":modules:factorio-events-processor",
-    ":modules:factorio-events-kafka-pipe",
+  ":modules:server",
+  ":modules:kt-rcon",
+  ":modules:factorio-events-data-model",
+//  ":modules:factorio-events-data-model2",
+  ":modules:factorio-events-processor",
+  ":modules:factorio-events-kafka-pipe",
 )
 
 

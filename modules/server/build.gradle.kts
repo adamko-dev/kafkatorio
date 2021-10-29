@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 plugins {
   id("dev.adamko.factoriowebmap.archetype.base")
 //  kotlin("jvm")
-  id("io.kvision") version  "5.4.1"
+  id("io.kvision") version "5.4.1"
   kotlin("js")
   kotlin("plugin.serialization")
 }
@@ -24,13 +24,13 @@ kotlin {
         outputFileName = "main.bundle.js"
         sourceMaps = false
         devServer = KotlinWebpackConfig.DevServer(
-            open = false,
-            port = 3000,
-            proxy = mutableMapOf(
-                "/kv/*" to "http://localhost:8080",
-                "/kvws/*" to mapOf("target" to "ws://localhost:8080", "ws" to true)
-            ),
-            static = mutableListOf("$buildDir/processedResources/js/main")
+          open = false,
+          port = 3000,
+          proxy = mutableMapOf(
+            "/kv/*" to "http://localhost:8080",
+            "/kvws/*" to mapOf("target" to "ws://localhost:8080", "ws" to true)
+          ),
+          static = mutableListOf("$buildDir/processedResources/js/main")
         )
       }
       webpackTask {
