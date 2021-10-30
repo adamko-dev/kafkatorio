@@ -56,6 +56,8 @@ open class ProtocPlugin : Plugin<Project> {
 
     project.dependencies {
       protobufLib("com.google.protobuf:protobuf-javalite:3.19.1")
+//      implementation("com.google.protobuf:protobuf-javalite:3.19.1")
+      implementation("com.google.protobuf:protobuf-kotlin-lite:3.19.1")
     }
 
     /** Download protobuf libs */
@@ -151,6 +153,7 @@ open class ProtocPlugin : Plugin<Project> {
 
     val genSrcDir = project.layout.buildDirectory.dir("protobuf/generated-sources")
     val ktGenSrc = genSrcDir.map { it.dir("kotlin") }
+    val jGenSrc = genSrcDir.map { it.dir("java") }
 
     project.mkdir(ktGenSrc)
 
@@ -159,6 +162,7 @@ open class ProtocPlugin : Plugin<Project> {
 
       project.sourceSets.named("main") {
         this.java.srcDir(ktGenSrc)
+        this.java.srcDir(jGenSrc)
       }
 
 //          sourceSets.main.get().kotlin.srcDir(ktGenSrc)
@@ -171,6 +175,7 @@ open class ProtocPlugin : Plugin<Project> {
     project.plugins.withType<IdeaPlugin> {
       project.extensions.configure<IdeaModel> {
         this.module.generatedSourceDirs.add(ktGenSrc.get().asFile)
+        this.module.generatedSourceDirs.add(jGenSrc.get().asFile)
       }
     }
 
