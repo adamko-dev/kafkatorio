@@ -1,7 +1,7 @@
 rootProject.name = "factorio-web-map"
 
 
-includeBuild("modules/protoc-gradle-plugin")
+//includeBuild("modules/protoc-gradle-plugin")
 
 include(
   ":modules:mod",
