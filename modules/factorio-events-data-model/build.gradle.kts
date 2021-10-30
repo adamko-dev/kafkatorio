@@ -82,53 +82,50 @@ open class ProtocPlugin : Plugin<Project> {
       dependsOn(protobufCompiler, libsTask)
       executable(protobufCompiler.singleFile)
 
-
       val protoLibsDir = project.layout.buildDirectory.dir("proto/libs")
       inputs.dir(protoLibsDir)
 
       standardOutput = System.out
 
-      val outDir = project.layout.buildDirectory.dir("protoc")
-//      outDir.get().asFile.mkdirs()
-      workingDir(outDir)
+      val outDir = project.layout.buildDirectory.dir("protoc/generated-sources")
+      outputs.dir(outDir)
 
-//      if (protocConfig.operatingSystemProvider.get().get().isWindows) {
-//        args("cmd", "/c")
-//      }
+      workingDir(temporaryDirFactory)
 
-      val srcDir = project.layout.projectDirectory.dir("src")
-      val javaOut = project.layout.buildDirectory.dir("proto/java")
-      val kotlinOut = project.layout.buildDirectory.dir("proto/kotlin")
-      val protoFile =
-        project.layout.projectDirectory.file("src/main/proto/FactorioServerLogRecord.proto")
+      val javaOut = workingDir.resolve("proto/java")
+      val kotlinOut = workingDir.resolve("proto/kotlin")
+      val protoFile by project.objects.fileProperty()
+        .convention(project.layout.projectDirectory.file("src/main/proto/FactorioServerLogRecord.proto"))
+      val protoFileParent = project.provider { protoFile.asFile.parentFile }
+
+      inputs.file(protoFile)
 
       args(
         parseSpaceSeparatedArgs(
           """
-            -I=${protoLibsDir.map { it.asFile.canonicalPath }.get()}
-            -I=${srcDir.asFile.canonicalPath}
-            --java_out=${javaOut.get().asFile.canonicalPath}
-            --kotlin_out=${kotlinOut.get().asFile.canonicalPath}
-            ${protoFile.asFile.canonicalPath}
-
-          """.trimIndent()
-//          """
-//            -I=$SRC_DIR
-//            --java_out=$DST_DIR
-//            --kotlin_out=$DST_DIR
-//            $SRC_DIR/addressbook.proto"
-//
-//          """.trimIndent()
+                      --proto_path=${protoFileParent.get()}
+                      --proto_path=${protoLibsDir.get()}
+                      --java_out=$javaOut
+                      --kotlin_out=$kotlinOut
+                      $protoFile
+                    """
         )
       )
       doFirst {
-        javaOut.get().asFile.mkdirs()
-        kotlinOut.get().asFile.mkdirs()
+        project.delete(workingDir)
+
+        project.mkdir(javaOut)
+        project.mkdir(kotlinOut)
       }
 
-//      doLast {
-//        executable = protocPrepare.flatMap { it.protocOutput }.get().asFile.canonicalPath
-//      }
+      doLast {
+        project.sync {
+          from(workingDir)
+          into(outDir)
+        }
+        project.delete(workingDir)
+      }
+
     }
   }
 }
