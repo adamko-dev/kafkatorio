@@ -8,6 +8,7 @@ import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.property
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.gradle.nativeplatform.platform.internal.DefaultOperatingSystem
+import org.jetbrains.kotlin.incremental.isJavaFile
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
@@ -23,79 +24,119 @@ dependencies {
 }
 
 
-class ProtocPlugin : Plugin<Project> {
+open class ProtocPlugin : Plugin<Project> {
 
   override fun apply(project: Project) {
 
     val protocConfig =
       project.extensions.create("protocPluginConfig", ProtocPluginConfig::class, project)
 
-//    val protocDep: Configuration = project.configurations.create("protoc") {
-//      isVisible = false
-//      isCanBeConsumed = false
-//      isCanBeResolved = true
-//      isTransitive = false
-//
-//      defaultDependencies {
-//        add(protocConfig.dependencyProvider())
-//      }
-//    }
+    val protobufCompiler: Configuration = project.configurations.create("protobufCompiler") {
+      isVisible = false
+      isCanBeConsumed = false
+      isCanBeResolved = true
+      isTransitive = false
 
-//    project.dependencies.createArtifactResolutionQuery().forComponents()
+      defaultDependencies {
+        add(protocConfig.dependency.get())
+      }
+    }
 
-    val protocPrepare = project.tasks.register<ProtocPrepareTask>("protocPrepare")
+    val protobufLibs: Configuration = project.configurations.create("protobufLib") {
+      isVisible = true
+      isCanBeConsumed = false
+      isCanBeResolved = true
+      isTransitive = false
+    }
 
-//    project.tasks.register<Exec>("protobufCompile") {
-//
-//      group = "protoc"
-//      dependsOn(protocPrepare)
-//
-//      workingDir(temporaryDir)
-//
-//
+//    val protocPrepare = project.tasks.register<ProtocPrepareTask>("protocPrepare")
+
+    project.dependencies {
+      protobufLibs("com.google.protobuf:protobuf-javalite:3.19.1")
+    }
+
+    val libsTask = project.tasks.register<Sync>("protobufLibs") {
+      group = "protobuf"
+
+      includeEmptyDirs = false
+
+      dependsOn(protobufLibs)
+
+      val outDir = project.layout.buildDirectory.dir("proto/libs")
+
+      protobufLibs
+        .map { project.zipTree(it) }
+        .forEach {
+          logger.lifecycle("protoc lib - $it")
+          from(it) {
+            include("**/*.proto")
+          }
+        }
+
+      into(outDir)
+    }
+
+
+    project.tasks.register<Exec>("protobufCompile") {
+      group = "protobuf"
+      dependsOn(protobufCompiler, libsTask)
+      executable(protobufCompiler.singleFile)
+
+
+      val protoLibsDir = project.layout.buildDirectory.dir("proto/libs")
+      inputs.dir(protoLibsDir)
+
+      standardOutput = System.out
+
+      val outDir = project.layout.buildDirectory.dir("protoc")
+//      outDir.get().asFile.mkdirs()
+      workingDir(outDir)
+
 //      if (protocConfig.operatingSystemProvider.get().get().isWindows) {
 //        args("cmd", "/c")
 //      }
-//
-//      val srcDir = project.layout.projectDirectory.dir("src")
-//      val javaOut = project.layout.buildDirectory.dir("proto/java")
-//      val kotlinOut = project.layout.buildDirectory.dir("proto/kotlin")
-//      val protoFile =
-//        project.layout.projectDirectory.file("src/main/proto/FactorioServerLogRecord.proto")
-//
-//      args(
-//        parseSpaceSeparatedArgs(
+
+      val srcDir = project.layout.projectDirectory.dir("src")
+      val javaOut = project.layout.buildDirectory.dir("proto/java")
+      val kotlinOut = project.layout.buildDirectory.dir("proto/kotlin")
+      val protoFile =
+        project.layout.projectDirectory.file("src/main/proto/FactorioServerLogRecord.proto")
+
+
+
+      args(
+        parseSpaceSeparatedArgs(
+          """
+            -I=${srcDir.asFile.canonicalPath}
+            --java_out=${javaOut.get().asFile.canonicalPath}
+            --kotlin_out=${kotlinOut.get().asFile.canonicalPath}
+            ${protoFile.asFile.canonicalPath}
+
+          """.trimIndent()
 //          """
-//            -I=${srcDir.asFile.canonicalPath}
-//            --java_out=${javaOut.get().asFile.canonicalPath}
-//            --kotlin_out=${kotlinOut.get().asFile.canonicalPath}
-//            ${protoFile.asFile.canonicalPath}
+//            -I=$SRC_DIR
+//            --java_out=$DST_DIR
+//            --kotlin_out=$DST_DIR
+//            $SRC_DIR/addressbook.proto"
 //
 //          """.trimIndent()
-////          """
-////            -I=$SRC_DIR
-////            --java_out=$DST_DIR
-////            --kotlin_out=$DST_DIR
-////            $SRC_DIR/addressbook.proto"
-////
-////          """.trimIndent()
-//        )
-//      )
+        )
+      )
 //      doLast {
 //        executable = protocPrepare.flatMap { it.protocOutput }.get().asFile.canonicalPath
 //      }
-//    }
+    }
   }
 }
 
-abstract class ProtocPluginConfig(private val project: Project) : java.io.Serializable {
+abstract class ProtocPluginConfig(private val project: Project) : java.io.Serializable { // TODO remove serializable?
 
   val protocWorkingDir: DirectoryProperty =
     project.objects.directoryProperty()
       .convention(project.rootProject.layout.projectDirectory.dir(".gradle/protoc"))
 
   val protocVersion: Property<String> =
-    project.objects.property(String::class).convention("3.9.2")
+    project.objects.property(String::class).convention("3.19.1")
 
   val protocGroup: Property<String> =
     project.objects.property(String::class).convention("com.google.protobuf")
@@ -177,9 +218,8 @@ abstract class ProtocPluginConfig(private val project: Project) : java.io.Serial
 
 }
 
-abstract class ProtocGenerationConfig
-
 abstract class ProtocPrepareTask : DefaultTask() {
+
 
   @Internal
   val protocPluginConfig: Provider<ProtocPluginConfig> = project.provider {
@@ -192,27 +232,18 @@ abstract class ProtocPrepareTask : DefaultTask() {
 
   @Internal
   val protocOutput: RegularFileProperty = project.objects.fileProperty()
-//  @get:OutputFile
-//  val protocOutput: RegularFileProperty = project.objects.fileProperty()
-//    .convention { outputDirectory.asFileTree.singleFile }
-//    .convention(outputDirectory.map {  project  it.asFileTree.singleFile })
 
   @Internal
   val protocDependency: Provider<ExternalModuleDependency> =
     protocPluginConfig.flatMap { it.dependency }
 
   init {
-    super.setGroup("protoc")
-
-//    project.dependencies {
-//      protocDep(protocDependency.get())
-//    }
-//
-//    super.dependsOn(protocDep)
+    super.setGroup("protobuf")
+    outputs.dir(outputDirectory)
   }
 
   @TaskAction
-  fun prepare() {
+  fun action() {
 
     val protocDep: Configuration = project.configurations.create("protoc") {
       isVisible = false
@@ -229,16 +260,11 @@ abstract class ProtocPrepareTask : DefaultTask() {
     val resolvedProtocDep = protocDep.singleFile
     logger.lifecycle("Downloaded $resolvedProtocDep")
 
-//    require(resolvedProtocDep.singleOrNull() != null) {
-//      "Expected to download a single protoc.exe, but got ${resolvedProtocDep.size}: ${resolvedProtocDep.joinToString()}"
-//    }
-
     project.sync {
       from(resolvedProtocDep)
       into(outputDirectory)
-//      doLast {
-//        logger.lifecycle("Syncing from $resolvedProtocDep to $outputDirectory")
-//      }
+      logger.lifecycle("Syncing from $resolvedProtocDep to ${outputDirectory.asFile.get().canonicalPath}")
+      protocOutput.set(outputDirectory.asFileTree.singleFile)
     }
   }
 }
