@@ -1,6 +1,7 @@
 package dev.adamko.factoriowebmap.archetype
 
 plugins {
+  idea
   base
 }
 
@@ -18,6 +19,12 @@ val tokens: Map<String, String> by extra(
   )
 )
 
+idea {
+  module {
+    isDownloadSources = true
+    isDownloadJavadoc = true
+  }
+}
 
 //group = "dev.adamko.factoriowebmap"
 //version = "0.0.1"

@@ -4,15 +4,18 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.provideDelegate
+import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.property
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.gradle.nativeplatform.platform.internal.DefaultOperatingSystem
-import org.jetbrains.kotlin.incremental.isJavaFile
+import org.gradle.plugins.ide.idea.model.IdeaModel
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
-  id("dev.adamko.factoriowebmap.archetype.base")
+  id("dev.adamko.factoriowebmap.archetype.kotlin-jvm")
   `kotlin-dsl`
 }
 
@@ -28,6 +31,8 @@ open class ProtocPlugin : Plugin<Project> {
 
   override fun apply(project: Project) {
 
+    configureIntelliJ(project)
+
     val protocConfig =
       project.extensions.create("protocPluginConfig", ProtocPluginConfig::class, project)
 
@@ -42,29 +47,29 @@ open class ProtocPlugin : Plugin<Project> {
       }
     }
 
-    val protobufLibs: Configuration = project.configurations.create("protobufLib") {
+    val protobufLib: Configuration = project.configurations.create("protobufLib") {
       isVisible = true
       isCanBeConsumed = false
       isCanBeResolved = true
       isTransitive = false
     }
 
-//    val protocPrepare = project.tasks.register<ProtocPrepareTask>("protocPrepare")
-
     project.dependencies {
-      protobufLibs("com.google.protobuf:protobuf-javalite:3.19.1")
+      protobufLib("com.google.protobuf:protobuf-javalite:3.19.1")
     }
 
-    val libsTask = project.tasks.register<Sync>("protobufLibs") {
+    /** Download protobuf libs */
+    val protoLibsTask = project.tasks.register<Sync>("protobufLibs") {
       group = "protobuf"
-
+      description = "Download and extract protobuf libs"
       includeEmptyDirs = false
+      dependsOn(protobufLib)
 
-      dependsOn(protobufLibs)
+      val protoLibDir by project.objects.directoryProperty()
+        .convention(project.layout.buildDirectory.dir("protobuf/libs"))
+      into(protoLibDir)
 
-      val outDir = project.layout.buildDirectory.dir("proto/libs")
-
-      protobufLibs
+      protobufLib
         .map { project.zipTree(it) }
         .forEach {
           logger.lifecycle("protoc lib - $it")
@@ -72,50 +77,60 @@ open class ProtocPlugin : Plugin<Project> {
             include("**/*.proto")
           }
         }
-
-      into(outDir)
     }
 
+    // TODO investigate builtBy and sourceDirectorySet?
+//    project.objects.fileCollection().builtBy()
+//    val pbSrcSet = project.objects.sourceDirectorySet("protobuf", "protobuf")
 
-    project.tasks.register<Exec>("protobufCompile") {
+
+    /** Convert `.proto` files to Kotlin */
+    val pbCompileTask = project.tasks.register<Exec>("protobufCompile") {
       group = "protobuf"
-      dependsOn(protobufCompiler, libsTask)
-      executable(protobufCompiler.singleFile)
-
-      val protoLibsDir = project.layout.buildDirectory.dir("proto/libs")
-      inputs.dir(protoLibsDir)
+      dependsOn(protobufCompiler, protoLibsTask)
 
       standardOutput = System.out
 
-      val outDir = project.layout.buildDirectory.dir("protoc/generated-sources")
-      outputs.dir(outDir)
-
+      executable(protobufCompiler.singleFile)
       workingDir(temporaryDirFactory)
 
-      val javaOut = workingDir.resolve("proto/java")
-      val kotlinOut = workingDir.resolve("proto/kotlin")
+      val outDir = project.layout.buildDirectory.dir("protobuf/generated-sources")
+      outputs.dir(outDir)
+
+      val protoLibsDir: Provider<File> = protoLibsTask.map { it.destinationDir }
+
+      val javaOut = workingDir.resolve("java")
+      val kotlinOut = workingDir.resolve("kotlin")
       val protoFile by project.objects.fileProperty()
         .convention(project.layout.projectDirectory.file("src/main/proto/FactorioServerLogRecord.proto"))
+
       val protoFileParent = project.provider { protoFile.asFile.parentFile }
 
-      inputs.file(protoFile)
+      val isLiteEnabled: Boolean by project.objects.property<Boolean>().convention(true)
 
-      args(
-        parseSpaceSeparatedArgs(
-          """
-                      --proto_path=${protoFileParent.get()}
-                      --proto_path=${protoLibsDir.get()}
-                      --java_out=$javaOut
-                      --kotlin_out=$kotlinOut
-                      $protoFile
-                    """
-        )
-      )
       doFirst {
         project.delete(workingDir)
 
+        project.mkdir(outDir)
         project.mkdir(javaOut)
         project.mkdir(kotlinOut)
+
+        val liteOpt: String = when (isLiteEnabled) {
+          true  -> "lite:"
+          false -> ""
+        }
+
+        args(
+          parseSpaceSeparatedArgs(
+            """
+                        --proto_path=${protoLibsDir.get()}
+                        --proto_path=${protoFileParent.get()}
+                        --java_out=$liteOpt$javaOut
+                        --kotlin_out=$liteOpt$kotlinOut
+                        $protoFile
+                      """
+          )
+        )
       }
 
       doLast {
@@ -125,13 +140,55 @@ open class ProtocPlugin : Plugin<Project> {
         }
         project.delete(workingDir)
       }
+    }
 
+    project.tasks.assemble { dependsOn(pbCompileTask) }
+
+  }
+
+  /** Setup source dirs */
+  private fun configureIntelliJ(project: Project) {
+
+    val genSrcDir = project.layout.buildDirectory.dir("protobuf/generated-sources")
+    val ktGenSrc = genSrcDir.map { it.dir("kotlin") }
+
+    project.mkdir(ktGenSrc)
+
+    project.extensions.findByType<KotlinJvmProjectExtension>()?.apply {
+      project.logger.lifecycle("-------\nadding generated sources $ktGenSrc\n-------")
+
+      project.sourceSets.named("main") {
+        this.java.srcDir(ktGenSrc)
+      }
+
+//          sourceSets.main.get().kotlin.srcDir(ktGenSrc)
+
+//          sourceSets.main.configure {
+//            this.kotlin.srcDir(ktGenSrc)
+//          }
+    }
+
+    project.plugins.withType<IdeaPlugin> {
+      project.extensions.configure<IdeaModel> {
+        this.module.generatedSourceDirs.add(ktGenSrc.get().asFile)
+      }
+    }
+
+
+    /**
+     * IntelliJ requires source dirs are configured first.
+     *
+     * https://github.com/google/protobuf-gradle-plugin/blob/master/src/main/groovy/com/google/protobuf/gradle/Utils.groovy#L128
+     */
+    project.tasks.withType<GenerateIdeaModule> {
+      doFirst {
+        project.mkdir(ktGenSrc)
+      }
     }
   }
 }
 
-abstract class ProtocPluginConfig(private val project: Project) :
-  java.io.Serializable { // TODO remove serializable?
+abstract class ProtocPluginConfig(private val project: Project) {
 
   val protocWorkingDir: DirectoryProperty =
     project.objects.directoryProperty()
@@ -222,7 +279,6 @@ abstract class ProtocPluginConfig(private val project: Project) :
 
 abstract class ProtocPrepareTask : DefaultTask() {
 
-
   @Internal
   val protocPluginConfig: Provider<ProtocPluginConfig> = project.provider {
     project.extensions.getByType<ProtocPluginConfig>()
@@ -280,9 +336,26 @@ abstract class ProtocGenerationTask : DefaultTask() {
 
 }
 
-
 apply<ProtocPlugin>()
 
 configure<ProtocPluginConfig> {
 }
+
+
+val logSS = tasks.create("logSourceSets") {
+  group = "protobuf"
+
+  doLast {
+    sourceSets.forEach { set ->
+      logger.lifecycle("SourceSet name: ${set.name}")
+      set.allSource.forEach { src ->
+        logger.lifecycle("location: ${src.toRelativeString(rootProject.projectDir)}")
+      }
+    }
+
+    logger.lifecycle("-------\nIdeaModel generated source dirs: ${project.idea.module.generatedSourceDirs.joinToString()}\n-------")
+  }
+}
+
+tasks.named("protobufCompile") { finalizedBy(logSS) }
 

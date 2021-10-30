@@ -27,3 +27,5 @@ to investigate:
 * https://github.com/cloudhut/kowl
 * https://opensource.expediagroup.com/graphql-kotlin/docs/server/spring-server/spring-subscriptions
 * https://github.com/YousefED/typescript-json-schema
+
+* https://jbrandhorst.com/post/go-protobuf-tips/

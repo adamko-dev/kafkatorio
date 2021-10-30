@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 
 plugins {
   kotlin("js")
+  id("dev.adamko.factoriowebmap.archetype.base")
   id("dev.adamko.factoriowebmap.archetype.node")
 }
 
