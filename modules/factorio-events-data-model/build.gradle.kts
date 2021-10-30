@@ -102,11 +102,10 @@ open class ProtocPlugin : Plugin<Project> {
       val protoFile =
         project.layout.projectDirectory.file("src/main/proto/FactorioServerLogRecord.proto")
 
-
-
       args(
         parseSpaceSeparatedArgs(
           """
+            -I=${protoLibsDir.map { it.asFile.canonicalPath }.get()}
             -I=${srcDir.asFile.canonicalPath}
             --java_out=${javaOut.get().asFile.canonicalPath}
             --kotlin_out=${kotlinOut.get().asFile.canonicalPath}
@@ -122,6 +121,11 @@ open class ProtocPlugin : Plugin<Project> {
 //          """.trimIndent()
         )
       )
+      doFirst {
+        javaOut.get().asFile.mkdirs()
+        kotlinOut.get().asFile.mkdirs()
+      }
+
 //      doLast {
 //        executable = protocPrepare.flatMap { it.protocOutput }.get().asFile.canonicalPath
 //      }
@@ -129,7 +133,8 @@ open class ProtocPlugin : Plugin<Project> {
   }
 }
 
-abstract class ProtocPluginConfig(private val project: Project) : java.io.Serializable { // TODO remove serializable?
+abstract class ProtocPluginConfig(private val project: Project) :
+  java.io.Serializable { // TODO remove serializable?
 
   val protocWorkingDir: DirectoryProperty =
     project.objects.directoryProperty()
