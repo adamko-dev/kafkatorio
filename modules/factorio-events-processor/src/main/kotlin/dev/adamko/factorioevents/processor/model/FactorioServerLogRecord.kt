@@ -9,8 +9,6 @@ import java.math.BigInteger
 import kotlin.reflect.KClass
 
 
-
-
 data class FactorioServerLogRecord<DataType : FactorioObjectData>(
   @JsonProperty("mod_version")
   val modVersion: String,
@@ -22,18 +20,19 @@ data class FactorioServerLogRecord<DataType : FactorioObjectData>(
   val data: DataType,
 )
 
-
 @JsonTypeInfo(
   use = JsonTypeInfo.Id.NAME,
-  include = JsonTypeInfo.As.PROPERTY,
+  include = JsonTypeInfo.As.EXISTING_PROPERTY,
   property = "object_name",
-  defaultImpl = Void::class, // equivalent to null
+  defaultImpl = UnknownFactorioObject::class,
   visible = true,
 )
 sealed class FactorioObjectData(
   @JsonProperty("object_name")
   val objectName: String
 )
+
+object UnknownFactorioObject : FactorioObjectData("unknown")
 
 @JsonTypeName("LuaSurface")
 class LuaSurfaceData(
