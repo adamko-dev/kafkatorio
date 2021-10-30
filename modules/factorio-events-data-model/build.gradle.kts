@@ -1,15 +1,14 @@
+import java.util.function.Supplier
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.ExternalDependency
-import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskAction
-import org.gradle.kotlin.dsl.domainObjectContainer
 import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.withType
 import org.gradle.kotlin.dsl.property
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
+import org.gradle.nativeplatform.platform.internal.DefaultOperatingSystem
+import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
   id("dev.adamko.factoriowebmap.archetype.base")
@@ -18,6 +17,7 @@ plugins {
 
 val projectId: String by project.extra
 val buildDir: Directory = layout.buildDirectory.dir(projectId).get()
+
 
 dependencies {
 }
@@ -41,64 +41,58 @@ class ProtocPlugin : Plugin<Project> {
 //      }
 //    }
 
-    project.tasks.register<ProtocPrepareTask>("protocPrepare") {
+//    project.dependencies.createArtifactResolutionQuery().forComponents()
 
-    }
+    val protocPrepare = project.tasks.register<ProtocPrepareTask>("protocPrepare")
 
+//    project.tasks.register<Exec>("protobufCompile") {
 //
-//    val prepareTask = project.tasks.register<Sync>("protocPrepare") {
 //      group = "protoc"
+//      dependsOn(protocPrepare)
 //
-//      val outputDir = project.rootProject.layout.projectDirectory.dir(".gradle/protoc")
+//      workingDir(temporaryDir)
 //
-//      outputs.dir(outputDir)
 //
-////      doLast {
-//      val protoc: File = protocDep.resolve().single()
-//      logger.lifecycle("protoc file $protoc")
-//
-//      from(protoc)
-//      into(outputDir)
-////      }
-//    }
-//
-//    project.tasks.build { dependsOn(prepareTask) }
-//
-//    val generateTask = project.tasks.create<Exec>("protocGenerate") {
-//      dependsOn(prepareTask)
-//    }
-
-//    val protocDeps = project.configurations.create("pbAndG") {
-//      this.let { config ->
-//
-//        config.isVisible = false
-//        config.isCanBeConsumed = false
-//        config.isCanBeResolved = true
-//        config.description = "protoc dependencies"
-//
-//        config.defaultDependencies {
-//          add(protocConfig.dependencyProvider())
-//        }
+//      if (protocConfig.operatingSystemProvider.get().get().isWindows) {
+//        args("cmd", "/c")
 //      }
 //
-//      val generatorsContainer =
-//        project.objects.domainObjectContainer(ProtocGenerationTask::class)
-//      protocConfig.extensions.add("protocGenerate", generatorsContainer)
+//      val srcDir = project.layout.projectDirectory.dir("src")
+//      val javaOut = project.layout.buildDirectory.dir("proto/java")
+//      val kotlinOut = project.layout.buildDirectory.dir("proto/kotlin")
+//      val protoFile =
+//        project.layout.projectDirectory.file("src/main/proto/FactorioServerLogRecord.proto")
 //
+//      args(
+//        parseSpaceSeparatedArgs(
+//          """
+//            -I=${srcDir.asFile.canonicalPath}
+//            --java_out=${javaOut.get().asFile.canonicalPath}
+//            --kotlin_out=${kotlinOut.get().asFile.canonicalPath}
+//            ${protoFile.asFile.canonicalPath}
 //
-//      project.extensions.add("testingExtensionThingy", project.provider {
-//        DefaultNativePlatform.getCurrentOperatingSystem().toFamilyName()
-//      })
-//
-//      project.tasks.withType<ProtocGenerationTask> {
+//          """.trimIndent()
+////          """
+////            -I=$SRC_DIR
+////            --java_out=$DST_DIR
+////            --kotlin_out=$DST_DIR
+////            $SRC_DIR/addressbook.proto"
+////
+////          """.trimIndent()
+//        )
+//      )
+//      doLast {
+//        executable = protocPrepare.flatMap { it.protocOutput }.get().asFile.canonicalPath
 //      }
-//
 //    }
-//
   }
 }
 
 abstract class ProtocPluginConfig(private val project: Project) : java.io.Serializable {
+
+  val protocWorkingDir: DirectoryProperty =
+    project.objects.directoryProperty()
+      .convention(project.rootProject.layout.projectDirectory.dir(".gradle/protoc"))
 
   val protocVersion: Property<String> =
     project.objects.property(String::class).convention("3.9.2")
@@ -112,6 +106,10 @@ abstract class ProtocPluginConfig(private val project: Project) : java.io.Serial
   val protocArtifactExtension: Property<String> =
     project.objects.property(String::class).convention("exe")
 
+  val operatingSystemProvider: Property<Supplier<DefaultOperatingSystem>> =
+    project.objects.property<Supplier<DefaultOperatingSystem>>()
+      .convention { DefaultNativePlatform.getCurrentOperatingSystem() }
+
   /**
    * Should return one of
    *
@@ -119,9 +117,13 @@ abstract class ProtocPluginConfig(private val project: Project) : java.io.Serial
    * * `osx`
    * * `windows`
    */
-  var osFamilyNameProvider: () -> String = {
-    DefaultNativePlatform.getCurrentOperatingSystem().toFamilyName()
-  }
+  val operatingSystemName: Property<String> =
+    project.objects
+      .property<String>()
+      .convention(operatingSystemProvider.map { it.get().toFamilyName() })
+
+  private val architectureProvider: Provider<Architecture> =
+    project.provider { DefaultNativePlatform.getCurrentArchitecture() }
 
   /**
    * Should return one of
@@ -131,11 +133,13 @@ abstract class ProtocPluginConfig(private val project: Project) : java.io.Serial
    * * `x86_32`
    * * `x86_64`
    */
-  var architectureProvider: () -> String = {
-    DefaultNativePlatform.getCurrentArchitecture()
-      .name
-      .replace("-", "_")
-  }
+  val architectureName: Property<String> =
+    project.objects
+      .property<String>()
+      .convention(architectureProvider.map { it.name.replace("-", "_") })
+
+  private val classifierProvider: Provider<String> =
+    project.provider { "${operatingSystemName.get()}-${architectureName.get()}" }
 
   /**
    * Default: concatenate [osFamilyNameProvider] and [architectureProvider]
@@ -149,49 +153,63 @@ abstract class ProtocPluginConfig(private val project: Project) : java.io.Serial
    *  * `osx-x86_64`
    *  * `windows-x86_32`
    */
-  var classifierProvider: () -> String = {
-    "${osFamilyNameProvider()}-${architectureProvider()}"
-  }
+  val classifier: Property<String> =
+    project.objects
+      .property<String>()
+      .convention(classifierProvider)
 
-  var dependencyProvider: () -> ExternalModuleDependency = {
-    project.dependencies.create(
-      group = protocGroup.get(),
-      name = protocArtifactName.get(),
-      version = protocVersion.get(),
-      classifier = classifierProvider(),
-      ext = protocArtifactExtension.get(),
-    )
-  }
 
-//  val generators = project.objects.domainObjectContainer(ProtocGenerationConfig::class)
+  private val dependencyProvider: Provider<ExternalModuleDependency> =
+    project.provider {
+      project.dependencies.create(
+        group = protocGroup.get(),
+        name = protocArtifactName.get(),
+        version = protocVersion.get(),
+        classifier = classifierProvider.get(),
+        ext = protocArtifactExtension.get(),
+      )
+    }
+
+  val dependency: Property<ExternalModuleDependency> =
+    project.objects
+      .property<ExternalModuleDependency>()
+      .convention(dependencyProvider)
+
 }
 
 abstract class ProtocGenerationConfig
 
 abstract class ProtocPrepareTask : DefaultTask() {
 
-  @get:OutputDirectory
-  val outputDirectory: DirectoryProperty = project.objects.directoryProperty()
-    .convention(project.rootProject.layout.projectDirectory.dir(".gradle/protoc"))
-
-  @get:OutputFile
-  val protocOutput: RegularFileProperty = project.objects.fileProperty()
-    .convention { outputDirectory.asFileTree.singleFile }
-
   @Internal
   val protocPluginConfig: Provider<ProtocPluginConfig> = project.provider {
     project.extensions.getByType<ProtocPluginConfig>()
   }
 
+  @get:OutputDirectory
+  val outputDirectory: DirectoryProperty = project.objects.directoryProperty()
+    .convention(protocPluginConfig.flatMap { it.protocWorkingDir })
+
   @Internal
-  val protocDependency: Provider<ExternalModuleDependency> = protocPluginConfig.map {
-    it.dependencyProvider()
-  }
+  val protocOutput: RegularFileProperty = project.objects.fileProperty()
+//  @get:OutputFile
+//  val protocOutput: RegularFileProperty = project.objects.fileProperty()
+//    .convention { outputDirectory.asFileTree.singleFile }
+//    .convention(outputDirectory.map {  project  it.asFileTree.singleFile })
+
+  @Internal
+  val protocDependency: Provider<ExternalModuleDependency> =
+    protocPluginConfig.flatMap { it.dependency }
 
   init {
     super.setGroup("protoc")
-  }
 
+//    project.dependencies {
+//      protocDep(protocDependency.get())
+//    }
+//
+//    super.dependsOn(protocDep)
+  }
 
   @TaskAction
   fun prepare() {
@@ -207,15 +225,20 @@ abstract class ProtocPrepareTask : DefaultTask() {
       }
     }
 
-    val resolvedProtocDep = protocDep.resolve()
+    logger.lifecycle("Downloading protoc")
+    val resolvedProtocDep = protocDep.singleFile
+    logger.lifecycle("Downloaded $resolvedProtocDep")
 
-    require(resolvedProtocDep.singleOrNull() != null) {
-      "Expected to download a single protoc.exe, but got ${resolvedProtocDep.size}: ${resolvedProtocDep.joinToString()}"
-    }
+//    require(resolvedProtocDep.singleOrNull() != null) {
+//      "Expected to download a single protoc.exe, but got ${resolvedProtocDep.size}: ${resolvedProtocDep.joinToString()}"
+//    }
 
     project.sync {
       from(resolvedProtocDep)
       into(outputDirectory)
+//      doLast {
+//        logger.lifecycle("Syncing from $resolvedProtocDep to $outputDirectory")
+//      }
     }
   }
 }
