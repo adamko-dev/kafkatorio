@@ -37,6 +37,7 @@ dependencies {
   testImplementation("io.kotest:kotest-property-jvm:$kotestVersion")
   testImplementation("io.kotest:kotest-assertions-json:$kotestVersion")
   testImplementation("io.mockk:mockk:1.12.0")
+
   //</editor-fold>
 
 }
