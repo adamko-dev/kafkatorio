@@ -1,5 +1,7 @@
 package dev.adamko.gradle.pbandg
 
+import dev.adamko.gradle.pbandg.pattern.IntelliJPattern
+import dev.adamko.gradle.pbandg.pattern.KotlinProjectConfiguration
 import dev.adamko.gradle.pbandg.settings.PBAndGSettings
 import dev.adamko.gradle.pbandg.task.ProtobufCompileTask
 import dev.adamko.gradle.pbandg.task.ProtobufPrepareLibrariesTask
@@ -20,11 +22,11 @@ plugins {
 //    val pbSrcSet = project.objects.sourceDirectorySet("protobuf", "protobuf")
 
 //if (plugins.hasPlugin(IdeaPlugin::class)) {
-//  apply(IntelliJPattern())
+//  IntelliJPattern().apply(project)
 //}
-//if (plugins.hasPlugin("org.jetbrains.kotlin.jvm")) {
-//  apply(KotlinProjectConfiguration())
-//}
+if (plugins.hasPlugin("org.jetbrains.kotlin.jvm")) {
+  KotlinProjectConfiguration().apply(project)
+}
 
 val pbAndGSettings =
   project.extensions.create(Constants.PBG_SETTINGS_NAME, PBAndGSettings::class, project)

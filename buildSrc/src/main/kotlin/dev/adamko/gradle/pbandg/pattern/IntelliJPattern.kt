@@ -24,17 +24,22 @@ class IntelliJPattern : Plugin<Project> {
       return
     }
 
-    val genSrcDir = project.layout.buildDirectory.dir("protobuf/generated-sources")
-    val ktGenSrc = genSrcDir.map { it.dir("kotlin") }
-    val jGenSrc = genSrcDir.map { it.dir("java") }
+    val genSrcDir = project.layout.buildDirectory.dir("pbAndG/generated-sources")
+    val ktGenSrc = genSrcDir.map { it.dir("kotlin").asFile }
+    val jGenSrc = genSrcDir.map { it.dir("java").asFile }
+
+    val protoSrc = project.layout.projectDirectory.dir("src/main/proto").asFile
 
     project.mkdir(ktGenSrc)
     project.mkdir(jGenSrc)
 
     project.plugins.withType<IdeaPlugin> {
       project.extensions.configure<IdeaModel> {
-        this.module.generatedSourceDirs.add(ktGenSrc.get().asFile)
-        this.module.generatedSourceDirs.add(jGenSrc.get().asFile)
+        module {
+          generatedSourceDirs.add(ktGenSrc.get())
+          generatedSourceDirs.add(jGenSrc.get())
+          sourceDirs.add(protoSrc)
+        }
       }
     }
 

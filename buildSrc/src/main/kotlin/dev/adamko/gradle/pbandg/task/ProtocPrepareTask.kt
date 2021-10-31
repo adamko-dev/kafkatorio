@@ -1,4 +1,4 @@
-package dev.adamko.gradle.pbandg.pattern
+package dev.adamko.gradle.pbandg.task
 
 
 import dev.adamko.gradle.pbandg.settings.PBAndGSettings

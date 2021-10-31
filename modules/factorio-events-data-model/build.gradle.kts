@@ -10,8 +10,15 @@ val buildDir: Directory = layout.buildDirectory.dir(projectId).get()
 
 dependencies {
   protobufLibrary("com.google.protobuf:protobuf-javalite:3.19.1")
+
+  api("com.google.protobuf:protobuf-javalite:3.19.1")
+  api("com.google.protobuf:protobuf-kotlin-lite:3.19.1")
 }
 
 tasks.protobufCompile {
   protoFile.set(layout.projectDirectory.file("src/main/proto/FactorioServerLogRecord.proto"))
+}
+
+sourceSets {
+
 }
