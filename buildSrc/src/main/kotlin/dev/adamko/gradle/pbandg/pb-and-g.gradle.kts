@@ -1,7 +1,7 @@
 package dev.adamko.gradle.pbandg
 
-import dev.adamko.gradle.pbandg.pattern.IntelliJPattern
-import dev.adamko.gradle.pbandg.pattern.KotlinProjectConfiguration
+import dev.adamko.gradle.pbandg.pattern.KotlinJvmProjectConfiguration
+import dev.adamko.gradle.pbandg.pattern.KotlinMultiplatformProjectConfiguration
 import dev.adamko.gradle.pbandg.settings.PBAndGSettings
 import dev.adamko.gradle.pbandg.task.ProtobufCompileTask
 import dev.adamko.gradle.pbandg.task.ProtobufPrepareLibrariesTask
@@ -24,8 +24,15 @@ plugins {
 //if (plugins.hasPlugin(IdeaPlugin::class)) {
 //  IntelliJPattern().apply(project)
 //}
-if (plugins.hasPlugin("org.jetbrains.kotlin.jvm")) {
-  KotlinProjectConfiguration().apply(project)
+
+plugins.withId("org.jetbrains.kotlin.jvm") {
+  logger.info("Configuring Kotlin JVM plugin for PB&G")
+  KotlinJvmProjectConfiguration().apply(project)
+}
+
+plugins.withId("org.jetbrains.kotlin.multiplatform") {
+  logger.info("Configuring Kotlin Multiplatform plugin for PB&G")
+  KotlinMultiplatformProjectConfiguration().apply(project)
 }
 
 val pbAndGSettings =

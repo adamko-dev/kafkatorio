@@ -7,7 +7,7 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.kotlin.dsl.findByType
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 
-class KotlinProjectConfiguration : Plugin<Project> {
+class KotlinJvmProjectConfiguration : Plugin<Project> {
 
   override fun apply(project: Project) {
     addSourceSets(project)
@@ -15,16 +15,18 @@ class KotlinProjectConfiguration : Plugin<Project> {
 
   private fun addSourceSets(project: Project) {
 
-    project.extensions.findByType<KotlinJvmProjectExtension>()?.apply {
-
-      project.extensions.findByType<SourceSetContainer>()
-        ?.named(SourceSet.MAIN_SOURCE_SET_NAME)
-        ?.configure {
-          java {
-            srcDir(project.layout.buildDirectory.dir("pbAndG/generated-sources/java"))
-            srcDir(project.layout.buildDirectory.dir("pbAndG/generated-sources/kotlin"))
+    project.beforeEvaluate {
+      extensions.findByType<KotlinJvmProjectExtension>()?.apply {
+        extensions.findByType<SourceSetContainer>()
+          ?.named(SourceSet.MAIN_SOURCE_SET_NAME)
+          ?.configure {
+            java {
+              srcDir(layout.buildDirectory.dir("pbAndG/generated-sources/java"))
+              srcDir(layout.buildDirectory.dir("pbAndG/generated-sources/kotlin"))
+            }
           }
-        }
+
+      }
 
 //      val srcSet = project.extensions.getByName<SourceSet>(SourceSet.MAIN_SOURCE_SET_NAME)
 //
