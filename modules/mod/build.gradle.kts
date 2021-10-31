@@ -52,6 +52,18 @@ val tstlTask = tasks.register<NpmTask>("typescriptToLua") {
 
 }
 
+idea {
+  module {
+    sourceDirs.add(layout.projectDirectory.dir("src/main/typescript").asFile)
+    excludeDirs.add(layout.projectDirectory.dir("src/main/typescript/node_modules").asFile)
+    resourceDirs.add(layout.projectDirectory.dir("src/main/resources").asFile)
+
+    resourceDirs.add(layout.projectDirectory.dir("infra").asFile)
+    excludeDirs.add(layout.projectDirectory.dir("infra/factorio-server").asFile)
+  }
+}
+
+
 //val typescriptSrc =
 //    project.objects.sourceDirectorySet("typescript", "typescript").apply {
 //      srcDir(
