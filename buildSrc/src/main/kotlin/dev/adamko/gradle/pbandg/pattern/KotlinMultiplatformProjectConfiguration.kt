@@ -22,21 +22,23 @@ class KotlinMultiplatformProjectConfiguration : Plugin<Project> {
         this.name
       }
 //
-//      val protoJvm = this.sourceSets.maybeCreate("protoJvm").apply {
-//        kotlin.srcDir(project.layout.buildDirectory.dir("pbAndG/generated-sources/java"))
-//        kotlin.srcDir(project.layout.buildDirectory.dir("pbAndG/generated-sources/kotlin"))
-//      }
-//
-//      val protoTypescript = this.sourceSets.maybeCreate("protoJvm").apply {
-//        kotlin.srcDir(project.layout.buildDirectory.dir("pbAndG/generated-sources/typescript"))
-//      }
+      val protoJvm = this.sourceSets.maybeCreate("protoJvm").apply {
+        kotlin.srcDir(project.layout.buildDirectory.dir("pbAndG/generated-sources/java"))
+        kotlin.srcDir(project.layout.buildDirectory.dir("pbAndG/generated-sources/kotlin"))
+      }
 
-      this.sourceSets.named("jvmMain").configure {
+      val protoTypescript = this.sourceSets.maybeCreate("protoJvm").apply {
+        kotlin.srcDir(project.layout.buildDirectory.dir("pbAndG/generated-sources/typescript"))
+      }
+
+      this.sourceSets.findByName("jvmMain")?.apply {
+//        protoJvm.dependsOn(this)
 //        dependsOn(protoJvm)
         kotlin.srcDir(project.layout.buildDirectory.dir("pbAndG/generated-sources/java"))
         kotlin.srcDir(project.layout.buildDirectory.dir("pbAndG/generated-sources/kotlin"))
       }
-      this.sourceSets.named("jsMain").configure {
+      this.sourceSets.findByName("jsMain")?.apply {
+//        protoTypescript.dependsOn(this)
 //        dependsOn(protoTypescript)
         kotlin.srcDir(project.layout.buildDirectory.dir("pbAndG/generated-sources/typescript"))
       }

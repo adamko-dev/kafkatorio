@@ -1,3 +1,7 @@
+import dev.adamko.gradle.pbandg.task.ProtobufCompileTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
+
 plugins {
   id("dev.adamko.factoriowebmap.archetype.base")
   kotlin("multiplatform")
@@ -17,10 +21,6 @@ dependencies {
 //  api("com.google.protobuf:protobuf-kotlin-lite:3.19.1")
 }
 
-tasks.protobufCompile {
-  protoFile.set(layout.projectDirectory.file("src/proto/FactorioServerLogRecord.proto"))
-}
-
 idea {
   workspace {
 
@@ -36,6 +36,7 @@ kotlin {
       optIn("kotlin.ExperimentalStdlibApi")
       optIn("kotlin.time.ExperimentalTime")
       optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
+      optIn("kotlin.js.ExperimentalJsExport")
 //      progressiveMode = true // false by default
     }
   }
@@ -136,4 +137,63 @@ kotlin {
   }
   //</editor-fold>
 
+}
+
+//rootProject.tasks.withType<RootPackageJsonTask>().configureEach {
+//}
+
+val rootPackageJson by rootProject.tasks.getting(RootPackageJsonTask::class)
+val nodePath: Directory by extra {
+  val file = rootPackageJson.rootPackageJson.parentFile.normalize()
+  logger.lifecycle("Kotlin/JS NODE_PATH: $file")
+  project.layout.dir(provider { file }).get()
+}
+
+val nodeModulesDir: Directory by extra {
+  val file = nodePath.dir(NpmProject.NODE_MODULES)
+  logger.lifecycle("Kotlin/JS NODE_MODULES: $file")
+  file
+}
+
+// build/js/node_modules/ts-proto/node_modules/.bin
+
+tasks.protobufCompile {
+  description = "proto2java"
+  protoFile.set(layout.projectDirectory.file("src/proto/FactorioServerLogRecord.proto"))
+}
+
+
+tasks.create<ProtobufCompileTask>("protobufTypescript") {
+  description = "proto2typescript"
+
+//  data class PluginTs(
+//    override val cliParam: String = "--plugin",
+//    override val protocOptions: String = "",
+//    override val outputDirectoryName: String =
+//      "${project.buildDir}/js/packages/factorio-web-map-factorio-events-data-model/node_modules/.bin/protoc-gen-ts_proto.cmd",
+//  ) : ProtocOutput
+//
+//
+//  data class OutputTs(
+//    override val cliParam: String = "--ts_proto_out",
+//    override val protocOptions: String = "",
+//    override val outputDirectoryName: String = "${project.buildDir}/pbAndG/generated-sources/typescript",
+//  ) : ProtocOutput
+//
+//  protocOutputs.add(PluginTs())
+//  protocOutputs.add(OutputTs())
+
+
+//  cliArgs.add("--plugin=${rootProject.buildDir}/js/packages/factorio-web-map-factorio-events-data-model/node_modules/.bin/protoc-gen-ts_proto.cmd")
+
+  cliArgs.add("--plugin=protoc-gen-ts_proto=${rootProject.buildDir}/js/packages/factorio-web-map-factorio-events-data-model/node_modules/.bin/protoc-gen-ts_proto.cmd")
+
+  val outdir = temporaryDir.resolve("typescript")
+  val f: File = project.mkdir(outdir)
+
+  cliArgs.add("--ts_proto_out=${outdir.canonicalPath}")
+  cliArgs.add("--ts_proto_opt=useOptionals=true")
+//  cliArgs.add("--proto_path=${rootProject.rootDir}")
+
+  protoFile.set(layout.projectDirectory.file("src/proto/FactorioServerLogRecord.proto"))
 }

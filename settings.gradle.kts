@@ -6,7 +6,7 @@ rootProject.name = "factorio-web-map"
 include(
   ":modules:mod",
 //    ":modules:mod2",
-  ":modules:server",
+//  ":modules:server",
   ":modules:kt-rcon",
   ":modules:factorio-events-data-model",
 //  ":modules:factorio-events-data-model2",

@@ -16,7 +16,6 @@ plugins {
   base
 }
 
-
 // TODO investigate builtBy and sourceDirectorySet?
 //    project.objects.fileCollection().builtBy()
 //    val pbSrcSet = project.objects.sourceDirectorySet("protobuf", "protobuf")
@@ -77,19 +76,19 @@ val protobufPrepareLibrariesTask =
 ////  implementation("com.google.protobuf:protobuf-kotlin-lite:3.19.1")
 //}
 
-
-/** Convert `.proto` files to Kotlin */
-val pbCompileTask = project.tasks.register<ProtobufCompileTask>(Constants.PBG_TASK_COMPILE) {
+project.tasks.withType<ProtobufCompileTask> {
   dependsOn(protocDep, protobufPrepareLibrariesTask)
-
   protobufLibraryDirectories.add(protobufPrepareLibrariesTask.flatMap { it.librariesDirectory })
-
-  protocOutputs += KotlinOutput()
-  protocOutputs += JavaOutput()
 
   val exe = protocDep.singleFile
   logger.lifecycle("protoc.exe: $exe")
   protocExecutable.set(exe)
+}
+
+/** Convert `.proto` files to Kotlin */
+val pbCompileTask = project.tasks.register<ProtobufCompileTask>(Constants.PBG_TASK_COMPILE) {
+  protocOutputs += KotlinOutput()
+  protocOutputs += JavaOutput()
 }
 
 project.tasks.assemble { dependsOn(pbCompileTask) }

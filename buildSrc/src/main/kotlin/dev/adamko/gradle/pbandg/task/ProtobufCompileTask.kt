@@ -33,6 +33,9 @@ abstract class ProtobufCompileTask : DefaultTask() {
   abstract val protocOutputs: DomainObjectSet<ProtocOutput>
 //  = project.objects.domainObjectSet(ProtocOutput::class.java)
 
+  @get:Input
+  abstract val cliArgs: ListProperty<String>
+
   @get:InputFile
   abstract val protoFile: RegularFileProperty
 
@@ -48,7 +51,7 @@ abstract class ProtobufCompileTask : DefaultTask() {
   fun compile() {
 
     val workDir = temporaryDir
-    project.delete(workDir)
+//    project.delete(workDir)
 
     project.exec {
       executable(protocExecutable.asFile.get())
@@ -65,9 +68,11 @@ abstract class ProtobufCompileTask : DefaultTask() {
       // set args
       mapOutputsToOutputDir
         .map { (opt, dir) ->
-          "${opt.cliParam}=${opt.protocOptions}:${dir}"
+          val optionsSuffix = if (opt.protocOptions.isBlank()) "" else ":"
+          "${opt.cliParam}=${opt.protocOptions}$optionsSuffix$dir"
         }
         .also { args(it) }
+      args(cliArgs.get())
 
       val protoPath = cliParamProtoPath.get()
       val libArgs = protobufLibraryDirectories.get().map { "$protoPath${it.asFile}" }

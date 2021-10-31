@@ -16,8 +16,6 @@ plugins {
   id("dev.adamko.factoriowebmap.archetype.node")
 }
 
-
-
 kotlin {
   js(IR) {
     binaries.executable()
