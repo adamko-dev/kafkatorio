@@ -1,5 +1,6 @@
 package dev.adamko.gradle.pbandg.pattern
 
+import dev.adamko.gradle.pbandg.Constants.pbAndGBuildDir
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.findByType
@@ -18,30 +19,36 @@ class KotlinMultiplatformProjectConfiguration : Plugin<Project> {
     project.extensions.findByType<KotlinMultiplatformExtension>()?.apply {
       project.logger.lifecycle("Kotlin Multiplatform source sets: ${sourceSets.joinToString { "${it.name} / ${it.kotlin.sourceDirectories.files.joinToString()}" }}")
 
-      sourceSets.whenObjectAdded {
-        this.name
+//      sourceSets.whenObjectAdded {
+//        this.name
+//      }
+//
+      val jvmProto = this.sourceSets.maybeCreate("jvmProto").apply {
+
+        kotlin.srcDir(project.layout.pbAndGBuildDir.get().dir("generated-sources/java"))
+        kotlin.srcDir(project.layout.pbAndGBuildDir.get().dir("generated-sources/kotlin"))
+
+        dependsOn(sourceSets.maybeCreate("jvmMain"))
       }
 //
-      val protoJvm = this.sourceSets.maybeCreate("protoJvm").apply {
-        kotlin.srcDir(project.layout.buildDirectory.dir("pbAndG/generated-sources/java"))
-        kotlin.srcDir(project.layout.buildDirectory.dir("pbAndG/generated-sources/kotlin"))
+      val tsProto = this.sourceSets.maybeCreate("tsProto").apply {
+
+        kotlin.srcDir(project.layout.pbAndGBuildDir.get().dir("generated-sources/typescript"))
+
+        dependsOn(sourceSets.maybeCreate("jsMain"))
       }
 
-      val protoTypescript = this.sourceSets.maybeCreate("protoJvm").apply {
-        kotlin.srcDir(project.layout.buildDirectory.dir("pbAndG/generated-sources/typescript"))
-      }
-
-      this.sourceSets.findByName("jvmMain")?.apply {
-//        protoJvm.dependsOn(this)
-//        dependsOn(protoJvm)
-        kotlin.srcDir(project.layout.buildDirectory.dir("pbAndG/generated-sources/java"))
-        kotlin.srcDir(project.layout.buildDirectory.dir("pbAndG/generated-sources/kotlin"))
-      }
-      this.sourceSets.findByName("jsMain")?.apply {
-//        protoTypescript.dependsOn(this)
-//        dependsOn(protoTypescript)
-        kotlin.srcDir(project.layout.buildDirectory.dir("pbAndG/generated-sources/typescript"))
-      }
+//      this.sourceSets.findByName("jvmMain")?.apply {
+////        protoJvm.dependsOn(this)
+////        dependsOn(protoJvm)
+//        kotlin.srcDir(project.layout.buildDirectory.dir("pbAndG/generated-sources/java"))
+//        kotlin.srcDir(project.layout.buildDirectory.dir("pbAndG/generated-sources/kotlin"))
+//      }
+//      this.sourceSets.findByName("jsMain")?.apply {
+////        protoTypescript.dependsOn(this)
+////        dependsOn(protoTypescript)
+//        kotlin.srcDir(project.layout.buildDirectory.dir("pbAndG/generated-sources/typescript"))
+//      }
 
       project.logger.lifecycle("Kotlin Multiplatform source sets: ${sourceSets.joinToString { "${it.name} / ${it.kotlin.sourceDirectories.files.joinToString()}" }}")
 

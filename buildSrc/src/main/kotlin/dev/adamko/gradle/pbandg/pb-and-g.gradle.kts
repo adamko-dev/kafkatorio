@@ -1,16 +1,11 @@
 package dev.adamko.gradle.pbandg
 
+import dev.adamko.gradle.pbandg.Constants.pbAndGBuildDir
 import dev.adamko.gradle.pbandg.pattern.KotlinJvmProjectConfiguration
 import dev.adamko.gradle.pbandg.pattern.KotlinMultiplatformProjectConfiguration
 import dev.adamko.gradle.pbandg.settings.PBAndGSettings
 import dev.adamko.gradle.pbandg.task.ProtobufCompileTask
 import dev.adamko.gradle.pbandg.task.ProtobufPrepareLibrariesTask
-import dev.adamko.gradle.pbandg.task.options.ProtocOutput.JavaOutput
-import dev.adamko.gradle.pbandg.task.options.ProtocOutput.KotlinOutput
-
-//plugins {
-//  `kotlin-dsl`
-//}
 
 plugins {
   base
@@ -63,18 +58,15 @@ project.dependencies {
   protobufLibraryDependencies("com.google.protobuf:protobuf-javalite:3.19.1")
 //      implementation("com.google.protobuf:protobuf-javalite:3.19.1")
 //  implementation("com.google.protobuf:protobuf-kotlin-lite:3.19.1")
+//  protobufLibraryDependencies("com.google.protobuf:protobuf-javalite:3.19.1")
+////      implementation("com.google.protobuf:protobuf-javalite:3.19.1")
+////  implementation("com.google.protobuf:protobuf-kotlin-lite:3.19.1")
 }
 
 val protobufPrepareLibrariesTask =
   project.tasks.register<ProtobufPrepareLibrariesTask>("protobufPrepareLibraries") {
     librarySources.set(protobufLibraryDependencies)
   }
-
-//project.dependencies {
-//  protobufLibraryDependencies("com.google.protobuf:protobuf-javalite:3.19.1")
-////      implementation("com.google.protobuf:protobuf-javalite:3.19.1")
-////  implementation("com.google.protobuf:protobuf-kotlin-lite:3.19.1")
-//}
 
 project.tasks.withType<ProtobufCompileTask> {
   dependsOn(protocDep, protobufPrepareLibrariesTask)
@@ -85,10 +77,25 @@ project.tasks.withType<ProtobufCompileTask> {
   protocExecutable.set(exe)
 }
 
-/** Convert `.proto` files to Kotlin */
-val pbCompileTask = project.tasks.register<ProtobufCompileTask>(Constants.PBG_TASK_COMPILE) {
-  protocOutputs += KotlinOutput()
-  protocOutputs += JavaOutput()
-}
+val aggregateTask = project.tasks.register<Sync>("protobufCompileAll") {
+  group = Constants.PBG_TASK_GROUP
 
-project.tasks.assemble { dependsOn(pbCompileTask) }
+  dependsOn(tasks.withType<ProtobufCompileTask>())
+
+  val genSrcDir = project.layout.pbAndGBuildDir.map { it.dir("generated-sources") }
+
+    val pbCompileTasks = tasks.withType<ProtobufCompileTask>()
+    from(pbCompileTasks.map { it.temporaryDir })
+    into(genSrcDir)
+    includeEmptyDirs = false
+
+}
+//project.tasks.assemble { dependsOn(aggregateTask) }
+
+
+///** Convert `.proto` files to Kotlin */
+//val pbCompileTask = project.tasks.create<ProtobufCompileTask>("protobufJava") {
+//  protocOutputs += KotlinOutput()
+//  protocOutputs += JavaOutput()
+//}
+

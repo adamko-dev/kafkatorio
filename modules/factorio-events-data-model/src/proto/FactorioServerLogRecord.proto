@@ -5,8 +5,8 @@ option java_multiple_files = true;
 
 package dev.adamko.factorioevents;
 
-import "google/protobuf/any.proto";
-import "google/protobuf/timestamp.proto";
+//import "google/protobuf/any.proto";
+//import "google/protobuf/timestamp.proto";
 
 message FactorioServerLogRecord {
   string mod_version = 1;
@@ -54,7 +54,7 @@ message LuaPlayer {
 
 // https://lua-api.factorio.com/next/LuaEntity.html
 message LuaEntity {
-  uint32 unit_number = 1; // (optional) unique ID
+  optional uint32 unit_number = 1; // (optional) unique ID
   string name = 2;
   string type = 3;
   string status = 4; // https://lua-api.factorio.com/next/defines.html#defines.entity_status
@@ -62,8 +62,8 @@ message LuaEntity {
   bool is_active = 8;
   bool is_moving = 9;
 
-  uint32 player_index = 50; // (optional) The player connected to this character or nil if none.
-  uint32 last_user_index = 51; // (optional) The last player that changed any setting on this entity.
+  optional uint32 player_index = 50; // (optional) The player connected to this character or nil if none.
+  optional uint32 last_user_index = 51; // (optional) The last player that changed any setting on this entity.
 
   Colour colour = 100; // (optional)
 }
