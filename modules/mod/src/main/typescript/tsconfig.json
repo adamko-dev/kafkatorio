@@ -10,7 +10,9 @@
     "types": [
       "typescript-to-lua/language-extensions",
       "lua-types/5.2",
-      "typed-factorio/runtime"
+      "typed-factorio/runtime",
+      "protobufjs/minimal.d.ts",
+      "@types/long"
     ],
     "explainFiles": true,
     "forceConsistentCasingInFileNames": true,
@@ -22,7 +24,8 @@
     "strict": true,
     "strictFunctionTypes": true,
     "strictNullChecks": true,
-    "traceResolution": true
+    "traceResolution": true,
+    "esModuleInterop": true
   },
   "tstl": {
     "luaTarget": "5.2",
@@ -38,7 +41,6 @@
       "node_modules"
     ],
     "exactOptionalPropertyTypes": true,
-    "luaTarget": "5.2",
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "types": [

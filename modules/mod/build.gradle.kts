@@ -45,31 +45,31 @@ val tsProtoFetch by tasks.creating(Sync::class) {
   from(genSrcDir)
   into(targetDir)
 
-  doLast {
-
-    fileTree(targetDir).forEach {
-      var text = it.readText()
-
-      text = text.replace(
-        Regex(
-          """if \(_m0\.util\.Long !== Long\)\s*\{\s*_m0\.util\.Long = Long as any;\s*_m0\.configure\(\);\s*\}"""
-        ),
-        ""
-      )
-
-      text = text.replace(
-        Regex("""import Long from "long";"""),
-        ""
-      )
-
-      text = text.replace(
-        Regex("""import _m0 from "protobufjs\/minimal";"""),
-        ""
-      )
-
-      it.writeText(text)
-    }
-  }
+//  doLast {
+//
+//    fileTree(targetDir).forEach {
+//      var text = it.readText()
+//
+//      text = text.replace(
+//        Regex(
+//          """if \(_m0\.util\.Long !== Long\)\s*\{\s*_m0\.util\.Long = Long as any;\s*_m0\.configure\(\);\s*\}"""
+//        ),
+//        ""
+//      )
+//
+//      text = text.replace(
+//        Regex("""import Long from "long";"""),
+//        ""
+//      )
+//
+//      text = text.replace(
+//        Regex("""import _m0 from "protobufjs\/minimal";"""),
+//        ""
+//      )
+//
+//      it.writeText(text)
+//    }
+//  }
 
 }
 
@@ -267,7 +267,7 @@ tasks.register("downloadFactorioApiDocs") {
 
   val target = uri("https://lua-api.factorio.com/latest/runtime-api.json")
   val apiFilename = File(target.path).name
-  val downloadedFile = file(temporaryDir.path + "/" + apiFilename)
+  val downloadedFile = file("$temporaryDir/$apiFilename")
 
   val apiFile = modBuildDir.file(apiFilename)
   outputs.file(apiFile)
@@ -290,3 +290,33 @@ tasks.register("downloadFactorioApiDocs") {
     logger.lifecycle("Downloaded Factorio API json: $apiFile")
   }
 }
+
+//tasks.register("downloadLuaProtobuf") {
+//  group = projectId
+//
+//  val luaProtobufVersion = "0.3.3"
+//
+//  val target = uri("https://github.com/starwing/lua-protobuf/archive/refs/tags/$luaProtobufVersion.zip")
+//  val downloadedFile = file("$temporaryDir/luaProtobuf-$luaProtobufVersion.zip")
+//
+//  val luaProto = modBuildDir.file(apiFilename)
+//  outputs.file(apiFile)
+//
+//  doLast {
+//
+//    ant.invokeMethod(
+//      "get", mapOf(
+//        "src" to target,
+//        "dest" to downloadedFile,
+//        "verbose" to true,
+//      )
+//    )
+//
+//    val json = downloadedFile.readText()
+//    val prettyJson = groovy.json.JsonOutput.prettyPrint(json)
+//
+//    apiFile.asFile.writeText(prettyJson)
+//
+//    logger.lifecycle("Downloaded Factorio API json: $apiFile")
+//  }
+//}

@@ -14,7 +14,8 @@
     "lua-types": "^2.11.0",
     "@types/node": "^12.0.8",
     "typescript-to-lua": "1.0.1",
-    "typed-factorio": "0.8.0"
+    "typed-factorio": "0.8.0",
+    "ts-proto": "1.83.3"
   },
   "peerDependencies": {},
   "optionalDependencies": {},

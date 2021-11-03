@@ -130,7 +130,7 @@ afterEvaluate {
       "--ts_proto_opt=useOptionals=true",
       "--ts_proto_opt=outputServices=false",
       "--ts_proto_opt=outputJsonMethods=false",
-      "--ts_proto_opt=outputEncodeMethods=false",
+//      "--ts_proto_opt=outputEncodeMethods=false",
       "--ts_proto_opt=forceLong=string",
       "--ts_proto_opt=forceLong=number",
       "--ts_proto_opt=esModuleInterop=true",
