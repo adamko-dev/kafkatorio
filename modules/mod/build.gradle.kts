@@ -16,66 +16,6 @@ node {
   nodeProjectDir.set(tsSrcDir)
 }
 
-val tsProto: Configuration by configurations.creating {
-  isCanBeConsumed = false
-  isCanBeResolved = true
-}
-
-dependencies {
-  tsProto(projects.modules.factorioEventsDataModel.dependencyProject.configurations.getByName("tsProto"))
-}
-
-val tsProtoFetch by tasks.creating(Sync::class) {
-  group = project.name
-
-  dependsOn(projects.modules.factorioEventsDataModel.dependencyProject.tasks.named("protobufTypescript"))
-
-  val genSrcDir = projects
-    .modules
-    .factorioEventsDataModel
-    .dependencyProject
-    .layout
-    .buildDirectory
-    .dir("pbAndG/generated-sources/typescript")
-
-  val targetDir = "$projectDir/src/main/typescript/proto"
-
-  inputs.dir(genSrcDir)
-
-  from(genSrcDir)
-  into(targetDir)
-
-//  doLast {
-//
-//    fileTree(targetDir).forEach {
-//      var text = it.readText()
-//
-//      text = text.replace(
-//        Regex(
-//          """if \(_m0\.util\.Long !== Long\)\s*\{\s*_m0\.util\.Long = Long as any;\s*_m0\.configure\(\);\s*\}"""
-//        ),
-//        ""
-//      )
-//
-//      text = text.replace(
-//        Regex("""import Long from "long";"""),
-//        ""
-//      )
-//
-//      text = text.replace(
-//        Regex("""import _m0 from "protobufjs\/minimal";"""),
-//        ""
-//      )
-//
-//      it.writeText(text)
-//    }
-//  }
-
-}
-
-tasks.assemble { dependsOn(tsProtoFetch) }
-
-
 val tstlTask = tasks.register<NpmTask>("typescriptToLua") {
   description = "Convert Typescript To Lua"
   group = projectId
@@ -86,7 +26,7 @@ val tstlTask = tasks.register<NpmTask>("typescriptToLua") {
 
   npmCommand.set(listOf("run", "build"))
 
-  inputs.dir(node.nodeProjectDir)
+  inputs.dir(project.node.nodeProjectDir)
     .skipWhenEmpty()
     .withPropertyName("sourceFiles")
     .withPathSensitivity(PathSensitivity.RELATIVE)
@@ -124,20 +64,18 @@ idea {
 }
 
 
-//val typescriptSrc =
-//    project.objects.sourceDirectorySet("typescript", "typescript").apply {
-//      srcDir(
-//          layout.projectDirectory.dir("src/main/typescript")
-//      )
-//      destinationDirectory.set(
-//          modBuildDir.dir("typescriptToLua")
-//      )
-//      compiledBy(tstlTask) {
-//        project.objects.directoryProperty().apply {
-//          set( modBuildDir.dir("typescriptToLua"))
-//        }
-//      }
-//    }
+val typescriptSrcSet =
+  project.objects.sourceDirectorySet("typescript", "typescript").apply {
+    srcDir(mkdir("$projectDir/src/main/typescript"))
+
+    destinationDirectory.set(modBuildDir.dir("typescriptToLua").asFile)
+    compiledBy(tstlTask) {
+
+      project.objects.directoryProperty().apply {
+        set(modBuildDir.dir("typescriptToLua"))
+      }
+    }
+  }
 
 val modPackageTask = tasks.register<Zip>("packageMod") {
   description = "Package mod files into ZIP"
