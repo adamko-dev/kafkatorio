@@ -23,7 +23,6 @@ kotlin {
     }
   }
 
-
   sourceSets {
     val jvmMain by getting {
       dependencies {
@@ -75,7 +74,6 @@ dependencies {
   protobufLibrary("com.google.protobuf:protobuf-javalite:3.19.1")
 }
 
-
 val rootPackageJson by rootProject.tasks.getting(RootPackageJsonTask::class)
 val nodePath: Directory by extra {
   val file = rootPackageJson.rootPackageJson.parentFile.normalize()
@@ -106,8 +104,6 @@ afterEvaluate {
 
   tasks.register<ProtobufCompileTask>("protobufTypescript") {
     description = "proto2typescript"
-
-    this.taskDependencies
 
     // linux:
 //  cliArgs.add("--plugin=${rootProject.buildDir}/js/packages/factorio-web-map-factorio-events-data-model/node_modules/.bin/protoc-gen-ts_proto.cmd")
