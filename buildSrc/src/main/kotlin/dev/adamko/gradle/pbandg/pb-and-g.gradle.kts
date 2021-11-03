@@ -1,8 +1,6 @@
 package dev.adamko.gradle.pbandg
 
 import dev.adamko.gradle.pbandg.Constants.pbAndGBuildDir
-import dev.adamko.gradle.pbandg.pattern.KotlinJvmProjectConfiguration
-import dev.adamko.gradle.pbandg.pattern.KotlinMultiplatformProjectConfiguration
 import dev.adamko.gradle.pbandg.settings.PBAndGSettings
 import dev.adamko.gradle.pbandg.task.ProtobufCompileTask
 import dev.adamko.gradle.pbandg.task.ProtobufPrepareLibrariesTask
@@ -19,21 +17,21 @@ plugins {
 //  IntelliJPattern().apply(project)
 //}
 
-plugins.withId("org.jetbrains.kotlin.jvm") {
-  logger.info("Configuring Kotlin JVM plugin for PB&G")
-  KotlinJvmProjectConfiguration().apply(project)
-}
-
-plugins.withId("org.jetbrains.kotlin.multiplatform") {
-  logger.info("Configuring Kotlin Multiplatform plugin for PB&G")
-  KotlinMultiplatformProjectConfiguration().apply(project)
-}
+//plugins.withId("org.jetbrains.kotlin.jvm") {
+//  logger.info("Configuring Kotlin JVM plugin for PB&G")
+//  KotlinJvmProjectConfiguration().apply(project)
+//}
+//
+//plugins.withId("org.jetbrains.kotlin.multiplatform") {
+//  logger.info("Configuring Kotlin Multiplatform plugin for PB&G")
+//  KotlinMultiplatformProjectConfiguration().apply(project)
+//}
 
 val pbAndGSettings =
   project.extensions.create(Constants.PBG_SETTINGS_NAME, PBAndGSettings::class, project)
 
 //val protocDep = ProtobufCompilerDependency(project, pbAndGSettings)
-val protocDep = project.configurations.create("protobufCompiler") {
+val protocDep: Configuration = project.configurations.create("protobufCompiler") {
   this.description = "Define a single dependency that provides the protoc.exe for this system"
   isVisible = false
   isCanBeConsumed = false
@@ -53,14 +51,10 @@ val protobufLibraryDependencies: Configuration =
     isTransitive = false
   }
 
-
 project.dependencies {
-  protobufLibraryDependencies("com.google.protobuf:protobuf-javalite:3.19.1")
-//      implementation("com.google.protobuf:protobuf-javalite:3.19.1")
-//  implementation("com.google.protobuf:protobuf-kotlin-lite:3.19.1")
-//  protobufLibraryDependencies("com.google.protobuf:protobuf-javalite:3.19.1")
-////      implementation("com.google.protobuf:protobuf-javalite:3.19.1")
-////  implementation("com.google.protobuf:protobuf-kotlin-lite:3.19.1")
+  protobufLibraryDependencies("com.google.protobuf:protobuf-javalite:3.19.1") {
+    because("This dep contains common Google .proto files that will be extracted")
+  }
 }
 
 val protobufPrepareLibrariesTask =
@@ -73,7 +67,7 @@ project.tasks.withType<ProtobufCompileTask> {
   protobufLibraryDirectories.add(protobufPrepareLibrariesTask.flatMap { it.librariesDirectory })
 
   val exe = protocDep.singleFile
-  logger.lifecycle("protoc.exe: $exe")
+  logger.debug("Configuring Protobuf task with protoc.exe: $exe")
   protocExecutable.set(exe)
 }
 
@@ -84,18 +78,11 @@ val aggregateTask = project.tasks.register<Sync>("protobufCompileAll") {
 
   val genSrcDir = project.layout.pbAndGBuildDir.map { it.dir("generated-sources") }
 
-    val pbCompileTasks = tasks.withType<ProtobufCompileTask>()
-    from(pbCompileTasks.map { it.temporaryDir })
-    into(genSrcDir)
-    includeEmptyDirs = false
+  val pbCompileTasks = tasks.withType<ProtobufCompileTask>()
+  from(pbCompileTasks.map { it.temporaryDir })
+  into(genSrcDir)
+  includeEmptyDirs = false
 
 }
-//project.tasks.assemble { dependsOn(aggregateTask) }
 
-
-///** Convert `.proto` files to Kotlin */
-//val pbCompileTask = project.tasks.create<ProtobufCompileTask>("protobufJava") {
-//  protocOutputs += KotlinOutput()
-//  protocOutputs += JavaOutput()
-//}
-
+project.tasks.assemble { dependsOn(aggregateTask) }

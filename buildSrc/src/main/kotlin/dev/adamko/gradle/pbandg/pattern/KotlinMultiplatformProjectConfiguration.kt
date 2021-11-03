@@ -10,7 +10,7 @@ class KotlinMultiplatformProjectConfiguration : Plugin<Project> {
 
   override fun apply(project: Project) {
     project.afterEvaluate {
-      addSourceSets(this)
+      addSourceSets(project)
     }
   }
 
@@ -19,10 +19,6 @@ class KotlinMultiplatformProjectConfiguration : Plugin<Project> {
     project.extensions.findByType<KotlinMultiplatformExtension>()?.apply {
       project.logger.lifecycle("Kotlin Multiplatform source sets: ${sourceSets.joinToString { "${it.name} / ${it.kotlin.sourceDirectories.files.joinToString()}" }}")
 
-//      sourceSets.whenObjectAdded {
-//        this.name
-//      }
-//
       val jvmProto = this.sourceSets.maybeCreate("jvmProto").apply {
 
         kotlin.srcDir(project.layout.pbAndGBuildDir.get().dir("generated-sources/java"))
@@ -55,7 +51,7 @@ class KotlinMultiplatformProjectConfiguration : Plugin<Project> {
 //
 //      targets        .forEach {
 //        when (it.platformType){
-//          KotlinPlatformType.jvm     -> TODO()
+//          KotlinPlatformType.jvm     -> {}
 //          KotlinPlatformType.js      -> {
 //          it.defaultConfigurationName
 //          }
