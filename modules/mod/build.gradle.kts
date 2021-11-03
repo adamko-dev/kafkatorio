@@ -1,6 +1,6 @@
 import com.github.gradle.node.npm.task.NpmTask
-import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 import org.apache.tools.ant.filters.ReplaceTokens
+import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
   id("dev.adamko.factoriowebmap.archetype.node")
@@ -15,6 +15,66 @@ val modBuildDir: Directory = layout.buildDirectory.dir(projectId).get()
 node {
   nodeProjectDir.set(tsSrcDir)
 }
+
+val tsProto: Configuration by configurations.creating {
+  isCanBeConsumed = false
+  isCanBeResolved = true
+}
+
+dependencies {
+  tsProto(projects.modules.factorioEventsDataModel.dependencyProject.configurations.getByName("tsProto"))
+}
+
+val tsProtoFetch by tasks.creating(Sync::class) {
+  group = project.name
+
+  dependsOn(projects.modules.factorioEventsDataModel.dependencyProject.tasks.named("protobufTypescript"))
+
+  val genSrcDir = projects
+    .modules
+    .factorioEventsDataModel
+    .dependencyProject
+    .layout
+    .buildDirectory
+    .dir("pbAndG/generated-sources/typescript")
+
+  val targetDir = "$projectDir/src/main/typescript/proto"
+
+  inputs.dir(genSrcDir)
+
+  from(genSrcDir)
+  into(targetDir)
+
+  doLast {
+
+    fileTree(targetDir).forEach {
+      var text = it.readText()
+
+      text = text.replace(
+        Regex(
+          """if \(_m0\.util\.Long !== Long\)\s*\{\s*_m0\.util\.Long = Long as any;\s*_m0\.configure\(\);\s*\}"""
+        ),
+        ""
+      )
+
+      text = text.replace(
+        Regex("""import Long from "long";"""),
+        ""
+      )
+
+      text = text.replace(
+        Regex("""import _m0 from "protobufjs\/minimal";"""),
+        ""
+      )
+
+      it.writeText(text)
+    }
+  }
+
+}
+
+tasks.assemble { dependsOn(tsProtoFetch) }
+
 
 val tstlTask = tasks.register<NpmTask>("typescriptToLua") {
   description = "Convert Typescript To Lua"

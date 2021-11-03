@@ -74,11 +74,11 @@ project.tasks.withType<ProtobufCompileTask> {
 val aggregateTask = project.tasks.register<Sync>("protobufCompileAll") {
   group = Constants.PBG_TASK_GROUP
 
-  dependsOn(tasks.withType<ProtobufCompileTask>())
+  val pbCompileTasks = tasks.withType<ProtobufCompileTask>()
+  dependsOn(pbCompileTasks)
 
   val genSrcDir = project.layout.pbAndGBuildDir.map { it.dir("generated-sources") }
 
-  val pbCompileTasks = tasks.withType<ProtobufCompileTask>()
   from(pbCompileTasks.map { it.temporaryDir })
   into(genSrcDir)
   includeEmptyDirs = false

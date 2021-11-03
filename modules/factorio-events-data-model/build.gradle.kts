@@ -88,21 +88,35 @@ val nodeModulesDir: Directory by extra {
 }
 
 afterEvaluate {
-  tasks.register<ProtobufCompileTask>("protobufJava") {
+  val protobufJava by tasks.creating(ProtobufCompileTask::class) {
     description = "proto2java"
     protoFile.set(file("$projectDir/src/proto/FactorioServerLogRecord.proto"))
 
     cliArgs.add("--java_out=lite:${project.mkdir("$temporaryDir/java").canonicalPath}")
   }
-
-  tasks.register<ProtobufCompileTask>("protobufKotlin") {
+  val protobufKotlin by tasks.creating(ProtobufCompileTask::class) {
     description = "proto2kotlin"
     protoFile.set(file("$projectDir/src/proto/FactorioServerLogRecord.proto"))
 
     cliArgs.add("--kotlin_out=lite:${project.mkdir("$temporaryDir/kotlin").canonicalPath}")
   }
 
-  tasks.register<ProtobufCompileTask>("protobufTypescript") {
+
+  val ktProto by configurations.creating {
+    isCanBeResolved = false
+    isCanBeConsumed = true
+  }
+
+  artifacts {
+    add(ktProto.name, protobufJava.outputDir) {
+      builtBy(protobufJava)
+    }
+    add(ktProto.name, protobufKotlin.outputDir) {
+      builtBy(protobufKotlin)
+    }
+  }
+
+  val protobufTypescript by tasks.creating(ProtobufCompileTask::class) {
     description = "proto2typescript"
 
     // linux:
@@ -126,4 +140,15 @@ afterEvaluate {
 
     protoFile.set(file("$projectDir/src/proto/FactorioServerLogRecord.proto"))
   }
+
+  val tsProto by configurations.creating {
+    isCanBeResolved = false
+    isCanBeConsumed = true
+  }
+  artifacts {
+    add(tsProto.name, protobufTypescript.outputDir) {
+      builtBy(protobufTypescript)
+    }
+  }
+
 }
