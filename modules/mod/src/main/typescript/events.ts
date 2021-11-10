@@ -8,7 +8,7 @@
 import {Serdes} from "./serdes/serdes"
 import {FactorioEvent, JsonTable} from "./model/model";
 
-const mapEventIdToName = new LuaTable<defines.events, keyof typeof defines.events>()
+const mapEventIdToName = new LuaTable<defines.Events, keyof typeof defines.events>()
 for (const [k, v] of pairs(defines.events)) {
   mapEventIdToName.set(v, k)
 }

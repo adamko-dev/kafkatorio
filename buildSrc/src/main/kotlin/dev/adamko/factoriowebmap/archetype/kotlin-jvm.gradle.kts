@@ -43,11 +43,20 @@ dependencies {
 }
 
 tasks.withType<KotlinCompile>().configureEach {
+
+  kotlinOptions {
+    jvmTarget = "11"
+    apiVersion = "1.5"
+    languageVersion = "1.5"
+  }
+
   kotlinOptions.freeCompilerArgs += listOf(
     "-Xopt-in=kotlin.OptIn",
+    "-Xopt-in=kotlin.RequiresOptIn",
     "-Xopt-in=kotlin.ExperimentalStdlibApi",
     "-Xopt-in=kotlin.time.ExperimentalTime",
     "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+    "-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi",
   )
 }
 

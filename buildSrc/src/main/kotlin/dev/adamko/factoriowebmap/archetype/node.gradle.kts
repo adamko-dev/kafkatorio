@@ -2,7 +2,10 @@ package dev.adamko.factoriowebmap.archetype
 
 import org.gradle.kotlin.dsl.kotlin
 import com.github.gradle.node.npm.task.NpmTask
+import com.github.gradle.node.npm.task.NpxTask
 import com.github.gradle.node.task.NodeTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.dukat.DtsResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
@@ -20,4 +23,7 @@ node {
 
   distBaseUrl.set(null as String?) // set by dependencyResolutionManagement
 }
+
+project.plugins.withType<KotlinJsPlugin>()
+project.plugins.withType<KotlinMultiplatformPlugin>()
 

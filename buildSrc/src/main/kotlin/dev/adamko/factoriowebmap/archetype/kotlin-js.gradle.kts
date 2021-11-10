@@ -26,7 +26,7 @@ kotlin {
 }
 
 dependencies {
-  val kotlinWrappersVersion = "0.0.1-pre.259-kotlin-1.5.31"
+  val kotlinWrappersVersion = "0.0.1-pre.263-kotlin-1.5.31"
   implementation(
       project.dependencies.enforcedPlatform(
           "org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:${kotlinWrappersVersion}"
@@ -48,7 +48,7 @@ val rootPackageJson by rootProject.tasks.getting(RootPackageJsonTask::class)
 val nodePath: Directory by extra {
   val file = rootPackageJson.rootPackageJson.parentFile.normalize()
   logger.lifecycle("Kotlin/JS NODE_PATH: $file")
-  project.layout.dir(provider { file }).get()
+  project.layout.dir(project.provider { file }).get()
 }
 
 val nodeModulesDir: Directory by extra {
@@ -56,14 +56,3 @@ val nodeModulesDir: Directory by extra {
   logger.lifecycle("Kotlin/JS NODE_MODULES: $file")
   file
 }
-
-node {
-  download.set(true)
-  version.set("14.18.0")
-
-  distBaseUrl.set(null as String?) // set by dependencyResolutionManagement
-
-//  nodeProjectDir.set(nodePath)
-//  nodeProjectDir.set(packageJson.packageJson.parentFile.normalize())
-}
-

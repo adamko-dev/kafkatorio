@@ -3,7 +3,9 @@ import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
+  idea
   id("dev.adamko.factoriowebmap.archetype.node")
+  id("dev.adamko.tstl")
 }
 
 val projectId: String by project.extra
@@ -33,7 +35,7 @@ val tstlTask = tasks.register<NpmTask>("typescriptToLua") {
 
   val intermediateOutputDir = temporaryDir
   args.set(parseSpaceSeparatedArgs("-- --outDir $intermediateOutputDir"))
-  val outputDir = modBuildDir.dir("typescriptToLua")
+  val outputDir: Directory = modBuildDir.dir("typescriptToLua")
   outputs.dir(outputDir)
     .withPropertyName("outputDir")
 
@@ -54,19 +56,17 @@ val tstlTask = tasks.register<NpmTask>("typescriptToLua") {
 
 idea {
   module {
-    sourceDirs.add(layout.projectDirectory.dir("src/main/typescript").asFile)
-    excludeDirs.add(layout.projectDirectory.dir("src/main/typescript/node_modules").asFile)
-    resourceDirs.add(layout.projectDirectory.dir("src/main/resources").asFile)
-
-    resourceDirs.add(layout.projectDirectory.dir("infra").asFile)
-    excludeDirs.add(layout.projectDirectory.dir("infra/factorio-server").asFile)
+    sourceDirs.add(mkdir(layout.projectDirectory.dir("src/main/typescript").asFile))
+    excludeDirs.add(mkdir(layout.projectDirectory.dir("src/main/typescript/node_modules").asFile))
+    resourceDirs.add(mkdir(layout.projectDirectory.dir("src/main/resources").asFile))
+    resourceDirs.add(mkdir(layout.projectDirectory.dir("infra").asFile))
+    excludeDirs.add(mkdir(layout.projectDirectory.dir("infra/factorio-server").asFile))
   }
 }
 
-
 val typescriptSrcSet =
   project.objects.sourceDirectorySet("typescript", "typescript").apply {
-    srcDir(mkdir("$projectDir/src/main/typescript"))
+    srcDir(layout.projectDirectory.dir("src/main/typescript"))
 
     destinationDirectory.set(modBuildDir.dir("typescriptToLua").asFile)
     compiledBy(tstlTask) {
@@ -228,33 +228,3 @@ tasks.register("downloadFactorioApiDocs") {
     logger.lifecycle("Downloaded Factorio API json: $apiFile")
   }
 }
-
-//tasks.register("downloadLuaProtobuf") {
-//  group = projectId
-//
-//  val luaProtobufVersion = "0.3.3"
-//
-//  val target = uri("https://github.com/starwing/lua-protobuf/archive/refs/tags/$luaProtobufVersion.zip")
-//  val downloadedFile = file("$temporaryDir/luaProtobuf-$luaProtobufVersion.zip")
-//
-//  val luaProto = modBuildDir.file(apiFilename)
-//  outputs.file(apiFile)
-//
-//  doLast {
-//
-//    ant.invokeMethod(
-//      "get", mapOf(
-//        "src" to target,
-//        "dest" to downloadedFile,
-//        "verbose" to true,
-//      )
-//    )
-//
-//    val json = downloadedFile.readText()
-//    val prettyJson = groovy.json.JsonOutput.prettyPrint(json)
-//
-//    apiFile.asFile.writeText(prettyJson)
-//
-//    logger.lifecycle("Downloaded Factorio API json: $apiFile")
-//  }
-//}
