@@ -3,35 +3,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   idea
   `kotlin-dsl`
-  kotlin("jvm") version "1.5.31"
+  kotlin("jvm") version "1.6.0"
   `java-gradle-plugin`
-}
-
-gradlePlugin {
-  plugins {
-    create("tstl") {
-      id = "dev.adamko.tstl"
-      description =
-        "Gradle plugin for TypescriptToLua. Requires plugin `com.github.node-gradle.node`."
-      implementationClass = "dev.adamko.gradle.tstl.TstlPlugin"
-    }
-    create("json-kotlin-schema-gen") {
-      id = "dev.adamko.json-kotlin-schema-gen"
-      description =
-        "Gradle plugin for 'json-kotlin-schema-codegen' - Code generation for JSON Schema (Draft 07) https://github.com/pwall567/json-kotlin-schema-codegen"
-      implementationClass = "dev.adamko.gradle.jsonkotlinschemagen.JsonKotlinSchemaGenPlugin"
-    }
-  }
 }
 
 dependencies {
 
-  val kotlinVersion = "1.5.31"
-
-//  implementation(gradleApi())
-
-//  implementation("org.gradle.kotlin:gradle-kotlin-dsl-plugins:${org.gradle.kotlin.dsl.support.expectedKotlinDslPluginsVersion}")
-//  implementation("org.gradle.kotlin:gradle-kotlin-dsl-plugins:${kotlinVersion}")
+  val kotlinVersion = "1.6.0"
 
   implementation(platform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion"))
   implementation("org.jetbrains.kotlin:kotlin-serialization")
@@ -39,8 +17,6 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-gradle-plugin")
 
   implementation("com.github.node-gradle:gradle-node-plugin:3.1.1")
-
-  implementation("net.pwall.json:json-kotlin-schema-codegen:0.53")
 }
 
 val projectJvmTarget = "11"
@@ -49,8 +25,8 @@ tasks.withType<KotlinCompile>().configureEach {
 
   kotlinOptions {
     jvmTarget = projectJvmTarget
-    apiVersion = "1.5"
-    languageVersion = "1.5"
+    apiVersion = "1.6"
+    languageVersion = "1.6"
   }
 
   kotlinOptions.freeCompilerArgs += listOf(

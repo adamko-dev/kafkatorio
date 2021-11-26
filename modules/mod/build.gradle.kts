@@ -5,7 +5,6 @@ import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 plugins {
   idea
   id("dev.adamko.factoriowebmap.archetype.node")
-  id("dev.adamko.tstl")
 }
 
 val projectId: String by project.extra

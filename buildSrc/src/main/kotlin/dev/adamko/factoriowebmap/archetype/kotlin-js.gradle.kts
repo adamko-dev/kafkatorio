@@ -26,7 +26,7 @@ kotlin {
 }
 
 dependencies {
-  val kotlinWrappersVersion = "0.0.1-pre.263-kotlin-1.5.31"
+  val kotlinWrappersVersion = "0.0.1-pre.270-kotlin-1.6.0"
   implementation(
       project.dependencies.enforcedPlatform(
           "org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:${kotlinWrappersVersion}"

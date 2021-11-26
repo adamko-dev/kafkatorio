@@ -6,7 +6,7 @@
     1. converts data to images
     2. hosts a web map
 
-todo
+## todo
 
 * add settings
   * is active - whether files are exported or not
@@ -15,7 +15,7 @@ todo
     * requires on some sort of in-mod cache of map<entity-id, event>)
     * also divide by game-speed? to keep ratio the same
 
-to investigate:
+### to investigate:
 
 * https://github.com/starwing/lua-protobuf
 * https://github.com/grafi-tt/lunajson
@@ -29,3 +29,8 @@ to investigate:
 * https://github.com/YousefED/typescript-json-schema
 
 * https://jbrandhorst.com/post/go-protobuf-tips/
+
+#### CBOR
+
+https://www.zash.se/lua-cbor.html
+https://code.zash.se/lua-cbor/archive/68b3a36d0816.tar.gz

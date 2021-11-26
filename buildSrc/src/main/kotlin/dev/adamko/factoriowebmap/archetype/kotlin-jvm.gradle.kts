@@ -36,6 +36,7 @@ dependencies {
   testImplementation("io.kotest:kotest-assertions-core-jvm:$kotestVersion")
   testImplementation("io.kotest:kotest-property-jvm:$kotestVersion")
   testImplementation("io.kotest:kotest-assertions-json:$kotestVersion")
+
   testImplementation("io.mockk:mockk:1.12.0")
 
   //</editor-fold>
@@ -46,8 +47,8 @@ tasks.withType<KotlinCompile>().configureEach {
 
   kotlinOptions {
     jvmTarget = "11"
-    apiVersion = "1.5"
-    languageVersion = "1.5"
+    apiVersion = "1.6"
+    languageVersion = "1.6"
   }
 
   kotlinOptions.freeCompilerArgs += listOf(

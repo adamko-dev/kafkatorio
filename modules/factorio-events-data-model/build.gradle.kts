@@ -1,4 +1,3 @@
-import org.gradle.process.internal.DefaultExecSpec
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -21,8 +20,8 @@ kotlin {
     compilations.configureEach {
       kotlinOptions {
         jvmTarget = "11"
-        apiVersion = "1.5"
-        languageVersion = "1.5"
+        apiVersion = "1.6"
+        languageVersion = "1.6"
       }
     }
   }
@@ -76,7 +75,7 @@ kotlin {
 
   sourceSets.all {
     languageSettings.apply {
-      languageVersion = "1.5"
+      languageVersion = "1.6"
 //      enableLanguageFeature("InlineClasses") // language feature name
       optIn("kotlin.OptIn")
       optIn("kotlin.RequiresOptIn")
@@ -91,24 +90,7 @@ kotlin {
 }
 
 
-
-
-//kotlin.js()
-//  .compilations
-//  .getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-//  .npmProject
-//  .useTool()
-
-
 afterEvaluate {
-
-//  val nodeJsExecTstl by tasks.creating(NodeJsExec::class) {
-//    group = project.name
-//
-//    nodeArgs += listOf(
-//      "tstl",
-//    )
-//  }
 
   val kotlinJsCompilation: KotlinJsCompilation =
     kotlin.targets
@@ -124,66 +106,13 @@ afterEvaluate {
     errorOutput = System.err
 
     workingDir = npmProject.dir
-    executable =
-      when (npmProject.nodeJs.requireConfigured().isWindows) {
+    executable = when (npmProject.nodeJs.requireConfigured().isWindows) {
         true  -> "npx.cmd"
         false -> "npx"
       }
 
     args(parseSpaceSeparatedArgs("tstl --out $temporaryDir"))
 
-  }
-
-  tasks.create("asd") {
-    group = project.name
-
-    doLast {
-
-      val execSpec =
-        project.objects.newInstance(DefaultExecSpec::class.java).apply {
-          isIgnoreExitValue = false
-          standardOutput = System.out
-          errorOutput = System.err
-        }
-
-      kotlin.targets
-        .flatMap { it.compilations }
-        .filterIsInstance<KotlinJsCompilation>()
-        .filter { it.name == KotlinCompilation.MAIN_COMPILATION_NAME }
-        .forEach {
-
-          org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec.create(it, "blahDeBlah") {
-
-          }
-
-          execSpec.workingDir = it.npmProject.dir
-
-          execSpec.executable =
-            when (it.npmProject.nodeJs.requireConfigured().isWindows) {
-              true  -> "npx.cmd"
-              false -> "npx"
-            }
-
-          execSpec.args("tstl", "--version")
-
-//          execSpec.commandLine
-
-
-//          it.npmProject.useTool(
-//            execSpec,
-//            "typescript-to-lua/dist/tstl.js",
-//            listOf(),
-//            listOf( "--outDir","$buildDir/testAsd"),
-//            listOf("--version"),
-//           listOf(),
-//          )
-        }
-
-      exec {
-        execSpec.copyTo(this)
-      }
-
-    }
   }
 
 }

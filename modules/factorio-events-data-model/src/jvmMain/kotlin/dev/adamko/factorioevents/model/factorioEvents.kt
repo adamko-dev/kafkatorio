@@ -1,13 +1,8 @@
 package dev.adamko.factorioevents.model
 
-import dev.adamko.factorioevents.model.FBuiltInType.FNumber.F_float
-import dev.adamko.factorioevents.model.FBuiltInType.FNumber.F_int
-import dev.adamko.factorioevents.model.FBuiltInType.FNumber.F_uint
-
-import kotlinx.serialization.*
-import kotlinx.serialization.builtins.*
-import kotlinx.serialization.json.*
-import kotlinx.serialization.modules.*
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonClassDiscriminator
 
 
 @Serializable
@@ -43,7 +38,6 @@ data class EntityData(
   val position: PositionData,
   val player_index: UInt?,
 ) : FactorioObjectData
-
 
 data class SurfaceData(
   override val objectName: String,
