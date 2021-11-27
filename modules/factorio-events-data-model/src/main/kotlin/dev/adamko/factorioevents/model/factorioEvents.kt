@@ -6,14 +6,14 @@ import kotlinx.serialization.json.JsonClassDiscriminator
 
 
 @Serializable
-data class FactorioEvent(
+data class FactorioEvent<T : FactorioObjectData>(
+  /** the initial Factorio event ({defines.events}) trigger */
+  val eventType: String,
   /** Schema versioning */
   val modVersion: String,
   /** game time */
   val tick: UInt,
-  /** the initial Factorio event ({defines.events}) trigger */
-  val eventType: String,
-  val data: FactorioObjectData,
+  val data: T,
 )
 
 @JsonClassDiscriminator("object_name")
@@ -21,34 +21,40 @@ sealed interface FactorioObjectData {
   val objectName: String
 }
 
-@SerialName("player")
+@SerialName("LuaPlayer")
 data class PlayerData(
   override val objectName: String,
-  val characterUnitNumber: UInt,
-  val associatedCharacterUnitNumbers: List<UInt>,
-  val positionData: PositionData,
+  val associatedCharactersUnitNumbers: List<UInt>,
+  val characterUnitNumber: UInt?,
+  val name: String,
+  val position: PositionData,
 ) : FactorioObjectData
 
+@SerialName("LuaEntity")
 data class EntityData(
   override val objectName: String,
-  val name: String,
-  val type: String,
+
   val active: Boolean,
-  val healthRatio: Float,
   val health: Float?,
-  val surfaceIndex: Int,
-  val unitNumber: UInt?,
+  val healthRatio: Float,
+  val name: String,
   val position: PositionData,
+  val surfaceIndex: Int,
+  val type: String,
+  val unitNumber: UInt?,
+
   val playerIndex: UInt?,
 ) : FactorioObjectData
 
+@SerialName("LuaSurface")
 data class SurfaceData(
   override val objectName: String,
-  val name: String,
-  val index: UInt,
   val daytime: Float,
+  val index: UInt,
+  val name: String,
 ) : FactorioObjectData
 
+@Serializable
 data class PositionData(
   val x: Int,
   val y: Int,

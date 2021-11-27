@@ -5,8 +5,8 @@ interface FactorioObjectData {
     object_name: string;
 }
 
-interface FactorioEvent {
-    data: FactorioObjectData;
+interface FactorioEvent<T extends FactorioObjectData> {
+    data: T;
     event_type: string;
     mod_version: string;
     tick: uint;
@@ -18,10 +18,11 @@ interface PositionData {
 }
 
 interface PlayerData extends FactorioObjectData {
-    associated_character_unit_numbers: uint[];
-    character_unit_number: uint;
+    associated_characters_unit_numbers: uint[];
+    character_unit_number: uint | null;
+    name: string;
     object_name: string;
-    position_data: PositionData;
+    position: PositionData;
 }
 
 interface EntityData extends FactorioObjectData {

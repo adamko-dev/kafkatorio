@@ -6,7 +6,10 @@
 
 
 import {Serdes} from "./serdes/serdes"
-import {FactorioEvent, JsonTable} from "./model/model";
+// import {FactorioEvent, JsonTable} from "./model/model";
+
+
+const MOD_VERSION = script.active_mods["factorio-web-map"]
 
 const mapEventIdToName = new LuaTable<defines.Events, keyof typeof defines.events>()
 for (const [k, v] of pairs(defines.events)) {
@@ -16,8 +19,7 @@ for (const [k, v] of pairs(defines.events)) {
 function handlePlayerUpdate(tick: uint, playerIndex: uint, eventType: string) {
   let player: LuaPlayer = game.players[playerIndex]
   let table = Serdes.Player.playerToTable(player)
-  let event = FactorioEvent(tick, eventType, table)
-  emitEvent(event)
+  emitEvent(table, tick, eventType)
 
   handleCharactersEvent(tick, playerIndex, eventType)
 }
@@ -38,22 +40,28 @@ function handleCharactersEvent(tick: uint, playerIndex: uint, eventType: string)
 
 function handleEntityUpdate(tick: uint, entity: LuaEntity, eventType: string) {
   let table = Serdes.Entity.entityToTable(entity)
-  let event = FactorioEvent(tick, eventType, table)
-  emitEvent(event)
+  emitEvent(table, tick, eventType)
 }
 
 function surfaceEvent(tick: uint, surface: LuaSurface, eventType: string) {
   let table = Serdes.Surface.surfaceToTable(surface)
-  let event = FactorioEvent(tick, eventType, table)
-  emitEvent(event)
+  emitEvent(table, tick, eventType)
 }
 
 // const SERVER_ID: uint = 0
 // const EVENT_FILE_DIR: string = "events"
 /** Emit a serialised event */
-function emitEvent(event: JsonTable) {
+function emitEvent<T extends FactorioObjectData>(eventData: T, tick: uint, eventType: string) {
+
+  let event: FactorioEvent<T> = {
+    data: eventData,
+    event_type: eventType,
+    mod_version: MOD_VERSION,
+    tick: tick
+  }
+
   let data = game.table_to_json(event)
-  // game.write_file(EVENT_FILE_DIR + "/" + filename, data, false, SERVER_ID)
+
   localised_print(`FactorioEvent: ${data}`)
 }
 

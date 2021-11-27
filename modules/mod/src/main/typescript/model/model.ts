@@ -1,47 +1,46 @@
-import {Serdes} from "../serdes/serdes";
-import FactorioObjectData = Serdes.FactorioObjectData;
+// import {Serdes} from "../serdes/serdes";
+// import FactorioObjectData = Serdes.FactorioObjectData;
+//
+// export type JsonPrimitiveType = number | string | boolean | undefined | null | void
+//
+// export type JsonArray<T extends JsonPrimitiveType = void> = T[]
+//
+// export type JsonTableValueType =
+//     JsonPrimitiveType
+//     | JsonTable
+//     | JsonArray<JsonPrimitiveType>
+//     | undefined
+//     | null
+//
+// export interface JsonTable {
+//   [key: string]: JsonTableValueType
+// }
 
-export type JsonPrimitiveType = number | string | boolean | undefined | null | void
 
-export type JsonArray<T extends JsonPrimitiveType = void> = T[]
-
-export type JsonTableValueType =
-    JsonPrimitiveType
-    | JsonTable
-    | JsonArray<JsonPrimitiveType>
-    | undefined
-    | null
-
-export interface JsonTable {
-  [key: string]: JsonTableValueType
-}
-
-const MOD_VERSION = script.active_mods["factorio-web-map"]
-
-export interface FactorioEvent extends JsonTable {
-  /** Schema versioning */
-  mod_version: string,
-  /** game time */
-  tick: uint,
-  /** the initial Factorio event ({defines.events}) trigger */
-  event_type: string,
-  data: FactorioObjectData,
-}
-
-export const FactorioEvent =
-    (<DataType extends FactorioObjectData>(
-            tick: uint,
-            eventType: string,
-            data: DataType
-        ) => {
-          return {
-            mod_version: MOD_VERSION,
-            tick: tick,
-            event_type: eventType,
-            data: data,
-          } as FactorioEvent
-        }
-    )
+// export interface FactorioEvent extends JsonTable {
+//   /** Schema versioning */
+//   mod_version: string,
+//   /** game time */
+//   tick: uint,
+//   /** the initial Factorio event ({defines.events}) trigger */
+//   event_type: string,
+//   data: FactorioObjectData,
+// }
+//
+// export const FactorioEvent =
+//     (<DataType extends FactorioObjectData>(
+//             tick: uint,
+//             eventType: string,
+//             data: DataType
+//         ) => {
+//           return {
+//             mod_version: MOD_VERSION,
+//             tick: tick,
+//             event_type: eventType,
+//             data: data,
+//           } as FactorioEvent
+//         }
+//     )
 
 
 // export type JsonArray<TValue extends JsonPrimitiveType> = TValue[]
