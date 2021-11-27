@@ -1,13 +1,14 @@
 package dev.adamko.factorioevents.model
 
+import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import me.ntrrgc.tsGenerator.ClassTransformer
 import me.ntrrgc.tsGenerator.TypeScriptGenerator
 import me.ntrrgc.tsGenerator.camelCaseToSnakeCase
+import org.intellij.lang.annotations.Language
 
-
-fun main() {
+fun main(args: Array<String>) {
 
   val gen =
     TypeScriptGenerator(
@@ -32,8 +33,31 @@ fun main() {
       )
     )
 
-  println(gen.definitionsText)
+  val definitions = gen.definitionsText
+
+  when (val filename = args.firstOrNull()) {
+    null -> {
+      println(definitions)
+    }
+    else -> {
+      val out = File(filename)
+      out.parentFile.mkdirs()
+      out.printWriter().use {
+        it.print(header)
+        it.print(definitions)
+      }
+      println("Generated file: $out")
+    }
+  }
 }
+
+@Language("TypeScript")
+val header = """
+
+  // Generated code - do edit this file manually
+  
+
+""".trimIndent()
 
 object PropertyNameTransformer : ClassTransformer {
   override fun transformPropertyName(

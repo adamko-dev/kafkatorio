@@ -1,4 +1,6 @@
 import com.github.gradle.node.npm.task.NpmTask
+import dev.adamko.factoriowebmap.configurations.asConsumer
+import dev.adamko.factoriowebmap.configurations.typescriptAttributes
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
@@ -52,6 +54,35 @@ val tstlTask = tasks.register<NpmTask>("typescriptToLua") {
   }
 
 }
+
+val dataModelTs: Configuration by configurations.creating {
+  asConsumer()
+  typescriptAttributes(objects)
+}
+
+dependencies {
+  dataModelTs(projects.modules.factorioEventsDataModel)
+}
+
+val updateDataModel by tasks.registering(Sync::class) {
+  group = project.name
+
+  dependsOn(dataModelTs)
+
+  from(
+    dataModelTs.incoming
+      .artifactView { lenient(true) }
+      .artifacts
+      .artifactFiles
+      .filter { it.exists() }
+  )
+
+  into(layout.projectDirectory.dir("src/main/typescript/generated"))
+}
+
+tasks.assemble { dependsOn(updateDataModel) }
+
+
 
 idea {
   module {

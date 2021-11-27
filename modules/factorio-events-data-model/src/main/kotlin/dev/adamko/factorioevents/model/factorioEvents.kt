@@ -7,8 +7,11 @@ import kotlinx.serialization.json.JsonClassDiscriminator
 
 @Serializable
 data class FactorioEvent(
+  /** Schema versioning */
   val modVersion: String,
+  /** game time */
   val tick: UInt,
+  /** the initial Factorio event ({defines.events}) trigger */
   val eventType: String,
   val data: FactorioObjectData,
 )
@@ -33,10 +36,10 @@ data class EntityData(
   val active: Boolean,
   val healthRatio: Float,
   val health: Float?,
-  val surface_index: Int,
-  val unit_number: UInt?,
+  val surfaceIndex: Int,
+  val unitNumber: UInt?,
   val position: PositionData,
-  val player_index: UInt?,
+  val playerIndex: UInt?,
 ) : FactorioObjectData
 
 data class SurfaceData(
