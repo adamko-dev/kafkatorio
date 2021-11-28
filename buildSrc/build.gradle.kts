@@ -4,7 +4,6 @@ plugins {
   idea
   `kotlin-dsl`
   kotlin("jvm") version "1.6.0"
-  `java-gradle-plugin`
 }
 
 dependencies {
@@ -13,8 +12,13 @@ dependencies {
 
   implementation(platform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion"))
   implementation("org.jetbrains.kotlin:kotlin-serialization")
-
+  implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-gradle-plugin")
+
+  val kotlinXSerializationVersion = "1.3.1"
+  implementation(platform("org.jetbrains.kotlinx:kotlinx-serialization-bom:$kotlinXSerializationVersion"))
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
+
 
   implementation("com.github.node-gradle:gradle-node-plugin:3.1.1")
 }
@@ -38,7 +42,6 @@ tasks.withType<KotlinCompile>().configureEach {
     "-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi",
   )
 }
-
 
 kotlin {
   jvmToolchain {
