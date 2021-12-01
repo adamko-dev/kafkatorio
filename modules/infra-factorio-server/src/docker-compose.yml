@@ -3,13 +3,13 @@ version: "3.9"
 services:
 
   factorio-server:
-    image: factoriotools/factorio:1.1.48
+    image: factoriotools/factorio:${FACTORIO_VERSION}
     #    logging:
     #      driver: "json-file"
     container_name: "factorio-server"
     restart: "unless-stopped"
     networks:
-      - "factorio-events-nw"
+      - "kafkatorio-nw"
     ports:
       - "34197:34197/udp" # factorio
       - "27015:27015/tcp" # rcon
@@ -32,8 +32,6 @@ services:
   #      - TOKEN=FactorioToken
 
 networks:
-  kafka-nw:
-    name: "kafka-nw"
+  kafkatorio-nw:
+    name: "kafkatorio-nw"
     external: true
-  factorio-events-nw:
-    name: "factorio-events-nw"

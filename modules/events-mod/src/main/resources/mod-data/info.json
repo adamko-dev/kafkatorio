@@ -1,8 +1,9 @@
 {
-  "name": "factorio-web-map",
+  "name": "@mod.name@",
   "version": "@project.version@",
-  "title": "Factorio Web Map",
+  "title": "@mod.title@",
+  "description": "@mod.description@",
   "author": "fredthedeadhead",
-  "factorio_version": "1.1",
+  "factorio_version": "@factorio.version@",
   "dependencies": []
 }

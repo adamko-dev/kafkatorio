@@ -3,7 +3,11 @@ ARG factorioVersion=1.1.42
 
 FROM factoriotools/factorio:$factorioVersion
 
-
+# In progress
+# The intention is to remove kafka-pipe and have a
+# pre-preared Factorio Docker container than can
+# just run, without needing an additional
+# container with kcat.
 
 #RUN apk add --update \
 #    curl \
@@ -19,5 +23,3 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /
 COPY kafka-pipe.sh kafka-pipe.sh
-
-

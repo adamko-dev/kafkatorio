@@ -29,7 +29,7 @@ const val FactorioObjectDataDiscriminatorKey: String = "object_name"
 
 @Serializable
 @JsonClassDiscriminator(FactorioObjectDataDiscriminatorKey)
-sealed class  FactorioObjectData {
+sealed class FactorioObjectData {
   @SerialName(FactorioObjectDataDiscriminatorKey)
   abstract val objectName: String
 }

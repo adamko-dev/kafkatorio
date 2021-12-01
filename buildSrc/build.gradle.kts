@@ -13,7 +13,7 @@ dependencies {
   implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion"))
   implementation("org.jetbrains.kotlin:kotlin-serialization")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
-  implementation("org.jetbrains.kotlin:kotlin-gradle-plugin")
+  implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
 
   val kotlinXSerializationVersion = "1.3.1"
   implementation(enforcedPlatform("org.jetbrains.kotlinx:kotlinx-serialization-bom:$kotlinXSerializationVersion"))
@@ -35,7 +35,6 @@ tasks.withType<KotlinCompile>().configureEach {
   }
 
   kotlinOptions.freeCompilerArgs += listOf(
-    "-Xopt-in=kotlin.OptIn",
     "-Xopt-in=kotlin.RequiresOptIn",
     "-Xopt-in=kotlin.ExperimentalStdlibApi",
     "-Xopt-in=kotlin.time.ExperimentalTime",

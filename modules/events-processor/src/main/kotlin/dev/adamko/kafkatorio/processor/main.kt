@@ -1,6 +1,7 @@
 package dev.adamko.kafkatorio.processor
 
 import dev.adamko.kafkatorio.events.schema.FactorioEvent
+import dev.adamko.kafkatorio.events.schema.FactorioObjectData
 import dev.adamko.kafkatorio.events.schema.jsonMapper
 import dev.adamko.kafkatorio.processor.config.ApplicationProperties
 import java.time.Duration
@@ -25,7 +26,7 @@ fun main() {
     .mapValues { readOnlyKey, value ->
       println("Mapping $readOnlyKey:$value")
 //      jsonMapper.decodeFromString<FactorioEvent<*>>(value)
-      KotlinxSerialization.asA<FactorioEvent<*>>(value)
+      KotlinxSerialization.asA<FactorioEvent<FactorioObjectData>>(value)
     }
     .to(TopicNameExtractor { key, value, recordContext ->
       value.data.objectName

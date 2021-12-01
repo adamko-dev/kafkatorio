@@ -5,7 +5,7 @@ plugins {
   `build-dashboard`
 }
 
-group = "dev.adamko.factoriowebmap"
+group = "dev.adamko"
 version = "0.0.7"
 
 tasks.wrapper {
@@ -13,13 +13,20 @@ tasks.wrapper {
   distributionType = Wrapper.DistributionType.ALL
 }
 
-idea {
-  module {
-    isDownloadSources = true
-    isDownloadJavadoc = true
-  }
+val startInfra by tasks.registering {
+  group = project.name
+
+  dependsOn(
+    ":modules:infra-kafka-pipe:processRun",
+    ":modules:infra-kafka-cluster:processRun",
+  )
 }
 
-//tasks.withType(HtmlDependencyReportTask::class).configureEach {
-//  projects = project.allprojects
-//}
+val runKafkatorio by tasks.registering {
+  group = project.name
+
+  dependsOn(
+    ":modules:infra-factorio-client:processRun",
+    ":modules:infra-factorio-server:processRun",
+  )
+}

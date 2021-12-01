@@ -5,10 +5,8 @@ import dev.adamko.kafkatorio.gradle.not
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
-  id("dev.adamko.kafkatorio.process-runner")
+  id("dev.adamko.kafkatorio.infra.process-runner")
 }
-
-val tokens: Map<String, String> by project.extra
 
 val clientModsDirectory = file("""D:\Users\Adam\AppData\Roaming\Factorio\mods""")
 val factorioGameId = "427520"

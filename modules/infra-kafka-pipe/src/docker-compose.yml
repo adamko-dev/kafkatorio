@@ -1,15 +1,15 @@
 version: "3.9"
 
 services:
-  factorio-events-kafka-pipe:
+  kafka-pipe:
     image: openjdk:11-jre-buster
-    container_name: "factorio-events-kafka-pipe"
+    container_name: "kafka-pipe"
     build:
       dockerfile: "kafka-pipe.Dockerfile"
     restart: "unless-stopped"
     privileged: true
     networks:
-      - "factorio-events-nw"
+      - "kafkatorio-nw"
     environment:
       FACTORIO_SERVER_CONTAINER_NAME: "factorio-server"
       KAFKA_HOST: "kafka:29092"
@@ -20,6 +20,6 @@ services:
       # - "/var/run/docker.sock:/var/run/docker.sock"
 
 networks:
-  factorio-events-nw:
-    name: "factorio-events-nw"
+  kafkatorio-nw:
+    name: "kafkatorio-nw"
     external: true

@@ -1,7 +1,4 @@
-package dev.adamko.kafkatorio
-
-import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.registering
+package dev.adamko.kafkatorio.infra
 
 plugins {
   id("dev.adamko.kafkatorio.base")
@@ -9,18 +6,17 @@ plugins {
 
 val processRunnerTaskGroup: String by extra("processes")
 
-val processRun by tasks.registering {
+val processRun by tasks.registering(Task::class) {
   group = processRunnerTaskGroup
 }
 
-val processKill by tasks.registering {
+val processKill by tasks.registering(Task::class) {
   group = processRunnerTaskGroup
 }
 
 val processRestart by tasks.registering {
   group = processRunnerTaskGroup
 
-  processKill.get().state
   dependsOn(processKill)
   finalizedBy(processRun)
 }

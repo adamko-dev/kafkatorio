@@ -55,7 +55,6 @@ tasks.withType<KotlinCompile>().configureEach {
   }
 
   kotlinOptions.freeCompilerArgs += listOf(
-    "-Xopt-in=kotlin.OptIn",
     "-Xopt-in=kotlin.RequiresOptIn",
     "-Xopt-in=kotlin.ExperimentalStdlibApi",
     "-Xopt-in=kotlin.time.ExperimentalTime",

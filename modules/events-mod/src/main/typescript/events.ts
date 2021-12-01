@@ -90,9 +90,13 @@ script.on_event(
     (e: OnTickEvent) => {
       if (e.tick % 60 == 0) {
 
-        for (const [index,] of pairs(game.surfaces)) {
-          let surface = game.surfaces[index]
-          surfaceEvent(e.tick, surface, mapEventIdToName.get(e.name))
+
+        for (const [index, _] of pairs(game.surfaces)) {
+          let s = game.get_surface(index) // TODO fix / report can't iterate over surfaces
+          // let surface = game.surfaces[index]
+          if (s != undefined) {
+            surfaceEvent(e.tick, s, mapEventIdToName.get(e.name))
+          }
           // surfaceEvent(e.tick, surface, "on_tick")
         }
 

@@ -10,23 +10,42 @@ import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 plugins {
   idea
   id("dev.adamko.kafkatorio.lang.node")
+  distribution
 }
 
-val tokens: Map<String, String> by project.extra
-val licenseFile: RegularFile by project.extra
+description =
+  "Sends in-game information to a server over the internet (requires Kafkatorio Kafka-Pipe)"
 
+
+// Factorio required format is:
+// - filename: `mod-name_version.zip`
+// - zip contains one directory, `mod-name`
+val modName: String by extra("${rootProject.name}-events")
+val distributionZipName: String by extra("${modName}_${project.version}.zip")
+
+
+val tokens: MutableMap<String, String> by project.extra
+tokens += mapOf(
+  "mod.name" to modName,
+  "mod.title" to "Kafkatorio Events",
+  "mod.description" to (project.description ?: ""),
+  "factorio.version" to libs.versions.factorio.get().substringBeforeLast("."),
+)
+
+val licenseFile: RegularFile by project.extra
 val tsSrcDir: Directory = layout.projectDirectory.dir("src/main/typescript")
 
 node {
   nodeProjectDir.set(tsSrcDir)
 }
 
-val typescriptEventsSchema by configurations.registering {
+val typescriptEventsSchema: Configuration by configurations.creating {
   asConsumer()
   typescriptAttributes(objects)
-  defaultDependencies {
-    project.dependencies.create(projects.modules.eventsSchema)
-  }
+}
+
+dependencies {
+  typescriptEventsSchema(projects.modules.eventsSchema)
 }
 
 val typescriptToLua by tasks.registering(NpmTask::class) {
@@ -39,13 +58,12 @@ val typescriptToLua by tasks.registering(NpmTask::class) {
 
   npmCommand.set(listOf("run", "build"))
 
-  inputs.dir(project.node.nodeProjectDir)
+  inputs.dir(tsSrcDir)
     .skipWhenEmpty()
     .withPropertyName("sourceFiles")
     .withPathSensitivity(PathSensitivity.RELATIVE)
 
-  val intermediateOutputDir = temporaryDir
-  args.set(parseSpaceSeparatedArgs("-- --outDir $intermediateOutputDir"))
+  args.set(parseSpaceSeparatedArgs("-- --outDir $temporaryDir"))
   val outputDir = layout.buildDirectory.dir("typescriptToLua")
   outputs.dir(outputDir)
     .withPropertyName("outputDir")
@@ -53,12 +71,13 @@ val typescriptToLua by tasks.registering(NpmTask::class) {
   ignoreExitValue.set(false)
 
   doFirst("clean") {
-    delete(intermediateOutputDir)
+    delete(temporaryDir)
+    mkdir(temporaryDir)
   }
 
   doLast("syncTstlOutput") {
     sync {
-      from(intermediateOutputDir)
+      from(temporaryDir)
       into(outputDir)
     }
   }
@@ -66,53 +85,85 @@ val typescriptToLua by tasks.registering(NpmTask::class) {
 }
 
 val fetchEventsSchema by tasks.registering(Sync::class) {
-  group = project.name
   description = "Fetch the latest shared data-model"
+  group = project.name
 
   dependsOn(typescriptEventsSchema)
 
   from(
-    typescriptEventsSchema.map { c ->
-      c.incoming
-        .artifactView { lenient(true) }
-        .artifacts
-        .artifactFiles
-        .filter { file -> file.exists() }
+    typescriptEventsSchema.incoming
+      .artifactView { lenient(true) }
+      .artifacts
+      .artifactFiles
+      .filter { file -> file.exists() }
+      .files
+      .map { zipTree(it) }
+  ) {
+    // drop the first directory inside the zip
+    eachFile {
+      relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray())
     }
-  )
+    includeEmptyDirs = false
+  }
 
-  into(layout.projectDirectory.dir("src/main/typescript/model"))
+  into(layout.projectDirectory.dir("src/main/typescript/schema"))
 }
 
-val packageMod by tasks.registering(Zip::class) {
-  description = "Package mod files into ZIP"
-  group = project.name
+tasks.distZip {
+  archiveFileName.set(distributionZipName)
+}
 
-  dependsOn(typescriptToLua)
+distributions {
+  main {
 
-  inputs.properties(tokens)
+    distributionBaseName.set(modName)
 
-  from(layout.projectDirectory.dir("src/main/resources/mod-data")) {
-    include("**/**")
-    filter<ReplaceTokens>("tokens" to tokens)
-  }
-  dependsOn(typescriptToLua)
-  from(licenseFile)
+    contents {
+      from(layout.projectDirectory.dir("src/main/resources/mod-data")) {
+        include("**/**")
+        filter<ReplaceTokens>("tokens" to tokens)
+      }
+      from(licenseFile)
+      from(typescriptToLua.map { it.outputs })
+      includeEmptyDirs = false
+      exclude {
+        it.file.run {
+          isFile && useLines { lines -> lines.all { line -> line.isBlank() } }
+        }
+      }
+    }
 
-  into(rootProject.name)
-
-  // Factorio required format is:
-  // - filename: `mod-name_version.zip`
-  // - zip contains one directory, `mod-name`
-  archiveFileName.set("${rootProject.name}_${project.version}.zip")
-  destinationDirectory.set(layout.buildDirectory.dir("dist"))
-
-  doLast {
-    val outDir = destinationDirectory.asFile.get().toRelativeString(layout.projectDirectory.asFile)
-    val outZip = "${archiveFileName.orNull}"
-    logger.lifecycle("Packaged mod into $outDir/$outZip")
   }
 }
+
+//val packageMod by tasks.registering(Zip::class) {
+//  description = "Package mod files into ZIP"
+//  group = project.name
+//
+//  dependsOn(typescriptToLua)
+//
+//  inputs.properties(tokens)
+//
+//  from(layout.projectDirectory.dir("src/main/resources/mod-data")) {
+//    include("**/**")
+//    filter<ReplaceTokens>("tokens" to tokens)
+//  }
+//  from(licenseFile)
+//
+//  into(rootProject.name)
+//
+//  // Factorio required format is:
+//  // - filename: `mod-name_version.zip`
+//  // - zip contains one directory, `mod-name`
+//  archiveFileName.set("${rootProject.name}_${project.version}.zip")
+//  destinationDirectory.set(layout.buildDirectory.dir("dist"))
+//
+//  doLast {
+//    val outDir = destinationDirectory.asFile.get().toRelativeString(layout.projectDirectory.asFile)
+//    val outZip = "${archiveFileName.orNull}"
+//    logger.lifecycle("Packaged mod into $outDir/$outZip")
+//  }
+//}
 
 
 val downloadFactorioApiDocs by tasks.registering {
@@ -148,7 +199,7 @@ val downloadFactorioApiDocs by tasks.registering {
 val factorioModProvider by configurations.registering {
   asProvider()
   factorioModAttributes(objects)
-  outgoing.artifact(packageMod)
+  outgoing.artifact(tasks.distZip.flatMap { it.archiveFile })
 }
 
 tasks.updatePackageJson {
@@ -157,7 +208,7 @@ tasks.updatePackageJson {
 }
 
 tasks.assemble { dependsOn(fetchEventsSchema, tasks.updatePackageJson) }
-tasks.build { dependsOn(packageMod) }
+//tasks.build { dependsOn(packageMod) }
 
 
 //

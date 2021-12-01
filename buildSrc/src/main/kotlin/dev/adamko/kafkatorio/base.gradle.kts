@@ -1,9 +1,5 @@
 package dev.adamko.kafkatorio
 
-import org.gradle.kotlin.dsl.base
-import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.idea
-
 plugins {
   idea
   base
@@ -14,8 +10,8 @@ version = rootProject.version
 
 val licenseFile: RegularFile by extra(rootProject.layout.projectDirectory.file("LICENSE"))
 
-val tokens: Map<String, String> by extra(
-  mapOf(
+val tokens: MutableMap<String, String> by extra(
+  mutableMapOf(
     "project.version" to "$version",
   )
 )
@@ -27,6 +23,7 @@ idea {
   }
 }
 
-//group = "dev.adamko.factoriowebmap"
-//version = "0.0.1"
-
+tasks.withType<WriteProperties>().configureEach {
+  encoding = Charsets.UTF_8.name()
+  comment = " Do not edit manually. This file was created with task '$name'"
+}
