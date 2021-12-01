@@ -2,6 +2,7 @@ plugins {
   idea
   base
   `project-report`
+  `build-dashboard`
 }
 
 group = "dev.adamko.factoriowebmap"
@@ -19,6 +20,6 @@ idea {
   }
 }
 
-tasks.withType(HtmlDependencyReportTask::class).configureEach {
-  projects = project.allprojects
-}
+//tasks.withType(HtmlDependencyReportTask::class).configureEach {
+//  projects = project.allprojects
+//}

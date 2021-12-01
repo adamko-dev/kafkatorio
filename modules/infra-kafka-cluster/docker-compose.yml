@@ -2,35 +2,6 @@ version: "3.9"
 
 services:
 
-  factorio-server:
-    image: factoriotools/factorio:1.1.48
-    #    logging:
-    #      driver: "json-file"
-    container_name: "factorio-server"
-    restart: "unless-stopped"
-    networks:
-      - "factorio-events-nw"
-    ports:
-      - "34197:34197/udp" # factorio
-      - "27015:27015/tcp" # rcon
-    volumes:
-      - "./factorio-server:/factorio"
-  #    logging:
-  #      driver: "mickyg/kafka-logdriver:latest"
-  #      options:
-  #        KAFKA_BROKER_ADDR: "kafka-kraft"
-  #        LOG_TOPIC: "dockerlogs-factorio-server"
-  #        LOG_TAG: "factorio-server"
-
-  #    environment:
-  #      RCON_PORT: 27715
-  #    environment:
-  #      - PUID=1000
-  #      - PGID=1000
-  #      - UPDATE_MODS_ON_START=true
-  #      - USERNAME=FactorioUsername
-  #      - TOKEN=FactorioToken
-
   kafka:
     image: dev-adamko/kafka-kraft
     container_name: "kafka"
@@ -74,10 +45,9 @@ services:
 #      - "8083:8083"
 #
 
-
 networks:
   kafka-nw:
     name: "kafka-nw"
   factorio-events-nw:
     name: "factorio-events-nw"
-
+    external: true

@@ -1,11 +1,17 @@
-rootProject.name = "factorio-web-map"
+rootProject.name = "kafkatorio"
 
 include(
-  ":modules:mod",
+
+  ":modules:events-mod",
+  ":modules:events-processor",
+  ":modules:events-schema",
+
+  ":modules:infra-factorio-client",
+  ":modules:infra-factorio-server",
+  ":modules:infra-kafka-cluster",
+  ":modules:infra-kafka-pipe",
+
   ":modules:kt-rcon",
-  ":modules:factorio-events-data-model",
-  ":modules:factorio-events-processor",
-  ":modules:factorio-events-kafka-pipe",
 )
 
 enableFeaturePreview("VERSION_CATALOGS")

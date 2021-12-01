@@ -11,14 +11,13 @@ description = """
   """.trimIndent()
 
 val projectId: String by project.extra
-val buildDir: Directory = layout.buildDirectory.dir(projectId).get()
 
 @Suppress("UnstableApiUsage")
 dependencies {
 
   implementation("org.apache.kafka:kafka-streams:3.0.0")
 
-  implementation(projects.modules.factorioEventsDataModel)
+  implementation(projects.modules.eventsSchema)
 
 //  implementation("com.ionspin.kotlin:bignum:0.3.3")
 

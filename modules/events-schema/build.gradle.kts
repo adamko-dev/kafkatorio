@@ -6,9 +6,6 @@ plugins {
   kotlin("plugin.serialization")
 }
 
-val projectId: String by project.extra
-val buildDir: Directory = layout.buildDirectory.dir(projectId).get()
-
 dependencies {
   implementation(platform(libs.kotlinx.serialization.bom))
   implementation(libs.kotlinx.serialization.core)
