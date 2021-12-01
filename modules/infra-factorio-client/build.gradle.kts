@@ -1,7 +1,7 @@
 import dev.adamko.kafkatorio.gradle.asConsumer
 import dev.adamko.kafkatorio.gradle.factorioModAttributes
-import dev.adamko.isProcessRunning
-import dev.adamko.not
+import dev.adamko.kafkatorio.gradle.isProcessRunning
+import dev.adamko.kafkatorio.gradle.not
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
@@ -52,7 +52,7 @@ val clientLaunch by tasks.registering(Exec::class) {
   commandLine = parseSpaceSeparatedArgs(
 //    """explorer "steam://rungameid/$factorioGameId// --mp-connect localhost/" """ // not working
 //    """explorer "steam://run/$factorioGameId//--mp-connect localhost/" """ // works! But has annoying pop-up
-    """ $steamExe -applaunch $factorioGameId --mp-connect localhost """
+    """ $steamExe -applaunch $factorioGameId --mp-connect localhost --mod-directory $clientModsDirectory  """
   )
   doFirst { logger.lifecycle("Launching factorio.exe") }
 }

@@ -153,6 +153,7 @@ val factorioModProvider by configurations.registering {
 
 tasks.updatePackageJson {
   propertiesToCheck["name"] = "${rootProject.name}-${project.name}"
+  packageJsonFile.set(layout.projectDirectory.file("src/main/typescript/package.json"))
 }
 
 tasks.assemble { dependsOn(fetchEventsSchema, tasks.updatePackageJson) }
