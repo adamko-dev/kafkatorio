@@ -4,19 +4,20 @@ plugins {
   idea
   `kotlin-dsl`
   kotlin("jvm") version "1.6.0"
+  `project-report`
 }
 
 dependencies {
 
   val kotlinVersion = "1.6.0"
-
-  implementation(platform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion"))
+  implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion"))
   implementation("org.jetbrains.kotlin:kotlin-serialization")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-gradle-plugin")
 
   val kotlinXSerializationVersion = "1.3.1"
-  implementation(platform("org.jetbrains.kotlinx:kotlinx-serialization-bom:$kotlinXSerializationVersion"))
+  implementation(enforcedPlatform("org.jetbrains.kotlinx:kotlinx-serialization-bom:$kotlinXSerializationVersion"))
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-core")
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
 
 
@@ -59,3 +60,5 @@ idea {
     isDownloadJavadoc = true
   }
 }
+
+tasks.assemble { dependsOn(tasks.htmlDependencyReport) }

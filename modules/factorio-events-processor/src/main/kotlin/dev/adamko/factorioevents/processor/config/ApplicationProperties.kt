@@ -9,7 +9,6 @@ import org.http4k.cloudnative.env.Environment
 import org.http4k.cloudnative.env.EnvironmentKey
 import org.http4k.core.Credentials
 import org.http4k.core.Uri
-import org.http4k.format.Jackson
 import org.http4k.format.Json
 import org.http4k.lens.boolean
 import org.http4k.lens.map

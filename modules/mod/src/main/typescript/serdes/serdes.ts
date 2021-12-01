@@ -1,11 +1,4 @@
-// import {JsonTable, JsonArray} from "../model/model";
-
-
 export namespace Serdes {
-
-  // export interface FactorioObjectData extends JsonTable {
-  //   object_name: string
-  // }
 
   export namespace Player {
 
@@ -13,6 +6,7 @@ export namespace Serdes {
       let charIds = Entity.entitiesToUnitNumbers(player.get_associated_characters())
       return {
         object_name: player.object_name,
+
         name: player.name,
         character_unit_number: player.character?.unit_number ?? null,
         associated_characters_unit_numbers: charIds,
@@ -30,6 +24,8 @@ export namespace Serdes {
 
       return {
         object_name: entity.object_name,
+
+        // entity data
         name: entity.name,
         type: entity.type,
         active: entity.active,
@@ -39,7 +35,7 @@ export namespace Serdes {
         unit_number: entity.unit_number ?? null,
         position: DataClasses.positionTableToTable(entity.position),
 
-        // player data:
+        // player data
         player_index: player?.index ?? null
       }
     }
@@ -61,6 +57,7 @@ export namespace Serdes {
     export function surfaceToTable(surface: LuaSurface): SurfaceData {
       return {
         object_name: surface.object_name,
+
         name: surface.name,
         index: surface.index,
         daytime: surface.daytime,

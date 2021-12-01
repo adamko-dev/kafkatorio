@@ -4,8 +4,7 @@ plugins {
   application
 }
 
-description =
-  """
+description = """
     Receive raw Factorio Events from Kafka and process them into targeted topics or data formats. 
     
     Factorio events -> Mod -> Kafka -> ***Factorio Events Processor*** -> processed events
@@ -19,13 +18,23 @@ dependencies {
 
   implementation("org.apache.kafka:kafka-streams:3.0.0")
 
-  implementation(libs.kotlinx.serialization)
+  implementation(projects.modules.factorioEventsDataModel)
+
+//  implementation("com.ionspin.kotlin:bignum:0.3.3")
+
+  implementation(enforcedPlatform(libs.kotlinx.serialization.bom))
+  implementation(libs.kotlinx.serialization.core)
+  implementation(libs.kotlinx.serialization.json)
 
   implementation(platform(libs.http4k.bom))
-  implementation(libs.http4k.core)
+//  implementation(libs.http4k.core)
   implementation(libs.http4k.cloudnative)
-  implementation(libs.http4k.format.json)
-  implementation(libs.http4k.format.yaml)
+//  implementation(libs.http4k.format.json)
+  implementation(libs.http4k.format.yaml) {
+    because("parsing yaml properties files")
+  }
+
+  implementation(libs.http4k.format.kotlinx)
 
   implementation(libs.bundles.logging)
 

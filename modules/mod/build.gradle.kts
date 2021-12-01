@@ -309,7 +309,7 @@ tasks.register("downloadFactorioApiDocs") {
     )
 
     val json = downloadedFile.readText()
-    val prettyJson = groovy.json.JsonOutput.prettyPrint(json)
+    val prettyJson = JsonOutput.prettyPrint(json)
 
     apiFile.asFile.writeText(prettyJson)
 

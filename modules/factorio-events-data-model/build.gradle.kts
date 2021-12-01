@@ -10,9 +10,9 @@ val projectId: String by project.extra
 val buildDir: Directory = layout.buildDirectory.dir(projectId).get()
 
 dependencies {
-  val kotlinXSerializationVersion = "1.3.0"
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:$kotlinXSerializationVersion")
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinXSerializationVersion")
+  implementation(platform(libs.kotlinx.serialization.bom))
+  implementation(libs.kotlinx.serialization.core)
+  implementation(libs.kotlinx.serialization.json)
 
   implementation("com.github.ntrrgc:ts-generator:1.1.2")
   implementation("org.jetbrains.kotlin:kotlin-reflect")

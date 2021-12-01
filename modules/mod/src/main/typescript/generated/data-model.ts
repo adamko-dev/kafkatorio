@@ -13,8 +13,8 @@ interface FactorioEvent<T extends FactorioObjectData> {
 }
 
 interface PositionData {
-    x: int;
-    y: int;
+    x: double;
+    y: double;
 }
 
 interface PlayerData extends FactorioObjectData {
@@ -27,8 +27,8 @@ interface PlayerData extends FactorioObjectData {
 
 interface EntityData extends FactorioObjectData {
     active: boolean;
-    health: float | null;
-    health_ratio: float;
+    health: double | null;
+    health_ratio: double;
     name: string;
     object_name: string;
     player_index: uint | null;
@@ -39,7 +39,7 @@ interface EntityData extends FactorioObjectData {
 }
 
 interface SurfaceData extends FactorioObjectData {
-    daytime: float;
+    daytime: double;
     index: uint;
     name: string;
     object_name: string;

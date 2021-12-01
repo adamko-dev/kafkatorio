@@ -1,61 +1,101 @@
 package dev.adamko.factorioevents.model
 
+
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonClassDiscriminator
 
 
+//@Serializable(with = FactorioEventSerializer::class)
 @Serializable
-data class FactorioEvent<T : FactorioObjectData>(
+data class FactorioEvent<out T : FactorioObjectData>(
   /** the initial Factorio event ({defines.events}) trigger */
+  @SerialName("event_type")
   val eventType: String,
   /** Schema versioning */
+  @SerialName("mod_version")
   val modVersion: String,
   /** game time */
+  @SerialName("tick")
   val tick: UInt,
-  val data: T,
+  @SerialName("data")
+  val data: T
 )
 
-@JsonClassDiscriminator("object_name")
-sealed interface FactorioObjectData {
-  val objectName: String
+
+/** The [JsonClassDiscriminator] for [FactorioEvent] */
+const val FactorioObjectDataDiscriminatorKey: String = "object_name"
+
+
+@Serializable
+@JsonClassDiscriminator(FactorioObjectDataDiscriminatorKey)
+sealed class  FactorioObjectData {
+  @SerialName(FactorioObjectDataDiscriminatorKey)
+  abstract val objectName: String
 }
 
+@Serializable
 @SerialName("LuaPlayer")
 data class PlayerData(
+  @SerialName(FactorioObjectDataDiscriminatorKey)
   override val objectName: String,
-  val associatedCharactersUnitNumbers: List<UInt>,
-  val characterUnitNumber: UInt?,
-  val name: String,
-  val position: PositionData,
-) : FactorioObjectData
 
+  @Serializable(with = ListAsObjectSerializer::class)
+  @SerialName("associated_characters_unit_numbers")
+  val associatedCharactersUnitNumbers: List<UInt>,
+  @SerialName("character_unit_number")
+  val characterUnitNumber: UInt?,
+  @SerialName("name")
+  val name: String,
+  @SerialName("position")
+  val position: PositionData,
+) : FactorioObjectData()
+
+@Serializable
 @SerialName("LuaEntity")
 data class EntityData(
+  @SerialName(FactorioObjectDataDiscriminatorKey)
   override val objectName: String,
 
+  @SerialName("active")
   val active: Boolean,
-  val health: Float?,
-  val healthRatio: Float,
+  @SerialName("health")
+  val health: Double?,
+  @SerialName("health_ratio")
+  val healthRatio: Double,
+  @SerialName("name")
   val name: String,
+  @SerialName("position")
   val position: PositionData,
+  @SerialName("surface_index")
   val surfaceIndex: Int,
+  @SerialName("type")
   val type: String,
+  @SerialName("unit_number")
   val unitNumber: UInt?,
 
-  val playerIndex: UInt?,
-) : FactorioObjectData
+  @SerialName("player_index")
+  val playerIndex: UInt? = null,
+) : FactorioObjectData()
 
+@Serializable
 @SerialName("LuaSurface")
 data class SurfaceData(
+  @SerialName(FactorioObjectDataDiscriminatorKey)
   override val objectName: String,
-  val daytime: Float,
+
+  @SerialName("daytime")
+  val daytime: Double,
+  @SerialName("index")
   val index: UInt,
+  @SerialName("name")
   val name: String,
-) : FactorioObjectData
+) : FactorioObjectData()
 
 @Serializable
 data class PositionData(
-  val x: Int,
-  val y: Int,
+  @SerialName("x")
+  val x: Double,
+  @SerialName("y")
+  val y: Double,
 )
