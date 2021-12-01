@@ -1,8 +1,8 @@
-import dev.adamko.factoriowebmap.configurations.asProvider
-import dev.adamko.factoriowebmap.configurations.typescriptAttributes
+import dev.adamko.kafkatorio.gradle.asProvider
+import dev.adamko.kafkatorio.gradle.typescriptAttributes
 
 plugins {
-  id("dev.adamko.factoriowebmap.archetype.kotlin-jvm")
+  id("dev.adamko.kafkatorio.lang.kotlin-jvm")
   kotlin("plugin.serialization")
 }
 

@@ -1,11 +1,11 @@
-import dev.adamko.factoriowebmap.configurations.asConsumer
-import dev.adamko.factoriowebmap.configurations.factorioModAttributes
+import dev.adamko.kafkatorio.gradle.asConsumer
+import dev.adamko.kafkatorio.gradle.factorioModAttributes
 import dev.adamko.isProcessRunning
 import dev.adamko.not
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
-  id("dev.adamko.factoriowebmap.archetype.process-runner")
+  id("dev.adamko.kafkatorio.process-runner")
 }
 
 val tokens: Map<String, String> by project.extra
@@ -78,4 +78,3 @@ tasks.processRun {
 tasks.processKill {
   dependsOn(clientKill)
 }
-

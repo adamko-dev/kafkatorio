@@ -1,23 +1,15 @@
 import com.github.gradle.node.npm.task.NpmTask
-import dev.adamko.factoriowebmap.configurations.asConsumer
-import dev.adamko.factoriowebmap.configurations.asProvider
-import dev.adamko.factoriowebmap.configurations.factorioModAttributes
-import dev.adamko.factoriowebmap.configurations.typescriptAttributes
+import dev.adamko.kafkatorio.gradle.asConsumer
+import dev.adamko.kafkatorio.gradle.asProvider
+import dev.adamko.kafkatorio.gradle.factorioModAttributes
+import dev.adamko.kafkatorio.gradle.typescriptAttributes
 import groovy.json.JsonOutput
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import org.apache.tools.ant.filters.ReplaceTokens
-import org.gradle.kotlin.dsl.support.useToRun
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
-import org.jetbrains.kotlin.util.suffixIfNot
 
 plugins {
   idea
-  id("dev.adamko.factoriowebmap.archetype.node")
+  id("dev.adamko.kafkatorio.lang.node")
 }
 
 val tokens: Map<String, String> by project.extra
@@ -29,15 +21,13 @@ node {
   nodeProjectDir.set(tsSrcDir)
 }
 
-
-val dataModelTs by configurations.registering {
+val typescriptEventsSchema by configurations.registering {
   asConsumer()
   typescriptAttributes(objects)
   defaultDependencies {
     project.dependencies.create(projects.modules.eventsSchema)
   }
 }
-
 
 val typescriptToLua by tasks.registering(NpmTask::class) {
   description = "Convert Typescript To Lua"
@@ -75,56 +65,14 @@ val typescriptToLua by tasks.registering(NpmTask::class) {
 
 }
 
-val updatePackageJsonVersion by tasks.registering {
-  group = project.name
-  description = """
-    Read the package.json file and set the version to be the project's version.
-  """.trimIndent()
-
-  val projectVersion = "${project.version}"
-  inputs.properties(
-    "projectVersion" to projectVersion,
-  )
-
-  val packageJsonFile = layout.projectDirectory.file("src/main/typescript/package.json")
-  outputs.file(packageJsonFile)
-
-  val jsonFormatter = Json {
-    prettyPrint = true
-    prettyPrintIndent = "  "
-  }
-
-  onlyIf {
-    // check to see if the version is already up-to-date
-    val packageJsonContent = packageJsonFile.asFile.readText()
-    val packageJson = jsonFormatter.parseToJsonElement(packageJsonContent).jsonObject
-    packageJson["version"]?.jsonPrimitive?.content != projectVersion
-  }
-
-  doLast {
-    val packageJsonContent = packageJsonFile.asFile.readText()
-    val packageJson = jsonFormatter.parseToJsonElement(packageJsonContent).jsonObject
-    val packageJsonUpdate = JsonObject(
-      packageJson + ("version" to JsonPrimitive(projectVersion))
-    )
-    val packageJsonContentUpdated =
-      jsonFormatter
-        .encodeToString(packageJsonUpdate)
-        .suffixIfNot("\n")
-    packageJsonFile.asFile.writer().useToRun {
-      write(packageJsonContentUpdated)
-    }
-  }
-}
-
-val updateDataModel by tasks.registering(Sync::class) {
+val fetchEventsSchema by tasks.registering(Sync::class) {
   group = project.name
   description = "Fetch the latest shared data-model"
 
-  dependsOn(dataModelTs)
+  dependsOn(typescriptEventsSchema)
 
   from(
-    dataModelTs.map { c ->
+    typescriptEventsSchema.map { c ->
       c.incoming
         .artifactView { lenient(true) }
         .artifacts
@@ -135,7 +83,6 @@ val updateDataModel by tasks.registering(Sync::class) {
 
   into(layout.projectDirectory.dir("src/main/typescript/model"))
 }
-
 
 val packageMod by tasks.registering(Zip::class) {
   description = "Package mod files into ZIP"
@@ -204,8 +151,11 @@ val factorioModProvider by configurations.registering {
   outgoing.artifact(packageMod)
 }
 
+tasks.updatePackageJson {
+  propertiesToCheck["name"] = "${rootProject.name}-${project.name}"
+}
 
-tasks.assemble { dependsOn(updateDataModel, updatePackageJsonVersion) }
+tasks.assemble { dependsOn(fetchEventsSchema, tasks.updatePackageJson) }
 tasks.build { dependsOn(packageMod) }
 
 

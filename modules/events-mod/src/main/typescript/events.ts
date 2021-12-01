@@ -1,13 +1,4 @@
-// import {Data, Mods} from "typed-factorio/settings/types"
-// import { events } from "typed-factorio/generated"
-
-// declare const factorioData: Data
-// declare const factorioMods: Mods
-
-
 import {Serdes} from "./serdes/serdes"
-// import {FactorioEvent, JsonTable} from "./model/model";
-
 
 const MOD_VERSION = script.active_mods["factorio-web-map"]
 

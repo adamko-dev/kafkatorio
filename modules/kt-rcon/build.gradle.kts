@@ -1,5 +1,5 @@
 plugins {
-  id("dev.adamko.factoriowebmap.archetype.kotlin-jvm")
+  id("dev.adamko.kafkatorio.lang.kotlin-jvm")
 }
 
 //group = "${rootProject.group}.server"
