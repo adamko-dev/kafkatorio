@@ -8,6 +8,7 @@ services:
     restart: "unless-stopped"
     build:
       dockerfile: "kafka.Dockerfile"
+      context: "."
       target: "kafka-kraft"
       args:
         KAFKA_DL_URL: "https://dlcdn.apache.org/kafka/3.0.0/kafka_2.13-3.0.0.tgz"

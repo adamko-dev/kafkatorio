@@ -1,5 +1,6 @@
 import dev.adamko.kafkatorio.gradle.asConsumer
 import dev.adamko.kafkatorio.gradle.factorioModAttributes
+import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
   id("dev.adamko.kafkatorio.infra.docker-compose")
@@ -27,6 +28,10 @@ val deployModToServer by tasks.registering(Copy::class) {
   doLast {
     logger.lifecycle("Copying mods ${source.files} to $destinationDir")
   }
+}
+
+tasks.dockerDown {
+  commandLine = parseSpaceSeparatedArgs(""" docker-compose stop """)
 }
 
 tasks.dockerUp {

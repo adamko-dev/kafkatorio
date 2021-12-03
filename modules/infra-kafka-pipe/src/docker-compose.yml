@@ -6,6 +6,7 @@ services:
     container_name: "kafka-pipe"
     build:
       dockerfile: "kafka-pipe.Dockerfile"
+      context: "."
     restart: "unless-stopped"
     privileged: true
     networks:

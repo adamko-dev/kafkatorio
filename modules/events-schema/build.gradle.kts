@@ -14,6 +14,8 @@ dependencies {
 
   implementation("com.github.ntrrgc:ts-generator:1.1.2")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
+
+  testImplementation(libs.kotest.datatest)
 }
 
 val generateTypescript by tasks.registering(JavaExec::class) {

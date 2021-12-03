@@ -52,7 +52,7 @@ val typescriptToLua by tasks.registering(NpmTask::class) {
   description = "Convert Typescript To Lua"
   group = project.name
 
-  dependsOn(tasks.npmInstall)
+  dependsOn(tasks.npmInstall, fetchEventsSchema)
 
   execOverrides { standardOutput = System.out }
 
@@ -121,12 +121,13 @@ distributions {
     contents {
       from(layout.projectDirectory.dir("src/main/resources/mod-data")) {
         include("**/**")
-        filter<ReplaceTokens>("tokens" to tokens)
       }
       from(licenseFile)
       from(typescriptToLua.map { it.outputs })
+      filter<ReplaceTokens>("tokens" to tokens)
       includeEmptyDirs = false
       exclude {
+        // exclude empty lines
         it.file.run {
           isFile && useLines { lines -> lines.all { line -> line.isBlank() } }
         }

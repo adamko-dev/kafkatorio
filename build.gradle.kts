@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "dev.adamko"
-version = "0.0.7"
+version = "0.1.1"
 
 tasks.wrapper {
   gradleVersion = "7.3"
@@ -26,7 +26,7 @@ val runKafkatorio by tasks.registering {
   group = project.name
 
   dependsOn(
-    ":modules:infra-factorio-client:processRun",
-    ":modules:infra-factorio-server:processRun",
+    ":modules:infra-factorio-client:processRestart",
+    ":modules:infra-factorio-server:processRestart",
   )
 }

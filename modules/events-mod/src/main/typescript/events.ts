@@ -1,6 +1,7 @@
 import {Serdes} from "./serdes/serdes"
 
-const MOD_VERSION = script.active_mods["factorio-web-map"]
+const MOD_VERSION = script.active_mods["@mod.name@"] ?? "UNKNOWN"
+const FACTORIO_VERSION = script.active_mods["base"] ?? "UNKNOWN"
 
 const mapEventIdToName = new LuaTable<defines.Events, keyof typeof defines.events>()
 for (const [k, v] of pairs(defines.events)) {
@@ -48,6 +49,7 @@ function emitEvent<T extends FactorioObjectData>(eventData: T, tick: uint, event
     data: eventData,
     event_type: eventType,
     mod_version: MOD_VERSION,
+    factorio_version: FACTORIO_VERSION,
     tick: tick
   }
 

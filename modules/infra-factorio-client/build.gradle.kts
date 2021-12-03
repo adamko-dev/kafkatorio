@@ -45,7 +45,7 @@ val clientLaunch by tasks.registering(Exec::class) {
   onlyIf(!isFactorioRunning())
 
   dependsOn(deployModToClient)
-  mustRunAfter(clientKill)
+  mustRunAfter(clientKill, ":modules:infra-factorio-server:processRun")
 
   commandLine = parseSpaceSeparatedArgs(
 //    """explorer "steam://rungameid/$factorioGameId// --mp-connect localhost/" """ // not working

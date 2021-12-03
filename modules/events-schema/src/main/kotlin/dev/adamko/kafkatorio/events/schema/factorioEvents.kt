@@ -1,8 +1,11 @@
 package dev.adamko.kafkatorio.events.schema
 
 
+import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.findAnnotations
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.json.JsonClassDiscriminator
 
 
@@ -15,6 +18,8 @@ data class FactorioEvent<out T : FactorioObjectData>(
   /** Schema versioning */
   @SerialName("mod_version")
   val modVersion: String,
+  @SerialName("factorio_version")
+  val factorioVersion: String,
   /** game time */
   @SerialName("tick")
   val tick: UInt,
@@ -29,17 +34,19 @@ const val FactorioObjectDataDiscriminatorKey: String = "object_name"
 
 @Serializable
 @JsonClassDiscriminator(FactorioObjectDataDiscriminatorKey)
-sealed class FactorioObjectData {
-  @SerialName(FactorioObjectDataDiscriminatorKey)
-  abstract val objectName: String
+sealed class FactorioObjectData private constructor() {
+
+  // workaround - https://github.com/Kotlin/kotlinx.serialization/issues/1664
+  val objectName : String by lazy {
+    requireNotNull(this::class.findAnnotation<SerialName>()?.value) {
+      "Couldn't find @SerialName for ${this::class}!"
+    }
+  }
 }
 
 @Serializable
 @SerialName("LuaPlayer")
 data class PlayerData(
-  @SerialName(FactorioObjectDataDiscriminatorKey)
-  override val objectName: String,
-
   @Serializable(with = ListAsObjectSerializer::class)
   @SerialName("associated_characters_unit_numbers")
   val associatedCharactersUnitNumbers: List<UInt>,
@@ -54,9 +61,6 @@ data class PlayerData(
 @Serializable
 @SerialName("LuaEntity")
 data class EntityData(
-  @SerialName(FactorioObjectDataDiscriminatorKey)
-  override val objectName: String,
-
   @SerialName("active")
   val active: Boolean,
   @SerialName("health")
@@ -72,7 +76,7 @@ data class EntityData(
   @SerialName("type")
   val type: String,
   @SerialName("unit_number")
-  val unitNumber: UInt?,
+  val unitNumber: UInt? = null,
 
   @SerialName("player_index")
   val playerIndex: UInt? = null,
@@ -81,9 +85,6 @@ data class EntityData(
 @Serializable
 @SerialName("LuaSurface")
 data class SurfaceData(
-  @SerialName(FactorioObjectDataDiscriminatorKey)
-  override val objectName: String,
-
   @SerialName("daytime")
   val daytime: Double,
   @SerialName("index")
