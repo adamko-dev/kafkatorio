@@ -21,7 +21,8 @@ import org.http4k.format.ConfigurableKotlinxSerialization
 import org.http4k.format.asConfigurable
 import org.http4k.format.withStandardMappings
 
-object KSX : ConfigurableKotlinxSerialization({
+
+object KXS : ConfigurableKotlinxSerialization({
   ignoreUnknownKeys = true
   prettyPrint = true
   prettyPrintIndent = "  "
@@ -37,7 +38,6 @@ object JsonSerdes : Serde<FactorioEvent<FactorioObjectData>> {
   override fun deserializer() = Deserializer<FactorioEvent<FactorioObjectData>> { _, bytes ->
     jsonMapper.decodeFromString(bytes.decodeToString())
   }
-
 }
 
 fun main() {
@@ -53,7 +53,7 @@ fun main() {
     .mapValues { readOnlyKey, value ->
       println("Mapping $readOnlyKey:$value")
       jsonMapper.decodeFromString<FactorioEvent<FactorioObjectData>>(value)
-//      KSX.asA<FactorioEvent<FactorioObjectData>>(value)
+//      KXS.asA<FactorioEvent<FactorioObjectData>>(value)
     }
     .to(
       { key, value, recordContext -> value.data.objectName },
@@ -62,7 +62,6 @@ fun main() {
 
   val topology = builder.build()
   val properties = appProps.kafkaConfig
-
 
   val streams = KafkaStreams(topology, properties)
 

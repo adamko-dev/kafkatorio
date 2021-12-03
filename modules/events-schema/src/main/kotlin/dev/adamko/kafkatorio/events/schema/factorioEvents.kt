@@ -1,11 +1,9 @@
 package dev.adamko.kafkatorio.events.schema
 
 
-import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.findAnnotations
+import kotlin.reflect.full.starProjectedType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import kotlinx.serialization.json.JsonClassDiscriminator
 
 
@@ -34,14 +32,20 @@ const val FactorioObjectDataDiscriminatorKey: String = "object_name"
 
 @Serializable
 @JsonClassDiscriminator(FactorioObjectDataDiscriminatorKey)
-sealed class FactorioObjectData private constructor() {
+sealed class FactorioObjectData {
 
   // workaround - https://github.com/Kotlin/kotlinx.serialization/issues/1664
-  val objectName : String by lazy {
-    requireNotNull(this::class.findAnnotation<SerialName>()?.value) {
-      "Couldn't find @SerialName for ${this::class}!"
-    }
+  val objectName: String by lazy {
+    kotlinx.serialization.serializer(this::class.starProjectedType).descriptor.serialName
   }
+
+  // alternative: find the @SerialName annotation
+  // Again it must be delegated so there's no backing field and kxs ignores it
+//  val objectNameByAnnotation: String by lazy {
+//    requireNotNull(this::class.findAnnotation<SerialName>()?.value) {
+//      "Couldn't find @SerialName for ${this::class}!"
+//    }
+//  }
 }
 
 @Serializable
