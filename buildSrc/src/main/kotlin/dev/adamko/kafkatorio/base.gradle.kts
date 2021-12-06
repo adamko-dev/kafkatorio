@@ -8,14 +8,6 @@ plugins {
 group = "${rootProject.group}.${project.name}"
 version = rootProject.version
 
-val licenseFile: RegularFile by extra(rootProject.layout.projectDirectory.file("LICENSE"))
-
-val tokens: MutableMap<String, String> by extra(
-  mutableMapOf(
-    "project.version" to "$version",
-  )
-)
-
 idea {
   module {
     isDownloadSources = true

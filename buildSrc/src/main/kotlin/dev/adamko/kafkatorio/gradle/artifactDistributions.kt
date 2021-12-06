@@ -32,7 +32,7 @@ fun Configuration.factorioModAttributes(objects: ObjectFactory): Configuration =
     attribute(BUNDLING_ATTRIBUTE, objects.named(Bundling.EMBEDDED))
   }
 
-fun Configuration.typescriptAttributes(objects: ObjectFactory) =
+fun Configuration.typescriptAttributes(objects: ObjectFactory): Configuration =
   attributes {
     attribute(USAGE_ATTRIBUTE, objects.named("typescript"))
     attribute(CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))

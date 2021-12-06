@@ -3,7 +3,7 @@
   "version": "@project.version@",
   "title": "@mod.title@",
   "description": "@mod.description@",
-  "author": "fredthedeadhead",
+  "author": "@author.email@",
   "factorio_version": "@factorio.version@",
   "dependencies": []
 }

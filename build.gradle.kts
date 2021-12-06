@@ -5,13 +5,32 @@ plugins {
   `build-dashboard`
 }
 
-group = "dev.adamko"
-version = "0.1.1"
+group = "dev.adamko.kafkatorio"
+version = "0.1.2"
+
+val licenseFile: RegularFile by extra(layout.projectDirectory.file("LICENSE"))
+
+val projectTokens: MutableMap<String, String> by extra(
+  mutableMapOf(
+    "project.version" to "$version",
+    "rootProject.name" to rootProject.name,
+    "date.year" to "${java.time.LocalDate.now().year}",
+    "author.email" to "adam@adamko.dev",
+  )
+)
+
+idea {
+  module {
+    isDownloadSources = true
+    isDownloadJavadoc = true
+  }
+}
 
 tasks.wrapper {
-  gradleVersion = "7.3"
+  gradleVersion = "7.3.1"
   distributionType = Wrapper.DistributionType.ALL
 }
+tasks.assemble { dependsOn(tasks.wrapper) }
 
 val startInfra by tasks.registering {
   group = project.name

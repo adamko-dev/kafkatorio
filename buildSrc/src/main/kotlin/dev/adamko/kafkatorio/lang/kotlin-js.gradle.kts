@@ -1,16 +1,8 @@
 package dev.adamko.kafkatorio.lang
 
 import org.gradle.kotlin.dsl.kotlin
-import com.github.gradle.node.npm.task.NpmTask
-import com.github.gradle.node.task.NodeTask
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.getting
-import org.jetbrains.kotlin.gradle.targets.js.dukat.DtsResolver
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
-import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 
 
 plugins {
@@ -18,6 +10,8 @@ plugins {
   id("dev.adamko.kafkatorio.base")
   id("dev.adamko.kafkatorio.lang.node")
 }
+
+// not in use at the moment
 
 kotlin {
   js(IR) {
@@ -31,9 +25,9 @@ kotlin {
 dependencies {
   val kotlinWrappersVersion = "0.0.1-pre.270-kotlin-1.6.0"
   implementation(
-      project.dependencies.enforcedPlatform(
-          "org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:${kotlinWrappersVersion}"
-      )
+    project.dependencies.enforcedPlatform(
+      "org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:${kotlinWrappersVersion}"
+    )
   )
 }
 

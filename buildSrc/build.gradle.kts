@@ -60,4 +60,4 @@ idea {
   }
 }
 
-tasks.assemble { dependsOn(tasks.htmlDependencyReport) }
+//tasks.assemble { dependsOn(tasks.htmlDependencyReport) }

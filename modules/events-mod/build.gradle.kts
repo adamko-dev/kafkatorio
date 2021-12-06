@@ -5,6 +5,7 @@ import dev.adamko.kafkatorio.gradle.factorioModAttributes
 import dev.adamko.kafkatorio.gradle.typescriptAttributes
 import groovy.json.JsonOutput
 import org.apache.tools.ant.filters.ReplaceTokens
+import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
@@ -23,16 +24,18 @@ description =
 val modName: String by extra("${rootProject.name}-events")
 val distributionZipName: String by extra("${modName}_${project.version}.zip")
 
+// version of Factorio that the mod is compatible with (must only be "major.minor" - patch causes error)
+val modFactorioCompatibility = SemVer.from(libs.versions.factorio.get()).run { "$major.$minor" }
 
-val tokens: MutableMap<String, String> by project.extra
-tokens += mapOf(
+val licenseFile: RegularFile by rootProject.extra
+val projectTokens: MutableMap<String, String> by rootProject.extra
+projectTokens += mapOf(
   "mod.name" to modName,
   "mod.title" to "Kafkatorio Events",
   "mod.description" to (project.description ?: ""),
-  "factorio.version" to libs.versions.factorio.get().substringBeforeLast("."),
+  "factorio.version" to modFactorioCompatibility,
 )
 
-val licenseFile: RegularFile by project.extra
 val tsSrcDir: Directory = layout.projectDirectory.dir("src/main/typescript")
 
 node {
@@ -52,7 +55,7 @@ val typescriptToLua by tasks.registering(NpmTask::class) {
   description = "Convert Typescript To Lua"
   group = project.name
 
-  dependsOn(tasks.npmInstall, fetchEventsSchema)
+  dependsOn(tasks.npmInstall, installEventsSchema)
 
   execOverrides { standardOutput = System.out }
 
@@ -84,7 +87,7 @@ val typescriptToLua by tasks.registering(NpmTask::class) {
 
 }
 
-val fetchEventsSchema by tasks.registering(Sync::class) {
+val installEventsSchema by tasks.registering(Sync::class) {
   description = "Fetch the latest shared data-model"
   group = project.name
 
@@ -124,10 +127,10 @@ distributions {
       }
       from(licenseFile)
       from(typescriptToLua.map { it.outputs })
-      filter<ReplaceTokens>("tokens" to tokens)
+      filter<ReplaceTokens>("tokens" to projectTokens)
       includeEmptyDirs = false
       exclude {
-        // exclude empty lines
+        // exclude empty files
         it.file.run {
           isFile && useLines { lines -> lines.all { line -> line.isBlank() } }
         }
@@ -196,7 +199,6 @@ val downloadFactorioApiDocs by tasks.registering {
   }
 }
 
-
 val factorioModProvider by configurations.registering {
   asProvider()
   factorioModAttributes(objects)
@@ -204,13 +206,11 @@ val factorioModProvider by configurations.registering {
 }
 
 tasks.updatePackageJson {
-  propertiesToCheck["name"] = "${rootProject.name}-${project.name}"
+  propertiesToCheck.put("name", "${rootProject.name}-${project.name}")
   packageJsonFile.set(layout.projectDirectory.file("src/main/typescript/package.json"))
 }
 
-tasks.assemble { dependsOn(fetchEventsSchema, tasks.updatePackageJson) }
-//tasks.build { dependsOn(packageMod) }
-
+tasks.assemble { dependsOn(installEventsSchema, tasks.updatePackageJson) }
 
 //
 //idea {

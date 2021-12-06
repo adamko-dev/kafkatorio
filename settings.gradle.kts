@@ -12,6 +12,7 @@ include(
   ":modules:infra-kafka-pipe",
 
   ":modules:kt-rcon",
+  ":modules:web-map",
 )
 
 enableFeaturePreview("VERSION_CATALOGS")

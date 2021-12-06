@@ -6,13 +6,20 @@
     1. converts data to images
     2. hosts a web map
 
+
+
+## License
+
+While this project is under development, [no license](https://choosealicense.com/no-permission/)
+is provided.
+
 ## todo
 
 * add settings
     * is active - whether files are exported or not
     * delete files - clean up all files
-    * tick-rate - how often reports are generated (
-        * requires on some sort of in-mod cache of map<entity-id, event>)
+    * tick-rate - how often reports are generated 
+        * requires on some sort of in-mod cache of map<entity-id, event>
         * also divide by game-speed? to keep ratio the same
 
 ### to investigate:
@@ -49,3 +56,6 @@ https://github.com/dvidelabs/flatcc
 
 https://www.zash.se/lua-cbor.html
 https://code.zash.se/lua-cbor/archive/68b3a36d0816.tar.gz
+
+
+
