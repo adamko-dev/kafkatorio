@@ -55,7 +55,7 @@ val typescriptToLua by tasks.registering(NpmTask::class) {
   description = "Convert Typescript To Lua"
   group = project.name
 
-  dependsOn(tasks.npmInstall, installEventsSchema)
+  dependsOn(tasks.npmInstall, installEventsTsSchema)
 
   execOverrides { standardOutput = System.out }
 
@@ -84,23 +84,27 @@ val typescriptToLua by tasks.registering(NpmTask::class) {
       into(outputDir)
     }
   }
-
 }
 
-val installEventsSchema by tasks.registering(Sync::class) {
+val installEventsTsSchema by tasks.registering(Sync::class) {
   description = "Fetch the latest shared data-model"
   group = project.name
 
   dependsOn(typescriptEventsSchema)
 
+  val outputDir = layout.projectDirectory.dir("src/main/typescript/schema")
+  outputs.dir(outputDir)
+
   from(
-    typescriptEventsSchema.incoming
-      .artifactView { lenient(true) }
-      .artifacts
-      .artifactFiles
-      .filter { file -> file.exists() }
-      .files
-      .map { zipTree(it) }
+    provider { typescriptEventsSchema }
+      .map { eventsSchema ->
+        eventsSchema.incoming
+          .artifactView { lenient(true) }
+          .artifacts
+          .artifactFiles
+          .filter { file -> file.exists() }
+          .map { zipTree(it) }
+      }
   ) {
     // drop the first directory inside the zip
     eachFile {
@@ -108,8 +112,7 @@ val installEventsSchema by tasks.registering(Sync::class) {
     }
     includeEmptyDirs = false
   }
-
-  into(layout.projectDirectory.dir("src/main/typescript/schema"))
+  into(outputDir)
 }
 
 tasks.distZip {
@@ -130,7 +133,7 @@ distributions {
       filter<ReplaceTokens>("tokens" to projectTokens)
       includeEmptyDirs = false
       exclude {
-        // exclude empty files
+// exclude empty files
         it.file.run {
           isFile && useLines { lines -> lines.all { line -> line.isBlank() } }
         }
@@ -210,7 +213,7 @@ tasks.updatePackageJson {
   packageJsonFile.set(layout.projectDirectory.file("src/main/typescript/package.json"))
 }
 
-tasks.assemble { dependsOn(installEventsSchema, tasks.updatePackageJson) }
+tasks.assemble { dependsOn(installEventsTsSchema, tasks.updatePackageJson) }
 
 //
 //idea {

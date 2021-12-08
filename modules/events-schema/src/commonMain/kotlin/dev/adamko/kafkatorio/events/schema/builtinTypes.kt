@@ -3,6 +3,7 @@
 package dev.adamko.kafkatorio.events.schema
 
 
+import kotlin.jvm.JvmInline
 import kotlinx.serialization.Serializable
 
 

@@ -1,7 +1,7 @@
 package dev.adamko.kafkatorio.events.schema
 
 
-import kotlin.reflect.full.starProjectedType
+//import kotlin.reflect.full.starProjectedType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonClassDiscriminator
@@ -35,8 +35,12 @@ const val FactorioObjectDataDiscriminatorKey: String = "object_name"
 sealed class FactorioObjectData {
 
   // workaround - https://github.com/Kotlin/kotlinx.serialization/issues/1664
+//  val objectName: String by lazy {
+//    kotlinx.serialization.serializer(this::class.starProjectedType).descriptor.serialName
+//  }
   val objectName: String by lazy {
-    kotlinx.serialization.serializer(this::class.starProjectedType).descriptor.serialName
+    serializer().descriptor.serialName
+//    kotlinx.serialization.serializer(this::class.starProjectedType).descriptor.serialName
   }
 
   // alternative: find the @SerialName annotation

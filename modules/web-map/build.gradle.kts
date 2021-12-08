@@ -9,6 +9,7 @@ plugins {
 
 kotlin {
   js(IR) {
+//    nodejs()
     browser {
       runTask {
         outputFileName = "main.bundle.js"

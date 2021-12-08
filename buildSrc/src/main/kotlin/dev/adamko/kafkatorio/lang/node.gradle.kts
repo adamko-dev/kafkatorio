@@ -31,7 +31,7 @@ val updatePackageJson by tasks.registering(UpdatePackageJson::class) {
   propertiesToCheck.put("version", "${project.version}")
 
   // check to see if the properties are already up-to-date
-  onlyIf(!areJsonPropertiesUpToDate(packageJsonFile) { propertiesToCheck.get() })
+  onlyIf(!areJsonPropertiesUpToDate(packageJsonFile, propertiesToCheck))
 
   doLast {
     val packageJsonContent = packageJsonFile.get().asFile.readText()
