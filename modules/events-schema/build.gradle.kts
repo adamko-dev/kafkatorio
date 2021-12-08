@@ -24,6 +24,7 @@ kotlin {
         optIn("kotlin.time.ExperimentalTime")
         optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
         optIn("kotlinx.serialization.ExperimentalSerializationApi")
+        optIn("kotlin.js.ExperimentalJsExport")
       }
     }
 
