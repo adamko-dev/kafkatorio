@@ -22,6 +22,8 @@ dependencies {
 
 
   implementation("com.github.node-gradle:gradle-node-plugin:3.1.1")
+
+  implementation("net.swiftzer.semver:semver:1.1.2")
 }
 
 val projectJvmTarget = "11"

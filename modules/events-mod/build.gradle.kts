@@ -5,7 +5,7 @@ import dev.adamko.kafkatorio.gradle.factorioModAttributes
 import dev.adamko.kafkatorio.gradle.typescriptAttributes
 import groovy.json.JsonOutput
 import org.apache.tools.ant.filters.ReplaceTokens
-import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
+import net.swiftzer.semver.SemVer
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
@@ -25,7 +25,7 @@ val modName: String by extra("${rootProject.name}-events")
 val distributionZipName: String by extra("${modName}_${project.version}.zip")
 
 // version of Factorio that the mod is compatible with (must only be "major.minor" - patch causes error)
-val modFactorioCompatibility = SemVer.from(libs.versions.factorio.get()).run { "$major.$minor" }
+val modFactorioCompatibility = SemVer.parse(libs.versions.factorio.get()).run { "$major.$minor" }
 
 val licenseFile: RegularFile by rootProject.extra
 val projectTokens: MutableMap<String, String> by rootProject.extra
