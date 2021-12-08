@@ -35,13 +35,13 @@ const val FactorioObjectDataDiscriminatorKey: String = "object_name"
 sealed class FactorioObjectData {
 
   // workaround - https://github.com/Kotlin/kotlinx.serialization/issues/1664
+  val objectName: String by lazy {
+    serializer().descriptor.serialName
+  }
+
 //  val objectName: String by lazy {
 //    kotlinx.serialization.serializer(this::class.starProjectedType).descriptor.serialName
 //  }
-  val objectName: String by lazy {
-    serializer().descriptor.serialName
-//    kotlinx.serialization.serializer(this::class.starProjectedType).descriptor.serialName
-  }
 
   // alternative: find the @SerialName annotation
   // Again it must be delegated so there's no backing field and kxs ignores it
