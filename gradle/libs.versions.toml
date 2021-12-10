@@ -22,7 +22,7 @@ junit      = "5.8.2"
 kotest     = "5.0.1"
 
 ## infra ##
-factorio = "1.1.48"
+factorio = "1.1.49"
 
 #########
 [plugins]

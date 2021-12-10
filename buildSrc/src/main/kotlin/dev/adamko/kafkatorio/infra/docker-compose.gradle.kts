@@ -25,11 +25,11 @@ val dockerDown by tasks.creating(Exec::class) {
 }
 
 afterEvaluate {
-  tasks.named("processRun") { dependsOn(dockerUp, updateEnv) }
+  tasks.named("processRun") { dependsOn(dockerUp, dockerEnv) }
   tasks.named("processKill") { dependsOn(dockerDown) }
 }
 
-val updateEnv by tasks.registering(WriteProperties::class) {
+val dockerEnv by tasks.registering(WriteProperties::class) {
   group = dockerComposeTaskGroup
 
   setOutputFile(srcDir.file(".env"))
@@ -38,4 +38,4 @@ val updateEnv by tasks.registering(WriteProperties::class) {
   )
 }
 
-tasks.assemble { dependsOn(updateEnv) }
+tasks.assemble { dependsOn(dockerEnv) }

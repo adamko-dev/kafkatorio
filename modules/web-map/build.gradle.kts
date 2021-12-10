@@ -52,12 +52,14 @@ kotlin {
         implementation("io.kvision:kvision-state:$kvisionVersion")
         implementation("io.kvision:kvision-chart:$kvisionVersion")
 
-        val kotlinWrappersVersion = "0.0.1-pre.270-kotlin-1.6.0"
+        val kotlinWrappersVersion = "0.0.1-pre.276-kotlin-1.6.0"
         implementation(
           project.dependencies.enforcedPlatform(
             "org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:${kotlinWrappersVersion}"
           )
         )
+
+        implementation(npm("kafkajs", "1.15.0"))
       }
 
       val webDir = file("src/main/web")
