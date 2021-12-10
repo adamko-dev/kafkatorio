@@ -8,8 +8,10 @@ include(
 
   ":modules:infra-factorio-client",
   ":modules:infra-factorio-server",
+
   ":modules:infra-kafka-cluster",
   ":modules:infra-kafka-pipe",
+  ":modules:infra-kafka-connect",
 
   ":modules:kt-rcon",
   ":modules:web-map",

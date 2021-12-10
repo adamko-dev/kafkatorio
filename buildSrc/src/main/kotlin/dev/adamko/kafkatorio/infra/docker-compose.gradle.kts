@@ -6,7 +6,7 @@ plugins {
   id("dev.adamko.kafkatorio.infra.process-runner")
 }
 
-val dockerComposeTaskGroup : String by extra("docker-compose")
+val dockerComposeTaskGroup: String by extra("docker-compose")
 
 val composeProjectName: String by extra(rootProject.name)
 val srcDir: Directory by extra(layout.projectDirectory.dir("src"))
@@ -14,12 +14,16 @@ val srcDir: Directory by extra(layout.projectDirectory.dir("src"))
 
 val dockerUp by tasks.creating(Exec::class) {
   group = dockerComposeTaskGroup
+
+  dependsOn(tasks.assemble)
+
   workingDir = srcDir.asFile
   commandLine = parseSpaceSeparatedArgs(""" docker-compose up -d """)
 }
 
 val dockerDown by tasks.creating(Exec::class) {
   group = dockerComposeTaskGroup
+
   workingDir = srcDir.asFile
   commandLine = parseSpaceSeparatedArgs(""" docker-compose down """)
 }

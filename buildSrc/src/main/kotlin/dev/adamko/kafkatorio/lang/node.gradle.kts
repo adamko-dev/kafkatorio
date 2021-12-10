@@ -53,3 +53,5 @@ val updatePackageJson by tasks.registering(UpdatePackageJson::class) {
 
   }
 }
+
+tasks.assemble { dependsOn(updatePackageJson) }

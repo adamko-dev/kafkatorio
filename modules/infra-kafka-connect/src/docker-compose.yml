@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+
+  connect:
+    image: adamko-dev/kafkatorio-kafka-connect:${KAFKA_CONNECT_VERSION}
+    hostname: ${CONNECTOR_ID}
+    container_name: ${CONNECTOR_ID}
+    build:
+      context: "."
+      dockerfile: kafka-connect.Dockerfile
+      args:
+        KAFKA_CONNECT_VERSION: ${KAFKA_CONNECT_VERSION}
+#        FILE_PULSE_VERSION: ${CONNECTOR_FILE_PULSE_VERSION}
+#        CAMEL_KC_VERSION: ${CONNECTOR_CAMEL_KAFKA_VERSION}
+#        CAMEL_CONNECTOR: ${CAMEL_FILE_CONNECTOR}
+    ports:
+      - "28083:28083"
+#    volumes:
+#      - "./connect/input:/warehouse/input"
+#      - "./connect/components:/usr/share/confluent-hub-components"
+
+#    volumes:
+#      - "./camel-kafka-connectors:/usr/share/java"
+    networks:
+      - "kafkatorio-nw"
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: "kafka:29092"
+      CONNECT_REST_ADVERTISED_HOST_NAME: ${CONNECTOR_ID}
+#      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: "http://${SCHEMA_REGISTRY}:8081"
+      CONNECT_REST_PORT: 28083
+      CONNECT_GROUP_ID: ${CONNECTOR_ID}
+      CONNECT_CONFIG_STORAGE_TOPIC: ${CONNECTOR_ID}-configs
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_FLUSH_INTERVAL_MS: 10000
+      CONNECT_OFFSET_STORAGE_TOPIC: ${CONNECTOR_ID}-offsets
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_STATUS_STORAGE_TOPIC: ${CONNECTOR_ID}-status
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.storage.StringConverter"
+#      CONNECT_VALUE_CONVERTER: "io.confluent.connect.avro.AvroConverter"
+      CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
+      CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
+      CONNECT_LOG4J_ROOT_LOGLEVEL: INFO
+      CONNECT_LOG4J_LOGGERS: "org.apache.zookeeper=INFO,org.I0Itec.zkclient=ERROR,org.reflections=ERROR"
+
+networks:
+  kafkatorio-nw:
+    name: "kafkatorio-nw"
+    external: true
