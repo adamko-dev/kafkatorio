@@ -44,12 +44,8 @@ axionRelease        = { id = "pl.allegro.tech.build.axion-release",         vers
 [libraries]
 ###########
 
-twilio-sdk = { group = "com.twilio.sdk",        name = "twilio",         version = "8.19.1" }
-faker      = { group = "com.github.javafaker",  name = "javafaker",      version = "1.0.2"  }
-sendgrid   = { group = "com.sendgrid",          name = "sendgrid-java",  version = "4.7.4"  }
-
 ## kotlin ##
-kotlin-bom         = { group = "org.jetbrains.kotlin",   name = "kotlin-bom",                  version.ref = "kotlin" }
+kotlin-bom = { group = "org.jetbrains.kotlin", name = "kotlin-bom", version.ref = "kotlin" }
 
 kotlinx-serialization-bom  = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-bom",  version.ref = "kotlinx-serialization" }
 kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core" }
@@ -89,7 +85,6 @@ gcp-speech = { group = "com.google.cloud",  name = "google-cloud-speech"        
 
 
 ## kafka ##
-
 kafka-streams = { group = "org.apache.kafka",     name = "kafka-streams", version.ref = "kafka" }
 
 # kafka helpers
