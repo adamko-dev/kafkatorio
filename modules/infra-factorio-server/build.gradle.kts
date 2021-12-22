@@ -6,8 +6,8 @@ plugins {
   id("dev.adamko.kafkatorio.infra.docker-compose")
 }
 
-val srcDir: Directory by extra
-val factorioServerDataDir: Directory = srcDir.dir("factorio-server")
+val dockerSrcDir: Directory by extra
+val factorioServerDataDir: Directory = dockerSrcDir.dir("factorio-server")
 
 val factorioMod: Configuration by configurations.creating {
   asConsumer()

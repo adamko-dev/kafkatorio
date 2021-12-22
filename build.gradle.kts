@@ -27,7 +27,7 @@ idea {
 }
 
 tasks.wrapper {
-  gradleVersion = "7.3.1"
+  gradleVersion = "7.3.3"
   distributionType = Wrapper.DistributionType.ALL
 }
 tasks.assemble { dependsOn(tasks.wrapper) }
@@ -38,6 +38,7 @@ val startInfra by tasks.registering {
   dependsOn(
     ":modules:infra-kafka-pipe:processRun",
     ":modules:infra-kafka-cluster:processRun",
+    ":modules:infra-kafka-connect:processRun",
   )
 }
 

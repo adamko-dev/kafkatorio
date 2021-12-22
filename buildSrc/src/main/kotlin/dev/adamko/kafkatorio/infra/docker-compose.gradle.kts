@@ -8,23 +8,26 @@ plugins {
 
 val dockerComposeTaskGroup: String by extra("docker-compose")
 
-val composeProjectName: String by extra(rootProject.name)
-val srcDir: Directory by extra(layout.projectDirectory.dir("src"))
+val dockerComposeProjectName: String by extra(rootProject.name)
+val dockerSrcDir: Directory by extra(layout.projectDirectory.dir("src"))
 
 
-val dockerUp by tasks.creating(Exec::class) {
+val dockerUp by tasks.registering(Exec::class) {
   group = dockerComposeTaskGroup
 
   dependsOn(tasks.assemble)
+  logging.captureStandardOutput(LogLevel.LIFECYCLE)
 
-  workingDir = srcDir.asFile
+  workingDir = dockerSrcDir.asFile
   commandLine = parseSpaceSeparatedArgs(""" docker-compose up -d """)
 }
 
-val dockerDown by tasks.creating(Exec::class) {
+val dockerDown by tasks.registering(Exec::class) {
   group = dockerComposeTaskGroup
 
-  workingDir = srcDir.asFile
+  logging.captureStandardOutput(LogLevel.LIFECYCLE)
+
+  workingDir = dockerSrcDir.asFile
   commandLine = parseSpaceSeparatedArgs(""" docker-compose down """)
 }
 
@@ -36,9 +39,11 @@ afterEvaluate {
 val dockerEnv by tasks.registering(WriteProperties::class) {
   group = dockerComposeTaskGroup
 
-  setOutputFile(srcDir.file(".env"))
+  logging.captureStandardOutput(LogLevel.LIFECYCLE)
+
+  setOutputFile(dockerSrcDir.file(".env"))
   properties(
-    "COMPOSE_PROJECT_NAME" to composeProjectName,
+    "COMPOSE_PROJECT_NAME" to dockerComposeProjectName,
   )
 }
 

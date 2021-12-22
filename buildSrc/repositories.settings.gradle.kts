@@ -1,4 +1,3 @@
-
 @Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
 
@@ -13,7 +12,7 @@ dependencyResolutionManagement {
   repositories {
     mavenCentral()
     gradlePluginPortal()
-    maven("https://jitpack.io")
+    jitpack()
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/")
     maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
 
@@ -35,11 +34,16 @@ dependencyResolutionManagement {
   pluginManagement {
 
     repositories {
-      mavenCentral()
       gradlePluginPortal()
+      mavenCentral()
+      jitpack()
       maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/")
     }
 
   }
 
+}
+
+fun RepositoryHandler.jitpack() {
+  maven("https://jitpack.io")
 }

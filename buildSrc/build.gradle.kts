@@ -3,13 +3,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   idea
   `kotlin-dsl`
-  kotlin("jvm") version "1.6.0"
+  kotlin("jvm") version "1.6.10"
   `project-report`
 }
 
 dependencies {
 
-  val kotlinVersion = "1.6.0"
+  val kotlinVersion = "1.6.10"
   implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion"))
   implementation("org.jetbrains.kotlin:kotlin-serialization")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -19,7 +19,7 @@ dependencies {
   implementation(enforcedPlatform("org.jetbrains.kotlinx:kotlinx-serialization-bom:$kotlinXSerializationVersion"))
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-core")
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
-
+//  implementation("com.charleskorn.kaml:kaml:0.37.0")
 
   implementation("com.github.node-gradle:gradle-node-plugin:3.1.1")
 
@@ -40,7 +40,7 @@ tasks.withType<KotlinCompile>().configureEach {
     "-Xopt-in=kotlin.RequiresOptIn",
     "-Xopt-in=kotlin.ExperimentalStdlibApi",
     "-Xopt-in=kotlin.time.ExperimentalTime",
-    "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+//    "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
     "-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi",
   )
 }

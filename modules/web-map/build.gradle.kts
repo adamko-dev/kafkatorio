@@ -59,7 +59,7 @@ kotlin {
           )
         )
 
-        implementation(npm("kafkajs", "1.15.0"))
+//        implementation(npm("kafkajs", "1.15.0"))
       }
 
       val webDir = file("src/main/web")

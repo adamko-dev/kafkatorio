@@ -1,8 +1,6 @@
 package dev.adamko.kafkatorio.lang
 
-import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.kotlin
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -29,11 +27,12 @@ dependencies {
 
   val junitVersion = "5.8.2"
   testImplementation(enforcedPlatform("org.junit:junit-bom:$junitVersion"))
-  testImplementation("org.junit.jupiter:junit-jupiter-api")
-  testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-  testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+  testImplementation("org.junit.jupiter:junit-jupiter")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher") {
+    because("Only needed to run tests in a version of IntelliJ IDEA that bundles older versions")
+  }
 
-  val kotestVersion = "5.0.1"
+  val kotestVersion = "5.0.3"
   testImplementation(enforcedPlatform("io.kotest:kotest-bom:$kotestVersion"))
   testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
   testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
@@ -58,11 +57,15 @@ tasks.withType<KotlinCompile>().configureEach {
     "-Xopt-in=kotlin.RequiresOptIn",
     "-Xopt-in=kotlin.ExperimentalStdlibApi",
     "-Xopt-in=kotlin.time.ExperimentalTime",
-    "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+//    "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
     "-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi",
   )
 }
 
 tasks.compileTestKotlin {
   kotlinOptions.freeCompilerArgs += "-Xopt-in=io.kotest.common.ExperimentalKotest"
+}
+
+tasks.withType<Test> {
+  useJUnitPlatform()
 }
