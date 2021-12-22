@@ -1,31 +1,19 @@
 package dev.adamko.kafkatorio.lang
 
-import org.gradle.kotlin.dsl.kotlin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
 
 
 plugins {
   kotlin("js")
   id("dev.adamko.kafkatorio.base")
-  id("dev.adamko.kafkatorio.lang.node")
-}
-
-// not in use at the moment
-
-kotlin {
-  js(IR) {
-    binaries.executable()
-
-    useCommonJs()
-    nodejs()
-  }
 }
 
 dependencies {
   val kotlinWrappersVersion = "0.0.1-pre.276-kotlin-1.6.0"
   implementation(
-    project.dependencies.enforcedPlatform(
+    project.dependencies.platform(
       "org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:${kotlinWrappersVersion}"
     )
   )
@@ -52,4 +40,11 @@ val nodeModulesDir: Directory by extra {
   val file = nodePath.dir(NpmProject.NODE_MODULES)
   logger.lifecycle("Kotlin/JS NODE_MODULES: $file")
   file
+}
+
+rootProject.extensions.configure<YarnRootExtension> {
+  // kotlin-js adds a directory in the root-dir for the Yarn lock.
+  // That's a bit annoying. It's a little neater if it's in the
+  // gradle dir, next to the version-catalog.
+  lockFileDirectory = rootProject.rootDir.resolve("gradle/kotlin-js-store")
 }

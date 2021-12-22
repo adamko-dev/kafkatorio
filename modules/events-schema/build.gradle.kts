@@ -22,7 +22,7 @@ kotlin {
         optIn("kotlin.RequiresOptIn")
         optIn("kotlin.ExperimentalStdlibApi")
         optIn("kotlin.time.ExperimentalTime")
-//        optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
+        optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
         optIn("kotlinx.serialization.ExperimentalSerializationApi")
         optIn("kotlin.js.ExperimentalJsExport")
       }

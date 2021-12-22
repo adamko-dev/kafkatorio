@@ -1,9 +1,9 @@
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
-  id("dev.adamko.kafkatorio.base")
+  id("dev.adamko.kafkatorio.lang.kotlin-js")
   kotlin("plugin.serialization")
-  kotlin("js") // version kotlinVersion
+//  kotlin("js") // version kotlinVersion
   id("io.kvision") version "5.6.1"
 }
 
@@ -51,13 +51,6 @@ kotlin {
         implementation("io.kvision:kvision-fontawesome:$kvisionVersion")
         implementation("io.kvision:kvision-state:$kvisionVersion")
         implementation("io.kvision:kvision-chart:$kvisionVersion")
-
-        val kotlinWrappersVersion = "0.0.1-pre.276-kotlin-1.6.0"
-        implementation(
-          project.dependencies.enforcedPlatform(
-            "org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:${kotlinWrappersVersion}"
-          )
-        )
 
 //        implementation(npm("kafkajs", "1.15.0"))
       }
