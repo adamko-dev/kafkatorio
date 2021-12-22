@@ -68,22 +68,25 @@ function emitEvent<T extends FactorioObjectData>(eventData: T, tick: uint, event
 script.on_event(
     defines.events.on_player_mined_entity,
     (e: OnPlayerMinedEntityEvent) => {
-      handlePlayerUpdate(e.tick, e.player_index, "on_player_mined_entity")
-      handleEntityUpdate(e.tick, e.entity, "on_player_mined_entity")
+      let eventName = mapEventIdToName.get(e.name)
+      handlePlayerUpdate(e.tick, e.player_index, eventName)
+      handleEntityUpdate(e.tick, e.entity, eventName)
     }
 )
+
 script.on_event(
     defines.events.on_player_joined_game,
     (e: OnPlayerJoinedGameEvent) => {
-      handlePlayerUpdate(e.tick, e.player_index, "on_player_joined_game")
+      let eventName = mapEventIdToName.get(e.name)
+      handlePlayerUpdate(e.tick, e.player_index, eventName)
     }
 )
 
 script.on_event(
     defines.events.on_player_changed_position,
-    // this is actually a character update, not a player update?
     (e: OnPlayerChangedPositionEvent) => {
-      handlePlayerUpdate(e.tick, e.player_index, "on_player_changed_position")
+      let eventName = mapEventIdToName.get(e.name)
+      handlePlayerUpdate(e.tick, e.player_index, eventName)
     }
 )
 
@@ -92,21 +95,14 @@ script.on_event(
     (e: OnTickEvent) => {
       if (e.tick % 60 == 0) {
 
-
         for (const [index, _] of pairs(game.surfaces)) {
-          let s = game.get_surface(index) // TODO fix / report can't iterate over surfaces
-          // let surface = game.surfaces[index]
-          if (s != undefined) {
-            surfaceEvent(e.tick, s, mapEventIdToName.get(e.name))
+          let surface = game.get_surface(index) // TODO fix / report can't iterate over surfaces
+          if (surface != undefined) {
+            surfaceEvent(e.tick, surface, mapEventIdToName.get(e.name))
           }
-          // surfaceEvent(e.tick, surface, "on_tick")
+          // let surface = game.surfaces[index]
+          // surfaceEvent(e.tick, surface, mapEventIdToName.get(e.name))
         }
-
-        // let filename: string = table.concat([entity.unit_number, eventType, tick], "_")
-        // let msg = "test mod tick: " + e.tick + "\n"
-        // game.write_file("tick.log", msg, true, SERVER_ID)
-        // let filename: string = `OnTickEvent/${e.tick}`
-        // outputEvent(filename, e)
       }
     }
 );

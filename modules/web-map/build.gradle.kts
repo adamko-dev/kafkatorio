@@ -52,7 +52,6 @@ kotlin {
         implementation("io.kvision:kvision-state:$kvisionVersion")
         implementation("io.kvision:kvision-chart:$kvisionVersion")
 
-//        implementation(npm("kafkajs", "1.15.0"))
       }
 
       val webDir = file("src/main/web")
