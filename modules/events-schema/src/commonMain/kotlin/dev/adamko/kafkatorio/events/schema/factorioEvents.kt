@@ -1,9 +1,9 @@
 package dev.adamko.kafkatorio.events.schema
 
 
-//import kotlin.reflect.full.starProjectedType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.json.JsonClassDiscriminator
 
 
@@ -34,10 +34,12 @@ const val FactorioObjectDataDiscriminatorKey: String = "object_name"
 @JsonClassDiscriminator(FactorioObjectDataDiscriminatorKey)
 sealed class FactorioObjectData {
 
+  abstract val objectName: String
+
   // workaround - https://github.com/Kotlin/kotlinx.serialization/issues/1664
-  val objectName: String by lazy {
-    serializer().descriptor.serialName
-  }
+//  val objectName: String by lazy {
+//    serializer().descriptor.serialName
+//  }
 
 //  val objectName: String by lazy {
 //    kotlinx.serialization.serializer(this::class.starProjectedType).descriptor.serialName
@@ -45,7 +47,7 @@ sealed class FactorioObjectData {
 
   // alternative: find the @SerialName annotation
   // Again it must be delegated so there's no backing field and kxs ignores it
-//  val objectNameByAnnotation: String by lazy {
+//  val objectName: String by lazy {
 //    requireNotNull(this::class.findAnnotation<SerialName>()?.value) {
 //      "Couldn't find @SerialName for ${this::class}!"
 //    }
@@ -64,7 +66,10 @@ data class PlayerData(
   val name: String,
   @SerialName("position")
   val position: PositionData,
-) : FactorioObjectData()
+) : FactorioObjectData() {
+  @Transient
+  override val objectName: String= "LuaPlayer"
+}
 
 @Serializable
 @SerialName("LuaEntity")
@@ -88,7 +93,10 @@ data class EntityData(
 
   @SerialName("player_index")
   val playerIndex: UInt? = null,
-) : FactorioObjectData()
+) : FactorioObjectData() {
+  @Transient
+  override val objectName: String= "LuaEntity"
+}
 
 @Serializable
 @SerialName("LuaSurface")
@@ -99,7 +107,10 @@ data class SurfaceData(
   val index: UInt,
   @SerialName("name")
   val name: String,
-) : FactorioObjectData()
+) : FactorioObjectData() {
+  @Transient
+  override val objectName: String="LuaSurface"
+}
 
 @Serializable
 data class PositionData(

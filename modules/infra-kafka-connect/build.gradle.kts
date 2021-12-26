@@ -24,13 +24,14 @@ fun DependencyHandlerScope.kafkaConnector(
 }
 
 dependencies {
+  kotlin("reflect")
+
   kafkaConnector("camel-ahc-ws-kafka-connector")
 
   implementation("com.github.adamko-dev:json5-kotlin:2.0.3")
 
   implementation(platform(libs.http4k.bom))
-  implementation("org.http4k:http4k-core")
-  implementation("org.http4k:http4k-client-okhttp")
+  implementation(libs.bundles.http4k)
 
   implementation(platform(libs.kotlinx.serialization.bom))
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-core")

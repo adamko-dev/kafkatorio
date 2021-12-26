@@ -56,7 +56,10 @@ fun main() {
 //      KXS.asA<FactorioEvent<FactorioObjectData>>(value)
     }
     .to(
-      { key, value, recordContext -> value.data.objectName },
+      { key, value, recordContext ->
+//        println("[$key] sending event:${value.eventType} to topic:${value.data.objectName()}")
+        value.data.objectName
+      },
       Produced.with(Serdes.String(), JsonSerdes)
     )
 

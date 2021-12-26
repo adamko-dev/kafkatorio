@@ -20,6 +20,7 @@ interface PlayerData extends FactorioObjectData {
     associated_characters_unit_numbers: uint[];
     character_unit_number: uint | null;
     name: string;
+    object_name: string;
     position: PositionData;
 }
 
@@ -28,6 +29,7 @@ interface EntityData extends FactorioObjectData {
     health: double | null;
     health_ratio: double;
     name: string;
+    object_name: string;
     player_index: uint | null;
     position: PositionData;
     surface_index: int;
@@ -39,4 +41,5 @@ interface SurfaceData extends FactorioObjectData {
     daytime: double;
     index: uint;
     name: string;
+    object_name: string;
 }

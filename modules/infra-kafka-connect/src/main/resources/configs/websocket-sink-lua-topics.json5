@@ -14,7 +14,7 @@
   // mandatory properties (for a complete properties list see the connector documentation):
 
   // The URI to use such as http://hostname:port/path
-  "camel.sink.path.httpUri": "http://localhost:8095/ws",
+  "camel.sink.path.httpUri": "localhost:8095/ws",
   // If the option is true, then the Exchange.HTTP_URI header is ignored, and use the endpoint's URI for request. You may also set the throwExceptionOnFailure to be false to let the AhcProducer send all the fault response back.
   // camel.sink.endpoint.bridgeEndpoint=
   // The initial in-memory buffer size used when transferring data between Camel and AHC Client.
@@ -29,8 +29,16 @@
   // camel.sink.endpoint.connectionClose=
   // Configure a cookie handler to maintain a HTTP session
   // camel.sink.endpoint.cookieHandler=
-  // Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing.
+
+  // Whether the producer should be started lazy (on the first message). By starting lazy you can
+  // use this to allow CamelContext and routes to startup in situations where a producer
+  // may otherwise fail during starting and cause the route to fail being started. By deferring
+  // this startup to be lazy then the startup failure can be handled during routing messages via
+  // Camel's routing error handlers. Beware that when the first message is processed then creating
+  // and starting the producer may take a little time and prolong the total processing time of the
+  // processing.
   // camel.sink.endpoint.lazyStartProducer=
+
   // To enable streaming to send data as multiple text fragments.
   // camel.sink.endpoint.useStreaming=
   // To use a custom AhcBinding which allows to control how to bind between AHC and Camel.

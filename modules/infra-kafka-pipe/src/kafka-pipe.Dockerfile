@@ -8,7 +8,7 @@ ENV KAFKA_HOST="kafka"
 USER root
 RUN apk add --update \
     curl \
-    kafkacat
+    kcat
 #USER rootless
 
 COPY kafka-pipe.sh kafka-pipe.sh
