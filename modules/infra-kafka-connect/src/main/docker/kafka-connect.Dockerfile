@@ -7,7 +7,7 @@ ENV CONNECT_VERSION=${KAFKA_CONNECT_VERSION}
 
 USER 0:0
 
-COPY ./camel-kafka-connectors /usr/share/java/
+COPY ./camel-kafka-connectors /usr/share/camel-kafka-connectors
 
 #WORKDIR /usr/share/java/
 #

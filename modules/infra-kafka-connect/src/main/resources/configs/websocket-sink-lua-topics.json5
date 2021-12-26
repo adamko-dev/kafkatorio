@@ -14,7 +14,7 @@
   // mandatory properties (for a complete properties list see the connector documentation):
 
   // The URI to use such as http://hostname:port/path
-  "camel.sink.path.httpUri": "http://localhost:/ws",
+  "camel.sink.path.httpUri": "http://localhost:8095/ws",
   // If the option is true, then the Exchange.HTTP_URI header is ignored, and use the endpoint's URI for request. You may also set the throwExceptionOnFailure to be false to let the AhcProducer send all the fault response back.
   // camel.sink.endpoint.bridgeEndpoint=
   // The initial in-memory buffer size used when transferring data between Camel and AHC Client.

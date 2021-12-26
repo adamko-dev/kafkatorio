@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage") // VERSION_PLATFORM + platform(...) is unstable
 
 import dev.adamko.kafkatorio.gradle.asConsumer
+import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
   id("dev.adamko.kafkatorio.infra.docker-compose")
@@ -16,12 +17,13 @@ fun DependencyHandlerScope.kafkaConnector(
   name: String,
   group: String = "org.apache.camel.kafkaconnector",
   version: String = libs.versions.camel.kafkaConnectors.get(),
+  classifier: String = "package",
+  extension: String = "tar.gz",
 ) {
-  camelConnectorDependencies(group, name, version)
+  camelConnectorDependencies(group, name, version, ext = extension, classifier = classifier)
 }
 
 dependencies {
-  kafkaConnector("camel-websocket-kafka-connector")
   kafkaConnector("camel-ahc-ws-kafka-connector")
 
   implementation("com.github.adamko-dev:json5-kotlin:2.0.3")
@@ -35,21 +37,46 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
 }
 
+val dockerBuildKafkaConnect by tasks.registering(Exec::class) {
+  group = "docker-compose"
+  dependsOn(downloadCamelConnectors, tasks.dockerEnv)
+
+  logging.captureStandardOutput(LogLevel.LIFECYCLE)
+
+  inputs.dir(dockerSrcDir)
+
+  workingDir = dockerSrcDir.asFile
+  commandLine = parseSpaceSeparatedArgs(""" docker-compose build connect """)
+}
+tasks.assemble { dependsOn(dockerBuildKafkaConnect) }
+
 
 val downloadCamelConnectors by tasks.registering(Sync::class) {
   group = project.name
   description = "Retrieve Camel Kafka Connectors from Maven, in preparation for the Docker build"
 
+  dependsOn(camelConnectorDependencies)
+
   from(
     provider { camelConnectorDependencies }
       .map { eventsSchema ->
         eventsSchema.incoming
-          .artifactView { lenient(true) }
           .artifacts
           .artifactFiles
       }
   )
-  into(connectorJarDir)
+  into(temporaryDir)
+
+  doLast {
+    sync {
+      fileTree(temporaryDir)
+        .asFileTree
+        .forEach { zip ->
+        from(tarTree(zip))
+      }
+      into(connectorJarDir)
+    }
+  }
 }
 
 tasks.dockerUp {

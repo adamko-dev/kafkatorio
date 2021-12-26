@@ -15,7 +15,8 @@ services:
 #        CAMEL_KC_VERSION: ${CONNECTOR_CAMEL_KAFKA_VERSION}
 #        CAMEL_CONNECTOR: ${CAMEL_FILE_CONNECTOR}
     ports:
-      - "28083:28083"
+      - "8083:8083"
+      - "8095:8095"
 #    volumes:
 #      - "./connect/input:/warehouse/input"
 #      - "./connect/components:/usr/share/confluent-hub-components"
@@ -28,7 +29,8 @@ services:
       CONNECT_BOOTSTRAP_SERVERS: "kafka:29092"
       CONNECT_REST_ADVERTISED_HOST_NAME: ${CONNECTOR_ID}
 #      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: "http://${SCHEMA_REGISTRY}:8081"
-      CONNECT_REST_PORT: 28083
+#      CONNECT_REST_PORT: 28083
+      CONNECT_REST_PORT: 8083
       CONNECT_GROUP_ID: ${CONNECTOR_ID}
       CONNECT_CONFIG_STORAGE_TOPIC: ${CONNECTOR_ID}-configs
       CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
@@ -40,9 +42,10 @@ services:
       CONNECT_KEY_CONVERTER: "org.apache.kafka.connect.storage.StringConverter"
 #      CONNECT_VALUE_CONVERTER: "io.confluent.connect.avro.AvroConverter"
       CONNECT_VALUE_CONVERTER: "org.apache.kafka.connect.json.JsonConverter"
-      CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
+      CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/camel-kafka-connectors"
       CONNECT_LOG4J_ROOT_LOGLEVEL: INFO
       CONNECT_LOG4J_LOGGERS: "org.apache.zookeeper=INFO,org.I0Itec.zkclient=ERROR,org.reflections=ERROR"
+#      CONNECT_LISTENERS: "http://localhost:28083"
 
 networks:
   kafkatorio-nw:
