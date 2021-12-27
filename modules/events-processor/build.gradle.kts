@@ -12,7 +12,7 @@ description = """
 
 val projectId: String by project.extra
 
-@Suppress("UnstableApiUsage")
+@Suppress("UnstableApiUsage") // platform + version-catalog is incubating
 dependencies {
 
   implementation("org.apache.kafka:kafka-streams:3.0.0")
@@ -21,9 +21,11 @@ dependencies {
 
 //  implementation("com.ionspin.kotlin:bignum:0.3.3")
 
-  implementation(enforcedPlatform(libs.kotlinx.serialization.bom))
+  implementation(platform(libs.kotlinx.serialization.bom))
   implementation(libs.kotlinx.serialization.core)
   implementation(libs.kotlinx.serialization.json)
+
+  implementation(libs.kotlinx.coroutines)
 
   implementation(platform(libs.http4k.bom))
 //  implementation(libs.http4k.core)
@@ -36,7 +38,6 @@ dependencies {
   implementation(libs.http4k.format.kotlinx)
 
   implementation(libs.bundles.logging)
-
 }
 
 application {

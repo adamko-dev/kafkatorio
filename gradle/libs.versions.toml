@@ -37,7 +37,6 @@ kotlinSerialization = { id = "org.jetbrains.kotlin.kotlin-serialization",   vers
 loggingCapabilities = { id = "dev.jacomet.logging-capabilities",            version      = "0.9.0"  }
 shadowJar           = { id = "com.github.jengelman.gradle.plugins.shadow",  version      = "6.1.0"  }
 dependencyCheck     = { id = "com.github.ben-manes.versions",               version      = "0.39.0" }
-axionRelease        = { id = "pl.allegro.tech.build.axion-release",         version      = "1.13.3" }
 
 
 ###########
@@ -69,8 +68,8 @@ http4k-format-kotlinx = { group = "org.http4k",  name = "http4k-format-kotlinx-s
 http4k-graphql        = { group = "org.http4k",  name = "http4k-graphql"                                              }
 
 ### jackson ##
-#jackson-bom     = { group = " com.fasterxml.jackson.module",  name = ":jackson-module-kotlin", version = "2.13.+"                       }
-#jackson-kotlin     = { group = " com.fasterxml.jackson.module",  name = ":jackson-module-kotlin", version = "2.13.+"                       }
+#jackson-bom     = { group = " com.fasterxml.jackson.module",  name = ":jackson-module-kotlin", version = "2.13.+"     }
+#jackson-kotlin     = { group = " com.fasterxml.jackson.module",  name = ":jackson-module-kotlin", version = "2.13.+"  }
 
 ## logging ##
 slf4j-api       = { group = "org.slf4j",             name = "slf4j-api",                 version.ref = "slf4j"      }

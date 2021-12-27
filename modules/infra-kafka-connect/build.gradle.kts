@@ -39,7 +39,12 @@ dependencies {
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
 }
 
+// disabled for now...
+val projectEnabled = false
+
 val dockerBuildKafkaConnect by tasks.registering(Exec::class) {
+  enabled = projectEnabled
+
   group = "docker-compose"
   dependsOn(downloadCamelConnectors, tasks.dockerEnv)
 
@@ -54,6 +59,8 @@ val dockerBuildKafkaConnect by tasks.registering(Exec::class) {
 
 
 val downloadCamelConnectors by tasks.registering(Sync::class) {
+  enabled = projectEnabled
+
   group = project.name
   description = "Retrieve Camel Kafka Connectors from Maven, in preparation for the Docker build"
 
@@ -82,11 +89,15 @@ val downloadCamelConnectors by tasks.registering(Sync::class) {
 }
 
 tasks.dockerUp {
+  enabled = projectEnabled
+
   dependsOn(":modules:infra-kafka-cluster:dockerUp")
   dependsOn(downloadCamelConnectors)
 }
 
 tasks.dockerEnv {
+  enabled = projectEnabled
+
   properties(
     "CONNECTOR_ID" to "kafkatorio-connect",
     "KAFKA_CONNECT_VERSION" to libs.versions.confluent.kafkaConnect.get(),
