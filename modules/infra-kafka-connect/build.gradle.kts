@@ -27,6 +27,7 @@ dependencies {
   kotlin("reflect")
 
   kafkaConnector("camel-ahc-ws-kafka-connector")
+  kafkaConnector("camel-websocket-kafka-connector")
 
   implementation("com.github.adamko-dev:json5-kotlin:2.0.3")
 
@@ -49,7 +50,7 @@ val dockerBuildKafkaConnect by tasks.registering(Exec::class) {
   workingDir = dockerSrcDir.asFile
   commandLine = parseSpaceSeparatedArgs(""" docker-compose build connect """)
 }
-tasks.assemble { dependsOn(dockerBuildKafkaConnect) }
+//tasks.assemble { dependsOn(dockerBuildKafkaConnect) }
 
 
 val downloadCamelConnectors by tasks.registering(Sync::class) {

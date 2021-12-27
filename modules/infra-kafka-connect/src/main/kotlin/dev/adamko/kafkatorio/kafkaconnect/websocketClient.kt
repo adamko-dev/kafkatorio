@@ -22,11 +22,11 @@ fun main() {
 
 
   val nonBlockingClient = WebsocketClient.nonBlocking(
-    uri = Uri.of("ws://localhost:8095/ws"),
+    uri = Uri.of("ws://localhost:9292/lua-objects"),
     onError = { it.printStackTrace() },
     onConnect = { ws ->
       println("onConnect, ws.upgradeRequest ${ws.upgradeRequest}")
-      ws.send(WsMessage("client sent on connection"))
+//      ws.send(WsMessage("client sent on connection"))
     }
   )
 

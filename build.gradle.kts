@@ -38,7 +38,7 @@ val startInfra by tasks.registering {
   dependsOn(
     ":modules:infra-kafka-pipe:processRun",
     ":modules:infra-kafka-cluster:processRun",
-    ":modules:infra-kafka-connect:processRun",
+//    ":modules:infra-kafka-connect:processRun",
   )
 }
 

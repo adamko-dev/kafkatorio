@@ -16,7 +16,8 @@ services:
 #        CAMEL_CONNECTOR: ${CAMEL_FILE_CONNECTOR}
     ports:
       - "8083:8083"
-      - "8095:8095"
+      - "8095:8095" # ws-async (client?)
+      - "9292:9292" # websocket server(?)
 #    volumes:
 #      - "./connect/input:/warehouse/input"
 #      - "./connect/components:/usr/share/confluent-hub-components"

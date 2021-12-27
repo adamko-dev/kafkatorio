@@ -24,7 +24,7 @@ fun main() {
 
   val connectorHostUrl = Uri.of("http://localhost:8083")
 
-  val configFile = Resources.loadResource("/configs/websocket-sink-lua-topics.json5")
+  val configFile = Resources.loadResource("/configs/ckc-websocket-lua-objects.json5")
 
   val jsonObject: JsonObject = j5.decodeObject(configFile.readText())
   println("json5 connector config: $jsonObject")
@@ -59,7 +59,7 @@ fun main() {
 //val updateConnectors by tasks.registering {
 //  group = project.name
 //
-//  val configFile = layout.projectDirectory.file("configs/websocket-sink-lua-topics.json5")
+//  val configFile = layout.projectDirectory.file("configs/websocket-async-lua-objects.json5")
 //  inputs.file(configFile)
 //
 //  doLast {
