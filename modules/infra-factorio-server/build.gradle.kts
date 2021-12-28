@@ -22,6 +22,8 @@ val deployModToServer by tasks.registering(Copy::class) {
   description = "Copy the mod to the Factorio Docker server"
   group = project.name
 
+  dependsOn(factorioMod)
+
   from(
     provider { factorioMod.incoming.artifacts.artifactFiles.files }
   )

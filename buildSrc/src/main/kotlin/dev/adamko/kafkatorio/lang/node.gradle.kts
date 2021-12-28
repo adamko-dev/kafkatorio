@@ -1,7 +1,7 @@
 package dev.adamko.kafkatorio.lang
 
 import com.github.gradle.node.NodePlugin
-import com.github.gradle.node.npm.task.NpmTask
+import com.github.gradle.node.npm.task.NpmInstallTask
 import dev.adamko.kafkatorio.gradle.areJsonPropertiesUpToDate
 import dev.adamko.kafkatorio.gradle.not
 import dev.adamko.kafkatorio.jsonMapper
@@ -56,6 +56,6 @@ val updatePackageJson by tasks.registering(UpdatePackageJson::class) {
 }
 
 tasks.assemble { dependsOn(updatePackageJson) }
-tasks.withType<NpmTask> {
+tasks.withType<NpmInstallTask> {
   dependsOn(updatePackageJson)
 }
