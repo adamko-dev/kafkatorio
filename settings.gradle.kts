@@ -3,8 +3,8 @@ rootProject.name = "kafkatorio"
 include(
 
   ":modules:events-mod",
-  ":modules:events-processor",
   ":modules:events-schema",
+  ":modules:events-server",
 
   ":modules:infra-factorio-client",
   ":modules:infra-factorio-server",
