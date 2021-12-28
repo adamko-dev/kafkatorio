@@ -26,14 +26,14 @@ dependencies {
   //<editor-fold desc="Test">
 
   val junitVersion = "5.8.2"
-  testImplementation(enforcedPlatform("org.junit:junit-bom:$junitVersion"))
+  testImplementation(platform("org.junit:junit-bom:$junitVersion"))
   testImplementation("org.junit.jupiter:junit-jupiter")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher") {
     because("Only needed to run tests in a version of IntelliJ IDEA that bundles older versions")
   }
 
   val kotestVersion = "5.0.3"
-  testImplementation(enforcedPlatform("io.kotest:kotest-bom:$kotestVersion"))
+  testImplementation(platform("io.kotest:kotest-bom:$kotestVersion"))
   testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
   testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
   testImplementation("io.kotest:kotest-property:$kotestVersion")
@@ -54,16 +54,16 @@ tasks.withType<KotlinCompile>().configureEach {
   }
 
   kotlinOptions.freeCompilerArgs += listOf(
-    "-Xopt-in=kotlin.RequiresOptIn",
-    "-Xopt-in=kotlin.ExperimentalStdlibApi",
-    "-Xopt-in=kotlin.time.ExperimentalTime",
-//    "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-    "-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi",
+    "-opt-in=kotlin.RequiresOptIn",
+    "-opt-in=kotlin.ExperimentalStdlibApi",
+    "-opt-in=kotlin.time.ExperimentalTime",
+//    "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+    "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
   )
 }
 
 tasks.compileTestKotlin {
-  kotlinOptions.freeCompilerArgs += "-Xopt-in=io.kotest.common.ExperimentalKotest"
+  kotlinOptions.freeCompilerArgs += "-opt-in=io.kotest.common.ExperimentalKotest"
 }
 
 tasks.withType<Test> {

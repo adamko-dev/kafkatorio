@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
   id("dev.adamko.kafkatorio.lang.kotlin-jvm")
   kotlin("plugin.serialization")
@@ -28,12 +30,7 @@ dependencies {
   implementation(libs.kotlinx.coroutines)
 
   implementation(platform(libs.http4k.bom))
-//  implementation(libs.http4k.core)
-  implementation(libs.http4k.cloudnative)
-//  implementation(libs.http4k.format.json)
-  implementation(libs.http4k.format.yaml) {
-    because("parsing yaml properties files")
-  }
+  implementation(libs.bundles.http4k)
 
   implementation(libs.http4k.format.kotlinx)
 
@@ -42,4 +39,10 @@ dependencies {
 
 application {
   mainClass.set("dev.adamko.factorioevents.processor.mainKt")
+}
+
+tasks.withType<KotlinCompile> {
+  kotlinOptions.freeCompilerArgs += listOf(
+    "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+  )
 }

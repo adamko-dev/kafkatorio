@@ -30,7 +30,6 @@ tasks.wrapper {
   gradleVersion = "7.3.3"
   distributionType = Wrapper.DistributionType.ALL
 }
-tasks.assemble { dependsOn(tasks.wrapper) }
 
 val startInfra by tasks.registering {
   group = project.name

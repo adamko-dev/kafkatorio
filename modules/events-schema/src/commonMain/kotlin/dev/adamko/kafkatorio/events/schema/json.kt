@@ -13,7 +13,7 @@ import kotlinx.serialization.modules.SerializersModule
 
 
 /** Factorio outputs lists as Json objects - this serializer converts an object back to a list. */
-class ListAsObjectSerializer<T>(dataSerializer: KSerializer<T>) :
+internal class ListAsObjectSerializer<T>(dataSerializer: KSerializer<T>) :
   JsonTransformingSerializer<List<T>>(ListSerializer(dataSerializer)) {
 
   override fun transformDeserialize(element: JsonElement): JsonElement =
@@ -27,7 +27,7 @@ class ListAsObjectSerializer<T>(dataSerializer: KSerializer<T>) :
     )
 }
 
-val jsonMapper = Json {
+internal val jsonMapper = Json {
   prettyPrint = true
   prettyPrintIndent = "  "
   serializersModule = SerializersModule { }
