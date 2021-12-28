@@ -1,19 +1,11 @@
 package dev.adamko.kafkatorio.processor.config
 
-import com.fasterxml.jackson.databind.JsonNode
 import dev.adamko.kafkatorio.processor.config.PortVal.Companion.portVal
-import java.io.StringReader
 import java.time.Clock
 import java.util.Properties
 import org.http4k.cloudnative.env.Environment
 import org.http4k.cloudnative.env.EnvironmentKey
-import org.http4k.core.Credentials
-import org.http4k.core.Uri
-import org.http4k.format.Json
-import org.http4k.lens.boolean
-import org.http4k.lens.map
 import org.http4k.lens.nonEmptyString
-import org.http4k.lens.uri
 
 /**
  * Load properties, in descending priority order, from

@@ -32,13 +32,13 @@ val rootPackageJson by rootProject.tasks.getting(RootPackageJsonTask::class)
 
 val nodePath: Directory by extra {
   val file = rootPackageJson.rootPackageJson.parentFile.normalize()
-  logger.lifecycle("Kotlin/JS NODE_PATH: $file")
+  logger.info("Kotlin/JS NODE_PATH: $file")
   project.layout.dir(project.provider { file }).get()
 }
 
 val nodeModulesDir: Directory by extra {
   val file = nodePath.dir(NpmProject.NODE_MODULES)
-  logger.lifecycle("Kotlin/JS NODE_MODULES: $file")
+  logger.info("Kotlin/JS NODE_MODULES: $file")
   file
 }
 

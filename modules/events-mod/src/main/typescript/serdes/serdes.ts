@@ -1,79 +1,65 @@
 export namespace Serdes {
 
-  export namespace Player {
 
-    export function playerToTable(player: LuaPlayer): PlayerData {
-      let charIds = Entity.entitiesToUnitNumbers(player.get_associated_characters())
-      return {
-        object_name: player.object_name,
+  export function playerToTable(player: LuaPlayer): PlayerData {
+    let charIds = entitiesToUnitNumbers(player.get_associated_characters())
+    return {
+      object_name: player.object_name,
 
-        name: player.name,
-        character_unit_number: player.character?.unit_number ?? null,
-        associated_characters_unit_numbers: charIds,
-        position: DataClasses.positionTableToTable(player.position),
-      }
+      name: player.name,
+      character_unit_number: player.character?.unit_number ?? null,
+      associated_characters_unit_numbers: charIds,
+      position: positionTableToTable(player.position),
     }
-
   }
 
-  export namespace Entity {
+  export function entityToTable(entity: LuaEntity): EntityData {
 
-    export function entityToTable(entity: LuaEntity): EntityData {
+    let player: LuaPlayer | null = entity.is_player() ? entity.player!! : null
 
-      let player: LuaPlayer | null = entity.is_player() ? entity.player!! : null
+    return {
+      object_name: entity.object_name,
 
-      return {
-        object_name: entity.object_name,
+      // entity data
+      name: entity.name,
+      type: entity.type,
+      active: entity.active,
+      health: entity.health ?? null,
+      health_ratio: entity.get_health_ratio(),
+      surface_index: entity.surface.index,
+      unit_number: entity.unit_number ?? null,
+      position: positionTableToTable(entity.position),
 
-        // entity data
-        name: entity.name,
-        type: entity.type,
-        active: entity.active,
-        health: entity.health ?? null,
-        health_ratio: entity.get_health_ratio(),
-        surface_index: entity.surface.index,
-        unit_number: entity.unit_number ?? null,
-        position: DataClasses.positionTableToTable(entity.position),
-
-        // player data
-        player_index: player?.index ?? null
-      }
+      // player data
+      player_index: player?.index ?? null
     }
-
-    export function entitiesToUnitNumbers(entities: LuaEntity[]): uint[] {
-      let result: (uint) [] = []
-      for (let entity of entities) {
-        if (entity.unit_number != null) {
-          result[result.length] = entity.unit_number
-        }
-      }
-      return result
-    }
-
   }
 
-  export namespace Surface {
-
-    export function surfaceToTable(surface: LuaSurface): SurfaceData {
-      return {
-        object_name: surface.object_name,
-
-        name: surface.name,
-        index: surface.index,
-        daytime: surface.daytime,
+  export function entitiesToUnitNumbers(entities: LuaEntity[]): uint[] {
+    let result: (uint) [] = []
+    for (let entity of entities) {
+      if (entity.unit_number != null) {
+        result[result.length] = entity.unit_number
       }
     }
-
+    return result
   }
 
-  export namespace DataClasses {
+  export function surfaceToTable(surface: LuaSurface): SurfaceData {
+    return {
+      object_name: surface.object_name,
 
-    export function positionTableToTable(positionTable: PositionTable): PositionData {
-      return {
-        x: positionTable.x,
-        y: positionTable.y,
-      }
+      name: surface.name,
+      index: surface.index,
+      daytime: surface.daytime,
     }
-
   }
+
+  export function positionTableToTable(positionTable: PositionTable): PositionData {
+    return {
+      x: positionTable.x,
+      y: positionTable.y,
+    }
+  }
+
 }

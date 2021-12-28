@@ -8,6 +8,9 @@ import me.ntrrgc.tsGenerator.TypeScriptGenerator
 import me.ntrrgc.tsGenerator.camelCaseToSnakeCase
 import org.intellij.lang.annotations.Language
 
+/**
+ * Convert Kotlin classes to Typescript classes, using [TypeScriptGenerator]
+ */
 fun main(args: Array<String>) {
 
   val gen =

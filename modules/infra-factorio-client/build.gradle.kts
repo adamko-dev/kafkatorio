@@ -8,6 +8,8 @@ plugins {
   id("dev.adamko.kafkatorio.infra.process-runner")
 }
 
+description = "Start the Factorio game client"
+
 val clientModsDirectory = file("""D:\Users\Adam\AppData\Roaming\Factorio\mods""")
 val factorioGameId = "427520"
 val steamExe = """C:\Program Files (x86)\Steam\steam.exe"""

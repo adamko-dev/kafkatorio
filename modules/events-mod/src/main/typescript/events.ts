@@ -10,7 +10,7 @@ for (const [k, v] of pairs(defines.events)) {
 
 function handlePlayerUpdate(tick: uint, playerIndex: uint, eventType: string) {
   let player: LuaPlayer = game.players[playerIndex]
-  let table = Serdes.Player.playerToTable(player)
+  let table = Serdes.playerToTable(player)
   emitEvent(table, tick, eventType)
 
   handleCharactersEvent(tick, playerIndex, eventType)
@@ -31,12 +31,12 @@ function handleCharactersEvent(tick: uint, playerIndex: uint, eventType: string)
 }
 
 function handleEntityUpdate(tick: uint, entity: LuaEntity, eventType: string) {
-  let table = Serdes.Entity.entityToTable(entity)
+  let table = Serdes.entityToTable(entity)
   emitEvent(table, tick, eventType)
 }
 
 function surfaceEvent(tick: uint, surface: LuaSurface, eventType: string) {
-  let table = Serdes.Surface.surfaceToTable(surface)
+  let table = Serdes.surfaceToTable(surface)
   emitEvent(table, tick, eventType)
 }
 

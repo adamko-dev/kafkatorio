@@ -15,7 +15,7 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
 
-  val kotlinXSerializationVersion = "1.3.1"
+  val kotlinXSerializationVersion = "1.3.2"
   implementation(enforcedPlatform("org.jetbrains.kotlinx:kotlinx-serialization-bom:$kotlinXSerializationVersion"))
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-core")
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
@@ -24,6 +24,9 @@ dependencies {
   implementation("com.github.node-gradle:gradle-node-plugin:3.1.1")
 
   implementation("net.swiftzer.semver:semver:1.1.2")
+
+  // https://github.com/avast/gradle-docker-compose-plugin
+  implementation("com.avast.gradle:gradle-docker-compose-plugin:0.14.12")
 }
 
 val projectJvmTarget = "11"

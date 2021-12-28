@@ -19,7 +19,6 @@ dependencies {
   //<editor-fold desc="Main">
 
   implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-//  implementation(kotlin("stdlib"))
 
   //</editor-fold>
 

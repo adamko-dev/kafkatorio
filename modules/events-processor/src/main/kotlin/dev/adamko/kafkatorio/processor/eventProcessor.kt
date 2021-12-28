@@ -15,18 +15,5 @@ fun main() = runBlocking {
   val topology = FactorioEventsTopology(wsServer)
   topology.build()
 
-  wsServer.start().asServer(Undertow(9073)).start().block()
+  wsServer.build().asServer(Undertow(9073)).start().block()
 }
-
-//
-//
-//// a standard websocket app
-//val websocketServer = websockets(
-//  "/lua-objects" bind { ws: Websocket ->
-//    ws.send(WsMessage("bob"))
-//    ws.onMessage {
-//      println("server received: $it")
-//      ws.send(it)
-//    }
-//  }
-//).asServer(Undertow(9097)).start()

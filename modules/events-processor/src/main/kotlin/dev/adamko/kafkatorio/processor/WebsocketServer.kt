@@ -47,7 +47,7 @@ class WebsocketServer {
     messages.emit(msg)
   }
 
-  suspend fun start(): PolyHandler = supervisorScope builder@{
+  suspend fun build(): PolyHandler = supervisorScope builder@{
 
     coroutineContext.job.invokeOnCompletion { e ->
       e?.let { serverJob.completeExceptionally(it) } ?: serverJob.complete()

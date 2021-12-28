@@ -138,7 +138,7 @@ distributions {
       filter<ReplaceTokens>("tokens" to projectTokens)
       includeEmptyDirs = false
       exclude {
-// exclude empty files
+        // exclude empty files
         it.file.run {
           isFile && useLines { lines -> lines.all { line -> line.isBlank() } }
         }
@@ -147,36 +147,6 @@ distributions {
 
   }
 }
-
-//val packageMod by tasks.registering(Zip::class) {
-//  description = "Package mod files into ZIP"
-//  group = project.name
-//
-//  dependsOn(typescriptToLua)
-//
-//  inputs.properties(tokens)
-//
-//  from(layout.projectDirectory.dir("src/main/resources/mod-data")) {
-//    include("**/**")
-//    filter<ReplaceTokens>("tokens" to tokens)
-//  }
-//  from(licenseFile)
-//
-//  into(rootProject.name)
-//
-//  // Factorio required format is:
-//  // - filename: `mod-name_version.zip`
-//  // - zip contains one directory, `mod-name`
-//  archiveFileName.set("${rootProject.name}_${project.version}.zip")
-//  destinationDirectory.set(layout.buildDirectory.dir("dist"))
-//
-//  doLast {
-//    val outDir = destinationDirectory.asFile.get().toRelativeString(layout.projectDirectory.asFile)
-//    val outZip = "${archiveFileName.orNull}"
-//    logger.lifecycle("Packaged mod into $outDir/$outZip")
-//  }
-//}
-
 
 val downloadFactorioApiDocs by tasks.registering {
   group = project.name
@@ -244,3 +214,5 @@ tasks.assemble { dependsOn(installEventsTsSchema, tasks.updatePackageJson) }
 //      }
 //    }
 //  }
+
+tasks.npmInstall

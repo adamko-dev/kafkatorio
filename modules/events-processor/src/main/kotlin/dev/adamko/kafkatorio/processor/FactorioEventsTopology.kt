@@ -13,8 +13,8 @@ import org.apache.kafka.streams.kstream.Consumed
 import org.apache.kafka.streams.kstream.Produced
 
 class FactorioEventsTopology(
-  val websocketServer: WebsocketServer,
-  val builder: StreamsBuilder = StreamsBuilder(),
+  private val websocketServer: WebsocketServer,
+  private val builder: StreamsBuilder = StreamsBuilder(),
 ) {
 
   private val sourceTopic = "factorio-server-log"
