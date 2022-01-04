@@ -10,6 +10,9 @@ export namespace Serdes {
       character_unit_number: player.character?.unit_number ?? null,
       associated_characters_unit_numbers: charIds,
       position: positionTableToTable(player.position),
+      colour: mapColour(player.color),
+      chat_colour: mapColour(player.chat_color),
+      last_online: player.last_online
     }
   }
 
@@ -59,6 +62,16 @@ export namespace Serdes {
     return {
       x: positionTable.x,
       y: positionTable.y,
+    }
+  }
+
+  export function mapColour(color: Color): Colour {
+    color = (color as ColorTable)
+    return {
+      red: color.r ?? 0,
+      green: color.g ?? 0,
+      blue: color.b ?? 0,
+      alpha: color.a ?? 0,
     }
   }
 

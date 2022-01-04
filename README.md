@@ -42,6 +42,14 @@ is provided.
 
 * https://jbrandhorst.com/post/go-protobuf-tips/
 
+
+##### wasm
+
+kt -> wasm -> lua?
+kt-flatbuffers -> wasm -> lua?
+
+https://www.npmjs.com/package/wasm2lua?activeTab=readme
+
 ##### flatbuffers
 
 https://github.com/dvidelabs/flatcc
@@ -56,6 +64,3 @@ https://github.com/dvidelabs/flatcc
 
 https://www.zash.se/lua-cbor.html
 https://code.zash.se/lua-cbor/archive/68b3a36d0816.tar.gz
-
-
-

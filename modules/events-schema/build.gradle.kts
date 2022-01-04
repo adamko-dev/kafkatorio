@@ -30,9 +30,9 @@ kotlin {
 
     val commonMain by getting {
       dependencies {
-        implementation(project.dependencies.enforcedPlatform(libs.kotlin.bom))
+        implementation(project.dependencies.platform(libs.kotlin.bom))
 
-        implementation(project.dependencies.enforcedPlatform(libs.kotlinx.serialization.bom))
+        implementation(project.dependencies.platform(libs.kotlinx.serialization.bom))
         implementation(libs.kotlinx.serialization.core)
         implementation(libs.kotlinx.serialization.json)
 
@@ -44,7 +44,7 @@ kotlin {
 
         implementation(kotlin("test"))
 
-        implementation(project.dependencies.enforcedPlatform(libs.kotest.bom))
+        implementation(project.dependencies.platform(libs.kotest.bom))
         implementation("io.kotest:kotest-assertions-core")
         implementation("io.kotest:kotest-property")
         implementation("io.kotest:kotest-assertions-json")

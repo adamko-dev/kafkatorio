@@ -11,6 +11,13 @@ interface FactorioEvent<T extends FactorioObjectData> {
     tick: uint;
 }
 
+interface Colour {
+    alpha: float;
+    blue: float;
+    green: float;
+    red: float;
+}
+
 interface PositionData {
     x: double;
     y: double;
@@ -19,6 +26,9 @@ interface PositionData {
 interface PlayerData extends FactorioObjectData {
     associated_characters_unit_numbers: uint[];
     character_unit_number: uint | null;
+    chat_colour: Colour;
+    colour: Colour;
+    last_online: uint;
     name: string;
     object_name: string;
     position: PositionData;

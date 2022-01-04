@@ -21,7 +21,8 @@ class FactorioEventTest : BehaviorSpec({
           "position": {
             "x": -3.5703125,
             "y": 29.75
-          }
+          },
+          "last_online": 123
         },
         "event_type": "on_player_joined_game",
         "mod_version": "0.0.4",
@@ -41,7 +42,10 @@ class FactorioEventTest : BehaviorSpec({
           position = PositionData(
             x = -3.5703125,
             y = 29.75
-          )
+          ),
+          colour = Colour(),
+          chatColour = Colour(),
+          lastOnline = 123u
         ),
         eventType = "on_player_joined_game",
         modVersion = "0.0.4",

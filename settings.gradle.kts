@@ -21,3 +21,14 @@ enableFeaturePreview("VERSION_CATALOGS")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 apply(from = "./buildSrc/repositories.settings.gradle.kts")
+
+@Suppress("UnstableApiUsage") // centralized repositories is incubating
+dependencyResolutionManagement {
+  repositories {
+    mavenLocal {
+      content {
+        includeGroup("io.kvision")
+      }
+    }
+  }
+}
