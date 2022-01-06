@@ -50,17 +50,14 @@ kt-flatbuffers -> wasm -> lua?
 
 https://www.npmjs.com/package/wasm2lua?activeTab=readme
 
-##### flatbuffers
 
-https://github.com/dvidelabs/flatcc
+##### Encodings
 
-
-##### z85 encoding
-
-* Kotlin https://gist.github.com/ischumacher/b4929f26341ebef62cbce35c65543eda
-* Lua https://web-eworks.github.io/lZ85/
-
-#### CBOR
-
-https://www.zash.se/lua-cbor.html
-https://code.zash.se/lua-cbor/archive/68b3a36d0816.tar.gz
+* flatbuffers https://github.com/dvidelabs/flatcc
+* z85 encoding
+  * Kotlin https://gist.github.com/ischumacher/b4929f26341ebef62cbce35c65543eda
+  * Lua https://web-eworks.github.io/lZ85/
+* https://github.com/SafeteeWoW/LibDeflate
+* CBOR 
+  * https://www.zash.se/lua-cbor.html
+  * https://code.zash.se/lua-cbor/archive/68b3a36d0816.tar.gz

@@ -1,61 +1,14 @@
-import {Serdes} from "./serdes/serdes"
-
-const MOD_VERSION = script.active_mods["@mod.name@"] ?? "UNKNOWN"
-const FACTORIO_VERSION = script.active_mods["base"] ?? "UNKNOWN"
+import {
+  handleChunkUpdate,
+  handleConsoleChat,
+  handleEntityUpdate,
+  handlePlayerUpdate,
+  handleSurfaceUpdate
+} from "./events/handlers";
 
 const mapEventIdToName = new LuaTable<defines.Events, keyof typeof defines.events>()
 for (const [k, v] of pairs(defines.events)) {
   mapEventIdToName.set(v, k)
-}
-
-function handlePlayerUpdate(tick: uint, playerIndex: uint, eventType: string) {
-  let player: LuaPlayer = game.players[playerIndex]
-  let table = Serdes.playerToTable(player)
-  emitEvent(table, tick, eventType)
-
-  handleCharactersEvent(tick, playerIndex, eventType)
-}
-
-function handleCharactersEvent(tick: uint, playerIndex: uint, eventType: string) {
-
-  let player: LuaPlayer = game.players[playerIndex]
-
-  if (player.character != undefined) {
-    handleEntityUpdate(tick, player.character, eventType)
-  }
-  for (const character of player.get_associated_characters()) {
-    if (character != undefined) {
-      handleEntityUpdate(tick, character, eventType)
-    }
-  }
-}
-
-function handleEntityUpdate(tick: uint, entity: LuaEntity, eventType: string) {
-  let table = Serdes.entityToTable(entity)
-  emitEvent(table, tick, eventType)
-}
-
-function surfaceEvent(tick: uint, surface: LuaSurface, eventType: string) {
-  let table = Serdes.surfaceToTable(surface)
-  emitEvent(table, tick, eventType)
-}
-
-// const SERVER_ID: uint = 0
-// const EVENT_FILE_DIR: string = "events"
-/** Emit a serialised event */
-function emitEvent<T extends FactorioObjectData>(eventData: T, tick: uint, eventType: string) {
-
-  let event: FactorioEvent<T> = {
-    data: eventData,
-    event_type: eventType,
-    mod_version: MOD_VERSION,
-    factorio_version: FACTORIO_VERSION,
-    tick: tick
-  }
-
-  let data = game.table_to_json(event)
-
-  localised_print(`FactorioEvent: ${data}`)
 }
 
 // script.on_event(
@@ -94,20 +47,32 @@ script.on_event(
     defines.events.on_tick,
     (e: OnTickEvent) => {
       if (e.tick % 60 == 0) {
-
-        for (const [index, _] of pairs(game.surfaces)) {
-          let surface = game.get_surface(index) // TODO fix / report can't iterate over surfaces
-          if (surface != undefined) {
-            surfaceEvent(e.tick, surface, mapEventIdToName.get(e.name))
-          }
-          // let surface = game.surfaces[index]
-          // surfaceEvent(e.tick, surface, mapEventIdToName.get(e.name))
+        for (const [_, surface] of pairs(game.surfaces)) {
+          handleSurfaceUpdate(e.tick, surface, mapEventIdToName.get(e.name))
         }
+
+        // for (const [index, _] of pairs(game.surfaces)) {
+        //   let surface = game.get_surface(index) // TODO fix / report can't iterate over surfaces
+        //   if (surface != undefined) {
+        //     handleSurfaceUpdate(e.tick, surface, mapEventIdToName.get(e.name))
+        //   }
+        ////   let surface = game.surfaces[index]
+        ////   surfaceEvent(e.tick, surface, mapEventIdToName.get(e.name))
+        // }
       }
     }
-);
+)
 
+script.on_event(
+    defines.events.on_console_chat,
+    (e: OnConsoleChatEvent) => {
+      handleConsoleChat(e.tick, e.player_index, e.message, mapEventIdToName.get(e.name))
+    }
+)
 
-// script.on_load(() => {
-//   game.print("loaded Factorio Web Map!")
-// });
+script.on_event(
+    defines.events.on_chunk_charted,
+    (e: OnChunkChartedEvent) => {
+      handleChunkUpdate(e.tick, mapEventIdToName.get(e.name), e.surface_index, e.position)
+    }
+)

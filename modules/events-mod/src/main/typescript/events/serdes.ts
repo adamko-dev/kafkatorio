@@ -1,6 +1,5 @@
 export namespace Serdes {
 
-
   export function playerToTable(player: LuaPlayer): PlayerData {
     let charIds = entitiesToUnitNumbers(player.get_associated_characters())
     return {
@@ -65,13 +64,31 @@ export namespace Serdes {
     }
   }
 
-  export function mapColour(color: Color): Colour {
-    color = (color as ColorTable)
+  export function mapColour(color: ColorTable): Colour {
     return {
       red: color.r ?? 0,
       green: color.g ?? 0,
       blue: color.b ?? 0,
       alpha: color.a ?? 0,
+    }
+  }
+
+  export function consoleChat(content: string, playerIndex?: uint): ConsoleChatMessage {
+    return {
+      object_name: "ConsoleChatMessage",
+
+      author_player_index: playerIndex ?? null,
+      content: content
+    }
+  }
+
+  export function convertTile(tile: LuaTile): FactorioTile {
+    return {
+      object_name: tile.object_name,
+
+      position: tile.position,
+      prototype_name: tile.prototype.name,
+      surface_index: tile.surface.index
     }
   }
 

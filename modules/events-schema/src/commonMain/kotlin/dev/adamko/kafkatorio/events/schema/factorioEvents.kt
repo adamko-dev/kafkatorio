@@ -149,3 +149,44 @@ data class Colour(
   fun isPercentage(): Boolean = !isDecimal()
 
 }
+
+@Serializable
+data class ConsoleChatMessage(
+  @SerialName("author_player_index")
+  val authorPlayerIndex: UInt?,
+  val content: String,
+) : FactorioObjectData() {
+  @Transient
+  override val objectName: String = "ConsoleChatMessage"
+}
+
+@Serializable
+@SerialName("FactorioTilesMap")
+data class FactorioTilesMap(
+  val tiles: Map<PositionData, FactorioTile>,
+) : FactorioObjectData() {
+  @Transient
+  override val objectName: String = "FactorioTilesMap"
+}
+
+
+@Serializable
+@SerialName("FactorioTiles")
+data class FactorioTiles(
+  val tiles: List<FactorioTile>,
+) : FactorioObjectData() {
+  @Transient
+  override val objectName: String = "FactorioTiles"
+}
+
+
+@Serializable
+@SerialName("LuaTile")
+data class FactorioTile(
+  val prototypeName: String,
+  val position: PositionData,
+  val surfaceIndex: Int,
+) : FactorioObjectData() {
+  @Transient
+  override val objectName: String = "LuaTile"
+}

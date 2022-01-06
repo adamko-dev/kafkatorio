@@ -12,6 +12,8 @@
       "lua-types/5.2",
       "typed-factorio/runtime"
     ],
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "explainFiles": true,
     "forceConsistentCasingInFileNames": true,
     "listEmittedFiles": true,
@@ -22,8 +24,7 @@
     "strict": true,
     "strictFunctionTypes": true,
     "strictNullChecks": true,
-    "traceResolution": true,
-    "esModuleInterop": true
+    "traceResolution": true
   },
   "tstl": {
     "luaTarget": "5.2",

@@ -53,7 +53,8 @@ kotlin {
 
     val jvmMain by getting {
       dependencies {
-        implementation("com.github.ntrrgc:ts-generator:1.1.2")
+        implementation("com.github.aSemy:ts-generator:v1.2.1")
+//        implementation("com.github.ntrrgc:ts-generator:1.1.2")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
       }
     }
