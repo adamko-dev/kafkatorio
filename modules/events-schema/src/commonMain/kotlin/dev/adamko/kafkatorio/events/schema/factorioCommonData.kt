@@ -27,6 +27,7 @@ data class Colour(
   val blue: Float = 0f,
   val alpha: Float = 1f,
 ) {
+  
   /** True if any value is greater than 1, so the values are hexadecimal. */
   fun isDecimal(): Boolean {
     return red > 1f

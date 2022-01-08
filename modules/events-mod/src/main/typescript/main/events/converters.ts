@@ -1,4 +1,4 @@
-export namespace Serdes {
+export namespace Converters {
 
   export function playerToTable(player: LuaPlayer): PlayerData {
     let charIds = entitiesToUnitNumbers(player.get_associated_characters())
@@ -37,7 +37,7 @@ export namespace Serdes {
     }
   }
 
-  export function entitiesToUnitNumbers(entities: LuaEntity[]): uint[] {
+  function entitiesToUnitNumbers(entities: LuaEntity[]): uint[] {
     let result: (uint) [] = []
     for (let entity of entities) {
       if (entity.unit_number != null) {

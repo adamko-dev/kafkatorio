@@ -1,4 +1,4 @@
-import {Serdes} from "../events/serdes";
+import {Converters} from "../events/converters";
 
 export function convertPrototypes (): FactorioPrototype[] {
   let prototypes = new Array<FactorioPrototype>()
@@ -19,7 +19,7 @@ function getMapTilePrototypes(): FactorioMapTilePrototype[] {
           order: tile.order,
           layer: tile.layer,
           collisionMasks: convertCollisionMaskToNames(tile.collision_mask),
-          mapColor: Serdes.mapColour(tile.map_color),
+          mapColor: Converters.mapColour(tile.map_color),
           canBeMined: tile.mineable_properties.minable,
         }
     )

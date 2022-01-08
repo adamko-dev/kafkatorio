@@ -4,7 +4,7 @@ import {
   handleEntityUpdate,
   handlePlayerUpdate,
   handleSurfaceUpdate
-} from "./events/handlers";
+} from "./handlers";
 
 const mapEventIdToName = new LuaTable<defines.Events, keyof typeof defines.events>()
 for (const [k, v] of pairs(defines.events)) {

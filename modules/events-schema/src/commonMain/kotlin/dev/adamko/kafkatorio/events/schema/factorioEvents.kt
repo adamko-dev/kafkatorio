@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 data class FactorioEvent<out T : FactorioObjectData>(
   override val modVersion: String,
 
-  /** the initial Factorio event ({defines.events}) trigger */
+  /** the initial Factorio event (`defines.events`) trigger */
   val eventType: String,
   /** game time */
   val tick: UInt,

@@ -1,9 +1,11 @@
-import {Serdes} from "./serdes"
-import {emitEvent} from "./emitter";
+import {Converters} from "./converters"
+import {emitEvent} from "./emitEvent";
 
 export function handlePlayerUpdate(tick: uint, playerIndex: uint, eventType: string) {
   let player: LuaPlayer = game.players[playerIndex]
-  let table = Serdes.playerToTable(player)
+  let table = Converters.playerToTable(player)
+
+
   emitEvent(table, tick, eventType)
 
   handleCharactersEvent(tick, playerIndex, eventType)
@@ -24,7 +26,7 @@ export function handleCharactersEvent(tick: uint, playerIndex: uint, eventType: 
 }
 
 export function handleEntityUpdate(tick: uint, entity: LuaEntity, eventType: string) {
-  let table = Serdes.entityToTable(entity)
+  let table = Converters.entityToTable(entity)
   emitEvent(table, tick, eventType)
 }
 
@@ -33,7 +35,7 @@ export function handleSurfaceUpdate(
     surface: LuaSurface,
     eventType: string
 ) {
-  let table = Serdes.surfaceToTable(surface)
+  let table = Converters.surfaceToTable(surface)
   emitEvent(table, tick, eventType)
 }
 
@@ -44,7 +46,7 @@ export function handleConsoleChat(
     message: string,
     eventType: string,
 ) {
-  let table = Serdes.consoleChat(message, playerIndex)
+  let table = Converters.consoleChat(message, playerIndex)
   emitEvent(table, tick, eventType)
 }
 
@@ -71,8 +73,8 @@ export function handleChunkUpdate(
 
   let tilePositionMap = new Map<PositionData, FactorioTile>();
   for (let tile of tiles) {
-    let position = Serdes.convertMapPosition(tile.position)
-    tilePositionMap.set(position, Serdes.convertTile(tile))
+    let position = Converters.convertMapPosition(tile.position)
+    tilePositionMap.set(position, Converters.convertTile(tile))
   }
   let mapChunk: FactorioTilesMap = {
     objectName: "FactorioTilesMap",

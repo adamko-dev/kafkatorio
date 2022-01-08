@@ -1,7 +1,9 @@
 import {emitPacket} from "../emitKafkatorioPacket";
-import {convertPrototypes} from "../../prototypes/emitPrototypes";
+import {convertPrototypes} from "./convertPrototypes";
+import {updateGlobal} from "./updateGlobal";
 
 export function handleConfigurationUpdate(changeData: ConfigurationChangedData) {
+  updateGlobal()
 
   emitPacket<FactorioConfigurationUpdate>({
     modVersion: global.MOD_VERSION,
