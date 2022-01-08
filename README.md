@@ -6,8 +6,6 @@
     1. converts data to images
     2. hosts a web map
 
-
-
 ## License
 
 While this project is under development, [no license](https://choosealicense.com/no-permission/)
@@ -18,7 +16,7 @@ is provided.
 * add settings
     * is active - whether files are exported or not
     * delete files - clean up all files
-    * tick-rate - how often reports are generated 
+    * tick-rate - how often reports are generated
         * requires on some sort of in-mod cache of map<entity-id, event>
         * also divide by game-speed? to keep ratio the same
 
@@ -42,22 +40,21 @@ is provided.
 
 * https://jbrandhorst.com/post/go-protobuf-tips/
 
+* https://github.com/bakpakin/binser
 
 ##### wasm
 
-kt -> wasm -> lua?
-kt-flatbuffers -> wasm -> lua?
+kt -> wasm -> lua? kt-flatbuffers -> wasm -> lua?
 
 https://www.npmjs.com/package/wasm2lua?activeTab=readme
-
 
 ##### Encodings
 
 * flatbuffers https://github.com/dvidelabs/flatcc
 * z85 encoding
-  * Kotlin https://gist.github.com/ischumacher/b4929f26341ebef62cbce35c65543eda
-  * Lua https://web-eworks.github.io/lZ85/
+    * Kotlin https://gist.github.com/ischumacher/b4929f26341ebef62cbce35c65543eda
+    * Lua https://web-eworks.github.io/lZ85/
 * https://github.com/SafeteeWoW/LibDeflate
-* CBOR 
-  * https://www.zash.se/lua-cbor.html
-  * https://code.zash.se/lua-cbor/archive/68b3a36d0816.tar.gz
+* CBOR
+    * https://www.zash.se/lua-cbor.html
+    * https://code.zash.se/lua-cbor/archive/68b3a36d0816.tar.gz
