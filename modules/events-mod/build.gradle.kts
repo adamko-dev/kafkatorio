@@ -97,7 +97,7 @@ val installEventsTsSchema by tasks.registering(Sync::class) {
 
   dependsOn(typescriptEventsSchema)
 
-  val outputDir = layout.projectDirectory.dir("src/main/typescript/schema")
+  val outputDir = layout.projectDirectory.dir("src/main/typescript/generated/kafkatorio-schema")
   outputs.dir(outputDir)
 
   from(
