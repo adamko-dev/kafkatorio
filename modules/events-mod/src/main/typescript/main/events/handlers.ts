@@ -75,7 +75,7 @@ export function handleChunkUpdate(
   })
 
   let mapChunk: FactorioMapChunk = {
-    objectName: "FactorioTilesMap",
+    objectName: "FactorioMapChunk",
     tiles: convertedTiles,
   }
 
