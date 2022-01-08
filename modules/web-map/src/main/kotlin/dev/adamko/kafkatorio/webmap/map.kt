@@ -1,8 +1,7 @@
 package dev.adamko.kafkatorio.webmap
 
-import externals.leaflet.geo.CRS
-import externals.leaflet.geo.LatLng
-import io.kvision.maps.DefaultTileLayers
+import io.kvision.maps.externals.leaflet.geo.CRS
+import io.kvision.maps.externals.leaflet.geo.LatLng
 import io.kvision.maps.Maps
 import io.kvision.utils.px
 
