@@ -1,7 +1,8 @@
 package dev.adamko.kafkatorio.processor
 
+import dev.adamko.kafkatorio.events.schema.FactorioConfigurationUpdate
 import dev.adamko.kafkatorio.events.schema.FactorioEvent
-import dev.adamko.kafkatorio.events.schema.FactorioObjectData
+import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
 import java.time.Duration
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -27,7 +28,7 @@ class FactorioEventsTopology(
     )
       .mapValues { readOnlyKey, value ->
         println("Mapping $readOnlyKey:$value")
-        jsonMapper.decodeFromString<FactorioEvent<FactorioObjectData>>(value)
+        jsonMapper.decodeFromString<KafkatorioPacket>(value)
       }
       .peek { _, value ->
         websocketServer.sendMessage(jsonMapper.encodeToString(value))
@@ -35,9 +36,14 @@ class FactorioEventsTopology(
       .to(
         { _, value, _ ->
 //        println("[$key] sending event:${value.eventType} to topic:${value.data.objectName()}")
-          value.data.objectName
+          when (value) {
+            is FactorioEvent<*>            ->
+              "kafkatorio.${value.packetType.name}.${value.data.objectName.name}"
+            is FactorioConfigurationUpdate ->
+              "kafkatorio.${value.packetType.name}"
+          }
         },
-        Produced.with(Serdes.String(), JsonSerdes)
+        Produced.with(Serdes.String(), KafkatorioPacketSerde)
       )
 
     val topology = builder.build()

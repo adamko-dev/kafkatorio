@@ -15,5 +15,6 @@ interface FactorioConfigurationUpdate extends KafkatorioPacket {
   allMods: FactorioModInfo[];
   factorioData: FactorioGameDataUpdate;
   modVersion: string;
+  packetType: PacketType;
   prototypes: FactorioPrototype[];
 }

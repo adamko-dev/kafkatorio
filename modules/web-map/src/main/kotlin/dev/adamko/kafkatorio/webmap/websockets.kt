@@ -1,12 +1,19 @@
 package dev.adamko.kafkatorio.webmap
 
+import dev.adamko.kafkatorio.events.schema.ConsoleChatMessage
+import dev.adamko.kafkatorio.events.schema.EntityData
+import dev.adamko.kafkatorio.events.schema.FactorioConfigurationUpdate
 import dev.adamko.kafkatorio.events.schema.FactorioEvent
-import dev.adamko.kafkatorio.events.schema.FactorioObjectData
+import dev.adamko.kafkatorio.events.schema.FactorioMapChunk
+import dev.adamko.kafkatorio.events.schema.FactorioMapTile
+import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
 import dev.adamko.kafkatorio.events.schema.PlayerData
+import dev.adamko.kafkatorio.events.schema.SurfaceData
 import io.kvision.redux.ReduxStore
 import kotlinx.serialization.decodeFromString
 import org.w3c.dom.MessageEvent
 import org.w3c.dom.WebSocket
+
 
 class WebsocketService(
   private val wsUrl: String,
@@ -24,22 +31,28 @@ class WebsocketService(
 
     if (
       data != null
-      && data.trim().startsWith("{")
-      && data.trim().endsWith("}")
+      && data.trim().run { startsWith("{") && endsWith("}") }
     ) {
 
       println(data.replace('\n', ' '))
-      val event: FactorioEvent<FactorioObjectData> = jsonMapper.decodeFromString(data)
 
-      when (val eventData = event.data) {
-        is PlayerData -> {
-          reduxStore.dispatch(FactorioUpdate.PlayerUpdate(event, eventData))
+      when (val event: KafkatorioPacket = jsonMapper.decodeFromString(data)) {
+        is FactorioEvent<*>            -> {
+          when (val eventData = event.data) {
+            is PlayerData         ->
+              reduxStore.dispatch(FactorioUpdate.PlayerUpdate(event, eventData))
+            is ConsoleChatMessage -> {}
+            is EntityData         -> {}
+            is FactorioMapChunk   -> {}
+            is FactorioMapTile    -> {}
+            is SurfaceData        -> {}
+          }
         }
-        else          -> {}
+        is FactorioConfigurationUpdate -> {}
       }
+
     } else {
       println(data)
-
     }
 
   }

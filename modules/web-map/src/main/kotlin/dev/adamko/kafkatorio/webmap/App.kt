@@ -56,7 +56,6 @@ fun main() {
         "ws://localhost:9073/ws",
         reduxStore,
       )
-
       App(
         reduxStore = reduxStore,
         wsService = wsService

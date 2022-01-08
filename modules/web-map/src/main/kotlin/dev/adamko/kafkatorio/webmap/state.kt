@@ -2,15 +2,15 @@ package dev.adamko.kafkatorio.webmap
 
 import dev.adamko.kafkatorio.events.schema.FactorioEvent
 import dev.adamko.kafkatorio.events.schema.PlayerData
-import externals.leaflet.geo.LatLng
-import externals.leaflet.layer.overlay.Tooltip
-import externals.leaflet.layer.vector.CircleMarker
+import io.kvision.maps.externals.leaflet.layer.overlay.Tooltip
+import io.kvision.maps.externals.leaflet.layer.vector.CircleMarker
 import io.kvision.maps.Maps
 import io.kvision.maps.Maps.Companion.L
 import io.kvision.redux.ReduxStore
 import io.kvision.redux.createReduxStore
 import io.kvision.utils.obj
 import redux.RAction
+
 
 fun createFactorioReduxStore(): ReduxStore<FactorioGameState, FactorioUpdate> =
   createReduxStore(
@@ -20,6 +20,7 @@ fun createFactorioReduxStore(): ReduxStore<FactorioGameState, FactorioUpdate> =
       players = emptyMap()
     )
   )
+
 
 data class FactorioGameState(
   val kvMaps: Maps,
@@ -31,6 +32,7 @@ sealed class FactorioUpdate : RAction {
   data class PlayerUpdate(val event: FactorioEvent<*>, val playerData: PlayerData) :
     FactorioUpdate()
 }
+
 
 fun factorioGameReducer(state: FactorioGameState, update: FactorioUpdate): FactorioGameState =
   when (update) {
@@ -77,7 +79,7 @@ data class PlayerState(
         fillColor = color
         fillOpacity = 1f
         radius = 10
-        className = playerData.objectName
+        className = playerData.objectName.name
 //        interactive = false
       }
 

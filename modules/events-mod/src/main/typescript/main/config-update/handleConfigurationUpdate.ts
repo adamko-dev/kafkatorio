@@ -7,6 +7,7 @@ export function handleConfigurationUpdate(changeData: ConfigurationChangedData) 
 
   emitPacket<FactorioConfigurationUpdate>({
     modVersion: global.MOD_VERSION,
+    packetType: "CONFIG",
     allMods: allMods(changeData),
     factorioData: factorioData(changeData),
     prototypes: convertPrototypes()

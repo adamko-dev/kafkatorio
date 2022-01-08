@@ -1,17 +1,20 @@
 package dev.adamko.kafkatorio.events.schema;
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonClassDiscriminator
 
-//@Serializable
-sealed interface KafkatorioPacket {
+
+@Serializable
+@JsonClassDiscriminator("packetType")
+sealed class KafkatorioPacket {
   /** Schema versioning */
-  val modVersion: String
+  abstract val modVersion: String
+  abstract val packetType: PacketType
+
+  enum class PacketType {
+    EVENT, CONFIG,
+  }
 }
-
-
-//enum class PacketDataType {
-//  EVENT, PROTOTYPE, CONFIG_DATA,
-//  ;
-//}
 
 
 //@Serializable

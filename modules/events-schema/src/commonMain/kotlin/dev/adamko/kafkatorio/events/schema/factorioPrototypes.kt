@@ -7,14 +7,17 @@ import kotlinx.serialization.json.JsonClassDiscriminator
 
 @Serializable
 class FactorioPrototypes<T : FactorioPrototype>(
-  override val modVersion: String,
   val prototypes: List<T>,
-) : KafkatorioPacket
+)
 
 @Serializable
 @JsonClassDiscriminator(FactorioPrototype.discriminatorKey)
 sealed class FactorioPrototype {
-  abstract val objectName: String
+  abstract val objectName: PrototypeObjectName
+
+  enum class PrototypeObjectName {
+    LuaTilePrototype
+  }
 
   companion object {
     const val discriminatorKey: String = "objectName"
@@ -34,5 +37,5 @@ data class FactorioMapTilePrototype(
   val canBeMined: Boolean,
 ) : FactorioPrototype() {
   @Transient
-  override val objectName: String = "LuaTilePrototype"
+  override val objectName: PrototypeObjectName = PrototypeObjectName.LuaTilePrototype
 }

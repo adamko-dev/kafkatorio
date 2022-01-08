@@ -9,7 +9,8 @@ import kotlinx.serialization.json.JsonClassDiscriminator
 @JsonClassDiscriminator(FactorioObjectData.discriminatorKey)
 sealed class FactorioObjectData {
 
-  abstract val objectName: String
+  /** @see FactorioObjectData.discriminatorKey */
+  abstract val objectName: ObjectName
 
   // workaround - https://github.com/Kotlin/kotlinx.serialization/issues/1664
 //  val objectName: String by lazy {
@@ -28,11 +29,21 @@ sealed class FactorioObjectData {
 //    }
 //  }
 
+  enum class ObjectName {
+    LuaPlayer,
+    LuaEntity,
+    LuaSurface,
+    FactorioMapChunk,
+    LuaTile,
+    ConsoleChatMessage,
+  }
+
   companion object {
     /** The [JsonClassDiscriminator] for [FactorioEvent] */
     const val discriminatorKey: String = "objectName"
   }
 }
+
 
 @Serializable
 @SerialName("LuaPlayer")
@@ -47,7 +58,7 @@ data class PlayerData(
   val lastOnline: UInt,
 ) : FactorioObjectData() {
   @Transient
-  override val objectName: String = "LuaPlayer"
+  override val objectName = ObjectName.LuaPlayer
 }
 
 @Serializable
@@ -64,7 +75,7 @@ data class EntityData(
   val playerIndex: UInt? = null,
 ) : FactorioObjectData() {
   @Transient
-  override val objectName: String = "LuaEntity"
+  override val objectName = ObjectName.LuaEntity
 }
 
 @Serializable
@@ -75,16 +86,17 @@ data class SurfaceData(
   val name: String,
 ) : FactorioObjectData() {
   @Transient
-  override val objectName: String = "LuaSurface"
+  override val objectName = ObjectName.LuaSurface
 }
 
+/** Quasi-object. This isn't a Factorio Lua type, but a helpful collection of [FactorioMapTile]s */
 @Serializable
 @SerialName("FactorioMapChunk")
 data class FactorioMapChunk(
   val tiles: List<FactorioMapTile>,
 ) : FactorioObjectData() {
   @Transient
-  override val objectName: String = "FactorioMapChunk"
+  override val objectName = ObjectName.FactorioMapChunk
 }
 
 @Serializable
@@ -95,7 +107,7 @@ data class FactorioMapTile(
   val surfaceIndex: Int,
 ) : FactorioObjectData() {
   @Transient
-  override val objectName: String = "LuaTile"
+  override val objectName = ObjectName.LuaTile
 }
 
 @Serializable
@@ -104,5 +116,5 @@ data class ConsoleChatMessage(
   val content: String,
 ) : FactorioObjectData() {
   @Transient
-  override val objectName: String = "ConsoleChatMessage"
+  override val objectName = ObjectName.ConsoleChatMessage
 }

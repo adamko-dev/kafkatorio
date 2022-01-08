@@ -16,4 +16,5 @@ fun main() = runBlocking {
   topology.build()
 
   wsServer.build().asServer(Undertow(9073)).start().block()
+
 }

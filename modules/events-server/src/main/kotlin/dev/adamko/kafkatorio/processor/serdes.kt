@@ -1,7 +1,6 @@
 package dev.adamko.kafkatorio.processor
 
-import dev.adamko.kafkatorio.events.schema.FactorioEvent
-import dev.adamko.kafkatorio.events.schema.FactorioObjectData
+import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -14,12 +13,12 @@ import org.http4k.format.asConfigurable
 import org.http4k.format.withStandardMappings
 
 
-object JsonSerdes : Serde<FactorioEvent<FactorioObjectData>> {
-  override fun serializer() = Serializer<FactorioEvent<FactorioObjectData>> { _, message ->
-    jsonMapper.encodeToString<FactorioEvent<FactorioObjectData>>(message).encodeToByteArray()
+object KafkatorioPacketSerde : Serde<KafkatorioPacket> {
+  override fun serializer() = Serializer<KafkatorioPacket> { _, message ->
+    jsonMapper.encodeToString<KafkatorioPacket>(message).encodeToByteArray()
   }
 
-  override fun deserializer() = Deserializer<FactorioEvent<FactorioObjectData>> { _, bytes ->
+  override fun deserializer() = Deserializer<KafkatorioPacket> { _, bytes ->
     jsonMapper.decodeFromString(bytes.decodeToString())
   }
 }
