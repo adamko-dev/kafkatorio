@@ -20,7 +20,8 @@ class FactorioEventTest : BehaviorSpec({
           "associated_characters_unit_numbers": {},
           "position": {
             "x": -3.5703125,
-            "y": 29.75
+            "y": 29.75,
+            "type": "MAP"
           },
           "last_online": 123
         },
@@ -41,7 +42,8 @@ class FactorioEventTest : BehaviorSpec({
           associatedCharactersUnitNumbers = emptyList(),
           position = PositionData(
             x = -3.5703125,
-            y = 29.75
+            y = 29.75,
+            type = PositionType.MAP,
           ),
           colour = Colour(),
           chatColour = Colour(),
@@ -49,7 +51,6 @@ class FactorioEventTest : BehaviorSpec({
         ),
         eventType = "on_player_joined_game",
         modVersion = "0.0.4",
-        factorioVersion = "1.1.48",
         tick = 1278458u
       )
 
@@ -86,7 +87,6 @@ class FactorioEventTest : BehaviorSpec({
         ),
         eventType = "on_tick",
         modVersion = "0.0.4",
-        factorioVersion = "1.1.48",
         tick = 1278480u
       )
 
@@ -111,7 +111,8 @@ class FactorioEventTest : BehaviorSpec({
           "unit_number": 1,
           "position": {
             "x": -0.25,
-            "y": 30.09375
+            "y": 30.09375,
+            "type": "MAP"
           }
         },
         "event_type": "on_player_changed_position",
@@ -136,11 +137,11 @@ class FactorioEventTest : BehaviorSpec({
           position = PositionData(
             x = -0.25,
             y = 30.09375,
+            type = PositionType.MAP,
           )
         ),
         eventType = "on_player_changed_position",
         modVersion = "0.0.6",
-        factorioVersion = "1.1.48",
         tick = 1384507u
       )
 
