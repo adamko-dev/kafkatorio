@@ -1,7 +1,7 @@
 import {Converters} from "../events/converters";
 
-export function convertPrototypes (): FactorioPrototype[] {
-  let prototypes = new Array<FactorioPrototype>()
+export function convertPrototypes(): FactorioPrototype[] {
+  let prototypes: FactorioPrototype[] = []
 
   prototypes.push(...getMapTilePrototypes())
 

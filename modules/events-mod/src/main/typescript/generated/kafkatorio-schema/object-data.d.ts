@@ -42,16 +42,16 @@ interface SurfaceData extends FactorioObjectData {
   objectName: string;
 }
 
-interface FactorioTile extends FactorioObjectData {
+interface FactorioMapTile extends FactorioObjectData {
   objectName: string;
   position: PositionData;
   prototypeName: string;
   surfaceIndex: int;
 }
 
-interface FactorioTilesMap extends FactorioObjectData {
+interface FactorioMapChunk extends FactorioObjectData {
   objectName: string;
-  tiles: Map<PositionData, FactorioTile>;
+  tiles: FactorioMapTile[];
 }
 
 interface ConsoleChatMessage extends FactorioObjectData {

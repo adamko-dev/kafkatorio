@@ -15,7 +15,7 @@ INSTANCE_ID=$(cat /proc/sys/kernel/random/uuid)
 
 while :; do
   docker logs --tail 0 -f "$FACTORIO_SERVER_CONTAINER_NAME" |
-    sed -n -e 's/^FactorioEvent: //p' |
+    sed -n -e 's/^KafkatorioPacket: //p' |
     kcat -P -T -b "$KAFKA_HOST" -t factorio-server-log -k "$INSTANCE_ID"
 
   echo "Error - retrying in 10 seconds"

@@ -79,17 +79,17 @@ data class SurfaceData(
 }
 
 @Serializable
-@SerialName("FactorioTilesMap")
-data class FactorioTilesMap(
-  val tiles: Map<PositionData, FactorioTile>,
+@SerialName("FactorioMapChunk")
+data class FactorioMapChunk(
+  val tiles: List<FactorioMapTile>,
 ) : FactorioObjectData() {
   @Transient
-  override val objectName: String = "FactorioTilesMap"
+  override val objectName: String = "FactorioMapChunk"
 }
 
 @Serializable
 @SerialName("LuaTile")
-data class FactorioTile(
+data class FactorioMapTile(
   val prototypeName: String,
   val position: PositionData,
   val surfaceIndex: Int,
@@ -102,7 +102,7 @@ data class FactorioTile(
 data class ConsoleChatMessage(
   val authorPlayerIndex: UInt?,
   val content: String,
-)  : FactorioObjectData() {
+) : FactorioObjectData() {
   @Transient
   override val objectName: String = "ConsoleChatMessage"
 }

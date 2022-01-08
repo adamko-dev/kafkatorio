@@ -39,7 +39,6 @@ export function handleSurfaceUpdate(
   emitEvent(table, tick, eventType)
 }
 
-
 export function handleConsoleChat(
     tick: uint,
     playerIndex: uint | undefined,
@@ -64,21 +63,20 @@ export function handleChunkUpdate(
   let x = (position as ChunkPositionTable).x * CHUNK_SIZE
   let y = (position as ChunkPositionTable).y * CHUNK_SIZE
 
-  let tiles = surface?.find_tiles_filtered({
+  let tiles: LuaTile[] = surface?.find_tiles_filtered({
         position: {x: x, y: y},
         radius: CHUNK_SIZE,
         collision_mask: ["ground-tile", "water-tile"]
       }
   ) ?? []
 
-  let tilePositionMap = new Map<PositionData, FactorioTile>();
-  for (let tile of tiles) {
-    let position = Converters.convertMapPosition(tile.position)
-    tilePositionMap.set(position, Converters.convertTile(tile))
-  }
-  let mapChunk: FactorioTilesMap = {
+  let convertedTiles: FactorioMapTile[] = tiles.map((tile: LuaTile) => {
+    return Converters.convertTile(tile)
+  })
+
+  let mapChunk: FactorioMapChunk = {
     objectName: "FactorioTilesMap",
-    tiles: tilePositionMap,
+    tiles: convertedTiles,
   }
 
   emitEvent(mapChunk, tick, eventType)
