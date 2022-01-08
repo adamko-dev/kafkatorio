@@ -7,7 +7,7 @@ services:
     #    logging:
     #      driver: "json-file"
     container_name: "factorio-server"
-    restart: "unless-stopped"
+    restart: "no"
     networks:
       - "kafkatorio-nw"
     ports:
