@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
   idea
-  id("dev.adamko.kafkatorio.lang.node")
+  dev.adamko.kafkatorio.lang.node
   distribution
 }
 
@@ -60,7 +60,7 @@ val typescriptToLua by tasks.registering(NpmTask::class) {
   description = "Convert Typescript To Lua"
   group = project.name
 
-  dependsOn(tasks.npmInstall, installEventsTsSchema)
+  dependsOn(tasks.npmInstall, installEventsTsSchema, tasks.updatePackageJson)
 
   execOverrides { standardOutput = System.out }
 
@@ -214,5 +214,3 @@ tasks.assemble { dependsOn(installEventsTsSchema, tasks.updatePackageJson) }
 //      }
 //    }
 //  }
-
-tasks.npmInstall

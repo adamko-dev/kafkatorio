@@ -80,8 +80,8 @@ val generateTypescript by tasks.registering(JavaExec::class) {
 
   mainClass.set("dev.adamko.kafkatorio.events.schema.Kt2tsKt")
 
-  val generatedFile = file("$temporaryDir/${project.name}.ts")
-  args(generatedFile)
+  val tempOutputDirectory = file("$temporaryDir")
+  args(tempOutputDirectory)
 
   val buildOutput = layout.buildDirectory.dir("generated/typescript")
   outputs.dir(buildOutput)

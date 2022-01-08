@@ -6,9 +6,19 @@ import kotlinx.serialization.Transient
 import kotlinx.serialization.json.JsonClassDiscriminator
 
 @Serializable
-@JsonClassDiscriminator(FactorioObjectDataDiscriminatorKey)
+class FactorioPrototypes<T : FactorioPrototype>(
+  override val modVersion: String,
+  val prototypes: List<T>,
+) : KafkatorioPacket
+
+@Serializable
+@JsonClassDiscriminator(FactorioPrototype.discriminatorKey)
 sealed class FactorioPrototype {
   abstract val objectName: String
+
+  companion object {
+    const val discriminatorKey: String = "objectName"
+  }
 }
 
 @Serializable
@@ -20,7 +30,7 @@ data class FactorioMapTilePrototype(
   val collisionMasks: List<String>,
   val order: String,
 
-  /** Is this tile mineable at all? */
+  /** Can the tile be mined for resources? */
   val canBeMined: Boolean,
 ) : FactorioPrototype() {
   @Transient

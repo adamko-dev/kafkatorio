@@ -3,15 +3,15 @@ export namespace Serdes {
   export function playerToTable(player: LuaPlayer): PlayerData {
     let charIds = entitiesToUnitNumbers(player.get_associated_characters())
     return {
-      object_name: player.object_name,
+      objectName: player.object_name,
 
       name: player.name,
-      character_unit_number: player.character?.unit_number ?? null,
-      associated_characters_unit_numbers: charIds,
-      position: positionTableToTable(player.position),
+      characterUnitNumber: player.character?.unit_number ?? null,
+      associatedCharactersUnitNumbers: charIds,
+      position: convertMapPosition(player.position),
       colour: mapColour(player.color),
-      chat_colour: mapColour(player.chat_color),
-      last_online: player.last_online
+      chatColour: mapColour(player.chat_color),
+      lastOnline: player.last_online
     }
   }
 
@@ -20,20 +20,20 @@ export namespace Serdes {
     let player: LuaPlayer | null = entity.is_player() ? entity.player!! : null
 
     return {
-      object_name: entity.object_name,
+      objectName: entity.object_name,
 
       // entity data
       name: entity.name,
       type: entity.type,
       active: entity.active,
       health: entity.health ?? null,
-      health_ratio: entity.get_health_ratio(),
-      surface_index: entity.surface.index,
-      unit_number: entity.unit_number ?? null,
-      position: positionTableToTable(entity.position),
+      healthRatio: entity.get_health_ratio(),
+      surfaceIndex: entity.surface.index,
+      unitNumber: entity.unit_number ?? null,
+      position: convertMapPosition(entity.position),
 
       // player data
-      player_index: player?.index ?? null
+      playerIndex: player?.index ?? null
     }
   }
 
@@ -49,7 +49,7 @@ export namespace Serdes {
 
   export function surfaceToTable(surface: LuaSurface): SurfaceData {
     return {
-      object_name: surface.object_name,
+      objectName: surface.object_name,
 
       name: surface.name,
       index: surface.index,
@@ -57,10 +57,11 @@ export namespace Serdes {
     }
   }
 
-  export function positionTableToTable(positionTable: PositionTable): PositionData {
+  export function convertMapPosition(mapPos: MapPositionTable): PositionData {
     return {
-      x: positionTable.x,
-      y: positionTable.y,
+      type: "MAP",
+      x: mapPos.x,
+      y: mapPos.y,
     }
   }
 
@@ -75,20 +76,20 @@ export namespace Serdes {
 
   export function consoleChat(content: string, playerIndex?: uint): ConsoleChatMessage {
     return {
-      object_name: "ConsoleChatMessage",
+      objectName: "ConsoleChatMessage",
 
-      author_player_index: playerIndex ?? null,
+      authorPlayerIndex: playerIndex ?? null,
       content: content
     }
   }
 
   export function convertTile(tile: LuaTile): FactorioTile {
     return {
-      object_name: tile.object_name,
+      objectName: tile.object_name,
 
-      position: tile.position,
-      prototype_name: tile.prototype.name,
-      surface_index: tile.surface.index
+      position: convertMapPosition(tile.position),
+      prototypeName: tile.prototype.name,
+      surfaceIndex: tile.surface.index
     }
   }
 

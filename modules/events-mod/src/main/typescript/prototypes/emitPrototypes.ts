@@ -1,42 +1,36 @@
 import {Serdes} from "../events/serdes";
 
-export function emitTiles() {
+export function convertPrototypes (): FactorioPrototype[] {
+  let prototypes = new Array<FactorioPrototype>()
 
-  let tilePrototypes = new LuaTable<string, FactorioMapTilePrototype>()
+  prototypes.push(...getMapTilePrototypes())
 
-  for (const [_, tile] of pairs(game.tile_prototypes)) {
-    // let ttttt = game.tile_prototypes[tileName]
-    tilePrototypes.set(tile.name, mapTilePrototype(tile))
-  }
-
-  // for (let tileName in game.tile_prototypes) {
-  //   const tile = game.tile_prototypes[tileName]
-  //   tilePrototypes.set(tileName, mapTilePrototype(tile))
-  // }
-
-  // for (const [id, player] of pairs(game.players)) {
-  //   const num: number = id
-  //   const p: LuaPlayer = player
-  // }
-  emitPrototypes(tilePrototypes)
+  return prototypes
 }
 
-function mapTilePrototype(tile: LuaTilePrototype): FactorioMapTilePrototype {
-  return {
-    object_name: tile.object_name,
+function getMapTilePrototypes(): FactorioMapTilePrototype[] {
+  let tiles: FactorioMapTilePrototype[] = []
+  for (let [_, tile] of pairs(game.tile_prototypes)) {
+    tiles.push(
+        <FactorioMapTilePrototype>{
+          objectName: tile.object_name,
 
-    name: tile.name,
-    order: tile.order,
-    layer: tile.layer,
-    collision_masks: [],
-    map_color: Serdes.mapColour(tile.map_color),
-    can_be_mined: tile.mineable_properties.minable,
+          name: tile.name,
+          order: tile.order,
+          layer: tile.layer,
+          collisionMasks: convertCollisionMaskToNames(tile.collision_mask),
+          mapColor: Serdes.mapColour(tile.map_color),
+          canBeMined: tile.mineable_properties.minable,
+        }
+    )
   }
+  return tiles
 }
 
-function emitPrototypes<T extends FactorioPrototype>(prototypes: LuaTable<string, T>) {
-
-  let data = game.table_to_json(prototypes)
-
-  localised_print(`FactorioPrototype: ${data}`)
+function convertCollisionMaskToNames(cm: CollisionMask): string[] {
+  let masks: string[] = []
+  for (let [name, _] of pairs(cm)) {
+    masks.push(name)
+  }
+  return masks
 }

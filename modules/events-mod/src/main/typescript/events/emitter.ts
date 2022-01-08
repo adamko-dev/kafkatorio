@@ -9,9 +9,8 @@ export function emitEvent<T extends FactorioObjectData>(eventData: T, tick: uint
 
   let event: FactorioEvent<T> = {
     data: eventData,
-    event_type: eventType,
-    mod_version: MOD_VERSION,
-    factorio_version: FACTORIO_VERSION,
+    eventType: eventType,
+    modVersion: MOD_VERSION,
     tick: tick
   }
 

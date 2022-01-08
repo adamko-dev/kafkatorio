@@ -1,8 +1,5 @@
-import {emitTiles} from "./prototypes/emitPrototypes";
+import {handleConfigurationUpdate} from "./main/config-update/handleConfigurationUpdate";
 
 require("events")
 
-// on startup, push out prototypes
-script.on_configuration_changed((e: ConfigurationChangedData) => {
-  emitTiles()
-})
+script.on_configuration_changed(handleConfigurationUpdate)

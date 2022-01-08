@@ -50,10 +50,12 @@ export function handleConsoleChat(
 
 const CHUNK_SIZE = 32
 
-export function handleChunkUpdate(tick: uint,
-                                  eventType: string,
-                                  surfaceIndex: uint,
-                                  position: ChunkPosition) {
+export function handleChunkUpdate(
+    tick: uint,
+    eventType: string,
+    surfaceIndex: uint,
+    position: ChunkPosition
+) {
 
   let surface = game.get_surface(surfaceIndex)
 
@@ -69,14 +71,13 @@ export function handleChunkUpdate(tick: uint,
 
   let tilePositionMap = new Map<PositionData, FactorioTile>();
   for (let tile of tiles) {
-    let position = Serdes.positionTableToTable(tile.position)
+    let position = Serdes.convertMapPosition(tile.position)
     tilePositionMap.set(position, Serdes.convertTile(tile))
   }
   let mapChunk: FactorioTilesMap = {
-    object_name: "FactorioTilesMap",
+    objectName: "FactorioTilesMap",
     tiles: tilePositionMap,
   }
 
   emitEvent(mapChunk, tick, eventType)
-
 }
