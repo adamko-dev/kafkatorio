@@ -1,6 +1,5 @@
 package dev.adamko.kafkatorio.lang
 
-import org.gradle.kotlin.dsl.kotlin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -16,13 +15,7 @@ kotlin {
 
 dependencies {
 
-  //<editor-fold desc="Main">
-
   implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-
-  //</editor-fold>
-
-  //<editor-fold desc="Test">
 
   val junitVersion = "5.8.2"
   testImplementation(platform("org.junit:junit-bom:$junitVersion"))
@@ -33,14 +26,12 @@ dependencies {
 
   val kotestVersion = "5.0.3"
   testImplementation(platform("io.kotest:kotest-bom:$kotestVersion"))
-  testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
-  testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
-  testImplementation("io.kotest:kotest-property:$kotestVersion")
-  testImplementation("io.kotest:kotest-assertions-json:$kotestVersion")
+  testImplementation("io.kotest:kotest-runner-junit5")
+  testImplementation("io.kotest:kotest-assertions-core")
+  testImplementation("io.kotest:kotest-property")
+  testImplementation("io.kotest:kotest-assertions-json")
 
-  testImplementation("io.mockk:mockk:1.12.0")
-
-  //</editor-fold>
+  testImplementation("io.mockk:mockk:1.12.1")
 
 }
 
