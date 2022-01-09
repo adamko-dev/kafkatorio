@@ -29,7 +29,7 @@ internal class ListAsObjectSerializer<T>(dataSerializer: KSerializer<T>) :
 val jsonMapperKafkatorio = Json {
   prettyPrint = true
   prettyPrintIndent = "  "
-  serializersModule =  FactorioEvent.kxsModule
+//  serializersModule =  FactorioEvent.kxsModule
 //  serializersModule = KafkatorioPacket.kxsModule + FactorioEvent.kxsModule
 //  serializersModule = SerializersModule { }
 }
