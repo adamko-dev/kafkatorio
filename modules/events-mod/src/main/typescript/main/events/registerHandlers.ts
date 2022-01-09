@@ -3,8 +3,11 @@ import {
   handleConsoleChat,
   handleEntityUpdate,
   handlePlayerUpdate,
-  handleSurfaceUpdate
+  handleSurfaceUpdate,
+  handleTilesUpdate
 } from "./handlers";
+import on_player_built_tile = defines.events.on_player_built_tile;
+import on_robot_built_tile = defines.events.on_robot_built_tile;
 
 const mapEventIdToName = new LuaTable<defines.Events, keyof typeof defines.events>()
 for (const [k, v] of pairs(defines.events)) {
@@ -62,6 +65,19 @@ script.on_event(
 script.on_event(
     defines.events.on_chunk_generated,
     (e: OnChunkGeneratedEvent) => {
-      handleChunkUpdate(e.tick, mapEventIdToName.get(e.name), e.surface.index, e.position)
+      handleChunkUpdate(e.tick, mapEventIdToName.get(e.name), e.surface.index, e.position, e.area)
+    }
+)
+
+script.on_event(
+    [on_player_built_tile, on_robot_built_tile],
+    (builtTilesEvent) => {
+      handleTilesUpdate(
+          builtTilesEvent.tick,
+          mapEventIdToName.get(builtTilesEvent.name),
+          builtTilesEvent.surface_index,
+          builtTilesEvent.tile,
+          builtTilesEvent.tiles,
+      )
     }
 )

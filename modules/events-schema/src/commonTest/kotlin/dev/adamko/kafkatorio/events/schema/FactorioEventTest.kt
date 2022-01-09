@@ -19,7 +19,6 @@ class FactorioEventTest : FunSpec({
            "characterUnitNumber": 1,
            "associatedCharactersUnitNumbers": {},
            "position": {
-             "type": "MAP",
              "x": 30.6,
              "y": 84.1
            },
@@ -53,8 +52,7 @@ class FactorioEventTest : FunSpec({
             name = "fredthedeadhead",
             characterUnitNumber = 1u,
             associatedCharactersUnitNumbers = emptyList(),
-            position = PositionData(
-              type = PositionType.MAP,
+            position = MapEntityPosition(
               x = 30.6,
               y = 84.1,
             ),
@@ -148,7 +146,6 @@ class FactorioEventTest : FunSpec({
           "surfaceIndex": 1,
           "unitNumber": 1,
           "position": {
-            "type": "MAP",
             "x": 37.5,
             "y": 81.1
           }
@@ -174,10 +171,9 @@ class FactorioEventTest : FunSpec({
             surfaceIndex = 1,
             unitNumber = 1u,
             playerIndex = null,
-            position = PositionData(
+            position = MapEntityPosition(
               x = 37.5,
               y = 81.1,
-              type = PositionType.MAP,
             )
           ),
           eventType = "on_player_changed_position",

@@ -38,6 +38,7 @@ sealed class FactorioObjectData {
     LuaSurface,
     MapChunk,
     LuaTile,
+    LuaTiles,
     ConsoleChatMessage,
   }
 }
@@ -63,6 +64,7 @@ object FactorioObjectDataSerializer : JsonContentPolymorphicSerializer<FactorioO
       FactorioObjectData.ObjectName.LuaSurface         -> SurfaceData.serializer()
       FactorioObjectData.ObjectName.MapChunk           -> MapChunk.serializer()
       FactorioObjectData.ObjectName.LuaTile            -> MapTile.serializer()
+      FactorioObjectData.ObjectName.LuaTiles            -> MapTiles.serializer()
       FactorioObjectData.ObjectName.ConsoleChatMessage -> ConsoleChatMessage.serializer()
       null                                             ->
         throw Exception("Unknown FactorioObjectData $key: '$type' ")
@@ -112,21 +114,30 @@ data class SurfaceData(
   override val objectName = ObjectName.LuaSurface
 }
 
-/** Quasi-object. This isn't a Factorio Lua type, but a helpful collection of [MapTile]s */
+/** This isn't a Factorio Lua type, but a helpful collection of Chunk info */
 @Serializable
 data class MapChunk(
-  val tiles: List<MapTile>,
+  val tiles: MapTiles,
   val position: MapChunkPosition,
 ) : FactorioObjectData() {
   @EncodeDefault
   override val objectName = ObjectName.MapChunk
 }
 
+/** This isn't a Factorio Lua type, but a helpful collection of [MapTile]s */
+@Serializable
+data class MapTiles(
+  val surfaceIndex: Int,
+  val tiles: List<MapTile>,
+) : FactorioObjectData() {
+  @EncodeDefault
+  override val objectName = ObjectName.LuaTiles
+}
+
 @Serializable
 data class MapTile(
   val prototypeName: String,
   val position: MapTilePosition,
-  val surfaceIndex: Int,
 ) : FactorioObjectData() {
   @EncodeDefault
   override val objectName = ObjectName.LuaTile

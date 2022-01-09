@@ -71,7 +71,6 @@ export namespace Converters {
     }
   }
 
-
   export function mapChunkPosition(mapPos: ChunkPositionTable): MapChunkPosition {
     return {
       x: mapPos.x,
@@ -103,8 +102,16 @@ export namespace Converters {
 
       position: mapTilePosition(tile.position),
       prototypeName: tile.prototype.name,
-      surfaceIndex: tile.surface.index
     }
   }
+
+  // export function convertMapTilePositionToMapChunkPosition(
+  //     tilePosition: TilePositionTable
+  // ): ChunkPositionTable {
+  //   return {
+  //     x: tilePosition.x / 32,
+  //     y: tilePosition.y / 32,
+  //   }
+  // }
 
 }

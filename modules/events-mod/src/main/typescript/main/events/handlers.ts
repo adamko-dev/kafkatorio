@@ -50,23 +50,25 @@ export function handleConsoleChat(
   emitEvent(table, tick, eventType)
 }
 
-const CHUNK_SIZE = 32
+// const CHUNK_SIZE = 32
 
 export function handleChunkUpdate(
     tick: uint,
     eventType: string,
     surfaceIndex: uint,
-    position: ChunkPositionTable
+    position: ChunkPositionTable,
+    area: BoundingBoxTable,
 ) {
 
   let surface = game.get_surface(surfaceIndex)
 
-  let x = (position as ChunkPositionTable).x * CHUNK_SIZE
-  let y = (position as ChunkPositionTable).y * CHUNK_SIZE
+  // let x = (position as ChunkPositionTable).x * CHUNK_SIZE
+  // let y = (position as ChunkPositionTable).y * CHUNK_SIZE
 
   let tiles: LuaTile[] = surface?.find_tiles_filtered({
-        position: {x: x, y: y},
-        radius: CHUNK_SIZE,
+        area: area,
+        // position: {x: x, y: y},
+        // radius: CHUNK_SIZE,
         collision_mask: ["ground-tile", "water-tile"]
       }
   ) ?? []
@@ -77,9 +79,47 @@ export function handleChunkUpdate(
 
   let mapChunk: MapChunk = {
     objectName: "MapChunk",
-    tiles: convertedTiles,
+    tiles: createMapTiles(surfaceIndex, convertedTiles),
     position: mapChunkPosition(position)
   }
 
   emitEvent(mapChunk, tick, eventType)
+}
+
+export function handleTilesUpdate(
+    tick: uint,
+    eventType: string,
+    surfaceIndex: uint,
+    newTileType: LuaTilePrototype,
+    updatedTiles: OldTileAndPosition[],
+) {
+
+  if (!newTileType.collision_mask["ground-tile"] && !newTileType.collision_mask["water-tile"]) {
+    return
+  } else {
+
+    let convertedTiles: MapTile[] = updatedTiles.map((it) => {
+      return {
+        objectName: "LuaTile",
+        position: it.position,
+        prototypeName: newTileType.name,
+        surfaceIndex: surfaceIndex
+      }
+    })
+
+    let mapTiles: MapTiles = createMapTiles(surfaceIndex, convertedTiles)
+
+    emitEvent(mapTiles, tick, eventType)
+  }
+}
+
+function createMapTiles(
+    surfaceIndex: uint,
+    tiles: MapTile[],
+): MapTiles {
+  return {
+    objectName: "LuaTiles",
+    surfaceIndex: surfaceIndex,
+    tiles: tiles,
+  }
 }
