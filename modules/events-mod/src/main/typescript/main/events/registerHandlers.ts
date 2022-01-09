@@ -48,15 +48,6 @@ script.on_event(
         for (const [, surface] of pairs(game.surfaces)) {
           handleSurfaceUpdate(e.tick, mapEventIdToName.get(e.name), surface)
         }
-
-        // for (const [index, _] of pairs(game.surfaces)) {
-        //   let surface = game.get_surface(index) // TODO fix / report can't iterate over surfaces
-        //   if (surface != undefined) {
-        //     handleSurfaceUpdate(e.tick, surface, mapEventIdToName.get(e.name))
-        //   }
-        ////   let surface = game.surfaces[index]
-        ////   surfaceEvent(e.tick, surface, mapEventIdToName.get(e.name))
-        // }
       }
     }
 )
@@ -69,8 +60,8 @@ script.on_event(
 )
 
 script.on_event(
-    defines.events.on_chunk_charted,
-    (e: OnChunkChartedEvent) => {
-      handleChunkUpdate(e.tick, mapEventIdToName.get(e.name), e.surface_index, e.position)
+    defines.events.on_chunk_generated,
+    (e: OnChunkGeneratedEvent) => {
+      handleChunkUpdate(e.tick, mapEventIdToName.get(e.name), e.surface.index, e.position)
     }
 )
