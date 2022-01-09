@@ -193,4 +193,97 @@ class FactorioEventTest : FunSpec({
     }
 
   }
+
+  context("Given: LuaTiles on_player_built_tile") {
+    // language=JSON
+    val json = """
+      {
+        "data": {
+          "objectName": "LuaTiles",
+          "surfaceIndex": 1,
+          "tiles": [
+            {
+              "objectName": "LuaTile",
+              "position": {
+                "y": 10,
+                "x": -65
+              },
+              "prototypeName": "refined-concrete"
+            },
+            {
+              "objectName": "LuaTile",
+              "position": {
+                "y": 11,
+                "x": -65
+              },
+              "prototypeName": "refined-concrete"
+            },
+            {
+              "objectName": "LuaTile",
+              "position": {
+                "y": 10,
+                "x": -64
+              },
+              "prototypeName": "refined-concrete"
+            },
+            {
+              "objectName": "LuaTile",
+              "position": {
+                "y": 11,
+                "x": -64
+              },
+              "prototypeName": "refined-concrete"
+            }
+          ]
+        },
+        "packetType": "EVENT",
+        "eventType": "on_player_built_tile",
+        "modVersion": "0.2.2",
+        "tick": 2429929
+      }
+    """.trimIndent()
+    context("When: decoded") {
+      val actual: KafkatorioPacket = jsonMapperKafkatorio.decodeFromString(json)
+
+      test("parse") {
+
+        val expected = FactorioEvent(
+          data = MapTiles(
+            surfaceIndex = 1,
+            tiles = listOf(
+              MapTile(
+                prototypeName = "refined-concrete",
+                position = MapTilePosition(-65, 10)
+              ),
+              MapTile(
+                prototypeName = "refined-concrete",
+                position = MapTilePosition(-65, 11)
+              ),
+              MapTile(
+                prototypeName = "refined-concrete",
+                position = MapTilePosition(-64, 10)
+              ),
+              MapTile(
+                prototypeName = "refined-concrete",
+                position = MapTilePosition(-64, 11)
+              ),
+            )
+          ),
+          eventType = "on_player_built_tile",
+          modVersion = "0.2.2",
+          tick = 2429929u
+        )
+
+        actual shouldBe expected
+
+        expected.data.objectName shouldBe FactorioObjectData.ObjectName.LuaTiles
+      }
+
+      test("Then: expect encode equals json") {
+        val encoded = jsonMapperKafkatorio.encodeToString(actual)
+        encoded.shouldEqualJson(json)
+      }
+    }
+
+  }
 })
