@@ -4,6 +4,7 @@ import dev.adamko.kafkatorio.gradle.typescriptAttributes
 plugins {
   kotlin("multiplatform")
   kotlin("plugin.serialization")
+  id("io.kotest.multiplatform") version "5.0.2"
   distribution
 }
 
@@ -12,7 +13,11 @@ kotlin {
     binaries.executable()
     nodejs()
   }
-  jvm()
+  jvm {
+    testRuns["test"].executionTask.configure {
+      useJUnitPlatform()
+    }
+  }
 
   @Suppress("UnstableApiUsage") // enforcedPlatform is incubating
   sourceSets {
@@ -22,7 +27,6 @@ kotlin {
         optIn("kotlin.RequiresOptIn")
         optIn("kotlin.ExperimentalStdlibApi")
         optIn("kotlin.time.ExperimentalTime")
-        optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
         optIn("kotlinx.serialization.ExperimentalSerializationApi")
         optIn("kotlin.js.ExperimentalJsExport")
       }
@@ -35,7 +39,6 @@ kotlin {
         implementation(project.dependencies.platform(libs.kotlinx.serialization.bom))
         implementation(libs.kotlinx.serialization.core)
         implementation(libs.kotlinx.serialization.json)
-
       }
     }
 
