@@ -25,4 +25,4 @@ val dockerBuildKafkaPipe by tasks.registering(Exec::class) {
   workingDir = dockerSrcDir.asFile
   commandLine = parseSpaceSeparatedArgs(""" docker-compose build kafka-pipe """)
 }
-//tasks.assemble { dependsOn(dockerBuildKafkaPipe) }
+tasks.assemble { dependsOn(dockerBuildKafkaPipe) }
