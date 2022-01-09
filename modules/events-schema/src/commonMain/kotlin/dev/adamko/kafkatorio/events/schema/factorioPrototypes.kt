@@ -1,31 +1,50 @@
 package dev.adamko.kafkatorio.events.schema
 
-import kotlinx.serialization.SerialName
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
-import kotlinx.serialization.json.JsonClassDiscriminator
+import kotlinx.serialization.json.JsonContentPolymorphicSerializer
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
-@Serializable
-class FactorioPrototypes<T : FactorioPrototype>(
-  val prototypes: List<T>,
-)
 
-@Serializable
-@JsonClassDiscriminator(FactorioPrototype.discriminatorKey)
+@Serializable(with = FactorioPrototypeSerializer::class)
 sealed class FactorioPrototype {
-  abstract val objectName: PrototypeObjectName
+  @EncodeDefault
+  abstract val objectName: ObjectName
 
-  enum class PrototypeObjectName {
+  enum class ObjectName {
     LuaTilePrototype
-  }
-
-  companion object {
-    const val discriminatorKey: String = "objectName"
   }
 }
 
+object FactorioPrototypeSerializer : JsonContentPolymorphicSerializer<FactorioPrototype>(
+  FactorioPrototype::class
+) {
+  private val key = FactorioPrototype::objectName.name
+
+  override fun selectDeserializer(element: JsonElement): DeserializationStrategy<out FactorioPrototype> {
+
+    val type = element
+      .jsonObject[key]
+      ?.jsonPrimitive
+      ?.contentOrNull
+      ?.let { json ->
+        FactorioPrototype.ObjectName.values().firstOrNull { it.name == json }
+      }
+
+    return when (type) {
+      FactorioPrototype.ObjectName.LuaTilePrototype -> FactorioMapTilePrototype.serializer()
+      null                                          ->
+        throw Exception("Unknown FactorioPrototype $key: '$type' ")
+    }
+  }
+}
+
+
 @Serializable
-@SerialName("LuaTilePrototype")
 data class FactorioMapTilePrototype(
   val name: String,
   val layer: UInt,
@@ -36,6 +55,6 @@ data class FactorioMapTilePrototype(
   /** Can the tile be mined for resources? */
   val canBeMined: Boolean,
 ) : FactorioPrototype() {
-  @Transient
-  override val objectName: PrototypeObjectName = PrototypeObjectName.LuaTilePrototype
+  @EncodeDefault
+  override val objectName: ObjectName = ObjectName.LuaTilePrototype
 }

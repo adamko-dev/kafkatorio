@@ -12,7 +12,6 @@ import kotlinx.serialization.json.jsonPrimitive
 @Serializable(with = FactorioObjectDataSerializer::class)
 sealed class FactorioObjectData {
 
-  /** @see FactorioObjectData.discriminatorKey */
   @EncodeDefault
   abstract val objectName: ObjectName
 
