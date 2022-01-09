@@ -22,10 +22,17 @@ interface Colour {
   red: float;
 }
 
-type PositionType = "MAP" | "CHUNK" | "TILE";
-
-interface PositionData {
-  type: PositionType | null;
+interface MapEntityPosition {
   x: double;
   y: double;
+}
+
+interface MapChunkPosition {
+  x: int;
+  y: int;
+}
+
+interface MapTilePosition {
+  x: int;
+  y: int;
 }

@@ -1,18 +1,59 @@
 package dev.adamko.kafkatorio.events.schema
 
+import kotlin.math.roundToInt
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
 
+const val MAP_CHUNK_SIZE = 32
+
+/**
+ * Coordinates of a [EntityData] on a map.
+ *
+ * A [MapEntityPosition] can be translated to a [MapChunkPosition] by dividing the `x`/`y` values
+ * by [32][MAP_CHUNK_SIZE].
+ */
 @Serializable
-data class PositionData(
+data class MapEntityPosition(
   val x: Double,
   val y: Double,
-  val type: PositionType?,
-)
+) {
 
+  fun toMapChunkPosition() = MapChunkPosition(
+    (x / MAP_CHUNK_SIZE).roundToInt(),
+    (y / MAP_CHUNK_SIZE).roundToInt(),
+  )
+
+}
+
+/** Coordinates of a chunk in a [SurfaceData] where each integer `x`/`y` represents a different
+ * chunk.
+ *
+ * A [MapChunkPosition] can be translated to a [MapEntityPosition] by multiplying the `x`/`y`
+ * values by [32][MAP_CHUNK_SIZE].
+ */
 @Serializable
-enum class PositionType {
-  MAP, CHUNK, TILE,
+data class MapChunkPosition(
+  val x: Int,
+  val y: Int,
+) {
+  fun toMapEntityPosition() = MapEntityPosition(
+    x * MAP_CHUNK_SIZE.toDouble(),
+    y * MAP_CHUNK_SIZE.toDouble(),
+  )
+}
+
+/**
+ * Coordinates of a tile in a chunk on a [SurfaceData] where each integer `x`/`y` represents a
+ * different [MapTile].
+ *
+ * It rounds any `x`/`y` down to whole numbers.
+ */
+@Serializable
+data class MapTilePosition(
+  val x: Int,
+  val y: Int,
+) {
+  constructor(x: Number, y: Number) : this(x.toInt(), y.toInt())
 }
 
 /**

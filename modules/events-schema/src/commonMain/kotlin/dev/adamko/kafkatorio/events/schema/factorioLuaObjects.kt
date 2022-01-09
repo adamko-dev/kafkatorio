@@ -77,7 +77,7 @@ data class PlayerData(
   val associatedCharactersUnitNumbers: List<UInt>,
   val characterUnitNumber: UInt?,
   val name: String,
-  val position: PositionData,
+  val position: MapEntityPosition,
   val colour: Colour,
   val chatColour: Colour,
   val lastOnline: UInt,
@@ -92,7 +92,7 @@ data class EntityData(
   val health: Double?,
   val healthRatio: Double,
   val name: String,
-  val position: PositionData,
+  val position: MapEntityPosition,
   val surfaceIndex: Int,
   val type: String,
   val unitNumber: UInt? = null,
@@ -116,6 +116,7 @@ data class SurfaceData(
 @Serializable
 data class MapChunk(
   val tiles: List<MapTile>,
+  val position: MapChunkPosition,
 ) : FactorioObjectData() {
   @EncodeDefault
   override val objectName = ObjectName.MapChunk
@@ -124,7 +125,7 @@ data class MapChunk(
 @Serializable
 data class MapTile(
   val prototypeName: String,
-  val position: PositionData,
+  val position: MapTilePosition,
   val surfaceIndex: Int,
 ) : FactorioObjectData() {
   @EncodeDefault

@@ -8,7 +8,7 @@ export namespace Converters {
       name: player.name,
       characterUnitNumber: player.character?.unit_number ?? null,
       associatedCharactersUnitNumbers: charIds,
-      position: convertMapPosition(player.position),
+      position: mapEntityPosition(player.position),
       colour: mapColour(player.color),
       chatColour: mapColour(player.chat_color),
       lastOnline: player.last_online
@@ -30,7 +30,7 @@ export namespace Converters {
       healthRatio: entity.get_health_ratio(),
       surfaceIndex: entity.surface.index,
       unitNumber: entity.unit_number ?? null,
-      position: convertMapPosition(entity.position),
+      position: mapEntityPosition(entity.position),
 
       // player data
       playerIndex: player?.index ?? null
@@ -57,9 +57,23 @@ export namespace Converters {
     }
   }
 
-  export function convertMapPosition(mapPos: MapPositionTable): PositionData {
+  export function mapEntityPosition(mapPos: MapPositionTable): MapEntityPosition {
     return {
-      type: "MAP",
+      x: mapPos.x,
+      y: mapPos.y,
+    }
+  }
+
+  export function mapTilePosition(mapPos: MapPositionTable): MapTilePosition {
+    return {
+      x: mapPos.x,
+      y: mapPos.y,
+    }
+  }
+
+
+  export function mapChunkPosition(mapPos: ChunkPositionTable): MapChunkPosition {
+    return {
       x: mapPos.x,
       y: mapPos.y,
     }
@@ -87,7 +101,7 @@ export namespace Converters {
     return {
       objectName: tile.object_name,
 
-      position: convertMapPosition(tile.position),
+      position: mapTilePosition(tile.position),
       prototypeName: tile.prototype.name,
       surfaceIndex: tile.surface.index
     }

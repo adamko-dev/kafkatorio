@@ -14,7 +14,7 @@ interface PlayerData extends FactorioObjectData {
   lastOnline: uint;
   name: string;
   objectName: ObjectName;
-  position: PositionData;
+  position: MapEntityPosition;
 }
 
 interface EntityData extends FactorioObjectData {
@@ -24,7 +24,7 @@ interface EntityData extends FactorioObjectData {
   name: string;
   objectName: ObjectName;
   playerIndex: uint | null;
-  position: PositionData;
+  position: MapEntityPosition;
   surfaceIndex: int;
   type: string;
   unitNumber: uint | null;
@@ -39,13 +39,14 @@ interface SurfaceData extends FactorioObjectData {
 
 interface MapTile extends FactorioObjectData {
   objectName: ObjectName;
-  position: PositionData;
+  position: MapTilePosition;
   prototypeName: string;
   surfaceIndex: int;
 }
 
 interface MapChunk extends FactorioObjectData {
   objectName: ObjectName;
+  position: MapChunkPosition;
   tiles: MapTile[];
 }
 
