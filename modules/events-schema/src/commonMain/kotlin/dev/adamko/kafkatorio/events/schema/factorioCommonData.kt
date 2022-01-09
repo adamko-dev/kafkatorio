@@ -40,12 +40,3 @@ data class Colour(
   fun isPercentage(): Boolean = !isDecimal()
 
 }
-
-//@Serializable
-//@SerialName("FactorioTiles")
-//data class FactorioTiles(
-//  val tiles: List<FactorioTile>,
-//) : FactorioObjectData() {
-//  @Transient
-//  override val objectName: String = "FactorioTiles"
-//}

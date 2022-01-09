@@ -3,16 +3,13 @@ package dev.adamko.kafkatorio.events.schema
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonClassDiscriminator
 import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
-//@Serializable
 @Serializable(with = FactorioObjectDataSerializer::class)
-//@JsonClassDiscriminator(FactorioObjectData.discriminatorKey)
 sealed class FactorioObjectData {
 
   /** @see FactorioObjectData.discriminatorKey */
@@ -44,19 +41,12 @@ sealed class FactorioObjectData {
     LuaTile,
     ConsoleChatMessage,
   }
-
-  companion object {
-    /** The [JsonClassDiscriminator] for [FactorioEvent] */
-    const val discriminatorKey: String = "objectName"
-  }
 }
 
 object FactorioObjectDataSerializer : JsonContentPolymorphicSerializer<FactorioObjectData>(
   FactorioObjectData::class
 ) {
-  private val key =
-    FactorioObjectData::objectName.name
-//    "objectName"
+  private val key = FactorioObjectData::objectName.name
 
   override fun selectDeserializer(element: JsonElement): DeserializationStrategy<out FactorioObjectData> {
 
@@ -83,7 +73,6 @@ object FactorioObjectDataSerializer : JsonContentPolymorphicSerializer<FactorioO
 
 
 @Serializable
-//@SerialName("LuaPlayer")
 data class PlayerData(
   @Serializable(with = ListAsObjectSerializer::class)
   val associatedCharactersUnitNumbers: List<UInt>,
@@ -99,7 +88,6 @@ data class PlayerData(
 }
 
 @Serializable
-//@SerialName("LuaEntity")
 data class EntityData(
   val active: Boolean,
   val health: Double?,
@@ -116,7 +104,6 @@ data class EntityData(
 }
 
 @Serializable
-//@SerialName("LuaSurface")
 data class SurfaceData(
   val daytime: Double,
   val index: UInt,
@@ -128,7 +115,6 @@ data class SurfaceData(
 
 /** Quasi-object. This isn't a Factorio Lua type, but a helpful collection of [MapTile]s */
 @Serializable
-//@SerialName("MapChunk")
 data class MapChunk(
   val tiles: List<MapTile>,
 ) : FactorioObjectData() {
@@ -137,7 +123,6 @@ data class MapChunk(
 }
 
 @Serializable
-//@SerialName("LuaTile")
 data class MapTile(
   val prototypeName: String,
   val position: PositionData,
@@ -148,7 +133,6 @@ data class MapTile(
 }
 
 @Serializable
-//@SerialName("ConsoleChatMessage")
 data class ConsoleChatMessage(
   val authorPlayerIndex: UInt?,
   val content: String,

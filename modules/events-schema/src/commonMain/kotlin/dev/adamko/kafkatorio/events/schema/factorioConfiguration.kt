@@ -8,15 +8,12 @@ import kotlinx.serialization.Transient
 
 
 @Serializable
-//@SerialName("CONFIG")
 data class FactorioConfigurationUpdate(
   override val modVersion: String,
   val factorioData: FactorioGameDataUpdate,
   val allMods: List<FactorioModInfo>,
   val prototypes: List<FactorioPrototype>,
 ) : KafkatorioPacket() {
-//  @Transient
-
   @EncodeDefault
   override val packetType  = PacketType.CONFIG
 }

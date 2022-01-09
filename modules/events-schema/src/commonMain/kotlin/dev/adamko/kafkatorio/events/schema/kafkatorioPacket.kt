@@ -2,7 +2,6 @@ package dev.adamko.kafkatorio.events.schema;
 
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.EncodeDefault
-import kotlinx.serialization.Required
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import kotlinx.serialization.json.JsonElement
@@ -10,9 +9,8 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
-//@Serializable
+
 @Serializable(with = KafkatorioPacketSerializer::class)
-//@JsonClassDiscriminator("packetType")
 sealed class KafkatorioPacket {
   /** Schema versioning */
   abstract val modVersion: String
@@ -23,21 +21,12 @@ sealed class KafkatorioPacket {
     EVENT,
     CONFIG,
   }
-
-  companion object {
-//    val kxsModule = SerializersModule {
-//      polym
-//    }
-  }
-
 }
 
 object KafkatorioPacketSerializer : JsonContentPolymorphicSerializer<KafkatorioPacket>(
   KafkatorioPacket::class
 ) {
-  private val key =
-    KafkatorioPacket::packetType.name
-//    "packetType"
+  private val key = KafkatorioPacket::packetType.name
 
   override fun selectDeserializer(element: JsonElement): DeserializationStrategy<out KafkatorioPacket> {
 
