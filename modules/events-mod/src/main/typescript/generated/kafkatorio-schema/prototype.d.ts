@@ -3,7 +3,7 @@
 type PrototypeObjectName = "LuaTilePrototype";
 
 interface FactorioPrototype {
-  objectName: PrototypeObjectName;
+  prototypeObjectName: PrototypeObjectName;
 }
 
 interface FactorioMapTilePrototype extends FactorioPrototype {
@@ -12,6 +12,6 @@ interface FactorioMapTilePrototype extends FactorioPrototype {
   layer: uint;
   mapColor: Colour;
   name: string;
-  objectName: PrototypeObjectName;
   order: string;
+  prototypeObjectName: PrototypeObjectName;
 }

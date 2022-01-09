@@ -10,10 +10,10 @@ export function convertPrototypes(): FactorioPrototype[] {
 
 function getMapTilePrototypes(): FactorioMapTilePrototype[] {
   let tiles: FactorioMapTilePrototype[] = []
-  for (let [_, tile] of pairs(game.tile_prototypes)) {
+  for (let [, tile] of pairs(game.tile_prototypes)) {
     tiles.push(
         <FactorioMapTilePrototype>{
-          objectName: tile.object_name,
+          prototypeObjectName: tile.object_name,
 
           name: tile.name,
           order: tile.order,
@@ -29,7 +29,7 @@ function getMapTilePrototypes(): FactorioMapTilePrototype[] {
 
 function convertCollisionMaskToNames(cm: CollisionMask): string[] {
   let masks: string[] = []
-  for (let [name, _] of pairs(cm)) {
+  for (let [name] of pairs(cm)) {
     masks.push(name)
   }
   return masks

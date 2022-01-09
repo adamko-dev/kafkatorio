@@ -13,9 +13,9 @@ import kotlinx.serialization.json.jsonPrimitive
 @Serializable(with = FactorioPrototypeSerializer::class)
 sealed class FactorioPrototype {
   @EncodeDefault
-  abstract val objectName: ObjectName
+  abstract val prototypeObjectName: PrototypeObjectName
 
-  enum class ObjectName {
+  enum class PrototypeObjectName {
     LuaTilePrototype
   }
 }
@@ -23,7 +23,7 @@ sealed class FactorioPrototype {
 object FactorioPrototypeSerializer : JsonContentPolymorphicSerializer<FactorioPrototype>(
   FactorioPrototype::class
 ) {
-  private val key = FactorioPrototype::objectName.name
+  private val key = FactorioPrototype::prototypeObjectName.name
 
   override fun selectDeserializer(element: JsonElement): DeserializationStrategy<out FactorioPrototype> {
 
@@ -32,12 +32,12 @@ object FactorioPrototypeSerializer : JsonContentPolymorphicSerializer<FactorioPr
       ?.jsonPrimitive
       ?.contentOrNull
       ?.let { json ->
-        FactorioPrototype.ObjectName.values().firstOrNull { it.name == json }
+        FactorioPrototype.PrototypeObjectName.values().firstOrNull { it.name == json }
       }
 
     return when (type) {
-      FactorioPrototype.ObjectName.LuaTilePrototype -> FactorioMapTilePrototype.serializer()
-      null                                          ->
+      FactorioPrototype.PrototypeObjectName.LuaTilePrototype -> FactorioMapTilePrototype.serializer()
+      null                                                   ->
         throw Exception("Unknown FactorioPrototype $key: '$type' ")
     }
   }
@@ -55,5 +55,5 @@ data class FactorioMapTilePrototype(
   val canBeMined: Boolean,
 ) : FactorioPrototype() {
   @EncodeDefault
-  override val objectName: ObjectName = ObjectName.LuaTilePrototype
+  override val prototypeObjectName: PrototypeObjectName = PrototypeObjectName.LuaTilePrototype
 }

@@ -6,14 +6,6 @@ interface FactorioObjectData {
   objectName: ObjectName;
 }
 
-interface FactorioEvent<T extends FactorioObjectData> extends KafkatorioPacket {
-  data: T;
-  eventType: string;
-  modVersion: string;
-  packetType: PacketType;
-  tick: uint;
-}
-
 interface PlayerData extends FactorioObjectData {
   associatedCharactersUnitNumbers: uint[];
   characterUnitNumber: uint | null;

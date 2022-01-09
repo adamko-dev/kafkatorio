@@ -7,6 +7,14 @@ interface KafkatorioPacket {
   packetType: PacketType;
 }
 
+interface FactorioEvent extends KafkatorioPacket {
+  data: FactorioObjectData;
+  eventType: string;
+  modVersion: string;
+  packetType: PacketType;
+  tick: uint;
+}
+
 interface Colour {
   alpha: float;
   blue: float;
