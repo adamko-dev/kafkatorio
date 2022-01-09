@@ -22,7 +22,20 @@ val dockerBuildKafkaPipe by tasks.registering(Exec::class) {
 
   inputs.dir(dockerSrcDir)
 
+  val imageIdFile = file("$temporaryDir/docker-image-id.txt")
+  outputs.file(imageIdFile)
+
   workingDir = dockerSrcDir.asFile
   commandLine = parseSpaceSeparatedArgs(""" docker-compose build kafka-pipe """)
+
+  doLast {
+    imageIdFile.outputStream().use { os ->
+      exec {
+        workingDir = dockerSrcDir.asFile
+        commandLine = parseSpaceSeparatedArgs(""" docker-compose images -q kafka-pipe """)
+        standardOutput = os
+      }
+    }
+  }
 }
-//tasks.assemble { dependsOn(dockerBuildKafkaPipe) }
+tasks.assemble { dependsOn(dockerBuildKafkaPipe) }
