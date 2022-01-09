@@ -1,39 +1,39 @@
 import {Converters} from "./converters"
 import {emitEvent} from "./emitEvent";
 
-export function handlePlayerUpdate(tick: uint, playerIndex: uint, eventType: string) {
+export function handlePlayerUpdate(tick: uint, eventType: string, playerIndex: uint) {
   let player: LuaPlayer = game.players[playerIndex]
   let table = Converters.playerToTable(player)
 
 
   emitEvent(table, tick, eventType)
 
-  handleCharactersEvent(tick, playerIndex, eventType)
+  handleCharactersEvent(tick, eventType, playerIndex)
 }
 
-export function handleCharactersEvent(tick: uint, playerIndex: uint, eventType: string) {
+export function handleCharactersEvent(tick: uint, eventType: string, playerIndex: uint) {
 
   let player: LuaPlayer = game.players[playerIndex]
 
   if (player.character != undefined) {
-    handleEntityUpdate(tick, player.character, eventType)
+    handleEntityUpdate(tick, eventType, player.character)
   }
   for (const character of player.get_associated_characters()) {
     if (character != undefined) {
-      handleEntityUpdate(tick, character, eventType)
+      handleEntityUpdate(tick, eventType, character)
     }
   }
 }
 
-export function handleEntityUpdate(tick: uint, entity: LuaEntity, eventType: string) {
+export function handleEntityUpdate(tick: uint, eventType: string, entity: LuaEntity) {
   let table = Converters.entityToTable(entity)
   emitEvent(table, tick, eventType)
 }
 
 export function handleSurfaceUpdate(
     tick: uint,
+    eventType: string,
     surface: LuaSurface,
-    eventType: string
 ) {
   let table = Converters.surfaceToTable(surface)
   emitEvent(table, tick, eventType)
@@ -41,9 +41,9 @@ export function handleSurfaceUpdate(
 
 export function handleConsoleChat(
     tick: uint,
+    eventType: string,
     playerIndex: uint | undefined,
     message: string,
-    eventType: string,
 ) {
   let table = Converters.consoleChat(message, playerIndex)
   emitEvent(table, tick, eventType)

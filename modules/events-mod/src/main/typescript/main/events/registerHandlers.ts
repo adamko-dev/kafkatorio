@@ -22,24 +22,22 @@ script.on_event(
     defines.events.on_player_mined_entity,
     (e: OnPlayerMinedEntityEvent) => {
       let eventName = mapEventIdToName.get(e.name)
-      handlePlayerUpdate(e.tick, e.player_index, eventName)
-      handleEntityUpdate(e.tick, e.entity, eventName)
+      handlePlayerUpdate(e.tick, eventName, e.player_index)
+      handleEntityUpdate(e.tick, eventName, e.entity)
     }
 )
 
 script.on_event(
     defines.events.on_player_joined_game,
     (e: OnPlayerJoinedGameEvent) => {
-      let eventName = mapEventIdToName.get(e.name)
-      handlePlayerUpdate(e.tick, e.player_index, eventName)
+      handlePlayerUpdate(e.tick, mapEventIdToName.get(e.name), e.player_index)
     }
 )
 
 script.on_event(
     defines.events.on_player_changed_position,
     (e: OnPlayerChangedPositionEvent) => {
-      let eventName = mapEventIdToName.get(e.name)
-      handlePlayerUpdate(e.tick, e.player_index, eventName)
+      handlePlayerUpdate(e.tick, mapEventIdToName.get(e.name), e.player_index)
     }
 )
 
@@ -47,8 +45,8 @@ script.on_event(
     defines.events.on_tick,
     (e: OnTickEvent) => {
       if (e.tick % 60 == 0) {
-        for (const [_, surface] of pairs(game.surfaces)) {
-          handleSurfaceUpdate(e.tick, surface, mapEventIdToName.get(e.name))
+        for (const [, surface] of pairs(game.surfaces)) {
+          handleSurfaceUpdate(e.tick, mapEventIdToName.get(e.name), surface)
         }
 
         // for (const [index, _] of pairs(game.surfaces)) {
@@ -66,7 +64,7 @@ script.on_event(
 script.on_event(
     defines.events.on_console_chat,
     (e: OnConsoleChatEvent) => {
-      handleConsoleChat(e.tick, e.player_index, e.message, mapEventIdToName.get(e.name))
+      handleConsoleChat(e.tick, mapEventIdToName.get(e.name), e.player_index, e.message)
     }
 )
 
