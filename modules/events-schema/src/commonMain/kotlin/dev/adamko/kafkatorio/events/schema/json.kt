@@ -9,7 +9,6 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonTransformingSerializer
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.modules.SerializersModule
 
 
 /** Factorio outputs lists as Json objects - this serializer converts an object back to a list. */
@@ -27,8 +26,10 @@ internal class ListAsObjectSerializer<T>(dataSerializer: KSerializer<T>) :
     )
 }
 
-internal val jsonMapper = Json {
+val jsonMapperKafkatorio = Json {
   prettyPrint = true
   prettyPrintIndent = "  "
-  serializersModule = SerializersModule { }
+  serializersModule =  FactorioEvent.kxsModule
+//  serializersModule = KafkatorioPacket.kxsModule + FactorioEvent.kxsModule
+//  serializersModule = SerializersModule { }
 }

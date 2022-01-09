@@ -2,7 +2,6 @@ package dev.adamko.kafkatorio.events.schema
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import kotlinx.serialization.json.JsonClassDiscriminator
 
 @Serializable
@@ -33,7 +32,7 @@ sealed class FactorioObjectData {
     LuaPlayer,
     LuaEntity,
     LuaSurface,
-    FactorioMapChunk,
+    MapChunk,
     LuaTile,
     ConsoleChatMessage,
   }
@@ -57,7 +56,6 @@ data class PlayerData(
   val chatColour: Colour,
   val lastOnline: UInt,
 ) : FactorioObjectData() {
-  @Transient
   override val objectName = ObjectName.LuaPlayer
 }
 
@@ -74,7 +72,6 @@ data class EntityData(
   val unitNumber: UInt? = null,
   val playerIndex: UInt? = null,
 ) : FactorioObjectData() {
-  @Transient
   override val objectName = ObjectName.LuaEntity
 }
 
@@ -85,36 +82,33 @@ data class SurfaceData(
   val index: UInt,
   val name: String,
 ) : FactorioObjectData() {
-  @Transient
   override val objectName = ObjectName.LuaSurface
 }
 
-/** Quasi-object. This isn't a Factorio Lua type, but a helpful collection of [FactorioMapTile]s */
+/** Quasi-object. This isn't a Factorio Lua type, but a helpful collection of [MapTile]s */
 @Serializable
-@SerialName("FactorioMapChunk")
-data class FactorioMapChunk(
-  val tiles: List<FactorioMapTile>,
+@SerialName("MapChunk")
+data class MapChunk(
+  val tiles: List<MapTile>,
 ) : FactorioObjectData() {
-  @Transient
-  override val objectName = ObjectName.FactorioMapChunk
+  override val objectName = ObjectName.MapChunk
 }
 
 @Serializable
 @SerialName("LuaTile")
-data class FactorioMapTile(
+data class MapTile(
   val prototypeName: String,
   val position: PositionData,
   val surfaceIndex: Int,
 ) : FactorioObjectData() {
-  @Transient
   override val objectName = ObjectName.LuaTile
 }
 
 @Serializable
+@SerialName("ConsoleChatMessage")
 data class ConsoleChatMessage(
   val authorPlayerIndex: UInt?,
   val content: String,
 ) : FactorioObjectData() {
-  @Transient
   override val objectName = ObjectName.ConsoleChatMessage
 }

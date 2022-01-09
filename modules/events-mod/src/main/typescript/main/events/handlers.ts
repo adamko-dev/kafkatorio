@@ -70,12 +70,12 @@ export function handleChunkUpdate(
       }
   ) ?? []
 
-  let convertedTiles: FactorioMapTile[] = tiles.map((tile: LuaTile) => {
+  let convertedTiles: MapTile[] = tiles.map((tile: LuaTile) => {
     return Converters.convertTile(tile)
   })
 
-  let mapChunk: FactorioMapChunk = {
-    objectName: "FactorioMapChunk",
+  let mapChunk: MapChunk = {
+    objectName: "MapChunk",
     tiles: convertedTiles,
   }
 

@@ -4,8 +4,8 @@ import dev.adamko.kafkatorio.events.schema.ConsoleChatMessage
 import dev.adamko.kafkatorio.events.schema.EntityData
 import dev.adamko.kafkatorio.events.schema.FactorioConfigurationUpdate
 import dev.adamko.kafkatorio.events.schema.FactorioEvent
-import dev.adamko.kafkatorio.events.schema.FactorioMapChunk
-import dev.adamko.kafkatorio.events.schema.FactorioMapTile
+import dev.adamko.kafkatorio.events.schema.MapChunk
+import dev.adamko.kafkatorio.events.schema.MapTile
 import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
 import dev.adamko.kafkatorio.events.schema.PlayerData
 import dev.adamko.kafkatorio.events.schema.SurfaceData
@@ -42,10 +42,10 @@ class WebsocketService(
             is PlayerData         ->
               reduxStore.dispatch(FactorioUpdate.PlayerUpdate(event, eventData))
             is ConsoleChatMessage -> {}
-            is EntityData         -> {}
-            is FactorioMapChunk   -> {}
-            is FactorioMapTile    -> {}
-            is SurfaceData        -> {}
+            is EntityData -> {}
+            is MapChunk   -> {}
+            is MapTile    -> {}
+            is SurfaceData      -> {}
           }
         }
         is FactorioConfigurationUpdate -> {}

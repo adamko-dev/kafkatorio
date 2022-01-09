@@ -45,7 +45,7 @@ class FactorioEventTest : BehaviorSpec({
     """.trimIndent()
 
     Then("parse") {
-      val actual: KafkatorioPacket = jsonMapper.decodeFromString(KafkatorioPacket.serializer(), json)
+      val actual: KafkatorioPacket = jsonMapperKafkatorio.decodeFromString(json)
 
       val expected = FactorioEvent(
         data = PlayerData(
@@ -99,7 +99,7 @@ class FactorioEventTest : BehaviorSpec({
       }
     """.trimIndent()
     Then("parse") {
-      val actual: KafkatorioPacket = jsonMapper.decodeFromString(json)
+      val actual: KafkatorioPacket = jsonMapperKafkatorio.decodeFromString(json)
 
       val expected = FactorioEvent(
         data = SurfaceData(
@@ -144,7 +144,7 @@ class FactorioEventTest : BehaviorSpec({
       }
     """.trimIndent()
     Then("parse") {
-      val actual: KafkatorioPacket = jsonMapper.decodeFromString(json)
+      val actual: KafkatorioPacket = jsonMapperKafkatorio.decodeFromString(json)
 
       val expected = FactorioEvent(
         data = EntityData(

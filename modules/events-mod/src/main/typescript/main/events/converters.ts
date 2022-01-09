@@ -83,7 +83,7 @@ export namespace Converters {
     }
   }
 
-  export function convertTile(tile: LuaTile): FactorioMapTile {
+  export function convertTile(tile: LuaTile): MapTile {
     return {
       objectName: tile.object_name,
 

@@ -1,10 +1,10 @@
 package dev.adamko.kafkatorio.processor
 
 import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
+import dev.adamko.kafkatorio.events.schema.jsonMapperKafkatorio
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
 import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.Serde
 import org.apache.kafka.common.serialization.Serializer
@@ -26,7 +26,7 @@ object KafkatorioPacketSerde : Serde<KafkatorioPacket> {
 val jsonMapper = Json {
   prettyPrint = true
   prettyPrintIndent = "  "
-  serializersModule = SerializersModule { }
+  serializersModule = jsonMapperKafkatorio.serializersModule
 }
 
 object KXS : ConfigurableKotlinxSerialization({
@@ -34,5 +34,5 @@ object KXS : ConfigurableKotlinxSerialization({
   prettyPrint = true
   prettyPrintIndent = "  "
   asConfigurable().withStandardMappings().done()
-  serializersModule = SerializersModule { }
+  serializersModule = jsonMapperKafkatorio.serializersModule
 })

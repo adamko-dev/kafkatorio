@@ -1,17 +1,17 @@
 package dev.adamko.kafkatorio.events.schema
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 
 
 @Serializable
+@SerialName("CONFIG")
 data class FactorioConfigurationUpdate(
   override val modVersion: String,
   val factorioData: FactorioGameDataUpdate,
   val allMods: List<FactorioModInfo>,
   val prototypes: List<FactorioPrototype>,
 ) : KafkatorioPacket() {
-  @Transient
   override val packetType  = PacketType.CONFIG
 }
 
