@@ -12,28 +12,40 @@ class FactorioEventTest : BehaviorSpec({
 
     @Language("JSON")
     val json = """
-      {
-        "data": {
-          "object_name": "LuaPlayer",
-          "name": "fredthedeadhead",
-          "character_unit_number": 1,
-          "associated_characters_unit_numbers": {},
-          "position": {
-            "x": -3.5703125,
-            "y": 29.75,
-            "type": "MAP"
-          },
-          "last_online": 123
-        },
-        "event_type": "on_player_joined_game",
-        "mod_version": "0.0.4",
-        "factorio_version": "1.1.48",
-        "tick": 1278458
-      }
+       {
+         "data": {
+           "objectName": "LuaPlayer",
+           "name": "fredthedeadhead",
+           "characterUnitNumber": 1,
+           "associatedCharactersUnitNumbers": {},
+           "position": {
+             "type": "MAP",
+             "x": 30.65625,
+             "y": 84.07421875
+           },
+           "colour": {
+             "red": 0.869000017642974853515625,
+             "green": 0.5,
+             "blue": 0.12999999523162841796875,
+             "alpha": 0.5
+           },
+           "chatColour": {
+             "red": 1,
+             "green": 0.62999999523162841796875,
+             "blue": 0.259000003337860107421875,
+             "alpha": 1
+           },
+           "lastOnline": 2287061
+         },
+         "packetType": "EVENT",
+         "eventType": "on_player_joined_game",
+         "modVersion": "0.2.1",
+         "tick": 2287072
+       }
     """.trimIndent()
 
     Then("parse") {
-      val actual: FactorioEvent<FactorioObjectData> = jsonMapper.decodeFromString(json)
+      val actual: KafkatorioPacket = jsonMapper.decodeFromString(KafkatorioPacket.serializer(), json)
 
       val expected = FactorioEvent(
         data = PlayerData(
@@ -41,22 +53,32 @@ class FactorioEventTest : BehaviorSpec({
           characterUnitNumber = 1u,
           associatedCharactersUnitNumbers = emptyList(),
           position = PositionData(
-            x = -3.5703125,
-            y = 29.75,
             type = PositionType.MAP,
+            x = 30.65625,
+            y = 84.07421875,
           ),
-          colour = Colour(),
-          chatColour = Colour(),
-          lastOnline = 123u
+          colour = Colour(
+            red = 0.869000017642974853515625f,
+            green = 0.5f,
+            blue = 0.12999999523162841796875f,
+            alpha = 0.5f
+          ),
+          chatColour = Colour(
+            red = 1f,
+            green = 0.62999999523162841796875f,
+            blue = 0.259000003337860107421875f,
+            alpha = 1f
+          ),
+          lastOnline = 2287061u
         ),
         eventType = "on_player_joined_game",
-        modVersion = "0.0.4",
-        tick = 1278458u
+        modVersion = "0.2.1",
+        tick = 2287072u
       )
 
       actual shouldBeEqualToComparingFields expected
 
-      expected.data.objectName shouldBe "LuaPlayer"
+      expected.data.objectName shouldBe FactorioObjectData.ObjectName.LuaPlayer
     }
   }
 
@@ -65,64 +87,64 @@ class FactorioEventTest : BehaviorSpec({
     val json = """
       {
         "data": {
-          "object_name": "LuaSurface",
+          "objectName": "LuaSurface",
           "name": "nauvis",
           "index": 1,
-          "daytime": 0.8390800000511436707029133685864508152008056640625
+          "daytime": 0.749480000092057618843455202295444905757904052734375
         },
-        "event_type": "on_tick",
-        "mod_version": "0.0.4",
-        "factorio_version": "1.1.48",
-        "tick": 1278480
+        "packetType": "EVENT",
+        "eventType": "on_tick",
+        "modVersion": "0.2.1",
+        "tick": 2301240
       }
     """.trimIndent()
     Then("parse") {
-      val actual: FactorioEvent<FactorioObjectData> = jsonMapper.decodeFromString(json)
+      val actual: KafkatorioPacket = jsonMapper.decodeFromString(json)
 
       val expected = FactorioEvent(
         data = SurfaceData(
           name = "nauvis",
           index = 1u,
-          daytime = 0.8390800000511436707029133685864508152008056640625
+          daytime = 0.749480000092057618843455202295444905757904052734375
         ),
         eventType = "on_tick",
-        modVersion = "0.0.4",
-        tick = 1278480u
+        modVersion = "0.2.1",
+        tick = 2301240u
       )
 
       actual shouldBeEqualToComparingFields expected
 
-      expected.data.objectName shouldBe "LuaSurface"
+      expected.data.objectName shouldBe FactorioObjectData.ObjectName.LuaSurface
     }
   }
 
-  Given("json entity") {
+  Given("LuaEntity on_player_changed_position") {
     @Language("JSON")
     val json = """
       {
         "data": {
-          "object_name": "LuaEntity",
+          "objectName": "LuaEntity",
           "name": "character",
           "type": "character",
           "active": true,
           "health": 250,
-          "health_ratio": 1,
-          "surface_index": 1,
-          "unit_number": 1,
+          "healthRatio": 1,
+          "surfaceIndex": 1,
+          "unitNumber": 1,
           "position": {
-            "x": -0.25,
-            "y": 30.09375,
-            "type": "MAP"
+            "type": "MAP",
+            "x": 37.859375,
+            "y": 81.14453125
           }
         },
-        "event_type": "on_player_changed_position",
-        "mod_version": "0.0.6",
-        "factorio_version": "1.1.48",
-        "tick": 1384507
+        "packetType": "EVENT",
+        "eventType": "on_player_changed_position",
+        "modVersion": "0.2.1",
+        "tick": 2301231
       }
     """.trimIndent()
     Then("parse") {
-      val actual: FactorioEvent<FactorioObjectData> = jsonMapper.decodeFromString(json)
+      val actual: KafkatorioPacket = jsonMapper.decodeFromString(json)
 
       val expected = FactorioEvent(
         data = EntityData(
@@ -135,19 +157,19 @@ class FactorioEventTest : BehaviorSpec({
           unitNumber = 1u,
           playerIndex = null,
           position = PositionData(
-            x = -0.25,
-            y = 30.09375,
+            x = 37.859375,
+            y = 81.14453125,
             type = PositionType.MAP,
           )
         ),
         eventType = "on_player_changed_position",
-        modVersion = "0.0.6",
-        tick = 1384507u
+        modVersion = "0.2.1",
+        tick = 2301231u
       )
 
       actual shouldBeEqualToComparingFields expected
 
-      expected.data.objectName shouldBe "LuaEntity"
+      expected.data.objectName shouldBe FactorioObjectData.ObjectName.LuaEntity
     }
   }
 
