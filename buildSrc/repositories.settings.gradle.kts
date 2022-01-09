@@ -7,7 +7,7 @@ dependencyResolutionManagement {
   // Cannot use 'FAIL_ON_PROJECT_REPOS' because
   // - the 'gradle-guides-plugin' adds a repo (which it should not do)
   // - the 'kotlin-gradle-plugin' adds a repo (and removes it afterwards) to download NodeJS
-  repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+//  repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
 
   repositories {
     mavenCentral()
