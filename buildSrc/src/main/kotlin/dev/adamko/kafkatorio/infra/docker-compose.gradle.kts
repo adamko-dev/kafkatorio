@@ -44,6 +44,7 @@ val dockerEnv by tasks.registering(WriteProperties::class) {
   setOutputFile(dockerSrcDir.file(".env"))
   properties(
     "COMPOSE_PROJECT_NAME" to dockerComposeProjectName,
+    "KAFKATORIO_VERSION" to project.version,
   )
 }
 

@@ -13,6 +13,7 @@ services:
       - "kafkatorio-nw"
     environment:
       FACTORIO_SERVER_CONTAINER_NAME: "factorio-server"
+      KAFKATORIO_VERSION: $KAFKATORIO_VERSION
       KAFKA_HOST: "kafka:29092"
     volumes:
       # Windows (requires privileged/root)

@@ -2,6 +2,7 @@
 
 # Pipe Docker logs from a Factorio server to a Kafka topic
 
+echo "Kafkatorio-Pipe version $KAFKATORIO_VERSION"
 echo "Piping logs from $FACTORIO_SERVER_CONTAINER_NAME to $KAFKA_HOST"
 
 trap endProcess SIGINT
