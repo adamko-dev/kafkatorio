@@ -103,7 +103,6 @@ export function handleTilesUpdate(
         objectName: "LuaTile",
         position: it.position,
         prototypeName: newTileType.name,
-        surfaceIndex: surfaceIndex
       }
     })
 
