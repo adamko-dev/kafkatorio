@@ -13,7 +13,7 @@ import org.apache.kafka.streams.TopologyDescription
 import org.apache.kafka.streams.kstream.Consumed
 import org.apache.kafka.streams.kstream.Produced
 
-class FactorioEventsTopology(
+class KafkatorioTopology(
   private val websocketServer: WebsocketServer,
   private val builder: StreamsBuilder = StreamsBuilder(),
 ) {

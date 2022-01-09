@@ -38,7 +38,7 @@ dependencies {
 }
 
 application {
-  mainClass.set("dev.adamko.factorioevents.processor.mainKt")
+  mainClass.set("dev.adamko.kafkatorio.processor.EventProcessorKt")
 }
 
 tasks.withType<KotlinCompile> {

@@ -12,7 +12,7 @@ fun main() = runBlocking {
 
   val wsServer = WebsocketServer()
 
-  val topology = FactorioEventsTopology(wsServer)
+  val topology = KafkatorioTopology(wsServer)
   topology.build()
 
   wsServer.build().asServer(Undertow(9073)).start().block()
