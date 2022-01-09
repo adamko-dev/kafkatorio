@@ -19,7 +19,7 @@ val dockerUp by tasks.registering(Exec::class) {
   logging.captureStandardOutput(LogLevel.LIFECYCLE)
 
   workingDir = dockerSrcDir.asFile
-  commandLine = parseSpaceSeparatedArgs(""" docker-compose up --build -d """)
+  commandLine = parseSpaceSeparatedArgs(""" docker-compose up -d """)
 }
 
 val dockerDown by tasks.registering(Exec::class) {
