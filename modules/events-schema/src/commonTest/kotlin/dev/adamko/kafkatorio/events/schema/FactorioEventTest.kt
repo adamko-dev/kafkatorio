@@ -20,19 +20,19 @@ class FactorioEventTest : FunSpec({
            "associatedCharactersUnitNumbers": {},
            "position": {
              "type": "MAP",
-             "x": 30.65625,
-             "y": 84.07421875
+             "x": 30.6,
+             "y": 84.1
            },
            "colour": {
-             "red": 0.869000017642974853515625,
+             "red": 0.86,
              "green": 0.5,
-             "blue": 0.12999999523162841796875,
+             "blue": 0.12,
              "alpha": 0.5
            },
            "chatColour": {
              "red": 1,
-             "green": 0.62999999523162841796875,
-             "blue": 0.259000003337860107421875,
+             "green": 0.62,
+             "blue": 0.25,
              "alpha": 1
            },
            "lastOnline": 2287061
@@ -55,19 +55,19 @@ class FactorioEventTest : FunSpec({
             associatedCharactersUnitNumbers = emptyList(),
             position = PositionData(
               type = PositionType.MAP,
-              x = 30.65625,
-              y = 84.07421875,
+              x = 30.6,
+              y = 84.1,
             ),
             colour = Colour(
-              red = 0.869000017642974853515625f,
+              red = 0.86f,
               green = 0.5f,
-              blue = 0.12999999523162841796875f,
+              blue = 0.12f,
               alpha = 0.5f
             ),
             chatColour = Colour(
               red = 1f,
-              green = 0.62999999523162841796875f,
-              blue = 0.259000003337860107421875f,
+              green = 0.62f,
+              blue = 0.25f,
               alpha = 1f
             ),
             lastOnline = 2287061u
@@ -97,7 +97,7 @@ class FactorioEventTest : FunSpec({
           "objectName": "LuaSurface",
           "name": "nauvis",
           "index": 1,
-          "daytime": 0.749480000092057618843455202295444905757904052734375
+          "daytime": 0.745
         },
         "packetType": "EVENT",
         "eventType": "on_tick",
@@ -115,7 +115,7 @@ class FactorioEventTest : FunSpec({
           data = SurfaceData(
             name = "nauvis",
             index = 1u,
-            daytime = 0.749480000092057618843455202295444905757904052734375
+            daytime = 0.745
           ),
           eventType = "on_tick",
           modVersion = "0.2.1",
@@ -149,8 +149,8 @@ class FactorioEventTest : FunSpec({
           "unitNumber": 1,
           "position": {
             "type": "MAP",
-            "x": 37.859375,
-            "y": 81.14453125
+            "x": 37.5,
+            "y": 81.1
           }
         },
         "packetType": "EVENT",
@@ -175,8 +175,8 @@ class FactorioEventTest : FunSpec({
             unitNumber = 1u,
             playerIndex = null,
             position = PositionData(
-              x = 37.859375,
-              y = 81.14453125,
+              x = 37.5,
+              y = 81.1,
               type = PositionType.MAP,
             )
           ),

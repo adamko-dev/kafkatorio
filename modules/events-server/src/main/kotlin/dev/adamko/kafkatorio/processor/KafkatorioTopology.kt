@@ -37,7 +37,7 @@ class KafkatorioTopology(
         { _, value, _ ->
 //        println("[$key] sending event:${value.eventType} to topic:${value.data.objectName()}")
           when (value) {
-            is FactorioEvent<*>            ->
+            is FactorioEvent               ->
               "kafkatorio.${value.packetType.name}.${value.data.objectName.name}"
             is FactorioConfigurationUpdate ->
               "kafkatorio.${value.packetType.name}"

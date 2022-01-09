@@ -51,7 +51,6 @@ data class FactorioMapTilePrototype(
   val mapColor: Colour,
   val collisionMasks: List<String>,
   val order: String,
-
   /** Can the tile be mined for resources? */
   val canBeMined: Boolean,
 ) : FactorioPrototype() {

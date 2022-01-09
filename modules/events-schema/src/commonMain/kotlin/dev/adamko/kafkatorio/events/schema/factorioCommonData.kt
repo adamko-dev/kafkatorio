@@ -1,5 +1,6 @@
 package dev.adamko.kafkatorio.events.schema
 
+import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -22,12 +23,16 @@ enum class PositionType {
  */
 @Serializable
 data class Colour(
+  @EncodeDefault
   val red: Float = 0f,
+  @EncodeDefault
   val green: Float = 0f,
+  @EncodeDefault
   val blue: Float = 0f,
+  @EncodeDefault
   val alpha: Float = 1f,
 ) {
-  
+
   /** True if any value is greater than 1, so the values are hexadecimal. */
   fun isDecimal(): Boolean {
     return red > 1f

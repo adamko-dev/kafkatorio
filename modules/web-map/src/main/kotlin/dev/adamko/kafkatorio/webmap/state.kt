@@ -29,7 +29,7 @@ data class FactorioGameState(
 
 
 sealed class FactorioUpdate : RAction {
-  data class PlayerUpdate(val event: FactorioEvent<*>, val playerData: PlayerData) :
+  data class PlayerUpdate(val event: FactorioEvent, val playerData: PlayerData) :
     FactorioUpdate()
 }
 
