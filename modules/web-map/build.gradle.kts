@@ -13,7 +13,7 @@ kotlin {
     browser {
       runTask {
         outputFileName = "main.bundle.js"
-        sourceMaps = true
+        sourceMaps = false
         devServer = KotlinWebpackConfig.DevServer(
           open = false,
           port = 3000,
@@ -83,7 +83,7 @@ fun KotlinDependencyHandler.kvision(
   module: String,
   version: Provider<String> = libs.versions.kvision,
   configure: ExternalModuleDependency.() -> Unit = {
-    isChanging = true
+//    isChanging = true
   }
 ) {
   implementation("io.kvision:$module:${version.get()}", configure)
