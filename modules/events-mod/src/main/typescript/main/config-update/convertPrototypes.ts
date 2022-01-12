@@ -8,18 +8,18 @@ export function convertPrototypes(): FactorioPrototype[] {
   return prototypes
 }
 
-function getMapTilePrototypes(): FactorioMapTilePrototype[] {
-  let tiles: FactorioMapTilePrototype[] = []
+function getMapTilePrototypes(): MapTilePrototype[] {
+  let tiles: MapTilePrototype[] = []
   for (let [, tile] of pairs(game.tile_prototypes)) {
     tiles.push(
-        <FactorioMapTilePrototype>{
+        <MapTilePrototype>{
           prototypeObjectName: tile.object_name,
 
           name: tile.name,
           order: tile.order,
           layer: tile.layer,
           collisionMasks: convertCollisionMaskToNames(tile.collision_mask),
-          mapColor: Converters.mapColour(tile.map_color),
+          mapColour: Converters.mapColour(tile.map_color),
           canBeMined: tile.mineable_properties.minable,
         }
     )

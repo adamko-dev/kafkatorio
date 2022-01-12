@@ -58,3 +58,7 @@ https://www.npmjs.com/package/wasm2lua?activeTab=readme
 * CBOR
     * https://www.zash.se/lua-cbor.html
     * https://code.zash.se/lua-cbor/archive/68b3a36d0816.tar.gz
+
+* BSON 
+  * https://github.com/mpaland/bsonfy
+  * https://github.com/tcoram/bson-lua

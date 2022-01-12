@@ -36,7 +36,7 @@ object FactorioPrototypeSerializer : JsonContentPolymorphicSerializer<FactorioPr
       }
 
     return when (type) {
-      FactorioPrototype.PrototypeObjectName.LuaTilePrototype -> FactorioMapTilePrototype.serializer()
+      FactorioPrototype.PrototypeObjectName.LuaTilePrototype -> MapTilePrototype.serializer()
       null                                                   ->
         throw Exception("Unknown FactorioPrototype $key: '$type' ")
     }
@@ -45,10 +45,10 @@ object FactorioPrototypeSerializer : JsonContentPolymorphicSerializer<FactorioPr
 
 
 @Serializable
-data class FactorioMapTilePrototype(
+data class MapTilePrototype(
   val name: String,
   val layer: UInt,
-  val mapColor: Colour,
+  val mapColour: Colour,
   val collisionMasks: List<String>,
   val order: String,
   /** Can the tile be mined for resources? */

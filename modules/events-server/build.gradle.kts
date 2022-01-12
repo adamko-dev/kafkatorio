@@ -31,10 +31,11 @@ dependencies {
 
   implementation(platform(libs.http4k.bom))
   implementation(libs.bundles.http4k)
-
   implementation(libs.http4k.format.kotlinx)
 
   implementation(libs.bundles.logging)
+
+  implementation("com.sksamuel.scrimage:scrimage-core:4.0.24")
 }
 
 application {

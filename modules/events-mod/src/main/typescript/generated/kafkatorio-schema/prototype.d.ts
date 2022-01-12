@@ -6,11 +6,11 @@ interface FactorioPrototype {
   prototypeObjectName: PrototypeObjectName;
 }
 
-interface FactorioMapTilePrototype extends FactorioPrototype {
+interface MapTilePrototype extends FactorioPrototype {
   canBeMined: boolean;
   collisionMasks: string[];
   layer: uint;
-  mapColor: Colour;
+  mapColour: Colour;
   name: string;
   order: string;
   prototypeObjectName: PrototypeObjectName;

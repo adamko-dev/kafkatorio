@@ -54,13 +54,19 @@ data class MapTilePosition(
   val y: Int,
 ) {
   constructor(x: Number, y: Number) : this(x.toInt(), y.toInt())
+
+  fun toMapChunkPosition() = MapChunkPosition(
+    x / MAP_CHUNK_SIZE,
+    y / MAP_CHUNK_SIZE,
+  )
+
 }
 
 /**
  * Red, green, blue and alpha values, all in range `[0, 1]` or all in range `[0, 255]` if any
  * value is > 1.
  *
- * All values here are optional. Color channels default to 0, the alpha channel defaults to 1.
+ * All values here are optional. Colour channels default to 0, the alpha channel defaults to 1.
  */
 @Serializable
 data class Colour(
@@ -84,5 +90,27 @@ data class Colour(
 
   /** True if all values are between `[0..1]`. */
   fun isPercentage(): Boolean = !isDecimal()
+
+  fun asDecimal() = if (isPercentage()) {
+    Colour(
+      (red * 255).coerceIn(0f..255f),
+      (green * 255).coerceIn(0f..255f),
+      (blue * 255).coerceIn(0f..255f),
+      (alpha * 255).coerceIn(0f..255f),
+    )
+  } else {
+    this
+  }
+
+  fun asPercentage() = if (isPercentage()) {
+    this
+  } else {
+    Colour(
+      (red / 255).coerceIn(0f..1f),
+      (green / 255).coerceIn(0f..1f),
+      (blue / 255).coerceIn(0f..1f),
+      (alpha / 255).coerceIn(0f..1f),
+    )
+  }
 
 }
