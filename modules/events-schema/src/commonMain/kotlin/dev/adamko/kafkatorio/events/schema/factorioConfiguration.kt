@@ -1,10 +1,7 @@
 package dev.adamko.kafkatorio.events.schema
 
 import kotlinx.serialization.EncodeDefault
-import kotlinx.serialization.Required
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 
 
 @Serializable
@@ -12,10 +9,9 @@ data class FactorioConfigurationUpdate(
   override val modVersion: String,
   val factorioData: FactorioGameDataUpdate,
   val allMods: List<FactorioModInfo>,
-  val prototypes: List<FactorioPrototype>,
 ) : KafkatorioPacket() {
   @EncodeDefault
-  override val packetType  = PacketType.CONFIG
+  override val packetType = PacketType.CONFIG
 }
 
 @Serializable

@@ -1,6 +1,15 @@
 import {Converters} from "../events/converters";
+import {emitPacket} from "../emitKafkatorioPacket";
 
-export function convertPrototypes(): FactorioPrototype[] {
+export function emitPrototypes() {
+  emitPacket<FactorioPrototypes>({
+    modVersion: global.MOD_VERSION,
+    packetType: "PROTOTYPES",
+    prototypes: prototypes()
+  })
+}
+
+function prototypes(): FactorioPrototype[] {
   let prototypes: FactorioPrototype[] = []
 
   prototypes.push(...getMapTilePrototypes())

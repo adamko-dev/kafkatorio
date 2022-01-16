@@ -64,5 +64,3 @@ idea {
     isDownloadJavadoc = true
   }
 }
-
-//tasks.assemble { dependsOn(tasks.htmlDependencyReport) }

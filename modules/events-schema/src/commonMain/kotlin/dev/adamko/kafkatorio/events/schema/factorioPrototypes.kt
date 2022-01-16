@@ -10,6 +10,16 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 
+@Serializable
+data class FactorioPrototypes(
+  override val modVersion: String,
+  val prototypes: List<FactorioPrototype>,
+) : KafkatorioPacket() {
+  @EncodeDefault
+  override val packetType = PacketType.PROTOTYPES
+}
+
+
 @Serializable(with = FactorioPrototypeSerializer::class)
 sealed class FactorioPrototype {
   @EncodeDefault
@@ -49,6 +59,7 @@ data class MapTilePrototype(
   val name: String,
   val layer: UInt,
   val mapColour: Colour,
+  @Serializable(with = FactorioJsonListSerializer::class)
   val collisionMasks: List<String>,
   val order: String,
   /** Can the tile be mined for resources? */

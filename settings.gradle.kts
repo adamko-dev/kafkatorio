@@ -1,7 +1,6 @@
 rootProject.name = "kafkatorio"
 
 include(
-
   ":modules:events-mod",
   ":modules:events-schema",
   ":modules:events-server",
@@ -22,13 +21,17 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 apply(from = "./buildSrc/repositories.settings.gradle.kts")
 
-@Suppress("UnstableApiUsage") // centralized repositories is incubating
+@Suppress("UnstableApiUsage") // Central declaration of repositories is an incubating feature
 dependencyResolutionManagement {
+
+  repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+
   repositories {
     mavenLocal {
-      content {
-        includeGroup("io.kvision")
-      }
+////      content {
+////        includeGroup("io.kvision")
+////        includeGroup("dev.adamko.kotka")
+////      }
     }
   }
 }

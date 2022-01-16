@@ -114,4 +114,11 @@ export namespace Converters {
   //   }
   // }
 
+  export function convertBoundingBox(bb: BoundingBoxTable): MapBoundingBox {
+    return {
+      topLeft: mapTilePosition(bb.left_top as PositionTable),
+      bottomRight: mapTilePosition(bb.right_bottom as PositionTable),
+    }
+  }
+
 }

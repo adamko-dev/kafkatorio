@@ -16,6 +16,8 @@ fun main(args: Array<String>) {
         addAll(KafkatorioPacket::class.sealedSubclasses)
         addAll(FactorioObjectData::class.sealedSubclasses)
         addAll(FactorioPrototype::class.sealedSubclasses)
+        add(FactorioPrototypes::class)
+        add(FactorioConfigurationUpdate::class)
       },
       mappings = mapOf(
         // builtin Factorio numeric types > `typed-factorio/generated/builtin-types.d.ts`
@@ -40,7 +42,6 @@ fun main(args: Array<String>) {
       println(definitions)
     }
     else -> {
-
       val outPath = Path(filename)
       outPath.createDirectories()
 
@@ -64,17 +65,18 @@ private fun splitDefinitions(definitions: String): Map<String, String> {
     .split("\n\n")
     .groupBy { def ->
       when {
-        "extends FactorioObjectData" in def ||
-            "interface FactorioObjectData" in def ||
-            "type ObjectName" in def          -> "object-data.d.ts"
-        "extends FactorioPrototype" in def ||
-            "interface FactorioPrototype" in def ||
-            "type PrototypeObjectName" in def -> "prototype.d.ts"
-        "extends FactorioConfigurationUpdate" in def ||
-            "interface FactorioConfigurationUpdate" in def ||
-            "FactorioGameDataUpdate" in def ||
-            "FactorioModInfo" in def          -> "config-update.d.ts"
-        else                                  -> "schema.d.ts"
+        "extends FactorioObjectData " in def ||
+            "interface FactorioObjectData " in def ||
+            "type ObjectName " in def          -> "object-data.d.ts"
+        "extends FactorioPrototype " in def ||
+            "interface FactorioPrototypes " in def ||
+            "interface FactorioPrototype " in def ||
+            "type PrototypeObjectName " in def -> "prototype.d.ts"
+        "extends FactorioConfigurationUpdate " in def ||
+            "interface FactorioConfigurationUpdate " in def ||
+            "FactorioGameDataUpdate " in def ||
+            "FactorioModInfo " in def          -> "config-update.d.ts"
+        else                                   -> "schema.d.ts"
       }
     }
     .mapValues { (_, def) ->

@@ -1,4 +1,4 @@
-@Suppress("UnstableApiUsage")
+@Suppress("UnstableApiUsage") // Central declaration of repositories is an incubating feature
 dependencyResolutionManagement {
 
   // https://github.com/gradle/gradle/issues/15754#issuecomment-763614651
@@ -11,10 +11,10 @@ dependencyResolutionManagement {
 
   repositories {
     mavenCentral()
-    gradlePluginPortal()
     jitpack()
-    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/")
-    maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
+    gradlePluginPortal()
+//    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/")
+//    maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
 
     // Declare the Node.js download repository
     ivy("https://nodejs.org/dist/") {
@@ -37,7 +37,7 @@ dependencyResolutionManagement {
       gradlePluginPortal()
       mavenCentral()
       jitpack()
-      maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/")
+//      maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/")
     }
 
   }
@@ -45,5 +45,12 @@ dependencyResolutionManagement {
 }
 
 fun RepositoryHandler.jitpack() {
-  maven("https://jitpack.io")
+  maven("https://jitpack.io") {
+//    content {
+//      includeGroup("com.github.aSemy")
+//      includeGroup("com.github.adamko-dev")
+//      includeGroup("com.github.adamko-dev.kotka-streams")
+//      includeGroup("dev.adamko.kotka")
+//    }
+  }
 }

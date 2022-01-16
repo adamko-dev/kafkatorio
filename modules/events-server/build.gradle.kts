@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  id("dev.adamko.kafkatorio.lang.kotlin-jvm")
+  dev.adamko.kafkatorio.lang.`kotlin-jvm`
   kotlin("plugin.serialization")
   application
 }
@@ -36,6 +36,16 @@ dependencies {
   implementation(libs.bundles.logging)
 
   implementation("com.sksamuel.scrimage:scrimage-core:4.0.24")
+
+  val kotkaVersion = "0.0.5"
+  implementation("com.github.adamko-dev.kotka-streams:kotka-streams:$kotkaVersion") {
+    isChanging = true
+  }
+//  val kotkaVersion = "main-SNAPSHOT"
+//  implementation("dev.adamko.kotka:kotka-streams:$kotkaVersion") {
+//    isChanging = true
+//  }
+
 }
 
 application {

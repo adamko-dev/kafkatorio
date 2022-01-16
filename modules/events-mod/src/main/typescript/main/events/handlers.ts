@@ -1,6 +1,6 @@
 import {Converters} from "./converters"
 import {emitEvent} from "./emitEvent";
-import mapChunkPosition = Converters.mapChunkPosition;
+
 
 export function handlePlayerUpdate(tick: uint, eventType: string, playerIndex: uint) {
   let player: LuaPlayer = game.players[playerIndex]
@@ -80,7 +80,8 @@ export function handleChunkUpdate(
   let mapChunk: MapChunk = {
     objectName: "MapChunk",
     tiles: createMapTiles(surfaceIndex, convertedTiles),
-    position: mapChunkPosition(position)
+    position: Converters.mapChunkPosition(position),
+    area: Converters.convertBoundingBox(area)
   }
 
   emitEvent(mapChunk, tick, eventType)

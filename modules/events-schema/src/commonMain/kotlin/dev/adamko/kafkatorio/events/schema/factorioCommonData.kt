@@ -19,8 +19,8 @@ data class MapEntityPosition(
 ) {
 
   fun toMapChunkPosition() = MapChunkPosition(
-    (x / MAP_CHUNK_SIZE).roundToInt(),
-    (y / MAP_CHUNK_SIZE).roundToInt(),
+    (x / MAP_CHUNK_SIZE).toInt(),
+    (y / MAP_CHUNK_SIZE).toInt(),
   )
 
 }
@@ -36,10 +36,17 @@ data class MapChunkPosition(
   val x: Int,
   val y: Int,
 ) {
+
   fun toMapEntityPosition() = MapEntityPosition(
     x * MAP_CHUNK_SIZE.toDouble(),
     y * MAP_CHUNK_SIZE.toDouble(),
   )
+
+  fun toMapTilePosition() = MapChunkPosition(
+    x * MAP_CHUNK_SIZE,
+    y * MAP_CHUNK_SIZE,
+  )
+
 }
 
 /**
@@ -62,6 +69,14 @@ data class MapTilePosition(
 
 }
 
+
+@Serializable
+data class MapBoundingBox(
+  val topLeft: MapTilePosition,
+  val bottomRight: MapTilePosition,
+)
+
+
 /**
  * Red, green, blue and alpha values, all in range `[0, 1]` or all in range `[0, 255]` if any
  * value is > 1.
@@ -81,7 +96,7 @@ data class Colour(
 ) {
 
   /** True if any value is greater than 1, so the values are hexadecimal. */
-  fun isDecimal(): Boolean {
+  fun isHexadecimal(): Boolean {
     return red > 1f
         || green > 1f
         || blue > 1f
@@ -89,9 +104,9 @@ data class Colour(
   }
 
   /** True if all values are between `[0..1]`. */
-  fun isPercentage(): Boolean = !isDecimal()
+  fun isPercentage(): Boolean = !isHexadecimal()
 
-  fun asDecimal() = if (isPercentage()) {
+  fun asHexadecimal() = if (isPercentage()) {
     Colour(
       (red * 255).coerceIn(0f..255f),
       (green * 255).coerceIn(0f..255f),

@@ -119,6 +119,7 @@ data class SurfaceData(
 data class MapChunk(
   val tiles: MapTiles,
   val position: MapChunkPosition,
+  val area: MapBoundingBox,
 ) : FactorioObjectData() {
   @EncodeDefault
   override val objectName = ObjectName.MapChunk

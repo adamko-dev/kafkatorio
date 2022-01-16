@@ -20,6 +20,7 @@ sealed class KafkatorioPacket {
   enum class PacketType {
     EVENT,
     CONFIG,
+    PROTOTYPES,
   }
 }
 
@@ -41,6 +42,7 @@ object KafkatorioPacketSerializer : JsonContentPolymorphicSerializer<KafkatorioP
     return when (type) {
       KafkatorioPacket.PacketType.EVENT  -> FactorioEvent.serializer()
       KafkatorioPacket.PacketType.CONFIG -> FactorioConfigurationUpdate.serializer()
+      KafkatorioPacket.PacketType.PROTOTYPES -> FactorioPrototypes.serializer()
       null                               ->
         throw Exception("Unknown KafkatorioPacket ${key}: '$type' ")
     }

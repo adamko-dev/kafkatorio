@@ -20,7 +20,7 @@ kotlin {
     }
   }
 
-  @Suppress("UnstableApiUsage") // enforcedPlatform is incubating
+  @Suppress("UnstableApiUsage") // platform + version catalogs is incubating
   sourceSets {
 
     all {

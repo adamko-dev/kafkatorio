@@ -1,6 +1,6 @@
 import {emitPacket} from "../emitKafkatorioPacket";
-import {convertPrototypes} from "./convertPrototypes";
 import {updateGlobal} from "./updateGlobal";
+import {emitPrototypes} from "./prototypes";
 
 export function handleConfigurationUpdate(changeData: ConfigurationChangedData) {
   updateGlobal()
@@ -9,10 +9,10 @@ export function handleConfigurationUpdate(changeData: ConfigurationChangedData) 
     modVersion: global.MOD_VERSION,
     packetType: "CONFIG",
     allMods: allMods(changeData),
-    factorioData: factorioData(changeData),
-    prototypes: convertPrototypes()
+    factorioData: factorioData(changeData)
   })
 
+  emitPrototypes()
 }
 
 function factorioData(changeData: ConfigurationChangedData): FactorioGameDataUpdate {

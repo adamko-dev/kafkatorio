@@ -50,6 +50,7 @@ interface MapTiles extends FactorioObjectData {
 }
 
 interface MapChunk extends FactorioObjectData {
+  area: MapBoundingBox;
   objectName: ObjectName;
   position: MapChunkPosition;
   tiles: MapTiles;
