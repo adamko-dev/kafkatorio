@@ -49,6 +49,7 @@ import org.apache.kafka.streams.TopologyDescription
 import org.apache.kafka.streams.kstream.Consumed
 import org.apache.kafka.streams.kstream.KStream
 import org.apache.kafka.streams.kstream.KTable
+import org.apache.kafka.streams.kstream.Suppressed
 import org.apache.kafka.streams.processor.RecordContext
 import org.apache.kafka.streams.state.QueryableStoreTypes
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore
@@ -120,11 +121,11 @@ class KafkatorioTopology(
       ) { _: String, value: KafkatorioPacket, _: RecordContext ->
 //        println("[$key] sending event:${value.eventType} to topic:${value.data.objectName()}")
         when (value) {
-          is FactorioEvent               ->
+          is FactorioEvent ->
             "kafkatorio.${value.packetType.name}.${value.data.objectName.name}"
           is FactorioConfigurationUpdate ->
             "kafkatorio.${value.packetType.name}.FactorioConfigurationUpdate"
-          is FactorioPrototypes          ->
+          is FactorioPrototypes ->
             "kafkatorio.${value.packetType.name}.all"
         }
       }
@@ -219,14 +220,14 @@ class KafkatorioTopology(
       "kafkatorio.${KafkatorioPacket.PacketType.EVENT}.${FactorioObjectData.ObjectName.LuaTiles}",
       Consumed.with(Serdes.String(), jsonMapper.serde<FactorioEvent>())
     )
-      .peek { k, v ->
-        println("trying to handle MapChunk update... $k: ${v.eventType}")
-      }
+//      .peek { k, v ->
+//        println("trying to handle MapChunk update... $k: ${v.eventType}")
+//      }
       .filter("events.filter.map-tiles") { _: String, event: FactorioEvent -> event.data is MapTiles }
       .mapValues("events.extract-map-tiles") { _, event: FactorioEvent -> (event.data as? MapTiles)!! }
-      .peek { key, value ->
-        println("MapChunk update $key, tiles count: ${value.tiles.size}")
-      }
+//      .peek { key, value ->
+//        println("MapChunk update $key, tiles count: ${value.tiles.size}")
+//      }
 
 
     val chunkTilesUpdateStream: KStream<String, MapTiles> = builder.stream(
@@ -262,7 +263,7 @@ class KafkatorioTopology(
       luaTilesUpdatesStream
         .merge("luaTilesUpdatesStream-and-chunkTilesUpdateStream", chunkTilesUpdateStream)
         .flatMapTopicRecords("all-tiles-convert-to-TileUpdateRecord") { _, mapTiles: MapTiles ->
-          println("all map tiles update ${mapTiles.tiles.size}")
+//          println("all map tiles update ${mapTiles.tiles.size}")
           mapTiles.tiles.map { tile ->
             TileUpdateRecord(
               mapTiles.surfaceIndex,
@@ -288,6 +289,12 @@ class KafkatorioTopology(
         .reduce { tileA, tileB ->
           tileA.copy(tiles = tileA.tiles + tileB.tiles)
         }
+        .suppress(
+          Suppressed.untilTimeLimit(
+            Duration.ofSeconds(30),
+            Suppressed.BufferConfig.maxRecords(30)
+          )
+        )
 
     chunksTable
       .toStream()
@@ -302,7 +309,7 @@ class KafkatorioTopology(
       }
   }
 
-  @Suppress("KotlinConstantConditions")
+//  @Suppress("KotlinConstantConditions")
   private fun saveMapTilesPng(key: MapChunkDataPosition, chunk: MapChunkData) {
 
     val chunkOriginX = chunk.chunkPosition.position.leftTopTile.x
@@ -325,7 +332,10 @@ class KafkatorioTopology(
         ?.toHexadecimal()
 
       val rgbColour = when (prototypeColour) {
-        null -> RGBColor(11, 11, 11, 0)
+        null -> {
+          println("missing prototype: ${tile.prototypeName}")
+          RGBColor(11, 11, 11, 0)
+        }
         else -> RGBColor(
           prototypeColour.red.roundToInt(),
           prototypeColour.green.roundToInt(),
@@ -347,7 +357,7 @@ class KafkatorioTopology(
 
     val zoom = 1u
     val file =
-      File("kafkatorio-web-map/s${key.surfaceIndex}/z$zoom/x${key.position.x}/y${key.position.y}.png")
+      File("src/main/resources/kafkatorio-web-map/s${key.surfaceIndex}/z$zoom/x${key.position.x}/y${key.position.y}.png")
 
     if (file.parentFile.mkdirs()) {
       println("created new map tile parentFile directory ${file.absolutePath}")

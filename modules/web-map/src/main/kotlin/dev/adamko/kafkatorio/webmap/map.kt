@@ -1,8 +1,10 @@
 package dev.adamko.kafkatorio.webmap
 
+import io.kvision.maps.DefaultTileLayers
 import io.kvision.maps.externals.leaflet.geo.CRS
 import io.kvision.maps.externals.leaflet.geo.LatLng
 import io.kvision.maps.Maps
+import io.kvision.maps.Maps.Companion.L
 import io.kvision.utils.px
 
 //
@@ -24,9 +26,16 @@ fun createFactorioMap() = Maps {
   margin = 10.px
 
   configureLeafletMap {
-    setView(LatLng(0, 0), 13)
+    setView(LatLng(0, 0), 1)
 
 //    DefaultTileLayers.OpenStreetMap.addTo(this)
+    L.tileLayer(
+      """http://localhost:9073/tiles/s1/z1/x{x}/y{y}.png"""
+    ) {
+      attribution = "kafkatorio"
+      tms = true
+      minZoom = 1
+    }.addTo(this)
 
     with(options) {
       crs = CRS.Simple

@@ -17,6 +17,7 @@ import org.http4k.routing.bind
 import org.http4k.routing.websockets
 import org.http4k.server.PolyHandler
 import org.http4k.websocket.Websocket
+import org.http4k.websocket.WsHandler
 import org.http4k.websocket.WsMessage
 import org.http4k.websocket.WsStatus
 
@@ -47,7 +48,7 @@ class WebsocketServer {
     messages.emit(msg)
   }
 
-  suspend fun build(): PolyHandler = supervisorScope builder@{
+  suspend fun build(): WsHandler = supervisorScope builder@{
 
     coroutineContext.job.invokeOnCompletion { e ->
       e?.let { serverJob.completeExceptionally(it) } ?: serverJob.complete()
@@ -89,10 +90,8 @@ class WebsocketServer {
       }
       .launchIn(serverScope)
 
-    val http = { _: Request -> Response(OK) }
-    val ws = websockets("/ws" bind ::bindClient)
 
-    return@builder PolyHandler(http, ws)
+    return@builder websockets("/ws" bind ::bindClient)
 
   }
 }
