@@ -11,6 +11,11 @@
 While this project is under development, [no license](https://choosealicense.com/no-permission/)
 is provided.
 
+## cmds
+
+`./bin/kafka-streams-application-reset.sh --application-id kafkatorio-events-processor --input-topics factorio-server-log`
+
+
 ## todo
 
 * add settings

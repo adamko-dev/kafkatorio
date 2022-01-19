@@ -30,11 +30,13 @@ fun createFactorioMap() = Maps {
 
 //    DefaultTileLayers.OpenStreetMap.addTo(this)
     L.tileLayer(
-      """http://localhost:9073/tiles/s1/z1/x{x}/y{y}.png"""
+      """http://localhost:9073/tiles/s1/z{z}/x{x}/y{y}.png"""
     ) {
       attribution = "kafkatorio"
       tms = true
       minZoom = 1
+//      maxZoom = 1
+      maxNativeZoom = 1
     }.addTo(this)
 
     with(options) {

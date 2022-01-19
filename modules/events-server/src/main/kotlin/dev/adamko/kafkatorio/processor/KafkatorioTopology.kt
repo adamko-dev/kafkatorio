@@ -22,6 +22,7 @@ import dev.adamko.kafkatorio.events.schema.converters.toMapChunkPosition
 import dev.adamko.kotka.extensions.consumedAs
 import dev.adamko.kotka.extensions.groupedAs
 import dev.adamko.kotka.extensions.materializedAs
+import dev.adamko.kotka.extensions.materializedWith
 import dev.adamko.kotka.extensions.producedAs
 import dev.adamko.kotka.extensions.streams.filter
 import dev.adamko.kotka.extensions.streams.flatMap
@@ -29,6 +30,8 @@ import dev.adamko.kotka.extensions.streams.map
 import dev.adamko.kotka.extensions.streams.mapValues
 import dev.adamko.kotka.extensions.streams.merge
 import dev.adamko.kotka.extensions.streams.to
+import dev.adamko.kotka.extensions.streams.toTable
+import dev.adamko.kotka.extensions.tables.join
 import dev.adamko.kotka.kxs.serde
 import dev.adamko.kotka.topicdata.TopicRecord
 import dev.adamko.kotka.topicdata.flatMapTopicRecords
@@ -73,17 +76,17 @@ class KafkatorioTopology(
     sendPlayerUpdatesToWebSocket()
 //    createMapTileImages()
     val tilePrototypesTable: KTable<String, MapTilePrototype> = tilePrototypesTable()
-    mapChunksStream()
+    mapChunksStream(tilePrototypesTable)
 
     val topology = builder.build()
 
     val streams = KafkaStreams(topology, appProps.kafkaConfig)
+//    streams.cleanUp()
 
     streams.setUncaughtExceptionHandler(StreamsExceptionHandler())
 
     Runtime.getRuntime().addShutdownHook(Thread { streams.close(Duration.ofSeconds(10)) })
 
-//  streams.cleanUp()
 
     val description: TopologyDescription = topology.describe()
     println(description)
@@ -121,11 +124,11 @@ class KafkatorioTopology(
       ) { _: String, value: KafkatorioPacket, _: RecordContext ->
 //        println("[$key] sending event:${value.eventType} to topic:${value.data.objectName()}")
         when (value) {
-          is FactorioEvent ->
+          is FactorioEvent               ->
             "kafkatorio.${value.packetType.name}.${value.data.objectName.name}"
           is FactorioConfigurationUpdate ->
             "kafkatorio.${value.packetType.name}.FactorioConfigurationUpdate"
-          is FactorioPrototypes ->
+          is FactorioPrototypes          ->
             "kafkatorio.${value.packetType.name}.all"
         }
       }
@@ -167,7 +170,6 @@ class KafkatorioTopology(
           jsonMapper.serde()
         )
       )
-
 //      .to(
 //        tilePrototypesStreamName,
 //      )
@@ -188,6 +190,12 @@ class KafkatorioTopology(
   }
 
   @Serializable
+  data class MapTileWithPrototype(
+    val position: MapTilePosition,
+    val prototype: MapTilePrototype,
+  )
+
+  @Serializable
   data class MapChunkDataPosition(
     val position: MapChunkPosition,
     val surfaceIndex: Int,
@@ -197,24 +205,10 @@ class KafkatorioTopology(
   data class MapChunkData(
     val chunkPosition: MapChunkDataPosition,
     val tiles: Set<MapTile>,
+    val tilePrototypes: Set<MapTilePrototype>,
   )
-//    : TopicRecord<MapChunkDataPosition>
-  {
 
-    //    @kotlinx.serialization.Transient
-//    override val topicKey by ::chunkPosition
-//    @kotlinx.serialization.Transient
-//    val surfaceIndex: Int by chunkPosition::surfaceIndex
-
-//    @kotlinx.serialization.Transient
-//    val leftTopTile = chunkPosition.position.leftTopTile
-//    @kotlinx.serialization.Transient
-//    val rightBottom = chunkPosition.position.rightBottomTile
-//    @kotlinx.serialization.Transient
-//    val leftBottom = MapTilePosition(leftTopTile.x, rightBottom.x)
-  }
-
-  private fun mapChunksStream() {
+  private fun mapChunksStream(tilePrototypesTable: KTable<String, MapTilePrototype>) {
 
     val luaTilesUpdatesStream: KStream<String, MapTiles> = builder.stream(
       "kafkatorio.${KafkatorioPacket.PacketType.EVENT}.${FactorioObjectData.ObjectName.LuaTiles}",
@@ -253,10 +247,10 @@ class KafkatorioTopology(
     data class TileUpdateRecord(
       val surfaceIndex: Int,
       val tilePosition: MapTilePosition,
-      val tile: MapTile
+      val tile: MapTile,
+      val tilePrototype: MapTilePrototype?,
     ) : TopicRecord<TileUpdateRecordKey> {
-      override val topicKey: TileUpdateRecordKey =
-        TileUpdateRecordKey(surfaceIndex, tilePosition)
+      override val topicKey: TileUpdateRecordKey = TileUpdateRecordKey(surfaceIndex, tilePosition)
     }
 
     val allTileUpdatesStream: KStream<TileUpdateRecordKey, TileUpdateRecord> =
@@ -268,9 +262,26 @@ class KafkatorioTopology(
             TileUpdateRecord(
               mapTiles.surfaceIndex,
               tile.position,
-              tile
+              tile,
+              null
             )
           }
+        }
+        .toTable(
+          "all-tile-updates-table",
+          materializedWith(jsonMapper.serde(), jsonMapper.serde())
+        )
+        .join(
+          tilePrototypesTable,
+          "enrich-tiles-with-prototypes",
+          materializedWith(jsonMapper.serde(), jsonMapper.serde()),
+          { it.tile.prototypeName },
+        ) { v1: TileUpdateRecord, v2: MapTilePrototype ->
+          v1.copy(tilePrototype = v2)
+        }
+        .toStream()
+        .filter { _, value ->
+          value.tilePrototype != null
         }
 
     val chunksTable: KTable<MapChunkDataPosition, MapChunkData> =
@@ -280,19 +291,26 @@ class KafkatorioTopology(
             value.tilePosition.toMapChunkPosition(),
             value.surfaceIndex,
           )
-          key to MapChunkData(key, setOf(value.tile))
+          key to MapChunkData(
+            key,
+            setOf(value.tile),
+            setOfNotNull(value.tilePrototype)
+          )
         }
         // group all tiles by chunk position
         .groupByKey(
           groupedAs("group-tile-updates-per-chunk-position", jsonMapper.serde(), jsonMapper.serde())
         )
         .reduce { tileA, tileB ->
-          tileA.copy(tiles = tileA.tiles + tileB.tiles)
+          tileA.copy(
+            tiles = tileA.tiles + tileB.tiles,
+            tilePrototypes = tileA.tilePrototypes + tileB.tilePrototypes
+          )
         }
         .suppress(
           Suppressed.untilTimeLimit(
             Duration.ofSeconds(30),
-            Suppressed.BufferConfig.maxRecords(30)
+            Suppressed.BufferConfig.maxRecords(32*32*2)
           )
         )
 
@@ -309,11 +327,15 @@ class KafkatorioTopology(
       }
   }
 
-//  @Suppress("KotlinConstantConditions")
+
   private fun saveMapTilesPng(key: MapChunkDataPosition, chunk: MapChunkData) {
 
+    val tilePrototypes: Map<String, MapTilePrototype?> =
+      chunk.tilePrototypes.associateBy { it.name }.withDefault { null }
+
     val chunkOriginX = chunk.chunkPosition.position.leftTopTile.x
-    val chunkOriginY = chunk.chunkPosition.position.rightBottomTile.y
+//    val chunkOriginY = chunk.chunkPosition.position.rightBottomTile.y
+    val chunkOriginY = chunk.chunkPosition.position.leftTopTile.y
 
     val chunkImage =
       ImmutableImage.filled(
@@ -325,9 +347,8 @@ class KafkatorioTopology(
 
     chunk.tiles.forEach { tile ->
 
-      val prototypeColour = tilePrototypesStore
-        .get(tile.prototypeName)
-        ?.value()
+      val prototypeColour = tilePrototypes
+        .getValue(tile.prototypeName)
         ?.mapColour
         ?.toHexadecimal()
 
