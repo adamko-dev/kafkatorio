@@ -1,0 +1,5 @@
+<root>
+  <item name='org.apache.kafka.streams.state.ReadOnlyKeyValueStore V get(K)'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+</root>

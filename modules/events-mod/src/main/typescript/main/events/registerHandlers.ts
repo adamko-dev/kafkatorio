@@ -9,6 +9,7 @@ import {
 import on_player_built_tile = defines.events.on_player_built_tile;
 import on_robot_built_tile = defines.events.on_robot_built_tile;
 
+
 const mapEventIdToName = new LuaTable<defines.Events, keyof typeof defines.events>()
 for (const [k, v] of pairs(defines.events)) {
   mapEventIdToName.set(v, k)

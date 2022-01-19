@@ -64,7 +64,7 @@ object FactorioObjectDataSerializer : JsonContentPolymorphicSerializer<FactorioO
       FactorioObjectData.ObjectName.LuaSurface         -> SurfaceData.serializer()
       FactorioObjectData.ObjectName.MapChunk           -> MapChunk.serializer()
       FactorioObjectData.ObjectName.LuaTile            -> MapTile.serializer()
-      FactorioObjectData.ObjectName.LuaTiles            -> MapTiles.serializer()
+      FactorioObjectData.ObjectName.LuaTiles           -> MapTiles.serializer()
       FactorioObjectData.ObjectName.ConsoleChatMessage -> ConsoleChatMessage.serializer()
       null                                             ->
         throw Exception("Unknown FactorioObjectData $key: '$type' ")

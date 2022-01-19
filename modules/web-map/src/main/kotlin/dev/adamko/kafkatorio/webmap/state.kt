@@ -2,6 +2,7 @@ package dev.adamko.kafkatorio.webmap
 
 import dev.adamko.kafkatorio.events.schema.FactorioEvent
 import dev.adamko.kafkatorio.events.schema.PlayerData
+import dev.adamko.kafkatorio.events.schema.converters.toHexString
 import io.kvision.maps.externals.leaflet.layer.overlay.Tooltip
 import io.kvision.maps.externals.leaflet.layer.vector.CircleMarker
 import io.kvision.maps.Maps

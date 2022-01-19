@@ -29,8 +29,8 @@ object CreateTopics {
 
     KafkatorioPacket.PacketType.values().forEach { packetType ->
 
-      val kafkatorioTopics = buildList {
-        add(KafkatorioTopology.sourceTopic)
+      val kafkatorioTopics = buildSet {
+//        add(KafkatorioTopology.sourceTopic)
         when (packetType) {
           KafkatorioPacket.PacketType.EVENT      ->
             FactorioObjectData.ObjectName.values().forEach { objectName ->
@@ -72,7 +72,7 @@ object CreateTopics {
     replicationFactor: Short = 1,
     topicNames: () -> Collection<String>,
   ): CreateTopicsResult =
-    createTopics(topicNames().map {
+    createTopics(topicNames().distinct().map {
       NewTopic(it, numPartitions, replicationFactor)
     })
 }

@@ -57,13 +57,10 @@ export function handleChunkUpdate(
     eventType: string,
     surfaceIndex: uint,
     position: ChunkPositionTable,
-    area: BoundingBoxTable,
+    area: BoundingBoxRead,
 ) {
 
   let surface = game.get_surface(surfaceIndex)
-
-  // let x = (position as ChunkPositionTable).x * CHUNK_SIZE
-  // let y = (position as ChunkPositionTable).y * CHUNK_SIZE
 
   let tiles: LuaTile[] = surface?.find_tiles_filtered({
         area: area,
@@ -81,7 +78,7 @@ export function handleChunkUpdate(
     objectName: "MapChunk",
     tiles: createMapTiles(surfaceIndex, convertedTiles),
     position: Converters.mapChunkPosition(position),
-    area: Converters.convertBoundingBox(area)
+    area: Converters.convertBoundingBox(area),
   }
 
   emitEvent(mapChunk, tick, eventType)

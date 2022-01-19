@@ -15,25 +15,29 @@ import dev.adamko.kafkatorio.events.schema.MapTile
 import dev.adamko.kafkatorio.events.schema.MapTilePosition
 import dev.adamko.kafkatorio.events.schema.MapTilePrototype
 import dev.adamko.kafkatorio.events.schema.MapTiles
+import dev.adamko.kafkatorio.events.schema.converters.leftTopTile
+import dev.adamko.kafkatorio.events.schema.converters.rightBottomTile
+import dev.adamko.kafkatorio.events.schema.converters.toHexadecimal
+import dev.adamko.kafkatorio.events.schema.converters.toMapChunkPosition
 import dev.adamko.kotka.extensions.consumedAs
 import dev.adamko.kotka.extensions.groupedAs
 import dev.adamko.kotka.extensions.materializedAs
 import dev.adamko.kotka.extensions.producedAs
 import dev.adamko.kotka.extensions.streams.filter
 import dev.adamko.kotka.extensions.streams.flatMap
+import dev.adamko.kotka.extensions.streams.map
 import dev.adamko.kotka.extensions.streams.mapValues
 import dev.adamko.kotka.extensions.streams.merge
 import dev.adamko.kotka.extensions.streams.to
 import dev.adamko.kotka.kxs.serde
 import dev.adamko.kotka.topicdata.TopicRecord
 import dev.adamko.kotka.topicdata.flatMapTopicRecords
-import dev.adamko.kotka.topicdata.mapTopicRecords
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.File
 import java.time.Duration
+import kotlin.math.abs
 import kotlin.math.roundToInt
-import kotlin.math.sign
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -76,7 +80,7 @@ class KafkatorioTopology(
 
     streams.setUncaughtExceptionHandler(StreamsExceptionHandler())
 
-    Runtime.getRuntime().addShutdownHook(Thread { streams.close(Duration.ofSeconds(1)) })
+    Runtime.getRuntime().addShutdownHook(Thread { streams.close(Duration.ofSeconds(10)) })
 
 //  streams.cleanUp()
 
@@ -116,11 +120,11 @@ class KafkatorioTopology(
       ) { _: String, value: KafkatorioPacket, _: RecordContext ->
 //        println("[$key] sending event:${value.eventType} to topic:${value.data.objectName()}")
         when (value) {
-          is FactorioEvent ->
+          is FactorioEvent               ->
             "kafkatorio.${value.packetType.name}.${value.data.objectName.name}"
           is FactorioConfigurationUpdate ->
             "kafkatorio.${value.packetType.name}.FactorioConfigurationUpdate"
-          is FactorioPrototypes ->
+          is FactorioPrototypes          ->
             "kafkatorio.${value.packetType.name}.all"
         }
       }
@@ -139,6 +143,10 @@ class KafkatorioTopology(
   }
 
   private fun tilePrototypesTable(): KTable<String, MapTilePrototype> {
+
+//    val tilePrototypesStreamName = "kafkatorio.stream.prototypes-tiles"
+//    val tilePrototypesStoreName = "kafkatorio.store.prototypes-tiles"
+
     return builder.stream(
       "kafkatorio.${KafkatorioPacket.PacketType.PROTOTYPES}.all",
       Consumed.with(Serdes.String(), jsonMapper.serde<FactorioPrototypes>())
@@ -158,6 +166,24 @@ class KafkatorioTopology(
           jsonMapper.serde()
         )
       )
+
+//      .to(
+//        tilePrototypesStreamName,
+//      )
+
+//    return builder.globalTable(
+//      tilePrototypesStreamName,
+//      consumedAs(
+//        "send-tile-protos-to-gkt-store",
+//        jsonMapper.serde(),
+//        jsonMapper.serde()
+//      ),
+//      materializedAs(
+//        storeName = tilePrototypesStoreName,
+//        keySerde = jsonMapper.serde(),
+//        valueSerde = jsonMapper.serde(),
+//      )
+//    )
   }
 
   @Serializable
@@ -168,14 +194,23 @@ class KafkatorioTopology(
 
   @Serializable
   data class MapChunkData(
-    val position: MapChunkPosition,
-    val surfaceIndex: Int,
+    val chunkPosition: MapChunkDataPosition,
     val tiles: Set<MapTile>,
-  ) : TopicRecord<MapChunkDataPosition> {
-    override val topicKey = MapChunkDataPosition(position, surfaceIndex)
+  )
+//    : TopicRecord<MapChunkDataPosition>
+  {
 
-    constructor(key: MapChunkDataPosition, tiles: Set<MapTile>) :
-        this(key.position, key.surfaceIndex, tiles)
+    //    @kotlinx.serialization.Transient
+//    override val topicKey by ::chunkPosition
+//    @kotlinx.serialization.Transient
+//    val surfaceIndex: Int by chunkPosition::surfaceIndex
+
+//    @kotlinx.serialization.Transient
+//    val leftTopTile = chunkPosition.position.leftTopTile
+//    @kotlinx.serialization.Transient
+//    val rightBottom = chunkPosition.position.rightBottomTile
+//    @kotlinx.serialization.Transient
+//    val leftBottom = MapTilePosition(leftTopTile.x, rightBottom.x)
   }
 
   private fun mapChunksStream() {
@@ -192,6 +227,7 @@ class KafkatorioTopology(
       .peek { key, value ->
         println("MapChunk update $key, tiles count: ${value.tiles.size}")
       }
+
 
     val chunkTilesUpdateStream: KStream<String, MapTiles> = builder.stream(
       "kafkatorio.${KafkatorioPacket.PacketType.EVENT}.${FactorioObjectData.ObjectName.MapChunk}",
@@ -238,12 +274,12 @@ class KafkatorioTopology(
 
     val chunksTable: KTable<MapChunkDataPosition, MapChunkData> =
       allTileUpdatesStream
-        .mapTopicRecords("map-tile-updates-to-MapChunkData") { _: TileUpdateRecordKey, value: TileUpdateRecord ->
+        .map("map-tile-updates-to-MapChunkData") { _: TileUpdateRecordKey, value: TileUpdateRecord ->
           val key = MapChunkDataPosition(
             value.tilePosition.toMapChunkPosition(),
             value.surfaceIndex,
           )
-          MapChunkData(key, setOf(value.tile))
+          key to MapChunkData(key, setOf(value.tile))
         }
         // group all tiles by chunk position
         .groupByKey(
@@ -259,19 +295,18 @@ class KafkatorioTopology(
         runCatching {
           saveMapTilesPng(key, value)
         }.onFailure { e ->
-          println("error saving map tile png ${value.position}")
+          println("error saving map tile png chunk:${value.chunkPosition}")
           e.printStackTrace()
           throw e
         }
       }
   }
 
+  @Suppress("KotlinConstantConditions")
   private fun saveMapTilesPng(key: MapChunkDataPosition, chunk: MapChunkData) {
-    val (xChunk, yChunk) = chunk.position.toMapTilePosition()
-    val xOffset = when (xChunk.sign >= 0) {
-      true -> {}
-      false -> {}
-    }
+
+    val chunkOriginX = chunk.chunkPosition.position.leftTopTile.x
+    val chunkOriginY = chunk.chunkPosition.position.rightBottomTile.y
 
     val chunkImage =
       ImmutableImage.filled(
@@ -283,25 +318,28 @@ class KafkatorioTopology(
 
     chunk.tiles.forEach { tile ->
 
+      val prototypeColour = tilePrototypesStore
+        .get(tile.prototypeName)
+        ?.value()
+        ?.mapColour
+        ?.toHexadecimal()
 
-      val prototypeColour = tilePrototypesStore.get(tile.prototypeName)
-        .value()
-        .mapColour
-        .asHexadecimal()
+      val rgbColour = when (prototypeColour) {
+        null -> RGBColor(11, 11, 11, 0)
+        else -> RGBColor(
+          prototypeColour.red.roundToInt(),
+          prototypeColour.green.roundToInt(),
+          prototypeColour.blue.roundToInt(),
+          prototypeColour.alpha.roundToInt(),
+        )
+      }
 
-      val rgbColour = RGBColor(
-        prototypeColour.red.roundToInt(),
-        prototypeColour.green.roundToInt(),
-        prototypeColour.blue.roundToInt(),
-        prototypeColour.alpha.roundToInt(),
-      )
-
-      val x = (tile.position.x - xChunk) * xChunk.sign
-      val y = (tile.position.y - yChunk) * yChunk.sign
+      val pixelX = abs(abs(tile.position.x) - abs(chunkOriginX))
+      val pixelY = abs(abs(tile.position.y) - abs(chunkOriginY))
 
       chunkImage.setColor(
-        tile.position.x,
-        tile.position.y,
+        pixelX,
+        pixelY,
         rgbColour
       )
 
@@ -309,10 +347,10 @@ class KafkatorioTopology(
 
     val zoom = 1u
     val file =
-      File("kafkatorio-web-map/${key.surfaceIndex}/$zoom/${key.position.x}/${key.position.y}.png")
+      File("kafkatorio-web-map/s${key.surfaceIndex}/z$zoom/x${key.position.x}/y${key.position.y}.png")
 
-    require(file.mkdirs()) {
-      "error creating map tile directory ${file.absolutePath}"
+    if (file.parentFile.mkdirs()) {
+      println("created new map tile parentFile directory ${file.absolutePath}")
     }
 
     println("saving map tile $file")

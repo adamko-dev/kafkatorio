@@ -105,19 +105,10 @@ export namespace Converters {
     }
   }
 
-  // export function convertMapTilePositionToMapChunkPosition(
-  //     tilePosition: TilePositionTable
-  // ): ChunkPositionTable {
-  //   return {
-  //     x: tilePosition.x / 32,
-  //     y: tilePosition.y / 32,
-  //   }
-  // }
-
-  export function convertBoundingBox(bb: BoundingBoxTable): MapBoundingBox {
+  export function convertBoundingBox(bb: BoundingBoxRead): MapBoundingBox {
     return {
-      topLeft: mapTilePosition(bb.left_top as PositionTable),
-      bottomRight: mapTilePosition(bb.right_bottom as PositionTable),
+      topLeft: mapTilePosition(bb.left_top),
+      bottomRight: mapTilePosition(bb.right_bottom),
     }
   }
 

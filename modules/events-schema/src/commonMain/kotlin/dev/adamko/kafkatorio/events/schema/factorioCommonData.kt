@@ -1,8 +1,8 @@
 package dev.adamko.kafkatorio.events.schema
 
-import kotlin.math.roundToInt
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
+
 
 const val MAP_CHUNK_SIZE = 32
 
@@ -16,14 +16,8 @@ const val MAP_CHUNK_SIZE = 32
 data class MapEntityPosition(
   val x: Double,
   val y: Double,
-) {
+)
 
-  fun toMapChunkPosition() = MapChunkPosition(
-    (x / MAP_CHUNK_SIZE).toInt(),
-    (y / MAP_CHUNK_SIZE).toInt(),
-  )
-
-}
 
 /** Coordinates of a chunk in a [SurfaceData] where each integer `x`/`y` represents a different
  * chunk.
@@ -35,19 +29,8 @@ data class MapEntityPosition(
 data class MapChunkPosition(
   val x: Int,
   val y: Int,
-) {
+)
 
-  fun toMapEntityPosition() = MapEntityPosition(
-    x * MAP_CHUNK_SIZE.toDouble(),
-    y * MAP_CHUNK_SIZE.toDouble(),
-  )
-
-  fun toMapTilePosition() = MapChunkPosition(
-    x * MAP_CHUNK_SIZE,
-    y * MAP_CHUNK_SIZE,
-  )
-
-}
 
 /**
  * Coordinates of a tile in a chunk on a [SurfaceData] where each integer `x`/`y` represents a
@@ -59,15 +42,7 @@ data class MapChunkPosition(
 data class MapTilePosition(
   val x: Int,
   val y: Int,
-) {
-  constructor(x: Number, y: Number) : this(x.toInt(), y.toInt())
-
-  fun toMapChunkPosition() = MapChunkPosition(
-    x / MAP_CHUNK_SIZE,
-    y / MAP_CHUNK_SIZE,
-  )
-
-}
+)
 
 
 @Serializable
@@ -93,39 +68,4 @@ data class Colour(
   val blue: Float = 0f,
   @EncodeDefault
   val alpha: Float = 1f,
-) {
-
-  /** True if any value is greater than 1, so the values are hexadecimal. */
-  fun isHexadecimal(): Boolean {
-    return red > 1f
-        || green > 1f
-        || blue > 1f
-        || alpha > 1f
-  }
-
-  /** True if all values are between `[0..1]`. */
-  fun isPercentage(): Boolean = !isHexadecimal()
-
-  fun asHexadecimal() = if (isPercentage()) {
-    Colour(
-      (red * 255).coerceIn(0f..255f),
-      (green * 255).coerceIn(0f..255f),
-      (blue * 255).coerceIn(0f..255f),
-      (alpha * 255).coerceIn(0f..255f),
-    )
-  } else {
-    this
-  }
-
-  fun asPercentage() = if (isPercentage()) {
-    this
-  } else {
-    Colour(
-      (red / 255).coerceIn(0f..1f),
-      (green / 255).coerceIn(0f..1f),
-      (blue / 255).coerceIn(0f..1f),
-      (alpha / 255).coerceIn(0f..1f),
-    )
-  }
-
-}
+)
