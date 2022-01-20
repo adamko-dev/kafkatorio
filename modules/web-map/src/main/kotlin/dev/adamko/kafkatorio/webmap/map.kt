@@ -34,10 +34,15 @@ fun createFactorioMap() = Maps {
     ) {
       attribution = "kafkatorio"
       tms = true
-      minZoom = 1
-//      maxZoom = 1
+      minZoom = -2
+      maxZoom = 1
       maxNativeZoom = 1
+      minNativeZoom = 1
     }.addTo(this)
+
+    L.scale {
+
+    }
 
     with(options) {
       crs = CRS.Simple
