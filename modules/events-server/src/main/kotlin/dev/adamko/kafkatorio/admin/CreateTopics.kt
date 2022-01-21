@@ -2,7 +2,6 @@ package dev.adamko.kafkatorio.admin
 
 import dev.adamko.kafkatorio.events.schema.FactorioObjectData
 import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
-import dev.adamko.kafkatorio.processor.KafkatorioTopology
 import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
 import org.apache.kafka.clients.admin.Admin
@@ -68,8 +67,8 @@ object CreateTopics {
   }
 
   private fun Admin.createTopics(
-    numPartitions: Int = 1,
-    replicationFactor: Short = 1,
+    numPartitions: Int = 10,
+    replicationFactor: Short = 5,
     topicNames: () -> Collection<String>,
   ): CreateTopicsResult =
     createTopics(topicNames().distinct().map {
