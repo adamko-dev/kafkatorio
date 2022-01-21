@@ -26,6 +26,7 @@ dependencies {
   implementation(platform(libs.kotlinx.serialization.bom))
   implementation(libs.kotlinx.serialization.core)
   implementation(libs.kotlinx.serialization.json)
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf")
 
   implementation(libs.kotlinx.coroutines)
 

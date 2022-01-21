@@ -11,7 +11,7 @@ services:
       context: "."
       target: "kafka-kraft"
       args:
-        KAFKA_DL_URL: "https://dlcdn.apache.org/kafka/3.0.0/kafka_2.13-3.0.0.tgz"
+        KAFKA_DL_URL: "https://dlcdn.apache.org/kafka/3.1.0/kafka_2.13-3.1.0.tgz"
     networks:
       - "kafka-nw"
       - "kafkatorio-nw"
@@ -20,7 +20,7 @@ services:
       - "9093:9093"
 
   kafka-ui:
-    image: provectuslabs/kafka-ui:0.3.1
+    image: provectuslabs/kafka-ui:0.3.2
     container_name: "kafka-ui"
     restart: "unless-stopped"
     networks:

@@ -2,9 +2,9 @@ package dev.adamko.kafkatorio.processor.topology
 
 import dev.adamko.kafkatorio.events.schema.FactorioObjectData
 import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
-import dev.adamko.kafkatorio.processor.KafkatorioPacketSerde
+import dev.adamko.kafkatorio.processor.serdes.KafkatorioPacketSerde
 import dev.adamko.kafkatorio.processor.WebsocketServer
-import dev.adamko.kafkatorio.processor.jsonMapper
+import dev.adamko.kafkatorio.processor.serdes.jsonMapper
 import kotlinx.serialization.encodeToString
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.StreamsBuilder

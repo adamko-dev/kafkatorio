@@ -1,9 +1,9 @@
 package dev.adamko.kafkatorio.processor
 
 import dev.adamko.kafkatorio.events.schema.MapTile
-import dev.adamko.kafkatorio.events.schema.MapTilePosition
 import dev.adamko.kafkatorio.events.schema.MapTilePrototype
 import dev.adamko.kafkatorio.processor.topology.PrototypeName
+import dev.adamko.kafkatorio.processor.topology.TileUpdateRecordKey
 import dev.adamko.kafkatorio.processor.topology.WebMapTileChunkPixels
 import dev.adamko.kafkatorio.processor.topology.WebMapTileChunkPosition
 import dev.adamko.kafkatorio.processor.topology.aggregateWebMapTiles
@@ -33,7 +33,7 @@ class KafkatorioTopology(
     splitFactorioServerLog(builder)
     playerUpdatesToWsServer(websocketServer, builder)
 
-    val allMapTilesTable: KTable<MapTilePosition, MapTile> = allMapTilesTable(builder)
+    val allMapTilesTable: KTable<TileUpdateRecordKey, MapTile> = allMapTilesTable(builder)
     val tilePrototypesTable: KTable<PrototypeName, MapTilePrototype> = prototypesTable(builder)
 
     val webMapTiles: KTable<WebMapTileChunkPosition, WebMapTileChunkPixels> =

@@ -3,8 +3,9 @@ package dev.adamko.kafkatorio.processor.topology
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SurfaceIndex(
-  val surfaceIndex: Int
+@JvmInline
+value class SurfaceIndex(
+  val index: Int
 ) {
-  override fun toString() = "$surfaceIndex"
+  override fun toString() = "$index"
 }

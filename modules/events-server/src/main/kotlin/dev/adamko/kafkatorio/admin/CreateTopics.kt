@@ -2,11 +2,13 @@ package dev.adamko.kafkatorio.admin
 
 import dev.adamko.kafkatorio.events.schema.FactorioObjectData
 import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
+import dev.adamko.kafkatorio.processor.KafkatorioTopology
 import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
 import org.apache.kafka.clients.admin.Admin
 import org.apache.kafka.clients.admin.CreateTopicsResult
 import org.apache.kafka.clients.admin.NewTopic
+import org.apache.kafka.clients.admin.TopicListing
 
 private val logger = KotlinLogging.logger {}
 
@@ -29,7 +31,7 @@ object CreateTopics {
     KafkatorioPacket.PacketType.values().forEach { packetType ->
 
       val kafkatorioTopics = buildSet {
-//        add(KafkatorioTopology.sourceTopic)
+        add(KafkatorioTopology.sourceTopic)
         when (packetType) {
           KafkatorioPacket.PacketType.EVENT      ->
             FactorioObjectData.ObjectName.values().forEach { objectName ->
@@ -41,7 +43,11 @@ object CreateTopics {
             add("kafkatorio.${packetType.name}.all")
         }
       }
+
+      val currentTopics = currentTopics().map { it.name() }
+
       val result = kafkatorioTopics
+        .filterNot { it in currentTopics }
         .run {
           logger.info("Creating $size topics")
           kafkaAdmin.createTopics { this }
@@ -68,10 +74,18 @@ object CreateTopics {
 
   private fun Admin.createTopics(
     numPartitions: Int = 10,
-    replicationFactor: Short = 5,
+    replicationFactor: Short = 1,
     topicNames: () -> Collection<String>,
   ): CreateTopicsResult =
-    createTopics(topicNames().distinct().map {
-      NewTopic(it, numPartitions, replicationFactor)
-    })
+    createTopics(topicNames()
+      .distinct()
+      .map {
+        NewTopic(it, numPartitions, replicationFactor)
+      })
+
+  private fun currentTopics(): MutableCollection<TopicListing> {
+    return kafkaAdmin.listTopics()
+      .listings()
+      .get()
+  }
 }

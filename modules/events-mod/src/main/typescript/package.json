@@ -1,6 +1,6 @@
 {
   "name": "kafkatorio-events-mod",
-  "version": "0.2.4",
+  "version": "0.2.6",
   "private": true,
   "scripts": {
     "build": "tstl",
@@ -13,8 +13,8 @@
   "dependencies": {
     "lua-types": "^2.11.0",
     "@types/node": "^12.0.8",
-    "typescript-to-lua": "1.3.0",
-    "typed-factorio": "0.16.0",
+    "typescript-to-lua": "1.3.3",
+    "typed-factorio": "0.17.0",
     "typescript": "4.5.4"
   },
   "license": "UNLICENSED",

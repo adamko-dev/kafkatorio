@@ -1,4 +1,4 @@
-package dev.adamko.kafkatorio.processor
+package dev.adamko.kafkatorio.processor.serdes
 
 import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
 import dev.adamko.kafkatorio.events.schema.jsonMapperKafkatorio

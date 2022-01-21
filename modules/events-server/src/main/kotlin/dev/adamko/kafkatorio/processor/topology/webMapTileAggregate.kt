@@ -5,7 +5,7 @@ import dev.adamko.kafkatorio.events.schema.MapTile
 import dev.adamko.kafkatorio.events.schema.MapTilePosition
 import dev.adamko.kafkatorio.events.schema.MapTilePrototype
 import dev.adamko.kafkatorio.events.schema.converters.toMapChunkPosition
-import dev.adamko.kafkatorio.processor.jsonMapper
+import dev.adamko.kafkatorio.processor.serdes.jsonMapper
 import dev.adamko.kotka.extensions.groupedAs
 import dev.adamko.kotka.extensions.materializedAs
 import dev.adamko.kotka.extensions.namedAs
@@ -19,26 +19,16 @@ import kotlinx.serialization.Serializable
 import org.apache.kafka.streams.kstream.KTable
 import org.apache.kafka.streams.kstream.Suppressed
 
-/** The tiles of the webmap will be this many pixels high/wide */
-const val WEB_MAP_IMAGE_TILE_SIZE = 32
 
-//@Serializable
-//data class MapChunkDataPosition(
-//  val position: MapChunkPosition,
-//  val surfaceIndex: SurfaceIndex,
-//)
-//
-//@Serializable
-//data class MapChunkData(
-//  val chunkPosition: MapChunkDataPosition,
-//  val tiles: Set<MapTile>,
-//)
+/** The tiles of the webmap will be this many pixels high/wide */
+const val WEB_MAP_IMAGE_TILE_SIZE = 256
 
 @Serializable
 data class WebMapTileChunkPosition(
   val chunkSize: Int,
   val x: Int,
   val y: Int,
+  val surfaceIndex: SurfaceIndex,
 )
 
 @Serializable
@@ -59,11 +49,11 @@ private data class WebMapTileChunkPixelsAcc(
 )
 
 fun aggregateWebMapTiles(
-  allMapTilesTable: KTable<MapTilePosition, MapTile>,
+  allMapTilesTable: KTable<TileUpdateRecordKey, MapTile>,
   tilePrototypesTable: KTable<PrototypeName, MapTilePrototype>,
 ): KTable<WebMapTileChunkPosition, WebMapTileChunkPixels> {
 
-  val webmapTileColours: KTable<MapTilePosition, WebMapTilePixel> =
+  val webmapTileColours: KTable<TileUpdateRecordKey, WebMapTilePixel> =
     allMapTilesTable
       .join(
         tilePrototypesTable,
@@ -87,9 +77,14 @@ fun aggregateWebMapTiles(
           jsonMapper.serde(),
           jsonMapper.serde(),
         )
-      ) { pos: MapTilePosition, px: WebMapTilePixel ->
-        val (chunkX, chunkY) = pos.toMapChunkPosition(WEB_MAP_IMAGE_TILE_SIZE)
-        val chunkPos = WebMapTileChunkPosition(WEB_MAP_IMAGE_TILE_SIZE, chunkX, chunkY)
+      ) { pos: TileUpdateRecordKey, px: WebMapTilePixel ->
+        val (chunkX, chunkY) = pos.tilePosition.toMapChunkPosition(WEB_MAP_IMAGE_TILE_SIZE)
+        val chunkPos = WebMapTileChunkPosition(
+          WEB_MAP_IMAGE_TILE_SIZE,
+          chunkX,
+          chunkY,
+          pos.surfaceIndex
+        )
         (chunkPos to px).toKeyValue()
       }
       .aggregate(
@@ -103,7 +98,11 @@ fun aggregateWebMapTiles(
           acc.apply { pixels.minus(oldValue) }
         },
         namedAs("web-map-tile-colours-into-$WEB_MAP_IMAGE_TILE_SIZE-chunks"),
-        materializedAs("web-map-tile-colour-chunks-aggregate", jsonMapper.serde(), jsonMapper.serde())
+        materializedAs(
+          "web-map-tile-colour-chunks-aggregate",
+          jsonMapper.serde(),
+          jsonMapper.serde()
+        )
       )
       .suppress(
         Suppressed.untilTimeLimit<WebMapTileChunkPosition>(

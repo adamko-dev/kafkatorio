@@ -48,7 +48,7 @@ script.on_event(
 script.on_event(
     defines.events.on_tick,
     (e: OnTickEvent) => {
-      if (e.tick % 60 == 0) {
+      if (e.tick % 1000 == 0) {
         for (const [, surface] of pairs(game.surfaces)) {
           handleSurfaceUpdate(e.tick, mapEventIdToName.get(e.name), surface)
         }

@@ -3,7 +3,6 @@ package dev.adamko.kafkatorio.processor.topology
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.color.RGBColor
 import com.sksamuel.scrimage.nio.PngWriter
-import dev.adamko.kafkatorio.events.schema.MAP_CHUNK_SIZE
 import dev.adamko.kotka.extensions.tables.toStream
 import java.awt.Color
 import java.awt.image.BufferedImage
@@ -43,15 +42,14 @@ private fun saveMapTilesPng(
   chunkPosition: WebMapTileChunkPosition,
   pixels: Set<WebMapTilePixel>
 ) {
-  val surfaceIndex = 1 // TODO get surface index
-
-  val chunkOriginX = chunkPosition.x * chunkPosition.chunkSize
-  val chunkOriginY = chunkPosition.y * chunkPosition.chunkSize
+  val chunkOriginX: Int = chunkPosition.x * chunkPosition.chunkSize
+  val chunkOriginY: Int = chunkPosition.y * chunkPosition.chunkSize
+  val surfaceIndex: Int = chunkPosition.surfaceIndex.index
 
   val chunkImage =
     ImmutableImage.filled(
-      MAP_CHUNK_SIZE,
-      MAP_CHUNK_SIZE,
+      chunkPosition.chunkSize,
+      chunkPosition.chunkSize,
       Color.BLACK,
       BufferedImage.TYPE_INT_ARGB
     )
@@ -79,7 +77,7 @@ private fun saveMapTilesPng(
   val zoom = 1u
   val file =
     File(
-      "src/main/resources/kafkatorio-web-map/s${surfaceIndex}/z$zoom/x${chunkOriginX}/y${chunkOriginY}.png"
+      "src/main/resources/kafkatorio-web-map/s${surfaceIndex}/z$zoom/x${chunkPosition.x}/y${chunkPosition.y}.png"
     )
 
   if (file.parentFile.mkdirs()) {

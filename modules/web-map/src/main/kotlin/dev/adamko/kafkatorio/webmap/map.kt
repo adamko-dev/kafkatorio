@@ -33,9 +33,10 @@ fun createFactorioMap() = Maps {
       """http://localhost:9073/tiles/s1/z{z}/x{x}/y{y}.png"""
     ) {
       attribution = "kafkatorio"
+//      tileSize = 256
       tms = true
-      minZoom = -2
-      maxZoom = 1
+//      minZoom = -2
+//      maxZoom = 1
       maxNativeZoom = 1
       minNativeZoom = 1
     }.addTo(this)
