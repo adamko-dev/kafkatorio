@@ -17,20 +17,20 @@ operator fun MapTilePosition.plus(addend: Int) =
   MapTilePosition(x + addend, y + addend)
 
 
-fun MapTilePosition.toMapChunkPosition() =
+fun MapTilePosition.toMapChunkPosition(  chunkSize: Int = MAP_CHUNK_SIZE) =
   MapChunkPosition(
-    floor(x.toDouble() / MAP_CHUNK_SIZE.toDouble()).toInt(),
-    floor(y.toDouble() / MAP_CHUNK_SIZE.toDouble()).toInt(),
+    floor(x.toDouble() / chunkSize.toDouble()).toInt(),
+    floor(y.toDouble() / chunkSize.toDouble()).toInt(),
   )
 
 
 fun MapEntityPosition.toMapTilePosition() =
   MapChunkPosition(floor(x).toInt(), floor(y).toInt())
 
-fun MapEntityPosition.toMapChunkPosition() =
+fun MapEntityPosition.toMapChunkPosition( chunkSize: Int = MAP_CHUNK_SIZE) =
   MapChunkPosition(
-    floor(x / MAP_CHUNK_SIZE.toDouble()).toInt(),
-    floor(y / MAP_CHUNK_SIZE.toDouble()).toInt(),
+    floor(x / chunkSize.toDouble()).toInt(),
+    floor(y / chunkSize.toDouble()).toInt(),
   )
 
 
@@ -44,15 +44,15 @@ operator fun MapChunkPosition.minus(subtrahend: Int) =
   MapChunkPosition(x - subtrahend, y - subtrahend)
 
 
-val MapChunkPosition.leftTopTile: MapTilePosition
-  get() = MapTilePosition(
-    x * MAP_CHUNK_SIZE,
-    y * MAP_CHUNK_SIZE,
+fun MapChunkPosition.leftTopTile( chunkSize: Int = MAP_CHUNK_SIZE): MapTilePosition =
+    MapTilePosition(
+    x * chunkSize,
+    y * chunkSize,
   )
 
-val MapChunkPosition.rightBottomTile: MapTilePosition
-  get() = leftTopTile + (MAP_CHUNK_SIZE - 1)
-
-
-val MapChunkPosition.boundingBox: MapBoundingBox
-  get() = MapBoundingBox(leftTopTile, rightBottomTile)
+//val MapChunkPosition.rightBottomTile: MapTilePosition
+//  get() = leftTopTile + (MAP_CHUNK_SIZE - 1)
+//
+//
+//val MapChunkPosition.boundingBox: MapBoundingBox
+//  get() = MapBoundingBox(leftTopTile, rightBottomTile)

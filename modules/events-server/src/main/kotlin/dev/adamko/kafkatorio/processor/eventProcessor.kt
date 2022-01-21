@@ -3,7 +3,6 @@ package dev.adamko.kafkatorio.processor
 
 import dev.adamko.kafkatorio.processor.config.ApplicationProperties
 import dev.adamko.kafkatorio.processor.tileserver.WebMapTileServer
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.http4k.server.PolyHandler
 import org.http4k.server.Undertow
@@ -24,11 +23,11 @@ fun main() = runBlocking<Unit> {
     wsServer.build(),
   ).asServer(Undertow(9073))
 
-//  Runtime.getRuntime().addShutdownHook(Thread {
-//    webServer.stop()
-//  })
+  Runtime.getRuntime().addShutdownHook(Thread {
+    webServer.stop()
+  })
 //  launch {
-    webServer.start().block()
+  webServer.start().block()
 //  }
 
 }
