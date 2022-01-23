@@ -2,22 +2,21 @@ package dev.adamko.kafkatorio.processor.topology
 
 import dev.adamko.kafkatorio.events.schema.FactorioObjectData
 import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
-import dev.adamko.kafkatorio.processor.serdes.KafkatorioPacketSerde
 import dev.adamko.kafkatorio.processor.WebsocketServer
 import dev.adamko.kafkatorio.processor.serdes.jsonMapper
+import dev.adamko.kotka.extensions.consumedAs
+import dev.adamko.kotka.kxs.serde
 import kotlinx.serialization.encodeToString
-import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.StreamsBuilder
-import org.apache.kafka.streams.kstream.Consumed
 
 
 fun playerUpdatesToWsServer(
   websocketServer: WebsocketServer,
   builder: StreamsBuilder = StreamsBuilder(),
 ) {
-  builder.stream(
+  builder.stream<FactorioPacketKey, KafkatorioPacket>(
     "kafkatorio.${KafkatorioPacket.PacketType.EVENT}.${FactorioObjectData.ObjectName.LuaPlayer}",
-    Consumed.with(Serdes.String(), KafkatorioPacketSerde)
+    consumedAs("stream-player-updates-for-ws-server", jsonMapper.serde(), jsonMapper.serde())
   )
     .foreach { _, value ->
 //        println("sending ${value.packetType} packet to websocket")

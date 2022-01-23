@@ -8,6 +8,8 @@ import dev.adamko.kafkatorio.events.schema.MapTile
 import dev.adamko.kafkatorio.events.schema.MapTilePosition
 import dev.adamko.kafkatorio.events.schema.MapTiles
 import dev.adamko.kafkatorio.processor.serdes.jsonMapper
+import dev.adamko.kafkatorio.processor.serdes.kxsBinary
+import dev.adamko.kafkatorio.processor.serdes.serde
 import dev.adamko.kotka.extensions.consumedAs
 import dev.adamko.kotka.extensions.materializedWith
 import dev.adamko.kotka.extensions.streams.filter
@@ -71,7 +73,7 @@ fun allMapTilesTable(
     }
     .toTable(
       "all-tiles-keyed-on-position",
-      materializedWith(jsonMapper.serde(), jsonMapper.serde())
+      materializedWith(kxsBinary.serde(), kxsBinary.serde())
     )
     .suppress(
       Suppressed.untilTimeLimit(

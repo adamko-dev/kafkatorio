@@ -31,6 +31,7 @@ class KafkatorioTopology(
   fun build() {
 
     splitFactorioServerLog(builder)
+
     playerUpdatesToWsServer(websocketServer, builder)
 
     val allMapTilesTable: KTable<TileUpdateRecordKey, MapTile> = allMapTilesTable(builder)

@@ -12,7 +12,6 @@ import dev.adamko.kafkatorio.events.schema.MapTiles
 import dev.adamko.kafkatorio.events.schema.PlayerData
 import dev.adamko.kafkatorio.events.schema.SurfaceData
 import dev.adamko.kafkatorio.events.schema.converters.toMapChunkPosition
-import dev.adamko.kafkatorio.processor.serdes.KafkatorioPacketSerde
 import dev.adamko.kafkatorio.processor.KafkatorioTopology
 import dev.adamko.kafkatorio.processor.serdes.jsonMapper
 import dev.adamko.kotka.extensions.consumedAs
@@ -56,7 +55,7 @@ fun splitFactorioServerLog(
       producedAs(
         "split-server-log",
         jsonMapper.serde(),
-        KafkatorioPacketSerde
+        jsonMapper.serde(),
       )
     ) { _: FactorioPacketKey, value: KafkatorioPacket, _: RecordContext ->
 //        println("[$key] sending event:${value.eventType} to topic:${value.data.objectName()}")

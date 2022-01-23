@@ -4,6 +4,8 @@ import dev.adamko.kafkatorio.events.schema.FactorioPrototypes
 import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
 import dev.adamko.kafkatorio.events.schema.MapTilePrototype
 import dev.adamko.kafkatorio.processor.serdes.jsonMapper
+import dev.adamko.kafkatorio.processor.serdes.kxsBinary
+import dev.adamko.kafkatorio.processor.serdes.serde
 import dev.adamko.kotka.extensions.consumedAs
 import dev.adamko.kotka.extensions.materializedWith
 import dev.adamko.kotka.extensions.streams.flatMap
@@ -22,12 +24,12 @@ value class PrototypeName(val name: String) {
 
 
 fun prototypesTable(builder: StreamsBuilder): KTable<PrototypeName, MapTilePrototype> {
-  return builder.stream(
+  return builder.stream<FactorioPacketKey, FactorioPrototypes>(
     "kafkatorio.${KafkatorioPacket.PacketType.PROTOTYPES}.all",
     consumedAs(
       "consume-all-prototypes-packets",
-      Serdes.String(),
-      jsonMapper.serde<FactorioPrototypes>()
+      jsonMapper.serde(),
+      jsonMapper.serde()
     )
   )
     .flatMap("map-MapTilePrototype") { _, prototypes: FactorioPrototypes ->
@@ -37,62 +39,8 @@ fun prototypesTable(builder: StreamsBuilder): KTable<PrototypeName, MapTileProto
     }
     .toTable(
       materializedWith(
-        jsonMapper.serde(),
-        jsonMapper.serde()
+        kxsBinary.serde(),
+        kxsBinary.serde()
       )
     )
 }
-
-
-//@Serializable
-//data class FactorioServerPrototypesRecord(
-//  val serverId: FactorioServerId,
-//  val mapTilePrototypes: Map<PrototypeName, MapTilePrototype>,
-//)
-//
-//fun serverPrototypesTable(builder: StreamsBuilder): KTable<FactorioServerId, FactorioServerPrototypesRecord> {
-//
-//  return builder.stream(
-//    "kafkatorio.${KafkatorioPacket.PacketType.PROTOTYPES}.all",
-//    consumedAs(
-//      "consume-all-prototypes-packets",
-//      Serdes.String(),
-//      jsonMapper.serde<FactorioPrototypes>()
-//    )
-//  )
-//    .map("build-FactorioServerPrototypesRecord", ::buildPrototypesRecord)
-//    .peek { _, value ->
-//      println("tile prototypes: ${value.mapTilePrototypes.keys.joinToString()}")
-//    }
-//    .groupByKey(
-//      groupedAs(
-//        "grouping-tile-prototypes-by-surface-index",
-//        jsonMapper.serde(),
-//        jsonMapper.serde()
-//      )
-//    )
-//    .reduce(
-//      "group-surface-prototypes",
-//      materializedWith(
-////          "kafkatorio.surface-prototypes",
-//        jsonMapper.serde(),
-//        jsonMapper.serde()
-//      )
-//    ) { value1: FactorioServerPrototypesRecord, value2: FactorioServerPrototypesRecord ->
-//      val allTiles = value1.mapTilePrototypes + value2.mapTilePrototypes
-//      value1.copy(mapTilePrototypes = allTiles)
-//    }
-//}
-//
-//private fun buildPrototypesRecord(
-//  serverId: String,
-//  prototypes: FactorioPrototypes
-//): Pair<FactorioServerId, FactorioServerPrototypesRecord> {
-//  val tilePrototypes = prototypes.prototypes
-//    .filterIsInstance<MapTilePrototype>()
-//    .associateBy { PrototypeName(it.name) }
-//
-//  val key = FactorioServerId(serverId)
-//  val data = FactorioServerPrototypesRecord(key, tilePrototypes)
-//  return key to data
-//}

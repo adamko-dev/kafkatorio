@@ -5,7 +5,8 @@ import dev.adamko.kafkatorio.events.schema.MapTile
 import dev.adamko.kafkatorio.events.schema.MapTilePosition
 import dev.adamko.kafkatorio.events.schema.MapTilePrototype
 import dev.adamko.kafkatorio.events.schema.converters.toMapChunkPosition
-import dev.adamko.kafkatorio.processor.serdes.jsonMapper
+import dev.adamko.kafkatorio.processor.serdes.kxsBinary
+import dev.adamko.kafkatorio.processor.serdes.serde
 import dev.adamko.kotka.extensions.groupedAs
 import dev.adamko.kotka.extensions.materializedAs
 import dev.adamko.kotka.extensions.namedAs
@@ -13,7 +14,6 @@ import dev.adamko.kotka.extensions.tables.groupBy
 import dev.adamko.kotka.extensions.tables.join
 import dev.adamko.kotka.extensions.tables.mapValues
 import dev.adamko.kotka.extensions.toKeyValue
-import dev.adamko.kotka.kxs.serde
 import java.time.Duration
 import kotlinx.serialization.Serializable
 import org.apache.kafka.streams.kstream.KTable
@@ -60,8 +60,8 @@ fun aggregateWebMapTiles(
         "convert-tiles-to-colours",
         materializedAs(
           "store-web-map-tile-pixels",
-          jsonMapper.serde(),
-          jsonMapper.serde(),
+          kxsBinary.serde(),
+          kxsBinary.serde(),
         ),
         { PrototypeName(it.prototypeName) },
       ) { tile: MapTile, proto: MapTilePrototype ->
@@ -74,8 +74,8 @@ fun aggregateWebMapTiles(
       .groupBy(
         groupedAs(
           "group-webmap-tile-colours-into-chunks",
-          jsonMapper.serde(),
-          jsonMapper.serde(),
+          kxsBinary.serde(),
+          kxsBinary.serde(),
         )
       ) { pos: TileUpdateRecordKey, px: WebMapTilePixel ->
         val (chunkX, chunkY) = pos.tilePosition.toMapChunkPosition(WEB_MAP_IMAGE_TILE_SIZE)
@@ -100,24 +100,24 @@ fun aggregateWebMapTiles(
         namedAs("web-map-tile-colours-into-$WEB_MAP_IMAGE_TILE_SIZE-chunks"),
         materializedAs(
           "web-map-tile-colour-chunks-aggregate",
-          jsonMapper.serde(),
-          jsonMapper.serde()
+          kxsBinary.serde(),
+          kxsBinary.serde()
         )
       )
       .suppress(
         Suppressed.untilTimeLimit<WebMapTileChunkPosition>(
           Duration.ofSeconds(30),
           Suppressed.BufferConfig
-            .maxRecords(2)
+            .maxRecords(30)
 //            .withMaxBytes(31457280  ) // 30MB
-            .emitEarlyWhenFull()
+//            .emitEarlyWhenFull()
         ).withName("web-map-tile-aggregate-debounce")
       )
 
   return webMapTileChunkAggregate
     .mapValues(
       "finalise-web-map-tile-colour-chunk-aggregation",
-      materializedAs("web-map-tile-colour-chunks", jsonMapper.serde(), jsonMapper.serde())
+      materializedAs("web-map-tile-colour-chunks", kxsBinary.serde(), kxsBinary.serde())
     ) { _, v ->
       WebMapTileChunkPixels(v.pixels)
     }

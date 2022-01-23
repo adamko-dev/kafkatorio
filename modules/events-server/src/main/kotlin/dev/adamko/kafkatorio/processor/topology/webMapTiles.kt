@@ -20,10 +20,10 @@ fun saveTileImages(
 
   webMapTiles
     .suppress(
-      Suppressed.untilTimeLimit(
+      Suppressed.untilTimeLimit<WebMapTileChunkPosition>(
         Duration.ofSeconds(30),
         Suppressed.BufferConfig.maxRecords(30)
-      )
+      ).withName("save-tile-images-debounce")
     )
     .toStream("get-webmap-tile-updates")
     .foreach { position: WebMapTileChunkPosition, pixels: WebMapTileChunkPixels ->
@@ -37,13 +37,15 @@ fun saveTileImages(
     }
 }
 
+//val saveMapTilesContext = Dispatchers.IO.limitedParallelism(1)
+
 
 private fun saveMapTilesPng(
   chunkPosition: WebMapTileChunkPosition,
   pixels: Set<WebMapTilePixel>
 ) {
-  val chunkOriginX: Int = chunkPosition.x * chunkPosition.chunkSize
-  val chunkOriginY: Int = chunkPosition.y * chunkPosition.chunkSize
+  val chunkOriginX: Int = chunkPosition.x * chunkPosition.chunkSize // - 1
+  val chunkOriginY: Int = chunkPosition.y * chunkPosition.chunkSize // - 1
   val surfaceIndex: Int = chunkPosition.surfaceIndex.index
 
   val chunkImage =
@@ -76,15 +78,33 @@ private fun saveMapTilesPng(
 
   val zoom = 1u
   val file =
-    File(
-      "src/main/resources/kafkatorio-web-map/s${surfaceIndex}/z$zoom/x${chunkPosition.x}/y${chunkPosition.y}.png"
-    )
+    File(tileFilename("$surfaceIndex", "$zoom", "${chunkPosition.x}", "${chunkPosition.y}"))
 
   if (file.parentFile.mkdirs()) {
     println("created new map tile parentFile directory ${file.absolutePath}")
   }
 
   println("saving map tile $file")
-
-  chunkImage.output(PngWriter.MaxCompression, file)
+  val savedTile = chunkImage.output(PngWriter.NoCompression, file)
+  println("savedTile: $savedTile")
 }
+
+fun tileFilename(
+  surfaceIndex: String,
+  zoom: String,
+  chunkX: String,
+  chunkY: String,
+) = "src/main/resources/kafkatorio-web-map/s${surfaceIndex}/z$zoom/x${chunkX}/y${chunkY}.png"
+
+//fun subdivide(tile: ImmutableImage, size: Int) {
+//
+//  val halfSize = size / 2
+//
+//  val bl = tile.resizeTo(halfSize, halfSize, Position.BottomLeft)
+//  val savedTile = bl.output(PngWriter.NoCompression, file)
+//
+//  tile.resizeTo(halfSize, halfSize, Position.BottomRight)
+//  tile.resizeTo(halfSize, halfSize, Position.TopLeft)
+//  tile.resizeTo(halfSize, halfSize, Position.TopRight)
+//
+//}

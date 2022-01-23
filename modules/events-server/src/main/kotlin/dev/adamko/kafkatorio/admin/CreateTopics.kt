@@ -73,7 +73,7 @@ object CreateTopics {
   }
 
   private fun Admin.createTopics(
-    numPartitions: Int = 10,
+    numPartitions: Int = 3,
     replicationFactor: Short = 1,
     topicNames: () -> Collection<String>,
   ): CreateTopicsResult =
