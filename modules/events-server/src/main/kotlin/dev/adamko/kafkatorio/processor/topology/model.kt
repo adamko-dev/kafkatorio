@@ -9,3 +9,9 @@ value class SurfaceIndex(
 ) {
   override fun toString() = "$index"
 }
+
+@JvmInline
+@Serializable
+value class FactorioServerId(val id: String) {
+  override fun toString() = id
+}
