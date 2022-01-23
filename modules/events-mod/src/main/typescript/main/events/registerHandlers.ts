@@ -6,13 +6,20 @@ import {
   handleSurfaceUpdate,
   handleTilesUpdate
 } from "./handlers";
+import {Queue} from "../queue/queue";
 import on_player_built_tile = defines.events.on_player_built_tile;
 import on_robot_built_tile = defines.events.on_robot_built_tile;
 
 
 const mapEventIdToName = new LuaTable<defines.Events, keyof typeof defines.events>()
-for (const [k, v] of pairs(defines.events)) {
-  mapEventIdToName.set(v, k)
+for (const [eventName, eventId] of pairs(defines.events)) {
+  mapEventIdToName.set(eventId, eventName)
+}
+
+const mapEventIdToDefinedType = new LuaTable<EventId<EventData>, EventId<EventData>>()
+for (const [eventName, eventId] of pairs(defines.events)) {
+  let definedType = defines.events[eventName]
+  mapEventIdToDefinedType.set(eventId, definedType)
 }
 
 // script.on_event(
@@ -34,6 +41,9 @@ script.on_event(
 script.on_event(
     defines.events.on_player_joined_game,
     (e: OnPlayerJoinedGameEvent) => {
+
+      Queue.init() // TODO make Queue initialisation more stable, not dependent on events
+
       handlePlayerUpdate(e.tick, mapEventIdToName.get(e.name), e.player_index)
     }
 )
@@ -51,6 +61,29 @@ script.on_event(
       if (e.tick % 1000 == 0) {
         for (const [, surface] of pairs(game.surfaces)) {
           handleSurfaceUpdate(e.tick, mapEventIdToName.get(e.name), surface)
+        }
+
+        // let packets = new KafkatorioPacketQueue().dequeueValues(1)
+        // for (const packet of packets) {
+        //   emitPacket(packet)
+        // }
+      }
+
+      if (e.tick % 30 == 0) {
+        let events: EventData[] = Queue.dequeueValues(1)
+
+        if (events.length > 0) {
+          log(`[${e.tick}] dequed ${events.length} events, current size: ${Queue.size()}`)
+
+          for (const event of events) {
+
+            if (isEventType<OnChunkGeneratedEvent>(event)) {
+              let eName = mapEventIdToName.get(event.name)
+
+              log(`[${e.tick}] dequed event ${eName}`)
+              handleChunkUpdate(e.tick, eName, event.surface.index, event.position, event.area)
+            }
+          }
         }
       }
     }
@@ -82,3 +115,14 @@ script.on_event(
       )
     }
 )
+
+
+function isEventType<E extends EventData>(e: EventData): e is E {
+  let id: EventId<EventData> | string = e.name
+  if (typeof id === "string") {
+    return false
+  } else {
+    let name = mapEventIdToDefinedType.get(id)
+    return e.name == name
+  }
+}

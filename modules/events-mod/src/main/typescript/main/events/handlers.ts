@@ -1,11 +1,9 @@
 import {Converters} from "./converters"
 import {emitEvent} from "./emitEvent";
 
-
 export function handlePlayerUpdate(tick: uint, eventType: string, playerIndex: uint) {
   let player: LuaPlayer = game.players[playerIndex]
   let table = Converters.playerToTable(player)
-
 
   emitEvent(table, tick, eventType)
 
@@ -50,8 +48,6 @@ export function handleConsoleChat(
   emitEvent(table, tick, eventType)
 }
 
-// const CHUNK_SIZE = 32
-
 export function handleChunkUpdate(
     tick: uint,
     eventType: string,
@@ -64,8 +60,6 @@ export function handleChunkUpdate(
 
   let tiles: LuaTile[] = surface?.find_tiles_filtered({
         area: area,
-        // position: {x: x, y: y},
-        // radius: CHUNK_SIZE,
         collision_mask: ["ground-tile", "water-tile"]
       }
   ) ?? []

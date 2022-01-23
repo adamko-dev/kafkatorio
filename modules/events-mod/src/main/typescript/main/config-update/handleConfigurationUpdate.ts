@@ -1,6 +1,7 @@
 import {emitPacket} from "../emitKafkatorioPacket";
 import {updateGlobal} from "./updateGlobal";
 import {emitPrototypes} from "./prototypes";
+import {Queue} from "../queue/queue";
 
 export function handleConfigurationUpdate(changeData: ConfigurationChangedData) {
   updateGlobal()
@@ -12,6 +13,7 @@ export function handleConfigurationUpdate(changeData: ConfigurationChangedData) 
     factorioData: factorioData(changeData)
   })
 
+  Queue.reset()
   emitPrototypes()
 }
 

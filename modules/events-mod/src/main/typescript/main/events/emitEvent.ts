@@ -1,6 +1,3 @@
-// const SERVER_ID: uint = 0
-// const EVENT_FILE_DIR: string = "events"
-
 import {emitPacket} from "../emitKafkatorioPacket";
 
 /** Emit a serialised event */

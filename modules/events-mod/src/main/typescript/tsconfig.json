@@ -1,9 +1,9 @@
 {
   "$schema": "https://raw.githubusercontent.com/TypeScriptToLua/vscode-typescript-to-lua/master/tsconfig-schema.json",
   "compilerOptions": {
-    "target": "es2019",
+    "target": "esnext",
     "lib": [
-      "es2019"
+      "esnext"
     ],
     "module": "commonjs",
     "moduleResolution": "node",

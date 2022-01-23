@@ -1,6 +1,8 @@
 import {emitPrototypes} from "../config-update/prototypes";
 import {handleChunkUpdate} from "../events/handlers";
+import {Queue} from "../queue/queue";
 import floor = math.floor;
+
 
 commands.add_command(
     "kafkatorio",
@@ -36,7 +38,7 @@ commands.add_command(
 
           handleChunkUpdate(
               e.tick,
-              "player-command",
+              "player-command-" + e.parameter,
               player.surface.index,
               chunkPosition,
               chunkArea,
@@ -44,23 +46,50 @@ commands.add_command(
         }
       } else if ("CHUNKS" == e.parameter.toUpperCase()) {
 
-        for (let [, surface] of game.surfaces) {
-          for (let chunk of surface.get_chunks()) {
-            if (
-                (chunk.x >= -16 || chunk.x <= 16)
-                &&
-                (chunk.y >= -16 || chunk.y <= 16)
-            ) {
-              handleChunkUpdate(
-                  e.tick,
-                  "player-command",
-                  surface.index,
-                  chunk,
-                  chunk.area,
-              )
+        if (e.player_index != undefined) {
+          let player = game.players[e.player_index]
+
+          let chunkPosition: ChunkPosition = {
+            x: floor(player.position.x / 32),
+            y: floor(player.position.y / 32),
+          }
+
+          let delta = 1
+
+          let chunkXMin = chunkPosition.x - delta
+          let chunkXMax = chunkPosition.x + delta
+          let chunkYMin = chunkPosition.y - delta
+          let chunkYMax = chunkPosition.y + delta
+
+          for (let [, surface] of game.surfaces) {
+            for (let chunk of surface.get_chunks()) {
+              if (
+                  (chunk.x >= chunkXMin || chunk.x <= chunkXMax)
+                  &&
+                  (chunk.y >= chunkYMin || chunk.y <= chunkYMax)
+              ) {
+
+                let data: OnChunkGeneratedEvent = {
+                  name: defines.events.on_chunk_generated,
+                  position: {x: chunk.x, y: chunk.y},
+                  area: chunk.area,
+                  surface: surface,
+                  tick: e.tick
+                }
+
+                Queue.enqueue(
+                    `${surface.index}${chunk.x}${chunk.y}`,
+                    data,
+                    50
+                )
+              }
             }
           }
         }
+      } else if ("QUEUE_RESET" == e.parameter.toUpperCase()) {
+        Queue.reset()
+      } else if ("QUEUE_INIT" == e.parameter.toUpperCase()) {
+        Queue.init()
       }
     }
 )
