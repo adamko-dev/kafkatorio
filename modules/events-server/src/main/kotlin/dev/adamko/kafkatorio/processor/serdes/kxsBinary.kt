@@ -6,10 +6,10 @@ import java.io.DataInput
 import java.io.DataInputStream
 import java.io.DataOutput
 import java.io.DataOutputStream
-import java.util.zip.DeflaterOutputStream
 import kotlinx.serialization.BinaryFormat
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
+import kotlinx.serialization.builtins.ByteArraySerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.AbstractDecoder
 import kotlinx.serialization.encoding.AbstractEncoder
@@ -19,7 +19,7 @@ import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
 
 
-val kxsBinaryMapper: KxsBinary = KxsBinary()
+val kxsBinary: KxsBinary = KxsBinary()
 
 /** [`https://github.com/Kotlin/kotlinx.serialization/blob/master/docs/formats.md#efficient-binary-format`](https://github.com/Kotlin/kotlinx.serialization/blob/master/docs/formats.md#efficient-binary-format) */
 class KxsBinary(
@@ -42,6 +42,8 @@ class KxsBinary(
     return decoder.decodeSerializableValue(deserializer)
   }
 }
+
+private val byteArraySerializer = ByteArraySerializer()
 
 class KxsDataOutputEncoder(
   private val output: DataOutput,
@@ -69,14 +71,38 @@ class KxsDataOutputEncoder(
 
   override fun encodeNull() = encodeBoolean(false)
   override fun encodeNotNullMark() = encodeBoolean(true)
+
+  override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
+    if (serializer.descriptor == byteArraySerializer.descriptor)
+      encodeByteArray(value as ByteArray)
+    else
+      super.encodeSerializableValue(serializer, value)
+  }
+
+  private fun encodeByteArray(bytes: ByteArray) {
+    encodeCompactSize(bytes.size)
+    output.write(bytes)
+  }
+
+  private fun encodeCompactSize(value: Int) {
+    if (value < 0xff) {
+      output.writeByte(value)
+    } else {
+      output.writeByte(0xff)
+      output.writeInt(value)
+    }
+  }
 }
+
 
 class KxsDataInputDecoder(
   private val input: DataInput,
   override val serializersModule: SerializersModule = EmptySerializersModule,
   var elementsCount: Int = 0,
 ) : AbstractDecoder() {
+
   private var elementIndex = 0
+
   override fun decodeBoolean(): Boolean = input.readByte().toInt() != 0
   override fun decodeByte(): Byte = input.readByte()
   override fun decodeShort(): Short = input.readShort()
@@ -102,4 +128,27 @@ class KxsDataInputDecoder(
     decodeInt().also { elementsCount = it }
 
   override fun decodeNotNullMark(): Boolean = decodeBoolean()
+
+  override fun <T> decodeSerializableValue(
+    deserializer: DeserializationStrategy<T>,
+    previousValue: T?
+  ): T =
+    @Suppress("UNCHECKED_CAST")
+    when (deserializer.descriptor) {
+      byteArraySerializer.descriptor -> decodeByteArray() as T
+      else                           -> super.decodeSerializableValue(deserializer, previousValue)
+    }
+
+  private fun decodeByteArray(): ByteArray {
+    val bytes = ByteArray(decodeCompactSize())
+    input.readFully(bytes)
+    return bytes
+  }
+
+  private fun decodeCompactSize(): Int {
+    val byte = input.readByte().toInt() and 0xff
+    if (byte < 0xff) return byte
+    return input.readInt()
+  }
+
 }
