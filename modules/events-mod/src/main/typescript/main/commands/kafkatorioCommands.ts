@@ -1,5 +1,4 @@
 import {emitPrototypes} from "../config-update/prototypes";
-import {handleChunkUpdate} from "../events/handlers";
 import {Queue} from "../queue/queue";
 import floor = math.floor;
 
@@ -8,43 +7,20 @@ commands.add_command(
     "kafkatorio",
     "kafkatorio innit bruv",
     (e: CustomCommandData) => {
+
+      let player = (e.player_index != null) ? game.get_player(e.player_index) : null
+
       if (e.parameter == undefined) {
+        if (player != null) {
+          player.print("no parameter")
+        }
         // do nothing
       } else if ("PROTOTYPES" == e.parameter.toUpperCase()) {
         emitPrototypes()
-      } else if ("CURRENT_CHUNK" == e.parameter.toUpperCase()) {
+      } else if (e.parameter.toUpperCase().startsWith("CHUNKS")) {
 
-        if (e.player_index != undefined) {
-
-          let player = game.players[e.player_index]
-
-          let chunkPosition: ChunkPosition = {
-            x: floor(player.position.x / 32),
-            y: floor(player.position.y / 32),
-          }
-
-          let chunkLeftTop: Position = {
-            x: chunkPosition.x * 32,
-            y: chunkPosition.y * 32,
-          }
-          let chunkBottomRight: Position = {
-            x: chunkLeftTop.x + 32 - 1,
-            y: chunkLeftTop.y + 32 - 1,
-          }
-          let chunkArea: BoundingBoxRead = {
-            left_top: chunkLeftTop,
-            right_bottom: chunkBottomRight
-          }
-
-          handleChunkUpdate(
-              e.tick,
-              "player-command-" + e.parameter,
-              player.surface.index,
-              chunkPosition,
-              chunkArea,
-          )
-        }
-      } else if ("CHUNKS" == e.parameter.toUpperCase()) {
+        let size = e.parameter.split(" ")?.[1] ?? null
+        let radius = (size != null) ? parseInt(size) : 1
 
         if (e.player_index != undefined) {
           let player = game.players[e.player_index]
@@ -54,19 +30,17 @@ commands.add_command(
             y: floor(player.position.y / 32),
           }
 
-          let delta = 1
-
-          let chunkXMin = chunkPosition.x - delta
-          let chunkXMax = chunkPosition.x + delta
-          let chunkYMin = chunkPosition.y - delta
-          let chunkYMax = chunkPosition.y + delta
+          let chunkXMin = chunkPosition.x - radius
+          let chunkXMax = chunkPosition.x + radius
+          let chunkYMin = chunkPosition.y - radius
+          let chunkYMax = chunkPosition.y + radius
 
           for (let [, surface] of game.surfaces) {
             for (let chunk of surface.get_chunks()) {
               if (
-                  (chunk.x >= chunkXMin || chunk.x <= chunkXMax)
+                  (chunk.x >= chunkXMin && chunk.x <= chunkXMax)
                   &&
-                  (chunk.y >= chunkYMin || chunk.y <= chunkYMax)
+                  (chunk.y >= chunkYMin && chunk.y <= chunkYMax)
               ) {
 
                 let data: OnChunkGeneratedEvent = {
