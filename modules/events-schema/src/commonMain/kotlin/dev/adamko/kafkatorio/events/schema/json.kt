@@ -7,46 +7,62 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonTransformingSerializer
-import kotlinx.serialization.json.jsonArray
-import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.modules.SerializersModule
 
 val jsonMapperKafkatorio = Json {
   prettyPrint = true
   prettyPrintIndent = "  "
-//  serializersModule =  FactorioEvent.kxsModule
-//  serializersModule = KafkatorioPacket.kxsModule + FactorioEvent.kxsModule
-//  serializersModule = SerializersModule { }
+
+  serializersModule = SerializersModule {
+    contextual(List::class) { args -> FactorioJsonListSerializer(args[0]) }
+  }
+
 }
 
 
-/** Factorio outputs lists as Json objects - this serializer converts an object back to a list. */
-// actually I'm not sure that it does - I think *empty* lists get encoded as *empty* objects
-internal class ListAsObjectSerializer<T>(dataSerializer: KSerializer<T>) :
-  JsonTransformingSerializer<List<T>>(ListSerializer(dataSerializer)) {
-
-  override fun transformDeserialize(element: JsonElement): JsonElement =
-    JsonArray(
-      element.jsonObject.values.toList()
-    )
-
-  override fun transformSerialize(element: JsonElement): JsonElement =
-    JsonObject(
-      element.jsonArray.mapIndexed { index, jsonElement -> "$index" to jsonElement }.toMap()
-    )
-}
-
-
-/** Factorio outputs lists as Json objects - this serializer converts an object back to a list. */
-// actually I'm not sure that it does - I think *empty* lists get encoded as *empty* objects
-internal class FactorioJsonListSerializer<T>(dataSerializer: KSerializer<T>) :
+/**
+ * Factorio outputs an *empty* list as an *empty* Json object. This serde performs the same
+ * conversion
+ */
+class FactorioJsonListSerializer<T>(dataSerializer: KSerializer<T>) :
   JsonTransformingSerializer<List<T>>(ListSerializer(dataSerializer)) {
 
   override fun transformDeserialize(element: JsonElement): JsonElement {
-    return if (element is JsonObject) {
-      JsonArray(emptyList())
-    } else {
-      element
+    return when (element) {
+      is JsonObject -> JsonArray(emptyList())
+      else          -> element
+    }
+  }
+
+  override fun transformSerialize(element: JsonElement): JsonElement {
+    return when {
+      element is JsonArray && element.isEmpty() -> buildJsonObject { }
+      else                                      -> element
     }
   }
 
 }
+
+//internal class FactorioListSerializer<T : Any>(
+//  private val tSerializer: KSerializer<T>
+//) : KSerializer<List<T>> {
+//
+//  override val descriptor: SerialDescriptor get() = tSerializer.descriptor
+//  private val tListSerializer = ListSerializer(tSerializer)
+//  private val jsonTransformer = FactorioJsonListSerializer(tSerializer)
+//
+//  override fun serialize(encoder: Encoder, value: List<T>) {
+//    when (encoder) {
+//      is JsonEncoder -> jsonTransformer.serialize(encoder, value)
+//      else           -> tListSerializer.serialize(encoder, value)
+//    }
+//  }
+//
+//  override fun deserialize(decoder: Decoder): List<T> {
+//    return when (decoder) {
+//      is JsonDecoder -> jsonTransformer.deserialize(decoder)
+//      else           -> tListSerializer.deserialize(decoder)
+//    }
+//  }
+//}

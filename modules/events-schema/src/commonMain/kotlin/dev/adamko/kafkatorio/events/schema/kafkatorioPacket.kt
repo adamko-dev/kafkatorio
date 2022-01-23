@@ -10,7 +10,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 
-@Serializable(with = KafkatorioPacketSerializer::class)
+@Serializable(with = KafkatorioPacketJsonSerializer::class)
 sealed class KafkatorioPacket {
   /** Schema versioning */
   abstract val modVersion: String
@@ -24,7 +24,8 @@ sealed class KafkatorioPacket {
   }
 }
 
-object KafkatorioPacketSerializer : JsonContentPolymorphicSerializer<KafkatorioPacket>(
+
+object KafkatorioPacketJsonSerializer : JsonContentPolymorphicSerializer<KafkatorioPacket>(
   KafkatorioPacket::class
 ) {
   private val key = KafkatorioPacket::packetType.name
@@ -39,12 +40,12 @@ object KafkatorioPacketSerializer : JsonContentPolymorphicSerializer<KafkatorioP
         KafkatorioPacket.PacketType.values().firstOrNull { it.name == json }
       }
 
+    requireNotNull(type) { "Unknown KafkatorioPacket ${key}: $element" }
+
     return when (type) {
-      KafkatorioPacket.PacketType.EVENT  -> FactorioEvent.serializer()
-      KafkatorioPacket.PacketType.CONFIG -> FactorioConfigurationUpdate.serializer()
+      KafkatorioPacket.PacketType.EVENT      -> FactorioEvent.serializer()
+      KafkatorioPacket.PacketType.CONFIG     -> FactorioConfigurationUpdate.serializer()
       KafkatorioPacket.PacketType.PROTOTYPES -> FactorioPrototypes.serializer()
-      null                               ->
-        throw Exception("Unknown KafkatorioPacket ${key}: '$type' ")
     }
   }
 }

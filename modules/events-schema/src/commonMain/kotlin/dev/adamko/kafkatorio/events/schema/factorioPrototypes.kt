@@ -1,5 +1,7 @@
 package dev.adamko.kafkatorio.events.schema
 
+import dev.adamko.kafkatorio.events.schema.FactorioPrototype.PrototypeObjectName
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
@@ -20,7 +22,7 @@ data class FactorioPrototypes(
 }
 
 
-@Serializable(with = FactorioPrototypeSerializer::class)
+@Serializable(with = FactorioPrototypeJsonSerializer::class)
 sealed class FactorioPrototype {
   @EncodeDefault
   abstract val prototypeObjectName: PrototypeObjectName
@@ -30,7 +32,8 @@ sealed class FactorioPrototype {
   }
 }
 
-object FactorioPrototypeSerializer : JsonContentPolymorphicSerializer<FactorioPrototype>(
+
+object FactorioPrototypeJsonSerializer : JsonContentPolymorphicSerializer<FactorioPrototype>(
   FactorioPrototype::class
 ) {
   private val key = FactorioPrototype::prototypeObjectName.name
@@ -42,13 +45,13 @@ object FactorioPrototypeSerializer : JsonContentPolymorphicSerializer<FactorioPr
       ?.jsonPrimitive
       ?.contentOrNull
       ?.let { json ->
-        FactorioPrototype.PrototypeObjectName.values().firstOrNull { it.name == json }
+        PrototypeObjectName.values().firstOrNull { it.name == json }
       }
 
+    requireNotNull(type) { "Unknown FactorioPrototype ${key}: $element" }
+
     return when (type) {
-      FactorioPrototype.PrototypeObjectName.LuaTilePrototype -> MapTilePrototype.serializer()
-      null                                                   ->
-        throw Exception("Unknown FactorioPrototype $key: '$type' ")
+      PrototypeObjectName.LuaTilePrototype -> MapTilePrototype.serializer()
     }
   }
 }
@@ -59,7 +62,8 @@ data class MapTilePrototype(
   val name: String,
   val layer: UInt,
   val mapColour: Colour,
-  @Serializable(with = FactorioJsonListSerializer::class)
+//  @Serializable(with = FactorioJsonListSerializer::class)
+  @Contextual
   val collisionMasks: List<String>,
   val order: String,
   /** Can the tile be mined for resources? */

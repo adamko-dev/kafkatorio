@@ -1,5 +1,6 @@
 package dev.adamko.kafkatorio.events.schema
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
@@ -9,7 +10,7 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
-@Serializable(with = FactorioObjectDataSerializer::class)
+@Serializable(with = FactorioObjectDataJsonSerializer::class)
 sealed class FactorioObjectData {
 
   @EncodeDefault
@@ -43,7 +44,7 @@ sealed class FactorioObjectData {
   }
 }
 
-object FactorioObjectDataSerializer : JsonContentPolymorphicSerializer<FactorioObjectData>(
+object FactorioObjectDataJsonSerializer : JsonContentPolymorphicSerializer<FactorioObjectData>(
   FactorioObjectData::class
 ) {
   private val key = FactorioObjectData::objectName.name
@@ -58,6 +59,8 @@ object FactorioObjectDataSerializer : JsonContentPolymorphicSerializer<FactorioO
         FactorioObjectData.ObjectName.values().firstOrNull { it.name == json }
       }
 
+    requireNotNull(type) { "Unknown FactorioObjectData $key: $element" }
+
     return when (type) {
       FactorioObjectData.ObjectName.LuaPlayer          -> PlayerData.serializer()
       FactorioObjectData.ObjectName.LuaEntity          -> EntityData.serializer()
@@ -66,8 +69,6 @@ object FactorioObjectDataSerializer : JsonContentPolymorphicSerializer<FactorioO
       FactorioObjectData.ObjectName.LuaTile            -> MapTile.serializer()
       FactorioObjectData.ObjectName.LuaTiles           -> MapTiles.serializer()
       FactorioObjectData.ObjectName.ConsoleChatMessage -> ConsoleChatMessage.serializer()
-      null                                             ->
-        throw Exception("Unknown FactorioObjectData $key: '$type' ")
     }
   }
 }
@@ -75,7 +76,8 @@ object FactorioObjectDataSerializer : JsonContentPolymorphicSerializer<FactorioO
 
 @Serializable
 data class PlayerData(
-  @Serializable(with = ListAsObjectSerializer::class)
+//  @Serializable(with = FactorioJsonListSerializer::class)
+  @Contextual
   val associatedCharactersUnitNumbers: List<UInt>,
   val characterUnitNumber: UInt?,
   val name: String,
