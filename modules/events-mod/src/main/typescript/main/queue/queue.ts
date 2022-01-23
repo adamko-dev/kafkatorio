@@ -56,6 +56,7 @@ export namespace Queue {
       let weight = global.head.weight
       let storeKey = global.head.storeKey
       global.head = global.head.next
+      global.size--
 
       let storedPacket = global.store[storeKey]
       global.store[storeKey] = null
@@ -63,7 +64,6 @@ export namespace Queue {
       if (storedPacket == null) {
         return null
       } else {
-        global.size--
         return {
           value: storedPacket,
           weight: weight,
