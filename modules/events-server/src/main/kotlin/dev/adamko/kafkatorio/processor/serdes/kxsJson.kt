@@ -12,6 +12,7 @@ import org.http4k.format.ConfigurableKotlinxSerialization
 import org.http4k.format.asConfigurable
 import org.http4k.format.withStandardMappings
 
+
 object KafkatorioPacketSerde : Serde<KafkatorioPacket> {
   override fun serializer() = Serializer<KafkatorioPacket> { _, message ->
     jsonMapper.encodeToString<KafkatorioPacket>(message).encodeToByteArray()
