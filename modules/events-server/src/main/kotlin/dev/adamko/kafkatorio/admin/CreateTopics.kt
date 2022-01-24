@@ -30,6 +30,8 @@ object CreateTopics {
 
     KafkatorioPacket.PacketType.values().forEach { packetType ->
 
+      val currentTopics = currentTopics().map { it.name() }
+
       val kafkatorioTopics = buildSet {
         add(KafkatorioTopology.sourceTopic)
         when (packetType) {
@@ -42,33 +44,30 @@ object CreateTopics {
           KafkatorioPacket.PacketType.PROTOTYPES ->
             add("kafkatorio.${packetType.name}.all")
         }
-      }
+      }.minus(currentTopics.toSet())
 
-      val currentTopics = currentTopics().map { it.name() }
+      if (currentTopics.isNotEmpty()) {
 
-      val result = kafkatorioTopics
-        .filterNot { it in currentTopics }
-        .run {
-          logger.info("Creating $size topics")
-          kafkaAdmin.createTopics { this }
+        logger.info("Creating ${kafkatorioTopics.size} topics")
+        val result = kafkaAdmin.createTopics { kafkatorioTopics }
+
+        // wait for all brokers to become aware of the created topics
+        Thread.sleep(TimeUnit.SECONDS.toMillis(5))
+
+        result.values().forEach {
+          logger.info("Created topic: ${it.key} ${it.value.get()}")
         }
 
-      // wait for all brokers to become aware of the created topics
-      Thread.sleep(TimeUnit.SECONDS.toMillis(5))
+        Thread.sleep(TimeUnit.SECONDS.toMillis(5))
 
-      result.values().forEach {
-        logger.info("Created topic: ${it.key} ${it.value.get()}")
+        logger.info("Listing topics")
+        kafkaAdmin.listTopics()
+          .listings()
+          .get()
+          .forEach {
+            logger.info("Topic: $it")
+          }
       }
-
-      Thread.sleep(TimeUnit.SECONDS.toMillis(5))
-
-      logger.info("Listing topics")
-      kafkaAdmin.listTopics()
-        .listings()
-        .get()
-        .forEach {
-          logger.info("Topic: $it")
-        }
     }
   }
 
