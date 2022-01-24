@@ -11,7 +11,7 @@ import org.http4k.server.asServer
 
 val appProps = ApplicationProperties()
 
-fun main() = runBlocking<Unit> {
+fun main(): Unit = runBlocking {
 
   CreateTopics.create()
 

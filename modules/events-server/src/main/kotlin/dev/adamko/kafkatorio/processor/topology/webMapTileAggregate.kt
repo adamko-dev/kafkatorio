@@ -110,7 +110,7 @@ fun aggregateWebMapTiles(
           Suppressed.BufferConfig
             .maxRecords(30)
 //            .withMaxBytes(31457280  ) // 30MB
-//            .emitEarlyWhenFull()
+            .emitEarlyWhenFull()
         ).withName("web-map-tile-aggregate-debounce")
       )
 
