@@ -20,7 +20,7 @@ services:
       - "9093:9093"
 
   kafka-ui:
-    image: provectuslabs/kafka-ui:0.3.2
+    image: provectuslabs/kafka-ui:0.3.3
     container_name: "kafka-ui"
     restart: "unless-stopped"
     networks:
