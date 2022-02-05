@@ -3,28 +3,24 @@ package dev.adamko.kafkatorio.processor.topology
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.color.RGBColor
 import com.sksamuel.scrimage.nio.PngWriter
+import dev.adamko.kafkatorio.events.schema.Colour
+import dev.adamko.kafkatorio.events.schema.MapTilePosition
 import dev.adamko.kotka.extensions.tables.toStream
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.File
-import java.time.Duration
 import kotlin.math.abs
 import kotlin.math.roundToInt
 import org.apache.kafka.streams.kstream.KTable
-import org.apache.kafka.streams.kstream.Suppressed
 
+
+private val COLOUR_TRANSPARENT = RGBColor.fromAwt(Color(0f, 0f, 0f, 0f))
 
 fun saveTileImages(
   webMapTiles: KTable<WebMapTileChunkPosition, WebMapTileChunkPixels>
 ) {
 
   webMapTiles
-    .suppress(
-      Suppressed.untilTimeLimit<WebMapTileChunkPosition>(
-        Duration.ofSeconds(30),
-        Suppressed.BufferConfig.maxRecords(30)
-      ).withName("save-tile-images-debounce")
-    )
     .toStream("get-webmap-tile-updates")
     .foreach { position: WebMapTileChunkPosition, pixels: WebMapTileChunkPixels ->
       runCatching {
@@ -42,7 +38,7 @@ fun saveTileImages(
 
 private fun saveMapTilesPng(
   chunkPosition: WebMapTileChunkPosition,
-  pixels: Set<WebMapTilePixel>
+  pixels: Map<MapTilePosition, Colour>,
 ) {
   val chunkOriginX: Int = chunkPosition.x * chunkPosition.chunkSize // - 1
   val chunkOriginY: Int = chunkPosition.y * chunkPosition.chunkSize // - 1
@@ -52,21 +48,21 @@ private fun saveMapTilesPng(
     ImmutableImage.filled(
       chunkPosition.chunkSize,
       chunkPosition.chunkSize,
-      Color.BLACK,
+      COLOUR_TRANSPARENT.awt(),
       BufferedImage.TYPE_INT_ARGB
     )
 
-  pixels.forEach { pixel ->
+  pixels.forEach { (tilePosition, colour) ->
 
     val rgbColour = RGBColor(
-      pixel.mapColour.red.roundToInt(),
-      pixel.mapColour.green.roundToInt(),
-      pixel.mapColour.blue.roundToInt(),
-      pixel.mapColour.alpha.roundToInt(),
+      colour.red.roundToInt(),
+      colour.green.roundToInt(),
+      colour.blue.roundToInt(),
+      colour.alpha.roundToInt(),
     )
 
-    val pixelX = abs(abs(pixel.tilePosition.x) - abs(chunkOriginX))
-    val pixelY = abs(abs(pixel.tilePosition.y) - abs(chunkOriginY))
+    val pixelX = abs(abs(tilePosition.x) - abs(chunkOriginX))
+    val pixelY = abs(abs(tilePosition.y) - abs(chunkOriginY))
 
     chunkImage.setColor(
       pixelX,

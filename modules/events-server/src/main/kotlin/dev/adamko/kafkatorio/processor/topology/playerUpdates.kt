@@ -19,7 +19,7 @@ fun playerUpdatesToWsServer(
     consumedAs("stream-player-updates-for-ws-server", jsonMapper.serde(), jsonMapper.serde())
   )
     .foreach { _, value ->
-      println("sending ${value.packetType} packet to websocket")
+//      println("sending ${value.packetType} packet to websocket")
       websocketServer.sendMessage(jsonMapper.encodeToString(value))
     }
 }

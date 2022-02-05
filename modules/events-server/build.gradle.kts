@@ -38,7 +38,8 @@ dependencies {
 
   implementation("com.sksamuel.scrimage:scrimage-core:4.0.24")
 
-  val kotkaVersion = "0.0.8"
+//  val kotkaVersion = "0.0.11"
+  val kotkaVersion = "store-iterators-SNAPSHOT"
   implementation("com.github.adamko-dev.kotka-streams:kotka-streams:$kotkaVersion") {
     isChanging = true
   }
@@ -49,6 +50,10 @@ dependencies {
 
 }
 
+//configurations.all {
+//  resolutionStrategy.cacheDynamicVersionsFor(1, TimeUnit.MINUTES)
+//}
+
 application {
   mainClass.set("dev.adamko.kafkatorio.processor.EventProcessorKt")
 }
@@ -56,5 +61,6 @@ application {
 tasks.withType<KotlinCompile> {
   kotlinOptions.freeCompilerArgs += listOf(
     "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+    "-opt-in=kotlinx.coroutines.FlowPreview",
   )
 }

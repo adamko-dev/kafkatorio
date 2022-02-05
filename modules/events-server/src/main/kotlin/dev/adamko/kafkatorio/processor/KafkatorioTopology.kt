@@ -1,7 +1,7 @@
 package dev.adamko.kafkatorio.processor
 
+import dev.adamko.kafkatorio.events.schema.Colour
 import dev.adamko.kafkatorio.events.schema.MapTile
-import dev.adamko.kafkatorio.events.schema.MapTilePrototype
 import dev.adamko.kafkatorio.processor.topology.PrototypeName
 import dev.adamko.kafkatorio.processor.topology.TileUpdateRecordKey
 import dev.adamko.kafkatorio.processor.topology.WebMapTileChunkPixels
@@ -9,9 +9,9 @@ import dev.adamko.kafkatorio.processor.topology.WebMapTileChunkPosition
 import dev.adamko.kafkatorio.processor.topology.aggregateWebMapTiles
 import dev.adamko.kafkatorio.processor.topology.allMapTilesTable
 import dev.adamko.kafkatorio.processor.topology.playerUpdatesToWsServer
-import dev.adamko.kafkatorio.processor.topology.prototypesTable
 import dev.adamko.kafkatorio.processor.topology.saveTileImages
 import dev.adamko.kafkatorio.processor.topology.splitFactorioServerLog
+import dev.adamko.kafkatorio.processor.topology.tilePrototypeColourTable
 import java.time.Duration
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsBuilder
@@ -35,10 +35,10 @@ class KafkatorioTopology(
     playerUpdatesToWsServer(websocketServer, builder)
 
     val allMapTilesTable: KTable<TileUpdateRecordKey, MapTile> = allMapTilesTable(builder)
-    val tilePrototypesTable: KTable<PrototypeName, MapTilePrototype> = prototypesTable(builder)
+    val tilePrototypeColourTable: KTable<PrototypeName, Colour> = tilePrototypeColourTable(builder)
 
     val webMapTiles: KTable<WebMapTileChunkPosition, WebMapTileChunkPixels> =
-      aggregateWebMapTiles(allMapTilesTable, tilePrototypesTable)
+      aggregateWebMapTiles(allMapTilesTable, tilePrototypeColourTable)
 
     saveTileImages(webMapTiles)
 

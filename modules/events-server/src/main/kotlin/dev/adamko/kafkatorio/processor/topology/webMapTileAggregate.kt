@@ -1,27 +1,36 @@
 package dev.adamko.kafkatorio.processor.topology
 
+import com.sksamuel.scrimage.color.RGBColor
 import dev.adamko.kafkatorio.events.schema.Colour
 import dev.adamko.kafkatorio.events.schema.MapTile
 import dev.adamko.kafkatorio.events.schema.MapTilePosition
-import dev.adamko.kafkatorio.events.schema.MapTilePrototype
 import dev.adamko.kafkatorio.events.schema.converters.toMapChunkPosition
 import dev.adamko.kafkatorio.processor.serdes.kxsBinary
-import dev.adamko.kafkatorio.processor.serdes.serde
 import dev.adamko.kotka.extensions.groupedAs
 import dev.adamko.kotka.extensions.materializedAs
+import dev.adamko.kotka.extensions.materializedWith
 import dev.adamko.kotka.extensions.namedAs
+import dev.adamko.kotka.extensions.streams.groupBy
 import dev.adamko.kotka.extensions.tables.groupBy
 import dev.adamko.kotka.extensions.tables.join
 import dev.adamko.kotka.extensions.tables.mapValues
+import dev.adamko.kotka.extensions.tables.toStream
 import dev.adamko.kotka.extensions.toKeyValue
+import dev.adamko.kotka.kxs.serde
+import java.awt.Color
 import java.time.Duration
 import kotlinx.serialization.Serializable
 import org.apache.kafka.streams.kstream.KTable
+import org.apache.kafka.streams.kstream.SessionWindows
 import org.apache.kafka.streams.kstream.Suppressed
+import org.apache.kafka.streams.kstream.Windowed
 
 
 /** The tiles of the webmap will be this many pixels high/wide */
 const val WEB_MAP_IMAGE_TILE_SIZE = 256
+
+/** Debounce duration */
+private val WINDOW_INACTIVITY_DURATION = Duration.ofSeconds(60)
 
 @Serializable
 data class WebMapTileChunkPosition(
@@ -32,31 +41,52 @@ data class WebMapTileChunkPosition(
 )
 
 @Serializable
-data class WebMapTilePixel(
+private data class WebMapTilePixel(
   val mapColour: Colour,
   val tilePosition: MapTilePosition,
 )
 
 @Serializable
-data class WebMapTileChunkPixels(
-  val pixels: Set<WebMapTilePixel> = mutableSetOf(),
+@JvmInline
+value class WebMapTileChunkPixels(
+  val pixels: Map<MapTilePosition, Colour>,
 )
 
-/** Temporary mutable aggregator */
+/** Temporary mutable accumulator */
 @Serializable
-private data class WebMapTileChunkPixelsAcc(
-  val pixels: MutableSet<WebMapTilePixel> = mutableSetOf(),
-)
+@JvmInline
+private value class WebMapTileChunkPixelsAcc(
+  val pixels: MutableMap<MapTilePosition, Colour> = mutableMapOf(),
+) {
+
+  operator fun plus(pixel: WebMapTilePixel): WebMapTileChunkPixelsAcc {
+    pixels[pixel.tilePosition] = pixel.mapColour
+    return this
+  }
+
+  operator fun plus(other: WebMapTileChunkPixelsAcc): WebMapTileChunkPixelsAcc {
+    this.pixels += other.pixels
+    return this
+  }
+
+  operator fun minus(other: WebMapTileChunkPixelsAcc): WebMapTileChunkPixelsAcc {
+    this.pixels -= other.pixels.keys
+    return this
+  }
+
+}
+
 
 fun aggregateWebMapTiles(
   allMapTilesTable: KTable<TileUpdateRecordKey, MapTile>,
-  tilePrototypesTable: KTable<PrototypeName, MapTilePrototype>,
+  tilePrototypeColourTable: KTable<PrototypeName, Colour>,
 ): KTable<WebMapTileChunkPosition, WebMapTileChunkPixels> {
 
-  val webmapTileColours: KTable<TileUpdateRecordKey, WebMapTilePixel> =
+
+  val pixels: KTable<TileUpdateRecordKey, WebMapTilePixel> =
     allMapTilesTable
       .join(
-        tilePrototypesTable,
+        tilePrototypeColourTable,
         "convert-tiles-to-colours",
         materializedAs(
           "store-web-map-tile-pixels",
@@ -64,13 +94,14 @@ fun aggregateWebMapTiles(
           kxsBinary.serde(),
         ),
         { PrototypeName(it.prototypeName) },
-      ) { tile: MapTile, proto: MapTilePrototype ->
-        WebMapTilePixel(proto.mapColour, tile.position)
+      ) { tile: MapTile, colour: Colour ->
+        WebMapTilePixel(colour, tile.position)
       }
 
 
-  val webMapTileChunkAggregate: KTable<WebMapTileChunkPosition, WebMapTileChunkPixelsAcc> =
-    webmapTileColours
+  val chunkedPixelsWindowed: KTable<Windowed<WebMapTileChunkPosition>, WebMapTileChunkPixelsAcc> =
+    pixels
+      .toStream("stream-webmap-tile-pixels")
       .groupBy(
         groupedAs(
           "group-webmap-tile-colours-into-chunks",
@@ -85,17 +116,21 @@ fun aggregateWebMapTiles(
           chunkY,
           pos.surfaceIndex
         )
-        (chunkPos to px).toKeyValue()
+        chunkPos
       }
+      .windowedBy(
+        SessionWindows.ofInactivityGapAndGrace(
+          WINDOW_INACTIVITY_DURATION,
+          WINDOW_INACTIVITY_DURATION,
+        )
+      )
       .aggregate(
         { WebMapTileChunkPixelsAcc() },
-        /* adder */
         { _: WebMapTileChunkPosition, newValue: WebMapTilePixel, acc: WebMapTileChunkPixelsAcc ->
-          acc.apply { pixels.add(newValue) }
+          acc + newValue
         },
-        /* subtractor */
-        { _: WebMapTileChunkPosition, oldValue: WebMapTilePixel, acc: WebMapTileChunkPixelsAcc ->
-          acc.apply { pixels.minus(oldValue) }
+        { _, aggOne: WebMapTileChunkPixelsAcc, aggTwo: WebMapTileChunkPixelsAcc ->
+          aggOne + aggTwo
         },
         namedAs("web-map-tile-colours-into-$WEB_MAP_IMAGE_TILE_SIZE-chunks"),
         materializedAs(
@@ -105,20 +140,34 @@ fun aggregateWebMapTiles(
         )
       )
       .suppress(
-        Suppressed.untilTimeLimit<WebMapTileChunkPosition>(
-          Duration.ofSeconds(30),
-          Suppressed.BufferConfig
-            .maxRecords(30)
-//            .withMaxBytes(31457280  ) // 30MB
-            .emitEarlyWhenFull()
-        ).withName("web-map-tile-aggregate-debounce")
+        Suppressed.untilWindowCloses(
+          Suppressed.BufferConfig.unbounded()
+        ).withName("chunked-pixels-debounce")
       )
 
-  return webMapTileChunkAggregate
+
+  // merge windows
+  val chunkedPixels: KTable<WebMapTileChunkPosition, WebMapTileChunkPixelsAcc> =
+    chunkedPixelsWindowed
+      .groupBy(
+        groupedAs("merge-chunked-pixels.group-keys", kxsBinary.serde(), kxsBinary.serde())
+      ) { a: Windowed<WebMapTileChunkPosition>, b: WebMapTileChunkPixelsAcc ->
+        (a.key() to b).toKeyValue()
+      }
+      .reduce(
+        /* adder */
+        { pixels1, pixels2 -> pixels1 + pixels2 },
+        /* subtractor */
+        { pixels1, pixels2 -> pixels1 - pixels2 },
+        namedAs("merge-chunked-pixels.reduce-values"),
+        materializedAs("merge-chunked-pixels.reduce-values.store", kxsBinary.serde(), kxsBinary.serde())
+      )
+
+  return chunkedPixels
     .mapValues(
       "finalise-web-map-tile-colour-chunk-aggregation",
       materializedAs("web-map-tile-colour-chunks", kxsBinary.serde(), kxsBinary.serde())
-    ) { _, v ->
+    ) { _: WebMapTileChunkPosition, v: WebMapTileChunkPixelsAcc ->
       WebMapTileChunkPixels(v.pixels)
     }
 }

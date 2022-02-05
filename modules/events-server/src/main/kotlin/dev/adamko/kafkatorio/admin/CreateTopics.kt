@@ -28,11 +28,10 @@ object CreateTopics {
 
   fun create() {
 
-    KafkatorioPacket.PacketType.values().forEach { packetType ->
+    val currentTopics = currentTopics().map { it.name() }
 
-      val currentTopics = currentTopics().map { it.name() }
-
-      val kafkatorioTopics = buildSet {
+    val kafkatorioTopics = buildSet {
+      KafkatorioPacket.PacketType.values().forEach { packetType ->
         add(KafkatorioTopology.sourceTopic)
         when (packetType) {
           KafkatorioPacket.PacketType.EVENT      ->
@@ -44,30 +43,30 @@ object CreateTopics {
           KafkatorioPacket.PacketType.PROTOTYPES ->
             add("kafkatorio.${packetType.name}.all")
         }
-      }.minus(currentTopics.toSet())
-
-      if (currentTopics.isNotEmpty()) {
-
-        logger.info("Creating ${kafkatorioTopics.size} topics")
-        val result = kafkaAdmin.createTopics { kafkatorioTopics }
-
-        // wait for all brokers to become aware of the created topics
-        Thread.sleep(TimeUnit.SECONDS.toMillis(5))
-
-        result.values().forEach {
-          logger.info("Created topic: ${it.key} ${it.value.get()}")
-        }
-
-        Thread.sleep(TimeUnit.SECONDS.toMillis(5))
-
-        logger.info("Listing topics")
-        kafkaAdmin.listTopics()
-          .listings()
-          .get()
-          .forEach {
-            logger.info("Topic: $it")
-          }
       }
+    }.minus(currentTopics.toSet())
+
+    if (kafkatorioTopics.isNotEmpty()) {
+
+      logger.info("Creating ${kafkatorioTopics.size} topics")
+      val result = kafkaAdmin.createTopics { kafkatorioTopics }
+
+      // wait for all brokers to become aware of the created topics
+      Thread.sleep(TimeUnit.SECONDS.toMillis(5))
+
+      result.values().forEach {
+        logger.info("Created topic: ${it.key} ${it.value.get()}")
+      }
+
+      Thread.sleep(TimeUnit.SECONDS.toMillis(5))
+
+      logger.info("Listing topics")
+      kafkaAdmin.listTopics()
+        .listings()
+        .get()
+        .forEach {
+          logger.info("Topic: $it")
+        }
     }
   }
 
