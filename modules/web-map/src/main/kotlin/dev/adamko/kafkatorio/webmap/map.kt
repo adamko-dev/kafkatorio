@@ -1,10 +1,9 @@
 package dev.adamko.kafkatorio.webmap
 
-import io.kvision.maps.DefaultTileLayers
-import io.kvision.maps.externals.leaflet.geo.CRS
-import io.kvision.maps.externals.leaflet.geo.LatLng
 import io.kvision.maps.Maps
 import io.kvision.maps.Maps.Companion.L
+import io.kvision.maps.externals.leaflet.geo.CRS
+import io.kvision.maps.externals.leaflet.geo.LatLng
 import io.kvision.utils.px
 
 //
@@ -39,15 +38,17 @@ fun createFactorioMap() = Maps {
 //      maxZoom = 1
       maxNativeZoom = 1
       minNativeZoom = 1
+      noWrap = true
+      updateWhenIdle = true
+      updateWhenZooming = true
     }.addTo(this)
 
     L.scale {
+      metric = true
+    }.addTo(this)
 
-    }
 
-    with(options) {
-      crs = CRS.Simple
-    }
+    options.crs = CRS.Simple
 
   }
 }
