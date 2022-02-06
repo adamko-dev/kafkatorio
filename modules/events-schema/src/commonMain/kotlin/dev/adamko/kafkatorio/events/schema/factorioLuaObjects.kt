@@ -38,7 +38,7 @@ sealed class FactorioObjectData {
     LuaEntity,
     LuaSurface,
     MapChunk,
-    LuaTile,
+    //    LuaTile,
     LuaTiles,
     ConsoleChatMessage,
   }
@@ -66,7 +66,7 @@ object FactorioObjectDataJsonSerializer : JsonContentPolymorphicSerializer<Facto
       FactorioObjectData.ObjectName.LuaEntity          -> EntityData.serializer()
       FactorioObjectData.ObjectName.LuaSurface         -> SurfaceData.serializer()
       FactorioObjectData.ObjectName.MapChunk           -> MapChunk.serializer()
-      FactorioObjectData.ObjectName.LuaTile            -> MapTile.serializer()
+//      FactorioObjectData.ObjectName.LuaTile            -> MapTile.serializer()
       FactorioObjectData.ObjectName.LuaTiles           -> MapTiles.serializer()
       FactorioObjectData.ObjectName.ConsoleChatMessage -> ConsoleChatMessage.serializer()
     }
@@ -141,9 +141,11 @@ data class MapTiles(
 data class MapTile(
   val prototypeName: String,
   val position: MapTilePosition,
-) : FactorioObjectData() {
-  @EncodeDefault
-  override val objectName = ObjectName.LuaTile
+)
+//  : FactorioObjectData()
+{
+  //  @EncodeDefault
+  val objectName: String = ""
 }
 
 @Serializable

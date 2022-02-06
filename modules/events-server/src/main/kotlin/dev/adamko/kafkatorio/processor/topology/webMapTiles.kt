@@ -14,7 +14,7 @@ import kotlin.math.roundToInt
 import org.apache.kafka.streams.kstream.KTable
 
 
-private val COLOUR_TRANSPARENT = RGBColor.fromAwt(Color(0f, 0f, 0f, 0f))
+val COLOUR_TRANSPARENT = RGBColor.fromAwt(Color(0f, 0f, 0f, 0f))
 
 fun saveTileImages(
   webMapTiles: KTable<WebMapTileChunkPosition, WebMapTileChunkPixels>
@@ -54,12 +54,7 @@ private fun saveMapTilesPng(
 
   pixels.forEach { (tilePosition, colour) ->
 
-    val rgbColour = RGBColor(
-      colour.red.roundToInt(),
-      colour.green.roundToInt(),
-      colour.blue.roundToInt(),
-      colour.alpha.roundToInt(),
-    )
+    val rgbColour = colour.toRgbColor()
 
     val pixelX = abs(abs(tilePosition.x) - abs(chunkOriginX))
     val pixelY = abs(abs(tilePosition.y) - abs(chunkOriginY))

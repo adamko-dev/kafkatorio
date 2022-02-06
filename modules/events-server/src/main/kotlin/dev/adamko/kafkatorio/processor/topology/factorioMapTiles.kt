@@ -35,24 +35,24 @@ fun allMapTilesTable(
   builder: StreamsBuilder
 ): KTable<TileUpdateRecordKey, MapTile> {
 
-  val luaTilesUpdatesStream: KStream<FactorioPacketKey, MapTiles> =
-    builder.stream<FactorioPacketKey, FactorioEvent>(
+  val luaTilesUpdatesStream: KStream<FactorioServerId, MapTiles> =
+    builder.stream<FactorioServerId, FactorioEvent>(
       "kafkatorio.${KafkatorioPacket.PacketType.EVENT}.${FactorioObjectData.ObjectName.LuaTiles}",
       consumedAs("consume-map-tiles-packets", jsonMapper.serde(), jsonMapper.serde())
     )
-      .filter("events.filter.map-tiles") { _: FactorioPacketKey, event: FactorioEvent ->
+      .filter("events.filter.map-tiles") { _: FactorioServerId, event: FactorioEvent ->
         event.data is MapTiles
       }
       .mapValues("events.extract-map-tiles") { _, event: FactorioEvent ->
         (event.data as? MapTiles)!!
       }
 
-  val chunkTilesUpdateStream: KStream<FactorioPacketKey, MapTiles> =
-    builder.stream<FactorioPacketKey, FactorioEvent>(
+  val chunkTilesUpdateStream: KStream<FactorioServerId, MapTiles> =
+    builder.stream<FactorioServerId, FactorioEvent>(
       "kafkatorio.${KafkatorioPacket.PacketType.EVENT}.${FactorioObjectData.ObjectName.MapChunk}",
       consumedAs("consume-map-chunk-packets", jsonMapper.serde(), jsonMapper.serde())
     )
-      .filter("events.filter.map-chunks") { _: FactorioPacketKey, event: FactorioEvent ->
+      .filter("events.filter.map-chunks") { _: FactorioServerId, event: FactorioEvent ->
         event.data is MapChunk
       }
       .mapValues("events.extract-map-chunks") { _, event: FactorioEvent ->

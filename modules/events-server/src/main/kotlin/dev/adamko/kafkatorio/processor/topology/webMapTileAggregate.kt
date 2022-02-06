@@ -108,7 +108,7 @@ fun aggregateWebMapTiles(
           kxsBinary.serde(),
           kxsBinary.serde(),
         )
-      ) { pos: TileUpdateRecordKey, px: WebMapTilePixel ->
+      ) { pos: TileUpdateRecordKey, _: WebMapTilePixel ->
         val (chunkX, chunkY) = pos.tilePosition.toMapChunkPosition(WEB_MAP_IMAGE_TILE_SIZE)
         val chunkPos = WebMapTileChunkPosition(
           WEB_MAP_IMAGE_TILE_SIZE,

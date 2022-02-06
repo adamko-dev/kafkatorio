@@ -46,7 +46,7 @@ class WebsocketService(
             is ConsoleChatMessage,
             is EntityData,
             is MapChunk,
-            is MapTile,
+//            is MapTile,
             is SurfaceData,
             is MapTiles   -> {
             }

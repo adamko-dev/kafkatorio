@@ -17,7 +17,7 @@ val projectId: String by project.extra
 @Suppress("UnstableApiUsage") // platform + version-catalog is incubating
 dependencies {
 
-  implementation("org.apache.kafka:kafka-streams:3.0.0")
+  implementation("org.apache.kafka:kafka-streams:3.1.0")
 
   implementation(projects.modules.eventsSchema)
 
@@ -38,8 +38,8 @@ dependencies {
 
   implementation("com.sksamuel.scrimage:scrimage-core:4.0.24")
 
-//  val kotkaVersion = "0.0.11"
-  val kotkaVersion = "store-iterators-SNAPSHOT"
+  val kotkaVersion = "v0.0.12"
+//  val kotkaVersion = "store-iterators-SNAPSHOT"
   implementation("com.github.adamko-dev.kotka-streams:kotka-streams:$kotkaVersion") {
     isChanging = true
   }

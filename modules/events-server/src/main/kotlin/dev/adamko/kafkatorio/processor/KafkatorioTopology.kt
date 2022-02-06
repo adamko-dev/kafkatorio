@@ -1,22 +1,14 @@
 package dev.adamko.kafkatorio.processor
 
-import dev.adamko.kafkatorio.events.schema.Colour
-import dev.adamko.kafkatorio.events.schema.MapTile
-import dev.adamko.kafkatorio.processor.topology.PrototypeName
-import dev.adamko.kafkatorio.processor.topology.TileUpdateRecordKey
-import dev.adamko.kafkatorio.processor.topology.WebMapTileChunkPixels
-import dev.adamko.kafkatorio.processor.topology.WebMapTileChunkPosition
-import dev.adamko.kafkatorio.processor.topology.aggregateWebMapTiles
-import dev.adamko.kafkatorio.processor.topology.allMapTilesTable
+import dev.adamko.kafkatorio.processor.topology.buildFactorioServerMap
+import dev.adamko.kafkatorio.processor.topology.factorioServerPacketStream
 import dev.adamko.kafkatorio.processor.topology.playerUpdatesToWsServer
-import dev.adamko.kafkatorio.processor.topology.saveTileImages
-import dev.adamko.kafkatorio.processor.topology.splitFactorioServerLog
-import dev.adamko.kafkatorio.processor.topology.tilePrototypeColourTable
+import dev.adamko.kafkatorio.processor.topology.saveMapTiles
+import dev.adamko.kafkatorio.processor.topology.splitFactorioServerPacketStream
 import java.time.Duration
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.TopologyDescription
-import org.apache.kafka.streams.kstream.KTable
 
 
 class KafkatorioTopology(
@@ -30,17 +22,25 @@ class KafkatorioTopology(
 
   fun build() {
 
-    splitFactorioServerLog(builder)
+    val packets = factorioServerPacketStream(builder)
+
+    splitFactorioServerPacketStream(packets)
 
     playerUpdatesToWsServer(websocketServer, builder)
 
-    val allMapTilesTable: KTable<TileUpdateRecordKey, MapTile> = allMapTilesTable(builder)
-    val tilePrototypeColourTable: KTable<PrototypeName, Colour> = tilePrototypeColourTable(builder)
+    val serverMapDataTable = buildFactorioServerMap(packets)
 
-    val webMapTiles: KTable<WebMapTileChunkPosition, WebMapTileChunkPixels> =
-      aggregateWebMapTiles(allMapTilesTable, tilePrototypeColourTable)
+    saveMapTiles(serverMapDataTable)
 
-    saveTileImages(webMapTiles)
+
+    // the old way...
+//    val allMapTilesTable: KTable<TileUpdateRecordKey, MapTile> = allMapTilesTable(builder)
+//    val tilePrototypeColourTable: KTable<PrototypeName, Colour> = tilePrototypeColourTable(builder)
+//
+//    val webMapTiles: KTable<WebMapTileChunkPosition, WebMapTileChunkPixels> =
+//      aggregateWebMapTiles(allMapTilesTable, tilePrototypeColourTable)
+//
+//    saveTileImages(webMapTiles)
 
     val topology = builder.build()
 

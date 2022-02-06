@@ -14,7 +14,7 @@ fun playerUpdatesToWsServer(
   websocketServer: WebsocketServer,
   builder: StreamsBuilder = StreamsBuilder(),
 ) {
-  builder.stream<FactorioPacketKey, KafkatorioPacket>(
+  builder.stream<FactorioServerId, KafkatorioPacket>(
     "kafkatorio.${KafkatorioPacket.PacketType.EVENT}.${FactorioObjectData.ObjectName.LuaPlayer}",
     consumedAs("stream-player-updates-for-ws-server", jsonMapper.serde(), jsonMapper.serde())
   )

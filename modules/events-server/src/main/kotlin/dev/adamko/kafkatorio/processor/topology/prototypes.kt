@@ -49,7 +49,7 @@ value class PrototypeName(val name: String) {
 
 /** Get the [Colour] of each [MapTilePrototype] */
 fun tilePrototypeColourTable(builder: StreamsBuilder): KTable<PrototypeName, Colour> {
-  return builder.stream<FactorioPacketKey, FactorioPrototypes>(
+  return builder.stream<FactorioServerId, FactorioPrototypes>(
     "kafkatorio.${KafkatorioPacket.PacketType.PROTOTYPES}.all",
     consumedAs(
       "consume-all-prototypes-packets",
