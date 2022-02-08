@@ -21,7 +21,7 @@ fun main(): Unit = runBlocking {
   val tileServer = WebMapTileServer()
 
   val topology = KafkatorioTopology(wsServer)
-  topology.build()
+  topology.start()
 
   val webServer = PolyHandler(
     tileServer.build(),

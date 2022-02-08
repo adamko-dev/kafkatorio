@@ -45,10 +45,10 @@ class ApplicationProperties(
   val kafkaConfig: Properties
     get() = EnvironmentKey
       .nonEmptyString()
-      .map {
-        it.reader().use { sr ->
-          Properties().also { p ->
-            p.load(sr)
+      .map { srcString ->
+        srcString.reader().use { stringReader ->
+          Properties().also { properties ->
+            properties.load(stringReader)
           }
         }
       }
