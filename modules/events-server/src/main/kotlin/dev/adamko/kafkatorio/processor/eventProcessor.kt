@@ -1,7 +1,7 @@
 package dev.adamko.kafkatorio.processor
 
 
-import dev.adamko.kafkatorio.admin.CreateTopics
+import dev.adamko.kafkatorio.admin.KafkaAdmin
 import dev.adamko.kafkatorio.processor.config.ApplicationProperties
 import dev.adamko.kafkatorio.processor.tileserver.WebMapTileServer
 import kotlinx.coroutines.runBlocking
@@ -9,11 +9,13 @@ import org.http4k.server.PolyHandler
 import org.http4k.server.Undertow
 import org.http4k.server.asServer
 
+
 val appProps = ApplicationProperties()
+
 
 fun main(): Unit = runBlocking {
 
-  CreateTopics.create()
+  KafkaAdmin.createKafkatorioTopics()
 
   val wsServer = WebsocketServer()
   val tileServer = WebMapTileServer()

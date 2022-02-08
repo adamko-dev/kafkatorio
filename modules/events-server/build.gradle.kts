@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
   dev.adamko.kafkatorio.lang.`kotlin-jvm`
@@ -63,4 +64,20 @@ tasks.withType<KotlinCompile> {
     "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
     "-opt-in=kotlinx.coroutines.FlowPreview",
   )
+}
+
+val kafkatorioEventsServerKafkaForceReset by tasks.registering(Exec::class) {
+  group = project.name
+
+  val cmd = """
+    /kafka/bin/kafka-streams-application-reset.sh --application-id kafkatorio-events-processor --input-topics factorio-server-log --force
+  """.trimIndent()
+
+  logging.captureStandardOutput(LogLevel.LIFECYCLE)
+
+  commandLine = parseSpaceSeparatedArgs(""" docker exec -d kafka $cmd """)
+}
+
+tasks.run.configure {
+  dependsOn(kafkatorioEventsServerKafkaForceReset)
 }

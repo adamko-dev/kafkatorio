@@ -76,11 +76,6 @@ fun groupTilesIntoChunksWithColours(
 
         val zoomLevel = ZoomLevel.ZOOM_0
 
-//
-//        ZoomLevel
-//          .values
-//          .mapNotNull { zoomLevel ->
-
         mapTileData
           ?.tiles
           ?.groupBy { tile ->
@@ -101,7 +96,7 @@ fun groupTilesIntoChunksWithColours(
 
             chunkId to chunkTiles
           } ?: listOf()
-//          }.flatten()
+
       }
       .groupByKey(
         groupedAs("server-map-data.tiles.group", kxsBinary.serde(), kxsBinary.serde())
@@ -121,15 +116,20 @@ fun groupTilesIntoChunksWithColours(
         foreignKeyExtractor = { chunkTiles: ServerMapChunkTiles<TileProtoHashCode> -> chunkTiles.chunkId.serverId }
       ) { tiles: ServerMapChunkTiles<TileProtoHashCode>, colourDict: TileColourDict ->
 
-        ServerMapChunkTiles(
-          tiles.chunkId,
-          tiles.map.mapValues { (_, code) ->
-            colourDict.map.getOrElse(code) {
-              println("missing prototype $code")
-              ColourHex.TRANSPARENT
-            }
+        val missingProtos = mutableSetOf<TileProtoHashCode>()
+
+        val tileColours = tiles.map.mapValues { (_, code) ->
+          colourDict.map.getOrElse(code) {
+            missingProtos.add(code)
+            ColourHex.TRANSPARENT
           }
-        )
+        }
+
+        if (missingProtos.isNotEmpty()) {
+          println("missing ${missingProtos.size} tile prototypes: ${missingProtos.joinToString { "${it.code}" }}")
+        }
+
+        ServerMapChunkTiles(tiles.chunkId, tileColours)
       }
 
   return colourisedChunkTable

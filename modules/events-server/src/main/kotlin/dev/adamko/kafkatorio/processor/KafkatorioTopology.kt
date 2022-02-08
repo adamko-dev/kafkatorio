@@ -16,6 +16,7 @@ class KafkatorioTopology(
   private val builder: StreamsBuilder = StreamsBuilder(),
 ) {
 
+
   companion object {
     const val sourceTopic = "factorio-server-log"
   }
@@ -23,10 +24,7 @@ class KafkatorioTopology(
 
   fun build() {
 
-
     val packets = factorioServerPacketStream(builder)
-
-
 
     splitFactorioServerPacketStream(packets)
 

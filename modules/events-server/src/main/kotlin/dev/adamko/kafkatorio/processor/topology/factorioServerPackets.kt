@@ -36,6 +36,7 @@ fun factorioServerPacketStream(
     }
 }
 
+
 fun splitFactorioServerPacketStream(
   factorioServerPacketStream: KStream<FactorioServerId, KafkatorioPacket>
 ) {

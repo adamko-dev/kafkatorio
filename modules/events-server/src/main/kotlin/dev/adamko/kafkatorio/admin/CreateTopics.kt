@@ -12,11 +12,11 @@ import org.apache.kafka.clients.admin.TopicListing
 
 private val logger = KotlinLogging.logger {}
 
-fun main() {
-  CreateTopics.create()
-}
+//fun main() {
+//  KafkaAdmin.createKafkatorioTopics()
+//}
 
-object CreateTopics {
+object KafkaAdmin {
 
   private val kafkaAdmin: Admin =
     Admin.create(
@@ -26,7 +26,7 @@ object CreateTopics {
       )
     )
 
-  fun create() {
+  fun createKafkatorioTopics() {
 
     val currentTopics = currentTopics().map { it.name() }
 

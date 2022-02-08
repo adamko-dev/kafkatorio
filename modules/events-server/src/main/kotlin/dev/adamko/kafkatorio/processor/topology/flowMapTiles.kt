@@ -2,6 +2,7 @@ package dev.adamko.kafkatorio.processor.topology
 
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.ScaleMethod
+import com.sksamuel.scrimage.color.RGBColor
 import com.sksamuel.scrimage.nio.PngWriter
 import dev.adamko.kafkatorio.events.schema.ColourHex
 import dev.adamko.kafkatorio.events.schema.MapChunkPosition
@@ -20,7 +21,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -63,7 +63,7 @@ fun saveMapTiles(
       chunkedTiles
         .conflate()
         .distinctUntilChanged()
-        .debounce(5.seconds)
+        .debounce(1.seconds)
         .map {
           println("createMapTileImage ${it.chunkId}")
           createMapTileImage(it)
@@ -164,6 +164,9 @@ private fun createMapTileImage(
 }
 
 
+private val TRANSPARENT_AWT = ColourHex.TRANSPARENT.toRgbColor().awt()
+
+
 private fun createMapTileImage(
   chunkPosition: MapChunkPosition,
   chunkColours: Map<MapTilePosition, ColourHex>,
@@ -173,7 +176,7 @@ private fun createMapTileImage(
   val chunkImage = ImmutableImage.filled(
     z.chunkSize,
     z.chunkSize,
-    ColourHex.TRANSPARENT.toRgbColor().awt(),
+    TRANSPARENT_AWT,
     BufferedImage.TYPE_INT_ARGB
   )
 
@@ -195,4 +198,14 @@ private fun createMapTileImage(
   }
 
   return chunkImage.scaleTo(WEB_MAP_TILE_SIZE_PX, WEB_MAP_TILE_SIZE_PX, ScaleMethod.Progressive)
+}
+
+
+private fun ColourHex.toRgbColor(): RGBColor {
+  return RGBColor(
+    red.toInt(),
+    green.toInt(),
+    blue.toInt(),
+    alpha.toInt(),
+  )
 }

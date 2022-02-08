@@ -1,8 +1,5 @@
 package dev.adamko.kafkatorio.processor.topology
 
-import com.sksamuel.scrimage.color.RGBColor
-import dev.adamko.kafkatorio.events.schema.Colour
-import dev.adamko.kafkatorio.events.schema.ColourHex
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlinx.serialization.Serializable
@@ -21,16 +18,6 @@ value class SurfaceIndex(
 @Serializable
 value class FactorioServerId(val id: String) {
   override fun toString() = id
-}
-
-
-fun ColourHex.toRgbColor(): RGBColor {
-  return RGBColor(
-    red.toInt(),
-    green.toInt(),
-    blue.toInt(),
-    alpha.toInt(),
-  )
 }
 
 

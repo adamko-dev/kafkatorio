@@ -1,6 +1,5 @@
 package dev.adamko.kafkatorio.events.schema
 
-import dev.adamko.kafkatorio.events.schema.converters.toHexadecimal
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
 
@@ -69,20 +68,10 @@ data class Colour(
   val blue: Float = 0f,
   @EncodeDefault
   val alpha: Float = 1f,
-) {
-
-  fun toHex() = toHexadecimal().let {
-    ColourHex(
-      it.red.toUInt().toUByte(),
-      it.green.toUInt().toUByte(),
-      it.blue.toUInt().toUByte(),
-      it.alpha.toUInt().toUByte(),
-    )
-  }
-}
+)
 
 
-/** Size-efficient version of [Colour] */
+/** Size-efficient version of [Colour] (`4*4` bytes vs `4*1` bytes) */
 @Serializable
 data class ColourHex(
   @EncodeDefault
