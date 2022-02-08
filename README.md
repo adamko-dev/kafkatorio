@@ -15,6 +15,8 @@ is provided.
 
 `./bin/kafka-streams-application-reset.sh --application-id kafkatorio-events-processor --input-topics factorio-server-log`
 
+`:screen-fps=60.000000 :live-caching=300 :screen-width=1920 :screen-height=1080 :screen-top=20 :screen-left:20`
+`:screen-fps=60.000000 :live-caching=300 --screen-width=1920 --screen-height=1080  :sout=#transcode{vcodec=h264,vb=0,scale=0,acodec=mpga,ab=128,channels=2,samplerate=44100}:file{dst=D:\\savedir.mp4} :sout-keep`
 
 ## todo
 
@@ -67,3 +69,5 @@ https://www.npmjs.com/package/wasm2lua?activeTab=readme
 * BSON 
   * https://github.com/mpaland/bsonfy
   * https://github.com/tcoram/bson-lua
+
+* bebop https://rainway.com/blog/2020/12/09/bebop-an-efficient-schema-based-binary-serialization-format/
