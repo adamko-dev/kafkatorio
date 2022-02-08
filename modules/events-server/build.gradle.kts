@@ -78,6 +78,6 @@ val kafkatorioEventsServerKafkaForceReset by tasks.registering(Exec::class) {
   commandLine = parseSpaceSeparatedArgs(""" docker exec -d kafka $cmd """)
 }
 
-tasks.run.configure {
-  dependsOn(kafkatorioEventsServerKafkaForceReset)
-}
+//tasks.run.configure {
+//  dependsOn(kafkatorioEventsServerKafkaForceReset)
+//}
