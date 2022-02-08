@@ -45,6 +45,7 @@ fun createFactorioMap() = Maps {
 
     L.scale {
       metric = true
+      imperial = false
     }.addTo(this)
 
 
