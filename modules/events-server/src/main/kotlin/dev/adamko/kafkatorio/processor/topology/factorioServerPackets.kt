@@ -59,33 +59,3 @@ fun splitFactorioServerPacketStream(
       }
     }
 }
-
-//@Serializable
-//data class FactorioPacketKey(
-//  val serverId: FactorioServerId,
-//  /** arbitrary distinctive key */
-//  val key: String,
-//)
-//
-//private fun createPacketKey(packet: KafkatorioPacket): String {
-//
-//  return when (packet) {
-//    is FactorioEvent      -> factorioEventKey(packet)
-//    is FactorioConfigurationUpdate,
-//    is FactorioPrototypes -> packet.hashCode().toString()
-//  }
-//}
-//
-//private fun factorioEventKey(event: FactorioEvent): String {
-//  val id: String = when (val data = event.data) {
-//    is ConsoleChatMessage -> data.authorPlayerIndex?.toString()
-//    is EntityData         -> data.type
-//    is MapChunk           -> data.position.toString()
-////    is MapTile            -> data.position.toString()
-//    is MapTiles           -> data.tiles.firstOrNull()?.position?.toMapChunkPosition()?.toString()
-//    is PlayerData         -> (data.characterUnitNumber?.toString() ?: data.name)
-//    is SurfaceData        -> data.index.toString()
-//  } ?: event.tick.toString()
-//
-//  return id
-//}

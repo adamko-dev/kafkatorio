@@ -19,10 +19,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.runningFold
@@ -39,15 +38,9 @@ private val cScope = CoroutineScope(
   Dispatchers.Default + SupervisorJob() + CoroutineName("f-server-map-updates")
 )
 
-private val serverMapChunkHandler = ServerMapChunkHandler()
 
-///** A bridge between Kafka and Kotlin */
-//private val chunkedTiles: MutableSharedFlow<ServerMapChunkTiles<ColourHex>> =
-//  MutableSharedFlow(
-//    0,
-//    1,
-//    BufferOverflow.SUSPEND
-//  )
+/** A bridge between Kafka and Kotlin */
+private val serverMapChunkHandler = ServerMapChunkHandler()
 
 
 fun saveMapTiles(
@@ -60,90 +53,11 @@ fun saveMapTiles(
       if (value != null) {
         runBlocking(Dispatchers.Default) {
           println("emitting chunkedTiles ${value.chunkId} tiles: ${value.map.size}")
-//          chunkedTiles.emit(value)
           serverMapChunkHandler.emit(value)
         }
       }
     }
 
-//  cScope.launch {
-//    supervisorScope {
-//      chunkedTiles
-//        .conflate()
-//        .distinctUntilChanged()
-//        .debounce(1.seconds)
-//        .map {
-//          println("createMapTileImage ${it.chunkId}")
-//          createMapTileImage(it)
-//        }
-//        .collect()
-//    }
-//  }
-
-//  cScope.launch {
-//    println("launching serverMapDataFlow merging")
-//
-//    chunkedTiles
-//      .conflate()
-//      .flatMapConcat { chunk ->
-//        ZoomLevel.values
-//          .asFlow()
-//          .flatMapConcat { zoom ->
-//            chunk.map.entries
-//              .groupBy({ (tile, _) -> tile.toMapChunkPosition(zoom.chunkSize) }
-//              ) {
-//                it.key to it.value
-//              }
-//              .map { (chunkPos, tiles) ->
-//                val chunkId = chunk.chunkId.copy(
-//                  zoomLevel = zoom,
-//                  chunkPosition = chunkPos
-//                )
-//                ServerMapChunkTiles(chunkId, tiles.toMap())
-//              }
-//              .asFlow()
-//          }
-//      }
-//      .runningFold(
-//        mapOf<ServerMapChunkId, MutableSharedFlow<ServerMapChunkTiles<ColourHex>>>()
-//      ) { accumulator, value ->
-//
-//        println("folding chunkedTiles ${value.chunkId}, current flows: ${accumulator.keys}")
-//
-//        val chunkFlow = accumulator.getOrElse(value.chunkId) {
-//
-//          println("creating new MutableSharedFlow for ${value.chunkId}")
-//
-//          val input = MutableSharedFlow<ServerMapChunkTiles<ColourHex>>(
-//            replay = 0,
-//            extraBufferCapacity = 1,
-//            onBufferOverflow = BufferOverflow.DROP_OLDEST,
-//          )
-//
-//          supervisorScope {
-//            println("launching MutableSharedFlow for ${value.chunkId}")
-//            input
-//              .conflate()
-//              .distinctUntilChanged()
-//              .debounce(30.seconds)
-//              .mapLatest {
-//                println("createMapTileImage ${it.chunkId}")
-//                createMapTileImage(it)
-//              }
-//              .launchIn(this)
-//          }
-//
-//          input
-//        }
-//
-//        chunkFlow.emit(value)
-//
-//        accumulator + (value.chunkId to chunkFlow)
-//      }
-//      .collect()
-//
-//    println("end of cScope.launch")
-//  }
 }
 
 
@@ -161,33 +75,6 @@ private value class TilePngFilename(
   })
 }
 
-//private fun createMapTileImage(
-//  chunkTiles: ServerMapChunkTiles<ColourHex>,
-//
-//  zoomLevel: ZoomLevel
-//) {
-//
-//  println("creating chunkData ${chunkTiles.chunkId.chunkPosition}...")
-//
-//  val filename = TilePngFilename(chunkTiles.chunkId)
-//
-//  val chunkImageFile = File(filename.value)
-//  if (chunkImageFile.parentFile.mkdirs()) {
-//    println("created new map tile parentFile directory ${chunkImageFile.absolutePath}")
-//  }
-//
-//  val image =
-//    createMapTileImage(
-//      chunkTiles.chunkId.chunkPosition,
-//      chunkTiles.map,
-//      chunkTiles.chunkId.zoomLevel
-//    )
-//
-//  println("saving map tile $chunkImageFile")
-//  val savedTile = image.output(PngWriter.NoCompression, chunkImageFile)
-//  println("savedTile: $savedTile")
-//}
-//
 
 private val TRANSPARENT_AWT = ColourHex.TRANSPARENT.toRgbColor().awt()
 
@@ -257,48 +144,36 @@ private class ServerMapChunkHandler : CoroutineScope {
 
   init {
 
-    launch {
-      supervisorScope {
-        saveImagesFlow
-//          .conflate()
-          .onEach { (filename, img) ->
-            println("saving map tile $filename")
+    allChunksFlow
+      .runningFold(mapOf<ServerMapChunkId, MutableSharedFlow<Cmd.ChunkSubdivide>>()) { acc, src ->
 
-            val chunkImageFile = File(filename.value)
-            if (chunkImageFile.parentFile.mkdirs()) {
-              println("created new map tile parentFile directory ${chunkImageFile.absolutePath}")
-            }
+        val flow = acc.getOrElse(src.chunkId) {
+          println("creating new subdivide-flow for chunkId ${src.chunkId}")
+          subdivisionFlow()
+        }
 
-            val savedTile = img.output(PngWriter.NoCompression, chunkImageFile)
-            println("savedTile: $savedTile")
-          }
-          .collect()
+        flow.emit(Cmd.ChunkSubdivide(src.chunkId, src.map))
+
+        acc + (src.chunkId to flow)
       }
-    }
-
-    launch {
-      supervisorScope {
-        allChunksFlow
-//          .conflate()
-          .runningFold(mapOf<ServerMapChunkId, MutableSharedFlow<Cmd.ChunkSubdivide>>()) { acc, src ->
-
-            val flow = acc.getOrElse(src.chunkId) {
-              println("creating new subdivide-flow for chunkId ${src.chunkId}")
-              subdivisionFlow()
-            }
-
-            launch {
-              flow.emit(Cmd.ChunkSubdivide(src.chunkId, src.map))
-            }
-
-            acc + (src.chunkId to flow)
-          }
-          .onEach {
-            println("allChunksFlow has ${it.size} subdivide-flows: ${it.keys.joinToString()}")
-          }
-          .collect()
+      .onEach {
+        println("allChunksFlow has ${it.size} subdivide-flows: ${it.keys.joinToString()}")
       }
-    }
+      .launchIn(this)
+
+    saveImagesFlow
+      .onEach { (filename, img) ->
+        println("saving map tile $filename")
+
+        val chunkImageFile = File(filename.value)
+        if (chunkImageFile.parentFile.mkdirs()) {
+          println("created new map tile parentFile directory ${chunkImageFile.absolutePath}")
+        }
+
+        val savedTile = img.output(PngWriter.NoCompression, chunkImageFile)
+        println("savedTile: $savedTile")
+      }
+      .launchIn(this)
 
   }
 

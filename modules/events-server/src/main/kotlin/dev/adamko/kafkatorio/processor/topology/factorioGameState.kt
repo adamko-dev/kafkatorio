@@ -20,22 +20,6 @@ import kotlinx.serialization.Serializable
 import org.apache.kafka.streams.kstream.KStream
 import org.apache.kafka.streams.kstream.KTable
 
-
-//@Serializable
-//data class FactorioServerMap(
-//  val serverId: FactorioServerId,
-//  val tilePrototypes: Map<PrototypeName, MapTilePrototype>,
-//  val surfaces: Map<SurfaceIndex, FactorioMapSurface>,
-//)
-
-
-//@Serializable
-//data class FactorioMapSurface(
-//  val index: SurfaceIndex,
-//  val tiles: Map<MapTilePosition, PrototypeName>,
-//)
-
-
 @Serializable
 data class ServerMapChunkId(
   val serverId: FactorioServerId,
@@ -135,62 +119,3 @@ fun groupTilesIntoChunksWithColours(
   return colourisedChunkTable
 
 }
-
-//@Serializable
-//private data class FactorioServerMapAggregator(
-//  val tilePrototypes: SortedMap<PrototypeName, Colour> = TreeMap(),
-//  val surfaces: MutableMap<SurfaceIndex, FactorioMapSurfaceAggregator> = mutableMapOf(),
-//) {
-//
-//  operator fun plus(packet: KafkatorioPacket): FactorioServerMapAggregator {
-//    return when (packet) {
-//      is FactorioEvent               -> {
-//        when (val data = packet.data) {
-//          is MapChunk -> plus(data)
-//          is MapTiles -> plus(data)
-//          else        -> this
-//        }
-//      }
-//      is FactorioPrototypes          -> plus(packet)
-//      is FactorioConfigurationUpdate -> this
-//    }
-//  }
-//
-//  operator fun plus(mapTiles: MapTiles): FactorioServerMapAggregator {
-////    println("FactorioServerMapAggregator: adding ${mapTiles.tiles.size} MapTiles from surface ${mapTiles.surfaceIndex}")
-//
-//    val surfaceIndex = SurfaceIndex(mapTiles.surfaceIndex)
-//
-//    val surface = surfaces.getOrPut(surfaceIndex) { FactorioMapSurfaceAggregator(surfaceIndex) }
-//
-//    val surfaceTiles = mapTiles.tiles.associate { it.position to PrototypeName(it.prototypeName) }
-//    surface.tiles.putAll(surfaceTiles)
-//
-//    return this
-//  }
-//
-//  operator fun plus(mapChunk: MapChunk): FactorioServerMapAggregator {
-////    println("FactorioServerMapAggregator: adding mapChunk ${mapChunk.position}")
-//    return plus(mapChunk.tiles)
-//  }
-//
-//  operator fun plus(packet: FactorioPrototypes): FactorioServerMapAggregator {
-////    println("FactorioServerMapAggregator: adding FactorioPrototypes")
-//
-//    val packetPrototypes = packet.prototypes
-//      .filterIsInstance<MapTilePrototype>()
-//      .associate { PrototypeName(it.name) to it.mapColour }
-//
-//    tilePrototypes.putAll(packetPrototypes)
-//
-//    return this
-//  }
-//
-//}
-
-//
-//@Serializable
-//private data class FactorioMapSurfaceAggregator(
-//  val index: SurfaceIndex,
-//  val tiles: MutableMap<MapTilePosition, PrototypeName> = mutableMapOf(),
-//)

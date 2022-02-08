@@ -30,8 +30,6 @@ class KafkatorioTopology(
 
     playerUpdatesToWsServer(websocketServer, builder)
 
-//    val serverMapDataTable = buildFactorioServerMap(packets, tilePrototypesTable)
-
     val tileProtoColourDict = tileProtoColourDictionary(packets)
 
     val tilePrototypesTable = groupTilesIntoChunksWithColours(
@@ -39,16 +37,6 @@ class KafkatorioTopology(
       tileProtoColourDict,
     )
     saveMapTiles(tilePrototypesTable)
-
-
-    // the old way...
-//    val allMapTilesTable: KTable<TileUpdateRecordKey, MapTile> = allMapTilesTable(builder)
-//    val tilePrototypeColourTable: KTable<PrototypeName, Colour> = tilePrototypeColourTable(builder)
-//
-//    val webMapTiles: KTable<WebMapTileChunkPosition, WebMapTileChunkPixels> =
-//      aggregateWebMapTiles(allMapTilesTable, tilePrototypeColourTable)
-//
-//    saveTileImages(webMapTiles)
 
     val topology = builder.build()
 
