@@ -138,17 +138,6 @@ data class MapTiles(
 }
 
 @Serializable
-data class MapTile(
-  val prototypeName: String,
-  val position: MapTilePosition,
-)
-//  : FactorioObjectData()
-{
-  //  @EncodeDefault
-  val objectName: String = ""
-}
-
-@Serializable
 data class ConsoleChatMessage(
   val authorPlayerIndex: UInt?,
   val content: String,

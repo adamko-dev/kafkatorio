@@ -43,7 +43,6 @@ interface MapChunkPosition {
 }
 
 interface MapTile {
-  objectName: string;
   position: MapTilePosition;
   prototypeName: string;
 }

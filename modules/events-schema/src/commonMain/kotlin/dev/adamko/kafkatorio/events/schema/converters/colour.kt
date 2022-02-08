@@ -23,7 +23,12 @@ fun Colour.toHexadecimal() = if (isPercentage()) {
     (alpha * 255).coerceIn(0f..255f),
   )
 } else {
-  this
+  Colour(
+    red.coerceIn(0f..255f),
+    green.coerceIn(0f..255f),
+    blue.coerceIn(0f..255f),
+    alpha.coerceIn(0f..255f),
+  )
 }
 
 fun Colour.toPercentage() = if (isPercentage()) {

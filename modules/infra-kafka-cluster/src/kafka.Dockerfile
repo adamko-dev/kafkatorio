@@ -1,4 +1,4 @@
-ARG KAFKA_DL_URL=https://dlcdn.apache.org/kafka/3.0.0/kafka_2.13-3.0.0.tgz
+ARG KAFKA_DL_URL=https://dlcdn.apache.org/kafka/3.1.0/kafka_2.13-3.1.0.tgz
 
 ## builder ##
 FROM debian:11-slim as Kafka-Download

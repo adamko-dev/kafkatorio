@@ -203,7 +203,6 @@ class FactorioEventTest : FunSpec({
           "surfaceIndex": 1,
           "tiles": [
             {
-              "objectName": "LuaTile",
               "position": {
                 "y": 10,
                 "x": -65
@@ -211,23 +210,20 @@ class FactorioEventTest : FunSpec({
               "prototypeName": "refined-concrete"
             },
             {
-              "objectName": "LuaTile",
               "position": {
                 "y": 11,
                 "x": -65
               },
-              "prototypeName": "refined-concrete"
+              "prototypeName": "red-earth"
             },
             {
-              "objectName": "LuaTile",
               "position": {
                 "y": 10,
                 "x": -64
               },
-              "prototypeName": "refined-concrete"
+              "prototypeName": "blue-cheese"
             },
             {
-              "objectName": "LuaTile",
               "position": {
                 "y": 11,
                 "x": -64
@@ -256,11 +252,11 @@ class FactorioEventTest : FunSpec({
                 position = MapTilePosition(-65, 10)
               ),
               MapTile(
-                prototypeName = "refined-concrete",
+                prototypeName = "red-earth",
                 position = MapTilePosition(-65, 11)
               ),
               MapTile(
-                prototypeName = "refined-concrete",
+                prototypeName = "blue-cheese",
                 position = MapTilePosition(-64, 10)
               ),
               MapTile(
@@ -277,6 +273,60 @@ class FactorioEventTest : FunSpec({
         actual shouldBe expected
 
         expected.data.objectName shouldBe FactorioObjectData.ObjectName.LuaTiles
+      }
+
+      test("Then: expect encode equals json") {
+        val encoded = jsonMapperKafkatorio.encodeToString(actual)
+        encoded.shouldEqualJson(json)
+      }
+    }
+  }
+
+  context("Given: packet FactorioConfigurationUpdate") {
+    // language=JSON
+    val json = """
+               {
+                 "modVersion": "0.2.8",
+                 "packetType": "CONFIG",
+                 "allMods": [
+                   {
+                     "modName": "kafkatorio-events",
+                     "currentVersion": "0.2.8",
+                     "previousVersion": "0.2.7"
+                   },
+                   {
+                     "modName": "base",
+                     "currentVersion": "1.1.53"
+                   }
+                 ],
+                 "factorioData": {}
+               }
+               """.trimIndent()
+    context("When: decoded") {
+      val actual: FactorioConfigurationUpdate = jsonMapperKafkatorio.decodeFromString(json)
+
+      test("parse") {
+
+        val expected = FactorioConfigurationUpdate(
+          modVersion = "0.2.8",
+          factorioData = FactorioGameDataUpdate(null, null),
+          allMods = listOf(
+            FactorioModInfo(
+              modName = "kafkatorio-events",
+              currentVersion = "0.2.8",
+              previousVersion = "0.2.7"
+            ),
+            FactorioModInfo(
+              modName = "base",
+              currentVersion = "1.1.53",
+              previousVersion = null
+            ),
+          )
+        )
+
+        actual shouldBe expected
+
+        expected.packetType shouldBe KafkatorioPacket.PacketType.CONFIG
       }
 
       test("Then: expect encode equals json") {

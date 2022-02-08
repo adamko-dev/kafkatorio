@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 plugins {
   id("dev.adamko.kafkatorio.lang.kotlin-js")
   kotlin("plugin.serialization")
-  id("io.kvision") version "5.7.1"
+  id("io.kvision") version "5.8.1"
 }
 
 kotlin {
@@ -48,8 +48,8 @@ kotlin {
 
         implementation(projects.modules.eventsSchema)
 
-        implementation("org.jetbrains.kotlinx:kotlinx-nodejs:0.0.7")
-        implementation("org.jetbrains.kotlinx:kotlinx-html:0.7.3")
+        implementation(libs.kotlinx.nodejs)
+        implementation(libs.kotlinx.html)
 
         kvision("kvision")
         kvision("kvision-bootstrap")

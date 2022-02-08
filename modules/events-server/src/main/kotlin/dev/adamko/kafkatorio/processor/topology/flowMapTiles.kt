@@ -3,10 +3,9 @@ package dev.adamko.kafkatorio.processor.topology
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.ScaleMethod
 import com.sksamuel.scrimage.nio.PngWriter
-import dev.adamko.kafkatorio.events.schema.Colour
+import dev.adamko.kafkatorio.events.schema.ColourHex
 import dev.adamko.kafkatorio.events.schema.MapChunkPosition
 import dev.adamko.kafkatorio.events.schema.MapTilePosition
-import dev.adamko.kafkatorio.events.schema.converters.toMapChunkPosition
 import java.awt.image.BufferedImage
 import java.io.File
 import kotlin.math.abs
@@ -15,17 +14,17 @@ import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.conflate
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.supervisorScope
 import org.apache.kafka.streams.kstream.KTable
 
 
@@ -36,106 +35,84 @@ private val cScope = CoroutineScope(
 )
 
 /** A bridge between Kafka and Kotlin */
-private val serverMapDataFlow: MutableStateFlow<FactorioServerMap?> = MutableStateFlow(null)
+private val chunkedTiles: MutableSharedFlow<ServerMapChunkTiles<ColourHex>> =
+  MutableSharedFlow(
+    0,
+    1,
+    BufferOverflow.SUSPEND
+  )
 
 
 fun saveMapTiles(
-  serverMapTable: KTable<FactorioServerId, FactorioServerMap>
+  serverMapTable: KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>
 ) {
 
   serverMapTable
     .toStream()
     .foreach { _, value ->
-      runBlocking(Dispatchers.Default) {
-        serverMapDataFlow.emit(value)
+      if (value != null) {
+        runBlocking(Dispatchers.Default) {
+          println("emitting chunkedTiles ${value.chunkId} tiles: ${value.map.size}")
+          chunkedTiles.emit(value)
+        }
       }
     }
 
   cScope.launch {
-    println("launching serverMapDataFlow merging")
-
-
-    serverMapDataFlow
-      .filterNotNull()
-
-    serverMapDataFlow
-      .filterNotNull()
-      .conflate()
-//      .transform { serverMapData ->
-      .flatMapMerge(10) { serverMapData ->
-        println("flatMapMerge serverMapData ${serverMapData.serverId}, surfaces ${serverMapData.surfaces.keys}")
-
-        val prototypes = serverMapData.tilePrototypes
-
-        serverMapData
-          .surfaces
-          .values
-//          .forEach { surfaceData ->
-          .asFlow()
-          .flatMapMerge(10) { surfaceData ->
-            println("flatMapMerge surfaceData ${surfaceData.index}")
-
-            // get all tile colours for the surface
-            val surfaceTileColours = surfaceData.tiles
-              .entries
-              .mapNotNull { (tilePosition, prototypeName) ->
-                prototypes[prototypeName]?.let { prototype ->
-                  tilePosition to prototype.mapColour
-                }
-              }
-            println("surfaceTileColours.size ${surfaceTileColours.size}")
-
-            // split a surface into chunks, per zoom-level
-            ZoomLevel.values
-//              .forEach { zoom ->
-              .asFlow()
-              .flatMapMerge(10) { zoom ->
-                println("flatMapMerge zoom $zoom")
-
-                surfaceTileColours
-                  .groupBy { (tilePosition, _) ->
-                    tilePosition.toMapChunkPosition(zoom.chunkSize)
-                  }
-                  .entries
-//                    .forEach { (chunkPosition, tileColours) ->
-                  .asFlow()
-                  .mapLatest { (chunkPosition, tileColours) ->
-                    println("mapLatest chunkPosition $chunkPosition")
-
-                    // mapLatest + delay = an alternative to debounce-per-key?
-                    delay(30.seconds)
-
-                    println("emitting ChunkData $chunkPosition")
-
-                    ChunkData(
-                      surfaceData.index,
-                      zoom,
-                      chunkPosition,
-                      tileColours.toMap()
-                    )
-                  }
-              }
-          }
-      }
-      .onEach { chunkData ->
-
-        println("starting to save chunkData ${chunkData.chunkPosition}...")
-
-        val chunkImageFile = File(chunkData.filename.value)
-        if (chunkImageFile.parentFile.mkdirs()) {
-          println("created new map tile parentFile directory ${chunkImageFile.absolutePath}")
+    supervisorScope {
+      chunkedTiles
+        .conflate()
+        .distinctUntilChanged()
+        .debounce(5.seconds)
+        .map {
+          println("createMapTileImage ${it.chunkId}")
+          createMapTileImage(it)
         }
-
-        val image =
-          createMapTileImage(chunkData.chunkPosition, chunkData.tileColours, chunkData.zoomLevel)
-
-        println("saving map tile $chunkImageFile")
-        val savedTile = image.output(PngWriter.NoCompression, chunkImageFile)
-        println("savedTile: $savedTile")
-
-      }
-      .launchIn(this)
+        .collect()
+    }
   }
+
+//  cScope.launch {
+//    println("launching serverMapDataFlow merging")
+//
+//    chunkedTiles
+//      .runningFold(
+//        mapOf<ServerMapChunkId, MutableSharedFlow<ServerMapChunkTiles<ColourHex>>>()
+//      ) { accumulator, value ->
+//
+//        println("folding chunkedTiles ${value.chunkId}, current flows: ${accumulator.keys}")
+//
+//        val chunkFlow = accumulator.getOrElse(value.chunkId) {
+//
+//          println("creating new MutableSharedFlow for ${value.chunkId}")
+//
+//          val input = MutableSharedFlow<ServerMapChunkTiles<ColourHex>>(
+//            replay = 0,
+//            extraBufferCapacity = 1,
+//            onBufferOverflow = BufferOverflow.DROP_OLDEST,
+//          )
+//
+//          supervisorScope {
+//            println("launching MutableSharedFlow for ${value.chunkId}")
+//            input
+//              .debounce(30.seconds)
+//              .mapLatest {
+//                println("createMapTileImage ${it.chunkId}")
+//                createMapTileImage(it)
+//              }.launchIn(this)
+//          }
+//
+//          input
+//        }
+//
+//        chunkFlow.emit(value)
+//
+//        accumulator + (value.chunkId to chunkFlow)
+//      }
+//      .collect()
+//
+//    println("end of cScope.launch")
+//  }
 }
 
 
@@ -145,35 +122,58 @@ private value class TilePngFilename(
 ) {
 
   constructor(
-    surfaceIndex: SurfaceIndex,
-    zoom: Int,
-    chunkX: Int,
-    chunkY: Int,
-  ) : this("src/main/resources/kafkatorio-web-map/s${surfaceIndex.index}/z$zoom/x${chunkX}/y${chunkY}.png")
-
-}
-
-
-private data class ChunkData(
-  val surfaceIndex: SurfaceIndex,
-  val zoomLevel: ZoomLevel,
-  val chunkPosition: MapChunkPosition,
-  val tileColours: Map<MapTilePosition, Colour>,
-) {
-  val filename = TilePngFilename(surfaceIndex, zoomLevel.level, chunkPosition.x, chunkPosition.y)
+    chunkId: ServerMapChunkId
+  ) : this(buildString {
+    append("src/main/resources/kafkatorio-web-map/s")
+    append(chunkId.surfaceIndex.index)
+    append("/z")
+    append(chunkId.zoomLevel.level)
+    append("/x")
+    append(chunkId.chunkPosition.x)
+    append("/y")
+    append(chunkId.chunkPosition.y)
+    append(".png")
+  })
 }
 
 private fun createMapTileImage(
+  chunkTiles: ServerMapChunkTiles<ColourHex>
+) {
+
+  println("emitting ChunkData ${chunkTiles.chunkId.chunkPosition}")
+
+  println("starting to save chunkData ${chunkTiles.chunkId.chunkPosition}...")
+
+  val filename = TilePngFilename(chunkTiles.chunkId)
+
+  val chunkImageFile = File(filename.value)
+  if (chunkImageFile.parentFile.mkdirs()) {
+    println("created new map tile parentFile directory ${chunkImageFile.absolutePath}")
+  }
+
+  val image =
+    createMapTileImage(
+      chunkTiles.chunkId.chunkPosition,
+      chunkTiles.map,
+      chunkTiles.chunkId.zoomLevel
+    )
+
+  println("saving map tile $chunkImageFile")
+  val savedTile = image.output(PngWriter.NoCompression, chunkImageFile)
+  println("savedTile: $savedTile")
+}
+
+
+private fun createMapTileImage(
   chunkPosition: MapChunkPosition,
-  chunkColours: Map<MapTilePosition, Colour>,
+  chunkColours: Map<MapTilePosition, ColourHex>,
   z: ZoomLevel
 ): ImmutableImage {
-
 
   val chunkImage = ImmutableImage.filled(
     z.chunkSize,
     z.chunkSize,
-    COLOUR_TRANSPARENT.awt(),
+    ColourHex.TRANSPARENT.toRgbColor().awt(),
     BufferedImage.TYPE_INT_ARGB
   )
 

@@ -2,6 +2,7 @@ package dev.adamko.kafkatorio.processor.topology
 
 import com.sksamuel.scrimage.color.RGBColor
 import dev.adamko.kafkatorio.events.schema.Colour
+import dev.adamko.kafkatorio.events.schema.ColourHex
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlinx.serialization.Serializable
@@ -23,12 +24,12 @@ value class FactorioServerId(val id: String) {
 }
 
 
-fun Colour.toRgbColor(): RGBColor {
+fun ColourHex.toRgbColor(): RGBColor {
   return RGBColor(
-    red.roundToInt(),
-    green.roundToInt(),
-    blue.roundToInt(),
-    alpha.roundToInt(),
+    red.toInt(),
+    green.toInt(),
+    blue.toInt(),
+    alpha.toInt(),
   )
 }
 
@@ -36,15 +37,14 @@ fun Colour.toRgbColor(): RGBColor {
 enum class ZoomLevel(
   val level: Int
 ) {
-  ZOOM_0(0),
-  ZOOM_1(1),
-  ZOOM_2(2),
-  ZOOM_3(3),
-  ZOOM_4(4),
-  ZOOM_5(5),
+  ZOOM_0(0), // 512
+  ZOOM_1(1), // 256
+  ZOOM_2(2), // 128
+  ZOOM_3(3), // 64
+  ZOOM_4(4), // 32
   ;
 
-  val chunkSize: Int = 2f.pow(10 - level).roundToInt()
+  val chunkSize: Int = 2f.pow(9 - level).roundToInt()
 
   init {
     require(chunkSize > 0) { "chunkSize must be positive" }

@@ -1,5 +1,6 @@
 package dev.adamko.kafkatorio.events.schema
 
+import dev.adamko.kafkatorio.events.schema.converters.toHexadecimal
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
 
@@ -56,7 +57,7 @@ data class MapBoundingBox(
  * Red, green, blue and alpha values, all in range `[0, 1]` or all in range `[0, 255]` if any
  * value is > 1.
  *
- * All values here are optional. Colour channels default to 0, the alpha channel defaults to 1.
+ * All values here are optional. Colour channels default to `0`, the alpha channel defaults to `1`.
  */
 @Serializable
 data class Colour(
@@ -68,4 +69,39 @@ data class Colour(
   val blue: Float = 0f,
   @EncodeDefault
   val alpha: Float = 1f,
+) {
+
+  fun toHex() = toHexadecimal().let {
+    ColourHex(
+      it.red.toUInt().toUByte(),
+      it.green.toUInt().toUByte(),
+      it.blue.toUInt().toUByte(),
+      it.alpha.toUInt().toUByte(),
+    )
+  }
+}
+
+
+/** Size-efficient version of [Colour] */
+@Serializable
+data class ColourHex(
+  @EncodeDefault
+  val red: UByte = UByte.MIN_VALUE,
+  @EncodeDefault
+  val green: UByte = UByte.MIN_VALUE,
+  @EncodeDefault
+  val blue: UByte = UByte.MIN_VALUE,
+  @EncodeDefault
+  val alpha: UByte = UByte.MAX_VALUE,
+) {
+  companion object {
+    val TRANSPARENT = ColourHex(0u, 0u, 0u, 0u)
+  }
+}
+
+
+@Serializable
+data class MapTile(
+  val prototypeName: String,
+  val position: MapTilePosition,
 )

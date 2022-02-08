@@ -92,8 +92,7 @@ export function handleTilesUpdate(
 
     let convertedTiles: MapTile[] = updatedTiles.map((it) => {
       return {
-        objectName: "LuaTile",
-        position: it.position,
+        position: it.position, // TODO use converters for LuaTile
         prototypeName: newTileType.name,
       }
     })

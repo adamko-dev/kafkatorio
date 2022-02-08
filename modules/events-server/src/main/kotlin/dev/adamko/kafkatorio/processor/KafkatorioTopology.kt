@@ -1,15 +1,15 @@
 package dev.adamko.kafkatorio.processor
 
-import dev.adamko.kafkatorio.processor.topology.buildFactorioServerMap
 import dev.adamko.kafkatorio.processor.topology.factorioServerPacketStream
+import dev.adamko.kafkatorio.processor.topology.groupTilesIntoChunksWithColours
 import dev.adamko.kafkatorio.processor.topology.playerUpdatesToWsServer
 import dev.adamko.kafkatorio.processor.topology.saveMapTiles
 import dev.adamko.kafkatorio.processor.topology.splitFactorioServerPacketStream
+import dev.adamko.kafkatorio.processor.topology.tileProtoColourDictionary
 import java.time.Duration
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.TopologyDescription
-
 
 class KafkatorioTopology(
   private val websocketServer: WebsocketServer,
@@ -20,17 +20,27 @@ class KafkatorioTopology(
     const val sourceTopic = "factorio-server-log"
   }
 
+
   fun build() {
 
+
     val packets = factorioServerPacketStream(builder)
+
+
 
     splitFactorioServerPacketStream(packets)
 
     playerUpdatesToWsServer(websocketServer, builder)
 
-    val serverMapDataTable = buildFactorioServerMap(packets)
+//    val serverMapDataTable = buildFactorioServerMap(packets, tilePrototypesTable)
 
-    saveMapTiles(serverMapDataTable)
+    val tileProtoColourDict = tileProtoColourDictionary(packets)
+
+    val tilePrototypesTable = groupTilesIntoChunksWithColours(
+      packets,
+      tileProtoColourDict,
+    )
+    saveMapTiles(tilePrototypesTable)
 
 
     // the old way...

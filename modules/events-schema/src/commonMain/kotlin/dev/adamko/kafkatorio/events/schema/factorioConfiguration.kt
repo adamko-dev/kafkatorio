@@ -16,13 +16,13 @@ data class FactorioConfigurationUpdate(
 
 @Serializable
 data class FactorioGameDataUpdate(
-  val oldVersion: String?,
-  val newVersion: String?,
+  val oldVersion: String? = null,
+  val newVersion: String? = null,
 )
 
 @Serializable
 data class FactorioModInfo(
   val modName: String,
-  val currentVersion: String?,
-  val previousVersion: String?,
+  val currentVersion: String? = null,
+  val previousVersion: String? = null,
 )
