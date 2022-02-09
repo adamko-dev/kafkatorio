@@ -72,6 +72,7 @@ export namespace Queue {
     }
   }
 
+
   export function dequeueValues(targetWeight: uint = 50): EventData[] {
     let values: EventData[] = []
     let weight: uint = 0
@@ -107,18 +108,10 @@ export namespace Queue {
     [key: string]: EventData | null;
   }
 
-// interface PacketQueue<T> {
-//   enqueue(key: string, packet: T, weight: int): void
-//
-//   dequeue(): WeightedPacket<T> | null
-//
-//   dequeueValues(targetWeight: int): T[]
-// }
-//
+
   interface WeightedPacket {
     value: EventData,
     weight: int,
   }
-
 
 }

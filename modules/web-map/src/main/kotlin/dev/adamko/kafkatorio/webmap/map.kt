@@ -27,21 +27,27 @@ fun createFactorioMap() = Maps {
   configureLeafletMap {
     setView(LatLng(0, 0), 1)
 
-//    DefaultTileLayers.OpenStreetMap.addTo(this)
+
     L.tileLayer(
       """http://localhost:9073/tiles/s1/z{z}/x{x}/y{y}.png"""
     ) {
       attribution = "kafkatorio"
       tileSize = 256
       tms = true
-//      minZoom = -2
-//      maxZoom = 1
-      maxNativeZoom = 4
-      minNativeZoom = 0
+
+      minZoom = -2
+      maxZoom = 6
+
+      // NOTE: offset the zoom, so 1 meter = 1 tile
+      maxNativeZoom = 3
+      minNativeZoom = -1
+      zoomOffset = 1
+
       noWrap = true
-      updateWhenIdle = true
+      updateWhenIdle = false
       updateWhenZooming = true
     }.addTo(this)
+
 
     L.scale {
       metric = true
@@ -50,6 +56,7 @@ fun createFactorioMap() = Maps {
 
 
     options.crs = CRS.Simple
+    options.zoomSnap = 0.1
 
   }
 }
