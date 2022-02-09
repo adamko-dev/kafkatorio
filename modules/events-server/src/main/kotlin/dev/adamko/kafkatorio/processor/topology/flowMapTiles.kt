@@ -163,7 +163,6 @@ private class ServerMapChunkHandler : CoroutineScope {
 
     saveImagesFlow
       .onEach { (filename, img) ->
-        println("saving map tile $filename")
 
         val chunkImageFile = File(filename.value)
         if (chunkImageFile.parentFile.mkdirs()) {
