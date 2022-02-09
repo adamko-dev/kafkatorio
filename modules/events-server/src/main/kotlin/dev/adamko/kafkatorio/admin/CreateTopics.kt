@@ -32,7 +32,10 @@ object KafkaAdmin {
 
     val kafkatorioTopics = buildSet {
       KafkatorioPacket.PacketType.values().forEach { packetType ->
-        add(KafkatorioTopology.sourceTopic)
+
+        add(KafkatorioTopology.TOPIC_GROUPED_MAP_CHUNKS)
+        add(KafkatorioTopology.TOPIC_SRC_SERVER_LOG)
+
         when (packetType) {
           KafkatorioPacket.PacketType.EVENT      ->
             FactorioObjectData.ObjectName.values().forEach { objectName ->
@@ -43,6 +46,7 @@ object KafkaAdmin {
           KafkatorioPacket.PacketType.PROTOTYPES ->
             add("kafkatorio.${packetType.name}.all")
         }
+
       }
     }.minus(currentTopics.toSet())
 

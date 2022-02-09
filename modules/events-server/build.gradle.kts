@@ -90,6 +90,11 @@ val kafkatorioEventsServerKafkaForceReset by tasks.registering {
       logging.captureStandardOutput(LogLevel.LIFECYCLE)
       commandLine = parseSpaceSeparatedArgs(""" docker exec -d kafka $cmd """)
     }
+    exec {
+      val cmd = reset("kafkatorio-events-processor.groupTilesMapChunks")
+      logging.captureStandardOutput(LogLevel.LIFECYCLE)
+      commandLine = parseSpaceSeparatedArgs(""" docker exec -d kafka $cmd """)
+    }
   }
 }
 

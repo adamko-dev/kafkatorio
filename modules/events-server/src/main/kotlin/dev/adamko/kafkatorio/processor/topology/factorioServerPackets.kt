@@ -23,7 +23,7 @@ fun factorioServerPacketStream(
 ): KStream<FactorioServerId, KafkatorioPacket> {
 
   return builder.stream(
-    KafkatorioTopology.sourceTopic,
+    KafkatorioTopology.TOPIC_SRC_SERVER_LOG,
     consumedAs(
       "read-raw-packets-from-server",
       Serdes.String(),
