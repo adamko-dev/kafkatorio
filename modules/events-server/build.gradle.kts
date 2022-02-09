@@ -66,16 +66,31 @@ tasks.withType<KotlinCompile> {
   )
 }
 
-val kafkatorioEventsServerKafkaForceReset by tasks.registering(Exec::class) {
+val kafkatorioEventsServerKafkaForceReset by tasks.registering {
   group = project.name
 
-  val cmd = """
-    /kafka/bin/kafka-streams-application-reset.sh --application-id kafkatorio-events-processor --input-topics factorio-server-log --force
+  fun reset(applicationId: String) = """
+    /kafka/bin/kafka-streams-application-reset.sh --application-id $applicationId --force
   """.trimIndent()
 
-  logging.captureStandardOutput(LogLevel.LIFECYCLE)
+  doLast {
 
-  commandLine = parseSpaceSeparatedArgs(""" docker exec -d kafka $cmd """)
+    exec {
+      val cmd = reset("kafkatorio-events-processor.saveTiles")
+      logging.captureStandardOutput(LogLevel.LIFECYCLE)
+      commandLine = parseSpaceSeparatedArgs(""" docker exec -d kafka $cmd """)
+    }
+    exec {
+      val cmd = reset("kafkatorio-events-processor.splitPackets")
+      logging.captureStandardOutput(LogLevel.LIFECYCLE)
+      commandLine = parseSpaceSeparatedArgs(""" docker exec -d kafka $cmd  --input-topics factorio-server-log  """)
+    }
+    exec {
+      val cmd = reset("kafkatorio-events-processor.playerUpdates")
+      logging.captureStandardOutput(LogLevel.LIFECYCLE)
+      commandLine = parseSpaceSeparatedArgs(""" docker exec -d kafka $cmd """)
+    }
+  }
 }
 
 //tasks.run.configure {
