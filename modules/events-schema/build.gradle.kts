@@ -1,18 +1,26 @@
 import dev.adamko.kafkatorio.gradle.asProvider
 import dev.adamko.kafkatorio.gradle.typescriptAttributes
 
+
 plugins {
-  kotlin("multiplatform")
-  kotlin("plugin.serialization")
+  dev.adamko.kafkatorio.lang.`kotlin-multiplatform`
   id("io.kotest.multiplatform")
+  kotlin("plugin.serialization")
   distribution
 }
+
 
 kotlin {
   js(IR) {
     binaries.executable()
-    browser()
-    nodejs()
+    browser {
+      testTask {
+        useKarma {
+          useChromeHeadless()
+        }
+      }
+    }
+//    nodejs()
   }
   jvm {
     testRuns["test"].executionTask.configure {
@@ -20,7 +28,6 @@ kotlin {
     }
   }
 
-  @Suppress("UnstableApiUsage") // platform + version catalogs is incubating
   sourceSets {
 
     all {

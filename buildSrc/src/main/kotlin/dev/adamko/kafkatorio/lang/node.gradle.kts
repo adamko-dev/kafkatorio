@@ -1,8 +1,8 @@
 package dev.adamko.kafkatorio.lang
 
-import Versions
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.npm.task.NpmInstallTask
+import dev.adamko.kafkatorio.Versions
 import dev.adamko.kafkatorio.gradle.areJsonPropertiesUpToDate
 import dev.adamko.kafkatorio.gradle.not
 import dev.adamko.kafkatorio.jsonMapper

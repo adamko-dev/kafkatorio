@@ -1,5 +1,6 @@
 package dev.adamko.kafkatorio.lang
 
+import dev.adamko.kafkatorio.Versions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {

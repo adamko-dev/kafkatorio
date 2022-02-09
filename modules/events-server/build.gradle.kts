@@ -15,7 +15,7 @@ description = """
 
 val projectId: String by project.extra
 
-@Suppress("UnstableApiUsage") // platform + version-catalog is incubating
+
 dependencies {
 
   implementation(libs.kafka.streams)

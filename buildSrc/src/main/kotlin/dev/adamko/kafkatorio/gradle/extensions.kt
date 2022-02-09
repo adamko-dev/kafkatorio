@@ -11,7 +11,9 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.specs.Spec
 import org.gradle.kotlin.dsl.invoke
 
+
 operator fun <T> Spec<T>.not(): Spec<T> = Spec<T> { !this(it) }
+
 
 fun Project.isProcessRunning(process: String, ignoreCase: Boolean = true): Spec<Task> =
   Spec<Task> {
@@ -24,6 +26,7 @@ fun Project.isProcessRunning(process: String, ignoreCase: Boolean = true): Spec<
         .contains(process, ignoreCase)
     }
   }
+
 
 fun Project.areJsonPropertiesUpToDate(
   packageJsonFile: RegularFileProperty,

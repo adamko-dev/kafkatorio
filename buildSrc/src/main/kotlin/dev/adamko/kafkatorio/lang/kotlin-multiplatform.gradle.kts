@@ -5,7 +5,7 @@ import dev.adamko.kafkatorio.relocateKotlinJsStore
 
 plugins {
   id("dev.adamko.kafkatorio.base")
-  id("dev.adamko.kafkatorio.lang.node")
+//  id("dev.adamko.kafkatorio.lang.node")
   kotlin("multiplatform")
 }
 

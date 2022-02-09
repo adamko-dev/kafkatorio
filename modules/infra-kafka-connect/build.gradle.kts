@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage") // VERSION_PLATFORM + platform(...) is unstable
-
 import dev.adamko.kafkatorio.gradle.asConsumer
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 

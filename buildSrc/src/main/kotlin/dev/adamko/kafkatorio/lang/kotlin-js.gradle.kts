@@ -1,6 +1,6 @@
 package dev.adamko.kafkatorio.lang
 
-import Versions
+import dev.adamko.kafkatorio.Versions
 import dev.adamko.kafkatorio.relocateKotlinJsStore
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
