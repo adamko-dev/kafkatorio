@@ -4,7 +4,7 @@ import dev.adamko.kafkatorio.gradle.typescriptAttributes
 plugins {
   kotlin("multiplatform")
   kotlin("plugin.serialization")
-  id("io.kotest.multiplatform") version "5.0.2"
+  id("io.kotest.multiplatform")
   distribution
 }
 
@@ -112,7 +112,7 @@ val schemaTs by distributions.registering {
   }
 }
 
-val typescriptModelGenerated : Configuration by configurations.creating {
+val typescriptModelGenerated: Configuration by configurations.creating {
   asProvider()
   typescriptAttributes(objects)
 

@@ -9,7 +9,7 @@ plugins {
 
 kotlin {
   jvmToolchain {
-    (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(11))
+    (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(Versions.jvmTarget))
   }
 }
 
@@ -17,30 +17,28 @@ dependencies {
 
   implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
 
-  val junitVersion = "5.8.2"
-  testImplementation(platform("org.junit:junit-bom:$junitVersion"))
+  testImplementation(platform("org.junit:junit-bom:${Versions.junit}"))
   testImplementation("org.junit.jupiter:junit-jupiter")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher") {
     because("Only needed to run tests in a version of IntelliJ IDEA that bundles older versions")
   }
 
-  val kotestVersion = "5.0.3"
-  testImplementation(platform("io.kotest:kotest-bom:$kotestVersion"))
+  testImplementation(platform("io.kotest:kotest-bom:${Versions.kotest}"))
   testImplementation("io.kotest:kotest-runner-junit5")
   testImplementation("io.kotest:kotest-assertions-core")
   testImplementation("io.kotest:kotest-property")
   testImplementation("io.kotest:kotest-assertions-json")
 
-  testImplementation("io.mockk:mockk:1.12.1")
+  testImplementation("io.mockk:mockk:${Versions.mockk}")
 
 }
 
 tasks.withType<KotlinCompile>().configureEach {
 
   kotlinOptions {
-    jvmTarget = "11"
-    apiVersion = "1.6"
-    languageVersion = "1.6"
+    jvmTarget = Versions.jvmTarget
+    apiVersion = Versions.kotlinLang
+    languageVersion = Versions.kotlinLang
   }
 
   kotlinOptions.freeCompilerArgs += listOf(

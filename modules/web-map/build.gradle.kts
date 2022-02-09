@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 plugins {
   id("dev.adamko.kafkatorio.lang.kotlin-js")
   kotlin("plugin.serialization")
-  id("io.kvision") version "5.8.1"
+  id("io.kvision")
 }
 
 kotlin {

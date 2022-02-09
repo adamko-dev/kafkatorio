@@ -1,5 +1,6 @@
 package dev.adamko.kafkatorio.lang
 
+import Versions
 import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.npm.task.NpmInstallTask
 import dev.adamko.kafkatorio.gradle.areJsonPropertiesUpToDate
@@ -20,7 +21,7 @@ plugins {
 
 node {
   download.set(true)
-  version.set("14.18.0")
+  version.set(Versions.node)
 
   distBaseUrl.set(null as String?) // set by dependencyResolutionManagement
 }
@@ -56,6 +57,7 @@ val updatePackageJson by tasks.registering(UpdatePackageJson::class) {
 }
 
 tasks.assemble { dependsOn(updatePackageJson) }
+
 tasks.withType<NpmInstallTask> {
   dependsOn(updatePackageJson)
 }

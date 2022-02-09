@@ -7,36 +7,54 @@ plugins {
   `project-report`
 }
 
+
+object Versions {
+  const val jvmTarget = "11"
+  const val kotlinTarget = "1.6"
+
+  const val gradleNodePlugin = "3.2.0"
+  const val gradleDockerComposePlugin = "0.15.0"
+
+  const val kotlin = "1.6.10"
+  const val kotlinXSerialization = "1.3.2"
+  const val kvision = "5.8.1"
+  const val semver = "1.1.2"
+
+  const val kotest = "5.1.0"
+}
+
+
 dependencies {
 
-  val kotlinVersion = "1.6.10"
-  implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:$kotlinVersion"))
+  implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:${Versions.kotlin}"))
   implementation("org.jetbrains.kotlin:kotlin-serialization")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
-  implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+  implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}")
 
-  val kotlinXSerializationVersion = "1.3.2"
-  implementation(enforcedPlatform("org.jetbrains.kotlinx:kotlinx-serialization-bom:$kotlinXSerializationVersion"))
+  implementation(enforcedPlatform("org.jetbrains.kotlinx:kotlinx-serialization-bom:${Versions.kotlinXSerialization}"))
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-core")
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
 //  implementation("com.charleskorn.kaml:kaml:0.37.0")
 
-  implementation("com.github.node-gradle:gradle-node-plugin:3.1.1")
+  implementation("com.github.node-gradle:gradle-node-plugin:${Versions.gradleNodePlugin}")
 
-  implementation("net.swiftzer.semver:semver:1.1.2")
+  implementation("io.kotest:kotest-framework-multiplatform-plugin-gradle:${Versions.kotest}")
+
+  implementation("io.kvision:io.kvision.gradle.plugin:${Versions.kvision}")
+
+  implementation("net.swiftzer.semver:semver:${Versions.semver}")
 
   // https://github.com/avast/gradle-docker-compose-plugin
-  implementation("com.avast.gradle:gradle-docker-compose-plugin:0.14.12")
+  implementation("com.avast.gradle:gradle-docker-compose-plugin:${Versions.gradleDockerComposePlugin}")
 }
 
-val projectJvmTarget = "11"
 
 tasks.withType<KotlinCompile>().configureEach {
 
   kotlinOptions {
-    jvmTarget = projectJvmTarget
-    apiVersion = "1.6"
-    languageVersion = "1.6"
+    jvmTarget = Versions.jvmTarget
+    apiVersion = Versions.kotlinTarget
+    languageVersion = Versions.kotlinTarget
   }
 
   kotlinOptions.freeCompilerArgs += listOf(
@@ -50,11 +68,11 @@ tasks.withType<KotlinCompile>().configureEach {
 
 kotlin {
   jvmToolchain {
-    (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(projectJvmTarget))
+    (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(Versions.jvmTarget))
   }
 
   kotlinDslPluginOptions {
-    jvmTarget.set(projectJvmTarget)
+    jvmTarget.set(Versions.jvmTarget)
   }
 }
 
