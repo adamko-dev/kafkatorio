@@ -1,11 +1,19 @@
 package dev.adamko.kafkatorio.processor
 
+import dev.adamko.kafkatorio.events.schema.FactorioEvent
+import dev.adamko.kafkatorio.events.schema.FactorioObjectData
+import dev.adamko.kafkatorio.events.schema.FactorioPrototypes
+import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
+import dev.adamko.kafkatorio.processor.serdes.jsonMapper
+import dev.adamko.kafkatorio.processor.topology.FactorioServerId
 import dev.adamko.kafkatorio.processor.topology.factorioServerPacketStream
 import dev.adamko.kafkatorio.processor.topology.groupTilesIntoChunksWithColours
 import dev.adamko.kafkatorio.processor.topology.playerUpdatesToWsServer
 import dev.adamko.kafkatorio.processor.topology.saveMapTiles
 import dev.adamko.kafkatorio.processor.topology.splitFactorioServerPacketStream
 import dev.adamko.kafkatorio.processor.topology.tileProtoColourDictionary
+import dev.adamko.kotka.extensions.consumedAs
+import dev.adamko.kotka.kxs.serde
 import java.time.Duration
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineName
@@ -18,6 +26,8 @@ import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.StreamsConfig
 import org.apache.kafka.streams.Topology
+import org.apache.kafka.streams.kstream.KStream
+
 
 class KafkatorioTopology(
   private val websocketServer: WebsocketServer,
@@ -38,17 +48,37 @@ class KafkatorioTopology(
 
   private fun saveTiles() {
     val builder = StreamsBuilder()
-    val packets = factorioServerPacketStream(builder)
-    val tileProtoColourDict = tileProtoColourDictionary(packets)
 
+
+    val protosStream: KStream<FactorioServerId, FactorioPrototypes> =
+      builder.stream(
+        "kafkatorio.${KafkatorioPacket.PacketType.PROTOTYPES}.all",
+        consumedAs("consume.factorio-protos.all", jsonMapper.serde(), jsonMapper.serde())
+      )
+    val tileProtoColourDict = tileProtoColourDictionary(protosStream)
+
+
+    val mapTilesStream: KStream<FactorioServerId, FactorioEvent> =
+      builder.stream(
+        "kafkatorio.${KafkatorioPacket.PacketType.EVENT}.${FactorioObjectData.ObjectName.LuaTiles}",
+        consumedAs("consume.map-tiles", jsonMapper.serde(), jsonMapper.serde())
+      )
+    val mapChunksStream: KStream<FactorioServerId, FactorioEvent> =
+      builder.stream(
+        "kafkatorio.${KafkatorioPacket.PacketType.EVENT}.${FactorioObjectData.ObjectName.MapChunk}",
+        consumedAs("consume.map-chunks", jsonMapper.serde(), jsonMapper.serde())
+      )
     val tilePrototypesTable = groupTilesIntoChunksWithColours(
-      packets,
+      mapTilesStream,
+      mapChunksStream,
       tileProtoColourDict,
     )
+
+
     saveMapTiles(tilePrototypesTable)
 
-    val topology = builder.build()
 
+    val topology = builder.build()
     launchTopology("saveTiles", topology)
   }
 
@@ -74,7 +104,7 @@ class KafkatorioTopology(
 
   private fun launchTopology(id: String, topology: Topology) {
 
-    val props =  appProps.kafkaConfig
+    val props = appProps.kafkaConfig
 
     val appId = props.compute(StreamsConfig.APPLICATION_ID_CONFIG) { _, v -> "$v.$id" } as? String
     props.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, appId)

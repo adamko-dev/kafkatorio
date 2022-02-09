@@ -40,7 +40,7 @@ value class TileColourDict(val map: Map<TileProtoHashCode, ColourHex>)
 
 /** Get the latest map-tile colours per server. */
 fun tileProtoColourDictionary(
-  factorioServerPacketStream: KStream<FactorioServerId, KafkatorioPacket>
+  factorioServerPacketStream: KStream<FactorioServerId, FactorioPrototypes>
 ): KTable<FactorioServerId, TileColourDict> {
 
   // get all the prototypes
