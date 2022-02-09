@@ -42,10 +42,10 @@ export namespace Queue {
         global.tail.next = node
       }
       global.tail = node
+      global.size++
     }
 
     global.store[key] = event
-    global.size++
   }
 
 
