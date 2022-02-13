@@ -13,14 +13,23 @@ plugins {
 kotlin {
   js(IR) {
     binaries.executable()
-    browser {
-      testTask {
-        useKarma {
-          useChromeHeadless()
-        }
-      }
-    }
-//    nodejs()
+    // browser{} causes this error:
+    // Cannot load "webpack", it is not registered!
+    // Perhaps you are missing some plugin?
+    // Cannot load "sourcemap", it is not registered!
+    // Perhaps you are missing some plugin?
+    // Server start failed on port 9876: Error: No provider for "framework:mocha"! (Resolving: framework:mocha)
+    // browser {
+    //   runTask {
+    //     sourceMaps = true
+    //   }
+    //   testTask {
+    //     useKarma {
+    //       useChromeHeadless()
+    //     }
+    //   }
+    // }
+    nodejs()
   }
   jvm {
     testRuns["test"].executionTask.configure {
@@ -74,6 +83,12 @@ kotlin {
     val jvmTest by getting {
       dependencies {
         implementation("io.kotest:kotest-runner-junit5")
+      }
+    }
+
+    val jsTest by getting {
+      dependencies {
+        implementation(kotlin("test-js"))
       }
     }
   }

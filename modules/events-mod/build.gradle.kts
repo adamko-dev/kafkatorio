@@ -9,7 +9,6 @@ import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
-  idea
   dev.adamko.kafkatorio.lang.node
   distribution
 }
@@ -135,7 +134,9 @@ distributions {
       }
       from(licenseFile)
       from(typescriptToLua.map { it.outputs })
-      filter<ReplaceTokens>("tokens" to projectTokens)
+      filesNotMatching("**/*.png") {
+        filter<ReplaceTokens>("tokens" to projectTokens)
+      }
       includeEmptyDirs = false
       exclude {
         // exclude empty files
