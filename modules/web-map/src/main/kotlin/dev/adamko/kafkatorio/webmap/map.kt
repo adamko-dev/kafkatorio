@@ -56,7 +56,8 @@ fun createFactorioMap() = Maps {
 
 
     options.crs = CRS.Simple
-    options.zoomSnap = 0.1
+    options.zoomSnap = 0
+    options.zoomDelta = 0.1
 
   }
 }
