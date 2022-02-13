@@ -10,13 +10,14 @@ import org.apache.kafka.clients.admin.CreateTopicsResult
 import org.apache.kafka.clients.admin.NewTopic
 import org.apache.kafka.clients.admin.TopicListing
 
-private val logger = KotlinLogging.logger {}
 
 //fun main() {
 //  KafkaAdmin.createKafkatorioTopics()
 //}
 
-object KafkaAdmin {
+object KafkatorioKafkaAdmin {
+
+  private val logger = KotlinLogging.logger {}
 
   private val kafkaAdmin: Admin =
     Admin.create(

@@ -40,14 +40,9 @@ dependencies {
   implementation("com.sksamuel.scrimage:scrimage-core:4.0.24")
 
   val kotkaVersion = "v0.0.12"
-//  val kotkaVersion = "store-iterators-SNAPSHOT"
   implementation("com.github.adamko-dev.kotka-streams:kotka-streams:$kotkaVersion") {
     isChanging = true
   }
-//  val kotkaVersion = "main-SNAPSHOT"
-//  implementation("dev.adamko.kotka:kotka-streams:$kotkaVersion") {
-//    isChanging = true
-//  }
 
 }
 

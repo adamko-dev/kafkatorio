@@ -1,5 +1,7 @@
 package dev.adamko.kafkatorio.processor.tileserver
 
+import dev.adamko.kafkatorio.processor.config.ApplicationProperties
+import kotlin.io.path.absolutePathString
 import org.http4k.core.HttpHandler
 import org.http4k.core.then
 import org.http4k.filter.CachingFilters
@@ -9,17 +11,13 @@ import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.routing.static
 
-class WebMapTileServer {
+internal class WebMapTileServer(
+  appProps: ApplicationProperties = ApplicationProperties()
+) {
 
   private val routes: RoutingHttpHandler = routes(
     "/tiles" bind CachingFilters.Response.NoCache()
-      .then(
-        static(
-          ResourceLoader.Directory(
-            """D:\Users\Adam\Projects\games\kafkatorio\modules\events-server\src\main\resources\kafkatorio-web-map\"""
-          )
-        )
-      )
+      .then(static(ResourceLoader.Directory(appProps.webmapTileDir.absolutePathString())))
   )
 
   fun build(): HttpHandler {

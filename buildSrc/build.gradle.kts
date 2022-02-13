@@ -11,14 +11,16 @@ plugins {
 object Versions {
   const val jvmTarget = "11"
   const val kotlinTarget = "1.6"
+  const val kotlin = "1.6.10"
 
   const val gradleNodePlugin = "3.2.0"
   const val gradleDockerComposePlugin = "0.15.0"
 
-  const val kotlin = "1.6.10"
   const val kotlinXSerialization = "1.3.2"
   const val kvision = "5.8.1"
   const val semver = "1.1.2"
+  const val http4k = "4.19.1.0"
+  const val jsoup = "1.14.3"
 
   const val kotest = "5.1.0"
 }
@@ -31,7 +33,7 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}")
 
-  implementation(enforcedPlatform("org.jetbrains.kotlinx:kotlinx-serialization-bom:${Versions.kotlinXSerialization}"))
+  implementation(platform("org.jetbrains.kotlinx:kotlinx-serialization-bom:${Versions.kotlinXSerialization}"))
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-core")
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
 //  implementation("com.charleskorn.kaml:kaml:0.37.0")
@@ -46,6 +48,12 @@ dependencies {
 
   // https://github.com/avast/gradle-docker-compose-plugin
   implementation("com.avast.gradle:gradle-docker-compose-plugin:${Versions.gradleDockerComposePlugin}")
+
+  implementation(platform("org.http4k:http4k-bom:${Versions.http4k}"))
+  implementation("org.http4k:http4k-core")
+  implementation("org.http4k:http4k-client-okhttp")
+
+  implementation("org.jsoup:jsoup:${Versions.jsoup}")
 }
 
 

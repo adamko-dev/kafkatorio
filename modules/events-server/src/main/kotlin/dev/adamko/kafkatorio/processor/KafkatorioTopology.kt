@@ -5,6 +5,7 @@ import dev.adamko.kafkatorio.events.schema.FactorioEvent
 import dev.adamko.kafkatorio.events.schema.FactorioObjectData
 import dev.adamko.kafkatorio.events.schema.FactorioPrototypes
 import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
+import dev.adamko.kafkatorio.processor.config.ApplicationProperties
 import dev.adamko.kafkatorio.processor.serdes.jsonMapper
 import dev.adamko.kafkatorio.processor.serdes.kxsBinary
 import dev.adamko.kafkatorio.processor.topology.FactorioServerId
@@ -36,8 +37,9 @@ import org.apache.kafka.streams.kstream.KStream
 import org.apache.kafka.streams.kstream.KTable
 
 
-class KafkatorioTopology(
+internal class KafkatorioTopology(
   private val websocketServer: WebsocketServer,
+  private val appProps: ApplicationProperties = ApplicationProperties(),
 ) : CoroutineScope {
 
   override val coroutineContext: CoroutineContext =

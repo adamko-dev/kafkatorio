@@ -13,11 +13,11 @@ import org.http4k.lens.Lens
  *
  * (An improved version of [Environment.fromResource])
  */
-internal fun Environment.Companion.fromResourcesFile(
+fun Environment.Companion.fromResourcesFile(
   resource: String,
   default: Environment = EMPTY
-) =
-  try {
+): Environment {
+  return try {
     val file =
       this::class.java
         .getResource("/${resource.removePrefix("/")}")
@@ -27,6 +27,7 @@ internal fun Environment.Companion.fromResourcesFile(
   } catch (e: FileNotFoundException) {
     default
   }
+}
 
 /**
  * Try fetching a properties file the location provided by the
@@ -35,7 +36,7 @@ internal fun Environment.Companion.fromResourcesFile(
  *
  * If it does not exist, return [default].
  */
-internal fun Environment.Companion.fromEnvVarPath(
+fun Environment.Companion.fromEnvVarPath(
   location: Lens<Environment, File?> = Lenses.APPLICATION_PROPERTIES_FILE_PATH,
   default: Environment = EMPTY,
 ): Environment {
@@ -65,7 +66,7 @@ internal fun Environment.Companion.fromFile(
 }
 
 /** The same as [Environment.ENV], but refreshes on each invocation (which is useful for testing). */
-internal fun Environment.Companion.env(): Environment =
+fun Environment.Companion.env(): Environment =
   MapEnvironment.from(System.getenv().toProperties())
 
 /** The same as [Environment.JVM_PROPERTIES], but refreshes on each invocation (which is useful for testing). */

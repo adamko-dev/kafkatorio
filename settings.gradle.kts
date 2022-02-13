@@ -14,6 +14,8 @@ include(
 
   ":modules:kt-rcon",
   ":modules:web-map",
+
+  ":modules:factorio-mod-portal-client",
 )
 
 enableFeaturePreview("VERSION_CATALOGS")
