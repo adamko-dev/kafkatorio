@@ -4,7 +4,6 @@ import com.github.gradle.node.NodePlugin
 import com.github.gradle.node.npm.task.NpmInstallTask
 import dev.adamko.kafkatorio.Versions
 import dev.adamko.kafkatorio.gradle.areJsonPropertiesUpToDate
-import dev.adamko.kafkatorio.gradle.not
 import dev.adamko.kafkatorio.jsonMapper
 import dev.adamko.kafkatorio.task.UpdatePackageJson
 import kotlinx.serialization.encodeToString
@@ -33,7 +32,8 @@ val updatePackageJson by tasks.registering(UpdatePackageJson::class) {
   propertiesToCheck.put("version", "${project.version}")
 
   // check to see if the properties are already up-to-date
-  onlyIf(!areJsonPropertiesUpToDate(packageJsonFile, propertiesToCheck))
+  outputs.upToDateWhen(areJsonPropertiesUpToDate(packageJsonFile, propertiesToCheck))
+//  onlyIf(!areJsonPropertiesUpToDate(packageJsonFile, propertiesToCheck))
 
   doLast {
     val packageJsonContent = packageJsonFile.get().asFile.readText()
