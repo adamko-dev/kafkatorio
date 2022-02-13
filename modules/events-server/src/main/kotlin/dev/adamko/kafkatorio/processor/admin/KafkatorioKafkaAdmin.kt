@@ -1,4 +1,4 @@
-package dev.adamko.kafkatorio.admin
+package dev.adamko.kafkatorio.processor.admin
 
 import dev.adamko.kafkatorio.events.schema.FactorioObjectData
 import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
@@ -10,10 +10,6 @@ import org.apache.kafka.clients.admin.CreateTopicsResult
 import org.apache.kafka.clients.admin.NewTopic
 import org.apache.kafka.clients.admin.TopicListing
 
-
-//fun main() {
-//  KafkaAdmin.createKafkatorioTopics()
-//}
 
 object KafkatorioKafkaAdmin {
 
