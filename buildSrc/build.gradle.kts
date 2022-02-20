@@ -14,7 +14,7 @@ object Versions {
 //  const val kotlin = "1.6.20-M1"
   const val kotlin = "1.6.10"
 
-  const val gradleNodePlugin = "3.2.0"
+  const val gradleNodePlugin = "3.2.1"
   const val gradleDockerComposePlugin = "0.15.0"
 
   const val kotlinXSerialization = "1.3.2"

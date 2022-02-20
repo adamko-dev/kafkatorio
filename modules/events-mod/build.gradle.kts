@@ -59,6 +59,17 @@ val typescriptToLua by tasks.registering(TypescriptToLuaTask::class) {
 
   sourceFiles.set(tsSrcDir)
   outputDirectory.set(layout.buildDirectory.dir("typescriptToLua"))
+
+  doFirst("cleanTemporaryDir") {
+    delete(temporaryDir)
+    mkdir(temporaryDir)
+  }
+  doLast("syncTstlOutput") {
+    sync {
+      from(temporaryDir)
+      into(outputDirectory)
+    }
+  }
 }
 
 val installEventsTsSchema by tasks.registering(Sync::class) {

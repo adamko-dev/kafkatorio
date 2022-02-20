@@ -4,7 +4,7 @@ import com.github.gradle.node.npm.task.NpmTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SkipWhenEmpty
@@ -17,7 +17,7 @@ abstract class TypescriptToLuaTask : NpmTask() {
   @get:PathSensitive(PathSensitivity.RELATIVE)
   abstract val sourceFiles: DirectoryProperty
 
-  @get:OutputFile
+  @get:OutputDirectory
   abstract val outputDirectory: DirectoryProperty
 
 
@@ -26,18 +26,8 @@ abstract class TypescriptToLuaTask : NpmTask() {
     super.setDescription("Convert Typescript To Lua")
     super.execOverrides { standardOutput = System.out }
     super.npmCommand.set(listOf("run", "build"))
-    super.args.set(parseSpaceSeparatedArgs("-- --outDir $temporaryDir"))
     super.ignoreExitValue.set(false)
-    super.doFirst("cleanTemporaryDir") {
-      project.delete(temporaryDir)
-      project.mkdir(temporaryDir)
-    }
-    super.doLast("syncTstlOutput") {
-      project.sync {
-        from(temporaryDir)
-        into(outputDirectory)
-      }
-    }
+    super.args.set(parseSpaceSeparatedArgs("-- --outDir $temporaryDir"))
   }
 
 }
