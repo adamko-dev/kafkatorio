@@ -1,9 +1,11 @@
+# Kafkatorio
+
 1. output events from Factorio into Kafka.
-    1. Factorio mod listens to events.
-    2. For each event, it emits a file.
-    3. A Kafka Connector consumes each file.
-2. Factorio Web Map reads data from Kafka
-    1. converts data to images
+    1. Factorio mod listens to events https://mods.factorio.com/mod/kafkatorio-events
+    2. For each event, it emits a log message
+    3. A tool (e.g. Kafkatorio Kafka Pipe) reads the logs, and sends the messages to a Kafka cluster
+2. Kafkatorio Events Server reads the messages from Kafka
+    1. create images of the map
     2. hosts a web map
 
 ## License
@@ -66,8 +68,9 @@ https://www.npmjs.com/package/wasm2lua?activeTab=readme
     * https://www.zash.se/lua-cbor.html
     * https://code.zash.se/lua-cbor/archive/68b3a36d0816.tar.gz
 
-* BSON 
-  * https://github.com/mpaland/bsonfy
-  * https://github.com/tcoram/bson-lua
+* BSON
+    * https://github.com/mpaland/bsonfy
+    * https://github.com/tcoram/bson-lua
 
-* bebop https://rainway.com/blog/2020/12/09/bebop-an-efficient-schema-based-binary-serialization-format/
+* bebop
+  https://rainway.com/blog/2020/12/09/bebop-an-efficient-schema-based-binary-serialization-format/
