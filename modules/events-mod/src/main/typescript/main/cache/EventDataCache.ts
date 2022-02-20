@@ -1,62 +1,78 @@
-import {ExcludeNullKeys} from "../global";
+import {ExcludeNullKeys, NonNullableKeys} from "../types";
 
 export namespace EventDataCache {
 
 
   declare const global: {
-    cache: LuaTable<CacheKey<FactorioEventUpdate>, CacheEntry<FactorioEventUpdate>>,
-    DEFAULT_EXPIRATION_DURATION_TICKS: uint,
+    cache: LuaTable<CacheKey<FactorioEventUpdateType>, CacheEntry<FactorioEventUpdateType>>,
+    DEFAULT_CACHE_DURATION_TICKS: LuaTable<FactorioEventUpdateType, uint>,
+    DEFAULT_CACHE_DURATION_TICKS2: Record<FactorioEventUpdateType | "default", uint>,
+    MAP_CHUNK_CACHE_DURATION_TICKS: uint,
   }
 
 
   export function init() {
     if (typeof global.cache == undefined) {
-      global.cache = new LuaTable<CacheKey<FactorioEventUpdate>, CacheEntry<FactorioEventUpdate>>()
+      global.cache = new LuaTable<CacheKey<FactorioEventUpdateType>, CacheEntry<FactorioEventUpdateType>>()
 
-      global.DEFAULT_EXPIRATION_DURATION_TICKS = 60 * 60 // ~60 seconds
+      global.DEFAULT_CACHE_DURATION_TICKS = new LuaTable<FactorioEventUpdateType, uint>()
+      global.DEFAULT_CACHE_DURATION_TICKS.set("PLAYER", 30)         //  0.5 seconds
+      global.DEFAULT_CACHE_DURATION_TICKS.set("MAP_CHUNK", 60 * 15) // ~ 15 seconds
+      global.DEFAULT_CACHE_DURATION_TICKS.set("ENTITY", 60 * 2)     //   ~2 seconds
+
+      global.DEFAULT_CACHE_DURATION_TICKS2 = {
+        "PLAYER": 30, //  0.5 seconds
+        "MAP_CHUNK": 60 * 15,  // ~ 15 seconds
+        "ENTITY": 60 * 2, //   ~2 seconds
+        "default": 60
+      }
     }
   }
+
 
   /**
    * Update the cache data without restarting the 'time-to-emit' countdown, so that the data won't
    * be emitted more than once per {@link CacheEntry.expirationDurationTicks}.
    */
-  export function throttle<T extends FactorioEventUpdate>(
-      key: CacheKey<T>,
-      mutate: (data: CacheData<T> | undefined) => void,
+  export function throttle<TYPE extends FactorioEventUpdateType>(
+      key: CacheKey<TYPE>,
+      mutate: CacheDataMutator<TYPE>,
   ) {
     update(key, mutate, false)
   }
+
 
   /**
    * Update the cache data and reset the 'time-to-emit' countdown, so the data won't be emitted
    * until there's an inactivity gap of {@link CacheEntry.expirationDurationTicks}.
    */
-  export function debounce<T extends FactorioEventUpdate>(
-      key: CacheKey<T>,
-      mutate: (data: CacheData<T> | undefined) => void,
+  export function debounce<TYPE extends FactorioEventUpdateType>(
+      key: CacheKey<TYPE>,
+      mutate: CacheDataMutator<TYPE>,
   ) {
     update(key, mutate, true)
   }
 
-  function update<T extends FactorioEventUpdate>(
-      key: CacheKey<T>,
-      mutate: (data: CacheData<T> | undefined) => void,
+
+  function update<TYPE extends FactorioEventUpdateType>(
+      key: CacheKey<TYPE>,
+      mutate: CacheDataMutator<TYPE>,
       resetLastUpdated: boolean,
   ) {
-    const entry = getCacheEntry(key)
-    mutate(entry?.data)
-    if (entry != undefined && resetLastUpdated) {
+    const entry = getCacheEntry(key) ?? createCacheEntry(key, mutate)
+    mutate(entry.data)
+    if (resetLastUpdated) {
       entry.lastUpdatedTick = game.tick
     }
   }
+
 
   /**
    * Usage example: If an urgent update comes in, then the expiration can be reduced so that
    * it's transmitted sooner.
    */
   export function setExpiration(
-      key: CacheKey<any>,
+      key: CacheKey<FactorioEventUpdateType>,
       expirationDurationTicks?: uint,
   ) {
     const entry = getCacheEntry(key)
@@ -65,9 +81,22 @@ export namespace EventDataCache {
     }
   }
 
-  function getCacheEntry<T extends FactorioEventUpdate>(
-      key: CacheKey<T>
-  ): CacheEntry<T> | undefined {
+
+  export function extractExpired(): Array<CacheData<FactorioEventUpdateType>> {
+    const expiredData: Array<CacheData<FactorioEventUpdateType>> = []
+    for (let [key, entry] of global.cache) {
+      if (entry.isExpired()) {
+        expiredData.push(entry.data)
+        global.cache.delete(key)
+      }
+    }
+    return expiredData
+  }
+
+
+  function getCacheEntry<TYPE extends FactorioEventUpdateType>(
+      key: CacheKey<TYPE>
+  ): CacheEntry<TYPE> | undefined {
     if (!global.cache.has(key)) {
       return undefined
     }
@@ -80,27 +109,57 @@ export namespace EventDataCache {
     }
   }
 
-  type UpdateType<T extends FactorioEventUpdate> = T["updateType"]
 
-  /** Only include the non-null properties */
-  export type CacheKey<T extends FactorioEventUpdate> = ExcludeNullKeys<T> & {
-    updateType: UpdateType<T>
+  function createCacheEntry<TYPE extends FactorioEventUpdateType>(
+      key: CacheKey<TYPE>,
+      mutate: CacheDataMutator<TYPE>,
+  ): CacheEntry<TYPE> {
+    // @ts-ignore // TODO remove ts-ignore for "not assignable to type"
+    const data: CacheData<TYPE> = {updateType: key.updateType}
+    mutate(data)
+    let entry: CacheEntry<TYPE> = new CacheEntry<TYPE>(data)
+    global.cache.set(key, entry)
+    return entry
   }
 
-  /** Make the generated schema objects generic closed-polymorphic */
-  export type CacheData<T extends FactorioEventUpdate> = Omit<T, "type"> & {
-    updateType: UpdateType<T>
+
+  /** Map a {@link FactorioEventUpdateType} to a {@link FactorioEventUpdate} DTO */
+  type ConvertUpdateType<TYPE extends FactorioEventUpdateType> =
+      TYPE extends "PLAYER" ? PlayerUpdate :
+      TYPE extends "MAP_CHUNK" ? MapChunkUpdate :
+      TYPE extends "ENTITY" ? EntityUpdate :
+      never
+
+
+  /** Only include the non-null properties, and make `updateType` specific */
+  export type CacheKey<TYPE extends FactorioEventUpdateType> =
+      CacheTyped<TYPE>
+      & Omit<ExcludeNullKeys<ConvertUpdateType<TYPE>>, "updateType">
+
+
+  /** Exclude {@link CacheKey} fields, and make `updateType` specific */
+  export type CacheData<TYPE extends FactorioEventUpdateType> =
+      CacheTyped<TYPE>
+      & NonNullableKeys<Partial<Omit<ConvertUpdateType<TYPE>, keyof CacheKey<TYPE> | "updateType">>>
+
+
+  export type CacheTyped<TYPE extends FactorioEventUpdateType> = {
+    readonly updateType: TYPE
   }
 
 
-  class CacheEntry<T extends FactorioEventUpdate> {
+  export type CacheDataMutator<TYPE extends FactorioEventUpdateType> =
+      (data: CacheData<TYPE>) => void
+
+
+  class CacheEntry<TYPE extends FactorioEventUpdateType> {
     lastUpdatedTick: uint = game.tick
     expirationDurationTicks?: uint
 
-    data: CacheData<T>
+    data: CacheData<TYPE>
 
     constructor(
-        data: CacheData<T>,
+        data: CacheData<TYPE>,
         expirationDurationTicks?: uint,
     ) {
       this.data = data
@@ -110,16 +169,18 @@ export namespace EventDataCache {
     }
 
     isExpired(): boolean {
-      return game.tick -
-             this.lastUpdatedTick >
-             (this.expirationDurationTicks ?? global.DEFAULT_EXPIRATION_DURATION_TICKS)
+      const cacheDuration =
+          this.expirationDurationTicks ?? global.DEFAULT_CACHE_DURATION_TICKS2[this.data.updateType]
+
+      return game.tick - this.lastUpdatedTick > cacheDuration
     }
   }
 
-  function isType<T extends FactorioEventUpdate>(
-      data: CacheEntry<T>,
-      updateType: UpdateType<T>,
-  ): data is CacheEntry<T> {
+
+  function isType<TYPE extends FactorioEventUpdateType>(
+      data: CacheEntry<TYPE>,
+      updateType: TYPE,
+  ): data is CacheEntry<TYPE> {
     return data.data.updateType == updateType
   }
 
@@ -129,7 +190,7 @@ export namespace EventDataCache {
 //     type: string
 // }
 //
-// interface Update<T extends FactorioEventUpdateType> {
+// interface Update<TYPE extends FactorioEventUpdateTypeType> {
 //   type: T
 // }
 //

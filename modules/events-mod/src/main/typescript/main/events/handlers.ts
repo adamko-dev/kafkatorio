@@ -1,14 +1,14 @@
 import {Converters} from "./converters"
 import {emitEvent} from "./emitEvent";
 
-export function handlePlayerUpdate(tick: uint, eventType: string, playerIndex: uint) {
-  let player: LuaPlayer = game.players[playerIndex]
-  let table = Converters.playerToTable(player)
-
-  emitEvent(table, tick, eventType)
-
-  handleCharactersEvent(tick, eventType, playerIndex)
-}
+// export function handlePlayerUpdate(tick: uint, eventType: string, playerIndex: uint) {
+//   let player: LuaPlayer = game.players[playerIndex]
+//   let table = Converters.playerToTable(player)
+//
+//   emitEvent(table, tick, eventType)
+//
+//   handleCharactersEvent(tick, eventType, playerIndex)
+// }
 
 export function handleCharactersEvent(tick: uint, eventType: string, playerIndex: uint) {
 

@@ -1,5 +1,6 @@
 import {Converters} from "../events/converters";
 import {emitPacket} from "../emitKafkatorioPacket";
+// import { global } from "../global";
 
 export function emitPrototypes() {
   emitPacket<FactorioPrototypes>({

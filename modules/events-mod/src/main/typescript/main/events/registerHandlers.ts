@@ -2,12 +2,12 @@ import {
   handleChunkUpdate,
   handleConsoleChat,
   handleEntityUpdate,
-  handlePlayerUpdate,
+  // handlePlayerUpdate,
   handleSurfaceUpdate,
   handleTilesUpdate
 } from "./handlers";
 import {Queue} from "../queue/queue";
-import {EventName} from "../global";
+import {EventName} from "../types";
 
 
 const mapEventIdToName = new LuaTable<defines.Events, EventName>()
@@ -32,24 +32,24 @@ script.on_event(
     defines.events.on_player_mined_entity,
     (e: OnPlayerMinedEntityEvent) => {
       let eventName = mapEventIdToName.get(e.name)
-      handlePlayerUpdate(e.tick, eventName, e.player_index)
+      // handlePlayerUpdate(e.tick, eventName, e.player_index)
       handleEntityUpdate(e.tick, eventName, e.entity)
     }
 )
 
-script.on_event(
-    defines.events.on_player_joined_game,
-    (e: OnPlayerJoinedGameEvent) => {
-      handlePlayerUpdate(e.tick, mapEventIdToName.get(e.name), e.player_index)
-    }
-)
+// script.on_event(
+//     defines.events.on_player_joined_game,
+//     (e: OnPlayerJoinedGameEvent) => {
+//       handlePlayerUpdate(e.tick, mapEventIdToName.get(e.name), e.player_index)
+//     }
+// )
 
-script.on_event(
-    defines.events.on_player_changed_position,
-    (e: OnPlayerChangedPositionEvent) => {
-      handlePlayerUpdate(e.tick, mapEventIdToName.get(e.name), e.player_index)
-    }
-)
+// script.on_event(
+//     defines.events.on_player_changed_position,
+//     (e: OnPlayerChangedPositionEvent) => {
+//       handlePlayerUpdate(e.tick, mapEventIdToName.get(e.name), e.player_index)
+//     }
+// )
 
 script.on_event(
     defines.events.on_tick,
@@ -113,12 +113,3 @@ script.on_event(
       )
     }
 )
-
-
-function isEventType<ED extends EventData | CustomInputEvent>(
-    eventData: EventData,
-    type: ED extends CustomInputEvent ? string : EventId<ED>
-): eventData is ED {
-  let id: EventId<EventData> | string = eventData.name
-  return id == type
-}

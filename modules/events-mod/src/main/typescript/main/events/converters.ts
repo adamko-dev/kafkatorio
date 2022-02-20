@@ -1,19 +1,19 @@
 export namespace Converters {
 
-  export function playerToTable(player: LuaPlayer): PlayerData {
-    let charIds = entitiesToUnitNumbers(player.get_associated_characters())
-    return {
-      objectName: player.object_name,
-
-      name: player.name,
-      characterUnitNumber: player.character?.unit_number ?? null,
-      associatedCharactersUnitNumbers: charIds,
-      position: mapEntityPosition(player.position),
-      colour: mapColour(player.color),
-      chatColour: mapColour(player.chat_color),
-      lastOnline: player.last_online
-    }
-  }
+  // export function playerToTable(player: LuaPlayer): PlayerData {
+  //   let charIds = entitiesToUnitNumbers(player.get_associated_characters())
+  //   return {
+  //     objectName: player.object_name,
+  //
+  //     name: player.name,
+  //     characterUnitNumber: player.character?.unit_number ?? null,
+  //     associatedCharactersUnitNumbers: charIds,
+  //     position: mapEntityPosition(player.position),
+  //     colour: mapColour(player.color),
+  //     chatColour: mapColour(player.chat_color),
+  //     lastOnline: player.last_online
+  //   }
+  // }
 
   export function entityToTable(entity: LuaEntity): EntityData {
 
@@ -28,9 +28,10 @@ export namespace Converters {
       active: entity.active,
       health: entity.health ?? null,
       healthRatio: entity.get_health_ratio(),
-      surfaceIndex: entity.surface.index,
+      surface: entity.surface.index,
       unitNumber: entity.unit_number ?? null,
       position: mapEntityPosition(entity.position),
+      force: entity.force.index,
 
       // player data
       playerIndex: player?.index ?? null
@@ -101,6 +102,10 @@ export namespace Converters {
       position: mapTilePosition(tile.position),
       prototypeName: tile.prototype.name,
     }
+  }
+
+  export function convertTiles(tiles: LuaTile[]): MapTile[] {
+    return tiles.map((tile: LuaTile) => convertTile(tile))
   }
 
   export function convertBoundingBox(bb: BoundingBoxRead): MapBoundingBox {
