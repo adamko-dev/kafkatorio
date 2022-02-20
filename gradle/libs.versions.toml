@@ -6,6 +6,7 @@
 
 ## compilation ##
 jvm        = "11"
+#kotlin     = "1.6.20-M1"
 kotlin     = "1.6.10"
 
 ## libs ##

@@ -43,6 +43,7 @@ tasks.withType<KotlinCompile>().configureEach {
   }
 
   kotlinOptions.freeCompilerArgs += listOf(
+//    "-Xcontext-receivers",
     "-opt-in=kotlin.RequiresOptIn",
     "-opt-in=kotlin.ExperimentalStdlibApi",
     "-opt-in=kotlin.time.ExperimentalTime",

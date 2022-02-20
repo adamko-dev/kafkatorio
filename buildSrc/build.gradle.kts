@@ -11,6 +11,7 @@ plugins {
 object Versions {
   const val jvmTarget = "11"
   const val kotlinTarget = "1.6"
+//  const val kotlin = "1.6.20-M1"
   const val kotlin = "1.6.10"
 
   const val gradleNodePlugin = "3.2.0"
@@ -66,6 +67,7 @@ tasks.withType<KotlinCompile>().configureEach {
   }
 
   kotlinOptions.freeCompilerArgs += listOf(
+//    "-Xcontext-receivers",
     "-opt-in=kotlin.RequiresOptIn",
     "-opt-in=kotlin.ExperimentalStdlibApi",
     "-opt-in=kotlin.time.ExperimentalTime",
