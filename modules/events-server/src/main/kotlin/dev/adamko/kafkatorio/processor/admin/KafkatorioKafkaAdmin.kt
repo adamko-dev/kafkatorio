@@ -28,14 +28,14 @@ object KafkatorioKafkaAdmin {
     val currentTopics = currentTopics().map { it.name() }
 
     val kafkatorioTopics = buildSet {
-      KafkatorioPacket.PacketType.values().forEach { packetType ->
+      KafkatorioPacket.PacketType.values.forEach { packetType ->
 
         add(KafkatorioTopology.TOPIC_GROUPED_MAP_CHUNKS)
         add(KafkatorioTopology.TOPIC_SRC_SERVER_LOG)
 
         when (packetType) {
           KafkatorioPacket.PacketType.EVENT      ->
-            FactorioObjectData.ObjectName.values().forEach { objectName ->
+            FactorioObjectData.ObjectName.values.forEach { objectName ->
               add("kafkatorio.${packetType.name}.${objectName.name}")
             }
           KafkatorioPacket.PacketType.CONFIG     ->
