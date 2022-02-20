@@ -15,6 +15,8 @@ class FactorioEventTest : FunSpec({
        {
          "data": {
            "objectName": "LuaPlayer",
+           "force": 1,
+           "surface": 1,
            "name": "fredthedeadhead",
            "characterUnitNumber": 1,
            "associatedCharactersUnitNumbers": {},
@@ -145,7 +147,8 @@ class FactorioEventTest : FunSpec({
           "active": true,
           "health": 250,
           "healthRatio": 1,
-          "surfaceIndex": 1,
+          "surface": 1,
+          "force": 1,
           "unitNumber": 1,
           "position": {
             "x": 37.5,
@@ -251,19 +254,19 @@ class FactorioEventTest : FunSpec({
             surfaceIndex = SurfaceIndex(1u),
             tiles = listOf(
               MapTile(
-                prototypeName = "refined-concrete",
+                prototypeName = PrototypeName("refined-concrete"),
                 position = MapTilePosition(-65, 10)
               ),
               MapTile(
-                prototypeName = "red-earth",
+                prototypeName = PrototypeName("red-earth"),
                 position = MapTilePosition(-65, 11)
               ),
               MapTile(
-                prototypeName = "blue-cheese",
+                prototypeName = PrototypeName("blue-cheese"),
                 position = MapTilePosition(-64, 10)
               ),
               MapTile(
-                prototypeName = "refined-concrete",
+                prototypeName = PrototypeName("refined-concrete"),
                 position = MapTilePosition(-64, 11)
               ),
             )

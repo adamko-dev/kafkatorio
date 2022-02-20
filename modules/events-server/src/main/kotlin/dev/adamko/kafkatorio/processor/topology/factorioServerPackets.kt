@@ -2,6 +2,7 @@ package dev.adamko.kafkatorio.processor.topology
 
 import dev.adamko.kafkatorio.events.schema.FactorioConfigurationUpdate
 import dev.adamko.kafkatorio.events.schema.FactorioEvent
+import dev.adamko.kafkatorio.events.schema.FactorioEventUpdatePacket
 import dev.adamko.kafkatorio.events.schema.FactorioPrototypes
 import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
 import dev.adamko.kafkatorio.processor.KafkatorioTopology
@@ -49,13 +50,16 @@ fun splitFactorioServerPacketStream(
       )
     ) { _: FactorioServerId, value: KafkatorioPacket, _: RecordContext ->
 //        println("[$key] sending event:${value.eventType} to topic:${value.data.objectName()}")
-      when (value) {
-        is FactorioEvent               ->
-          "kafkatorio.${value.packetType.name}.${value.data.objectName.name}"
-        is FactorioConfigurationUpdate ->
-          "kafkatorio.${value.packetType.name}.FactorioConfigurationUpdate"
-        is FactorioPrototypes          ->
-          "kafkatorio.${value.packetType.name}.all"
+
+      val base = "kafkatorio.${value.packetType.name}"
+
+      val type: String = when (value) {
+        is FactorioEvent               -> value.data.objectName.name
+        is FactorioConfigurationUpdate -> "FactorioConfigurationUpdate"
+        is FactorioPrototypes          -> "all"
+        is FactorioEventUpdatePacket   -> "all"
       }
+
+      "$base.$type"
     }
 }

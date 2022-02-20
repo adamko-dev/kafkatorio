@@ -10,6 +10,18 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 
+@Serializable
+class FactorioEventUpdatePacket(
+  override val modVersion: String,
+  /** game time */
+  val tick: Tick,
+  val update: FactorioEventUpdate,
+) : KafkatorioPacket() {
+  @EncodeDefault
+  override val packetType: PacketType = PacketType.UPDATE
+}
+
+
 @Serializable(with = FactorioEventUpdate.Companion.JsonSerializer::class)
 sealed class FactorioEventUpdate {
 
@@ -68,7 +80,8 @@ data class PlayerUpdate(
   val colour: Colour? = null,
   val name: String? = null,
 
-  val disconnectReason: String? = null,
+  val afkTime: Tick? = null,
+  val ticksToRespawn: Tick? = null,
   val forceIndex: ForceIndex? = null,
   val isAdmin: Boolean? = null,
   val isConnected: Boolean? = null,
@@ -79,6 +92,13 @@ data class PlayerUpdate(
   val position: MapEntityPosition? = null,
   val surfaceIndex: SurfaceIndex? = null,
   val tag: String? = null,
+  val diedCause: EntityIdentifiers? = null,
+
+  val bannedReason: String? = null,
+  val kickedReason: String? = null,
+  val disconnectReason: String? = null,
+  /** `true` when a player is removed (deleted) from the game */
+  val isRemoved: Boolean? = null,
 ) : FactorioEventUpdate() {
   @EncodeDefault
   override val updateType: FactorioEventUpdateType = FactorioEventUpdateType.PLAYER
@@ -87,14 +107,11 @@ data class PlayerUpdate(
 
 @Serializable
 data class EntityUpdate(
-  /**
-   * A [unitNumber] is required for caching, else the Entity Update should be emitted without
-   * debouncing/throttling
-   */
-  val unitNumber: UnitNumber,
+  /** A [unitNumber] is required for caching */
+  override val unitNumber: UnitNumber,
+  override val name: String,
+  override val type: String,
 
-  val name: String? = null,
-  val type: String? = null,
   val chunkPosition: MapChunkPosition? = null,
   val graphicsVariation: UShort? = null,
   val health: Float? = null,
@@ -104,7 +121,7 @@ data class EntityUpdate(
   val localisedDescription: String? = null,
   val localisedName: String? = null,
   val prototype: PrototypeName? = null,
-) : FactorioEventUpdate() {
+) : FactorioEventUpdate(), EntityIdentifiers {
   @EncodeDefault
   override val updateType: FactorioEventUpdateType = FactorioEventUpdateType.ENTITY
 }
@@ -115,8 +132,12 @@ data class MapChunkUpdate(
   val chunkPosition: MapChunkPosition,
   val surfaceIndex: SurfaceIndex,
 
+  val player: PlayerIndex? = null,
+  val robot: EntityIdentifiers? = null,
+  val force: ForceIndex? = null,
+
   /** Might be a partial list of updated tiles */
-  val tiles: MapTiles? = null,
+  val tiles: Map<MapTilePosition, PrototypeName>? = null,
   val isDeleted: Boolean? = null,
 ) : FactorioEventUpdate() {
   @EncodeDefault

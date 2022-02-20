@@ -101,3 +101,10 @@ data class MapTile(
   val prototypeName: PrototypeName,
   val position: MapTilePosition,
 )
+
+
+interface EntityIdentifiers {
+  val unitNumber: UnitNumber?
+  val name: String
+  val type: String
+}
