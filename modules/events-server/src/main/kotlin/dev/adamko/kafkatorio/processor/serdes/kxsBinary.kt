@@ -52,14 +52,14 @@ class KxsDataOutputEncoder(
 
   override fun encodeBoolean(value: Boolean) = output.writeByte(if (value) 1 else 0)
   override fun encodeByte(value: Byte) = output.writeByte(value.toInt())
-  override fun encodeShort(value: Short) = output.writeShort(value.toInt())
+  override fun encodeChar(value: Char) = output.writeChar(value.code)
+  override fun encodeDouble(value: Double) = output.writeDouble(value)
+  override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int) = output.writeInt(index)
+  override fun encodeFloat(value: Float) = output.writeFloat(value)
   override fun encodeInt(value: Int) = output.writeInt(value)
   override fun encodeLong(value: Long) = output.writeLong(value)
-  override fun encodeFloat(value: Float) = output.writeFloat(value)
-  override fun encodeDouble(value: Double) = output.writeDouble(value)
-  override fun encodeChar(value: Char) = output.writeChar(value.code)
+  override fun encodeShort(value: Short) = output.writeShort(value.toInt())
   override fun encodeString(value: String) = output.writeUTF(value)
-  override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int) = output.writeInt(index)
 
   override fun beginCollection(
     descriptor: SerialDescriptor,
@@ -73,10 +73,10 @@ class KxsDataOutputEncoder(
   override fun encodeNotNullMark() = encodeBoolean(true)
 
   override fun <T> encodeSerializableValue(serializer: SerializationStrategy<T>, value: T) {
-    if (serializer.descriptor == byteArraySerializer.descriptor)
-      encodeByteArray(value as ByteArray)
-    else
-      super.encodeSerializableValue(serializer, value)
+    when (serializer.descriptor) {
+      byteArraySerializer.descriptor -> encodeByteArray(value as ByteArray)
+      else                           -> super.encodeSerializableValue(serializer, value)
+    }
   }
 
   private fun encodeByteArray(bytes: ByteArray) {
@@ -105,14 +105,14 @@ class KxsDataInputDecoder(
 
   override fun decodeBoolean(): Boolean = input.readByte().toInt() != 0
   override fun decodeByte(): Byte = input.readByte()
-  override fun decodeShort(): Short = input.readShort()
+  override fun decodeChar(): Char = input.readChar()
+  override fun decodeDouble(): Double = input.readDouble()
+  override fun decodeEnum(enumDescriptor: SerialDescriptor): Int = input.readInt()
+  override fun decodeFloat(): Float = input.readFloat()
   override fun decodeInt(): Int = input.readInt()
   override fun decodeLong(): Long = input.readLong()
-  override fun decodeFloat(): Float = input.readFloat()
-  override fun decodeDouble(): Double = input.readDouble()
-  override fun decodeChar(): Char = input.readChar()
+  override fun decodeShort(): Short = input.readShort()
   override fun decodeString(): String = input.readUTF()
-  override fun decodeEnum(enumDescriptor: SerialDescriptor): Int = input.readInt()
 
   override fun decodeElementIndex(descriptor: SerialDescriptor): Int {
     if (elementIndex == elementsCount) return CompositeDecoder.DECODE_DONE
@@ -132,12 +132,13 @@ class KxsDataInputDecoder(
   override fun <T> decodeSerializableValue(
     deserializer: DeserializationStrategy<T>,
     previousValue: T?
-  ): T =
+  ): T {
     @Suppress("UNCHECKED_CAST")
-    when (deserializer.descriptor) {
+    return when (deserializer.descriptor) {
       byteArraySerializer.descriptor -> decodeByteArray() as T
       else                           -> super.decodeSerializableValue(deserializer, previousValue)
     }
+  }
 
   private fun decodeByteArray(): ByteArray {
     val bytes = ByteArray(decodeCompactSize())
