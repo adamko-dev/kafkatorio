@@ -24,7 +24,10 @@
     "strict": true,
     "strictFunctionTypes": true,
     "strictNullChecks": true,
-    "traceResolution": true
+    "traceResolution": true,
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true
   },
   "tstl": {
     "luaTarget": "5.2",
