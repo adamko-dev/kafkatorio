@@ -96,7 +96,7 @@ kotlin {
 
 
 val generateTypescript by tasks.registering(JavaExec::class) {
-  group = project.name
+  group = "kt2ts"
 
   val jvmJar by tasks.getting(Jar::class)
   val main by kotlin.jvm().compilations.getting

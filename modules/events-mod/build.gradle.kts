@@ -1,12 +1,10 @@
-import com.github.gradle.node.npm.task.NpmTask
 import dev.adamko.kafkatorio.gradle.asConsumer
 import dev.adamko.kafkatorio.gradle.asProvider
 import dev.adamko.kafkatorio.gradle.factorioModAttributes
 import dev.adamko.kafkatorio.gradle.typescriptAttributes
-import groovy.json.JsonOutput
+import dev.adamko.kafkatorio.task.TypescriptToLuaTask
 import net.swiftzer.semver.SemVer
 import org.apache.tools.ant.filters.ReplaceTokens
-import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
   dev.adamko.kafkatorio.lang.node
@@ -47,6 +45,7 @@ node {
 }
 
 val typescriptEventsSchema: Configuration by configurations.creating {
+  description = "Fetch the TypeScript schema from the event-schema subproject"
   asConsumer()
   typescriptAttributes(objects)
 }
@@ -55,39 +54,11 @@ dependencies {
   typescriptEventsSchema(projects.modules.eventsSchema)
 }
 
-val typescriptToLua by tasks.registering(NpmTask::class) {
-  description = "Convert Typescript To Lua"
-  group = project.name
-
+val typescriptToLua by tasks.registering(TypescriptToLuaTask::class) {
   dependsOn(tasks.npmInstall, installEventsTsSchema, tasks.updatePackageJson)
 
-  execOverrides { standardOutput = System.out }
-
-  npmCommand.set(listOf("run", "build"))
-
-  inputs.dir(tsSrcDir)
-    .skipWhenEmpty()
-    .withPropertyName("sourceFiles")
-    .withPathSensitivity(PathSensitivity.RELATIVE)
-
-  args.set(parseSpaceSeparatedArgs("-- --outDir $temporaryDir"))
-  val outputDir = layout.buildDirectory.dir("typescriptToLua")
-  outputs.dir(outputDir)
-    .withPropertyName("outputDir")
-
-  ignoreExitValue.set(false)
-
-  doFirst("clean") {
-    delete(temporaryDir)
-    mkdir(temporaryDir)
-  }
-
-  doLast("syncTstlOutput") {
-    sync {
-      from(temporaryDir)
-      into(outputDir)
-    }
-  }
+  sourceFiles.set(tsSrcDir)
+  outputDirectory.set(layout.buildDirectory.dir("typescriptToLua"))
 }
 
 val installEventsTsSchema by tasks.registering(Sync::class) {
@@ -133,7 +104,7 @@ distributions {
         include("**/**")
       }
       from(licenseFile)
-      from(typescriptToLua.map { it.outputs })
+      from(typescriptToLua.map { it.outputDirectory })
       filesNotMatching("**/*.png") {
         filter<ReplaceTokens>("tokens" to projectTokens)
       }
@@ -149,34 +120,34 @@ distributions {
   }
 }
 
-val downloadFactorioApiDocs by tasks.registering {
-  group = project.name
-
-  val target = uri("https://lua-api.factorio.com/latest/runtime-api.json")
-  val apiFilename = File(target.path).name
-  val downloadedFile = file("$temporaryDir/$apiFilename")
-
-  val apiFile = layout.buildDirectory.file(apiFilename)
-  outputs.file(apiFile)
-
-  doLast {
-
-    ant.invokeMethod(
-      "get", mapOf(
-        "src" to target,
-        "dest" to downloadedFile,
-        "verbose" to true,
-      )
-    )
-
-    val json = downloadedFile.readText()
-    val prettyJson = JsonOutput.prettyPrint(json)
-
-    apiFile.get().asFile.writeText(prettyJson)
-
-    logger.lifecycle("Downloaded Factorio API json: $apiFile")
-  }
-}
+//val downloadFactorioApiDocs by tasks.registering {
+//  group = project.name
+//
+//  val target = uri("https://lua-api.factorio.com/latest/runtime-api.json")
+//  val apiFilename = File(target.path).name
+//  val downloadedFile = file("$temporaryDir/$apiFilename")
+//
+//  val apiFile = layout.buildDirectory.file(apiFilename)
+//  outputs.file(apiFile)
+//
+//  doLast {
+//
+//    ant.invokeMethod(
+//      "get", mapOf(
+//        "src" to target,
+//        "dest" to downloadedFile,
+//        "verbose" to true,
+//      )
+//    )
+//
+//    val json = downloadedFile.readText()
+//    val prettyJson = JsonOutput.prettyPrint(json)
+//
+//    apiFile.get().asFile.writeText(prettyJson)
+//
+//    logger.lifecycle("Downloaded Factorio API json: $apiFile")
+//  }
+//}
 
 val factorioModProvider by configurations.registering {
   asProvider()
@@ -191,27 +162,34 @@ tasks.updatePackageJson {
 
 tasks.assemble { dependsOn(installEventsTsSchema, tasks.updatePackageJson) }
 
-//
-//idea {
-//  // this doesn't work - no source sets?
-//  module {
-//    sourceDirs.add(mkdir(layout.projectDirectory.dir("src/main/typescript").asFile))
-//    excludeDirs.add(mkdir(layout.projectDirectory.dir("src/main/typescript/node_modules").asFile))
-//    resourceDirs.add(mkdir(layout.projectDirectory.dir("src/main/resources").asFile))
-//    resourceDirs.add(mkdir(layout.projectDirectory.dir("infra").asFile))
-//    excludeDirs.add(mkdir(layout.projectDirectory.dir("infra/factorio-server").asFile))
-//  }
+
+// trying to get Gradle+idea to recognise the ts-src...
+
+//val typescriptSrcSet = project.objects.sourceDirectorySet("typescript", "TypeScript").apply {
+//  srcDirs(tsSrcDir)
+//  compiledBy(typescriptToLua, TypescriptToLuaTask::outputDirectory)
+////  destinationDirectory.set(layout.buildDirectory.dir("typescriptToLua"))
 //}
 //
-//val typescriptSrcSet =
-//  project.objects.sourceDirectorySet("typescript", "typescript").apply {
-//    srcDir(layout.projectDirectory.dir("src/main/typescript"))
+//val tsSrcConfiguration by configurations.registering {
+//  asProvider()
+//  outgoing.artifact(tsSrcDir)
+//}
 //
-//    destinationDirectory.set(modBuildDir.dir("typescriptToLua").asFile)
-//    compiledBy(tstlTask) {
-//
-//      project.objects.directoryProperty().apply {
-//        set(modBuildDir.dir("typescriptToLua"))
+//idea {
+//  module {
+//    // Not using += due to https://github.com/gradle/gradle/issues/8749
+//    sourceDirs = sourceDirs + typescriptSrcSet.sourceDirectories
+//    resourceDirs.add(file("src/main/resources"))
+//    excludeDirs.add(layout.projectDirectory.dir("src/main/typescript/node_modules").asFile)
+//    scopes.compute("MAIN") { _: String, scope: MutableMap<String, MutableCollection<Configuration>>? ->
+//      val s = (scope ?: mutableMapOf())
+//      s.compute("plus") { _, conf ->
+//        val c = conf ?: mutableListOf()
+//        c.add(tsSrcConfiguration.get())
+//        c
 //      }
+//      s
 //    }
 //  }
+//}
