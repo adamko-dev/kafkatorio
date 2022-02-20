@@ -1,8 +1,7 @@
 package dev.adamko.kafkatorio.processor
 
 
-import dev.adamko.kafkatorio.admin.KafkatorioKafkaAdmin
-import dev.adamko.kafkatorio.processor.config.ApplicationProperties
+import dev.adamko.kafkatorio.processor.admin.KafkatorioKafkaAdmin
 import dev.adamko.kafkatorio.processor.tileserver.WebMapTileServer
 import kotlinx.coroutines.runBlocking
 import org.http4k.server.PolyHandler

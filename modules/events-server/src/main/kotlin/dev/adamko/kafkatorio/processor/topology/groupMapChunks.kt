@@ -6,6 +6,7 @@ import dev.adamko.kafkatorio.events.schema.MapChunk
 import dev.adamko.kafkatorio.events.schema.MapChunkPosition
 import dev.adamko.kafkatorio.events.schema.MapTilePosition
 import dev.adamko.kafkatorio.events.schema.MapTiles
+import dev.adamko.kafkatorio.events.schema.SurfaceIndex
 import dev.adamko.kafkatorio.events.schema.converters.toMapChunkPosition
 import dev.adamko.kafkatorio.processor.serdes.kxsBinary
 import dev.adamko.kotka.extensions.groupedAs
@@ -28,7 +29,7 @@ data class ServerMapChunkId(
   val serverId: FactorioServerId,
   val chunkPosition: MapChunkPosition,
   val surfaceIndex: SurfaceIndex,
-  val zoomLevel: ZoomLevel,
+  val chunkSize: ChunkSize,
 )
 
 
@@ -77,20 +78,20 @@ fun groupTilesIntoChunksWithColours(
       .filter { _, value -> value != null && value.tiles.isNotEmpty() }
       .flatMap("server-map-data.tiles.flatMapByChunk") { key: FactorioServerId, mapTiles: MapTiles ->
 
-        val zoomLevel = ZoomLevel.ZOOM_0
+        val standardChunkSize = ChunkSize.MAX
 
         mapTiles
           .tiles
           .groupBy { tile ->
-            tile.position.toMapChunkPosition(zoomLevel.chunkSize)
+            tile.position.toMapChunkPosition(standardChunkSize.tilesPerChunk)
           }
           .map { (chunkPos, tiles) ->
 
             val chunkId = ServerMapChunkId(
               key,
               chunkPos,
-              SurfaceIndex(mapTiles.surfaceIndex),
-              zoomLevel,
+              mapTiles.surfaceIndex,
+              standardChunkSize,
             )
 
             val tilesMap = tiles.associate { it.position to TileProtoHashCode(it) }

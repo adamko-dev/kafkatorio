@@ -7,6 +7,7 @@ import com.sksamuel.scrimage.nio.PngWriter
 import dev.adamko.kafkatorio.events.schema.ColourHex
 import dev.adamko.kafkatorio.events.schema.MapChunkPosition
 import dev.adamko.kafkatorio.events.schema.MapTilePosition
+import dev.adamko.kafkatorio.events.schema.SurfaceIndex
 import dev.adamko.kafkatorio.events.schema.converters.toMapChunkPosition
 import java.awt.image.BufferedImage
 import java.io.File
@@ -16,6 +17,8 @@ import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asFlow
@@ -67,8 +70,8 @@ private value class TilePngFilename(
 ) {
   constructor(cmd: Cmd.CreateImage) : this(buildString {
     append("src/main/resources/kafkatorio-web-map")
-    append("/s${cmd.surfaceIndex.index}")
-    append("/z${cmd.zoomLevel.level}")
+    append("/s${cmd.surfaceIndex.value}")
+    append("/z${cmd.chunkSize.zoomLevel}")
     append("/x${cmd.chunkPosition.x}")
     append("/y${cmd.chunkPosition.y}")
     append(".png")
@@ -77,40 +80,6 @@ private value class TilePngFilename(
 
 
 private val TRANSPARENT_AWT = ColourHex.TRANSPARENT.toRgbColor().awt()
-
-
-private fun createMapTileImage(
-  chunkPosition: MapChunkPosition,
-  chunkColours: Map<MapTilePosition, ColourHex>,
-  z: ZoomLevel
-): ImmutableImage {
-
-  val chunkImage = ImmutableImage.filled(
-    z.chunkSize,
-    z.chunkSize,
-    TRANSPARENT_AWT,
-    BufferedImage.TYPE_INT_ARGB
-  )
-
-  val chunkOriginX: Int = chunkPosition.x * z.chunkSize
-  val chunkOriginY: Int = chunkPosition.y * z.chunkSize
-
-  chunkColours.forEach { (tilePosition, colour) ->
-
-    val rgbColour = colour.toRgbColor()
-
-    val pixelX = abs(abs(tilePosition.x) - abs(chunkOriginX))
-    val pixelY = abs(abs(tilePosition.y) - abs(chunkOriginY))
-
-    chunkImage.setColor(
-      pixelX,
-      pixelY,
-      rgbColour
-    )
-  }
-
-  return chunkImage.scaleTo(WEB_MAP_TILE_SIZE_PX, WEB_MAP_TILE_SIZE_PX, ScaleMethod.FastScale)
-}
 
 
 private fun ColourHex.toRgbColor(): RGBColor {
@@ -122,6 +91,7 @@ private fun ColourHex.toRgbColor(): RGBColor {
   )
 }
 
+
 private class ServerMapChunkHandler : CoroutineScope {
 
   override val coroutineContext: CoroutineContext = Dispatchers.Default +
@@ -129,18 +99,25 @@ private class ServerMapChunkHandler : CoroutineScope {
       CoroutineName("ServerMapChunkHandler")
 
 
+  /** The inbox for this handler. */
   private val allChunksFlow = MutableSharedFlow<ServerMapChunkTiles<ColourHex>>(
     replay = 0,
     extraBufferCapacity = 10,
     onBufferOverflow = BufferOverflow.SUSPEND,
   )
 
+  fun emit(mapChunkTiles: ServerMapChunkTiles<ColourHex>) {
+    launch {
+      allChunksFlow.emit(mapChunkTiles)
+    }
+  }
+
+  /** This flow saves images one-by-one */
   private val saveImagesFlow = MutableSharedFlow<Cmd.SaveImage>(
     replay = 0,
     extraBufferCapacity = 10,
     onBufferOverflow = BufferOverflow.SUSPEND,
   )
-
 
   init {
 
@@ -149,7 +126,7 @@ private class ServerMapChunkHandler : CoroutineScope {
 
         val flow = acc.getOrElse(src.chunkId) {
           println("creating new subdivide-flow for chunkId ${src.chunkId}")
-          subdivisionFlow()
+          createSubdivisionFlow()
         }
 
         flow.emit(Cmd.ChunkSubdivide(src.chunkId, src.map))
@@ -160,6 +137,7 @@ private class ServerMapChunkHandler : CoroutineScope {
         println("allChunksFlow has ${it.size} subdivide-flows: ${it.keys.joinToString()}")
       }
       .launchIn(this)
+
 
     saveImagesFlow
       .onEach { (filename, img) ->
@@ -176,42 +154,45 @@ private class ServerMapChunkHandler : CoroutineScope {
 
   }
 
-  fun emit(mapChunkTiles: ServerMapChunkTiles<ColourHex>) {
-    launch {
-      allChunksFlow.emit(mapChunkTiles)
-    }
-  }
 
-  private fun subdivisionFlow(): MutableSharedFlow<Cmd.ChunkSubdivide> {
+  /**
+   * Given a chunk, split it into multiple, smaller sub-tiles.
+   *
+   * Send each sub-tile to [saveImagesFlow] to be saved as a PNG
+   */
+  private fun createSubdivisionFlow(): MutableSharedFlow<Cmd.ChunkSubdivide> {
 
-    val flow = MutableSharedFlow<Cmd.ChunkSubdivide>(
+    val subdivisionFlow = MutableSharedFlow<Cmd.ChunkSubdivide>(
       replay = 0,
       extraBufferCapacity = 10,
       onBufferOverflow = BufferOverflow.SUSPEND,
     )
 
-    val saveImgCommands = flow
-//      .conflate()
+    val saveImgCommands = subdivisionFlow
       .flatMapConcat { subdivideCmd ->
-        ZoomLevel.values
-          .asFlow()
-          .flatMapConcat { zoom ->
+        ChunkSize
+          .values
+          .flatMap { chunkSize ->
             subdivideCmd.tiles
               .entries
-              .groupBy({ (tile, _) -> tile.toMapChunkPosition(zoom.chunkSize) }
+              .groupBy(
+                { (tile, _) -> tile.toMapChunkPosition(chunkSize.tilesPerChunk) }
               ) {
                 it.key to it.value
               }
               .map { (chunkPos, tiles) ->
-                Cmd.CreateImage(
-                  surfaceIndex = subdivideCmd.chunkId.surfaceIndex,
-                  zoomLevel = zoom,
-                  chunkPosition = chunkPos,
-                  tiles = tiles.toMap()
-                )
+                async {
+                  Cmd.CreateImage(
+                    surfaceIndex = subdivideCmd.chunkId.surfaceIndex,
+                    chunkSize = chunkSize,
+                    chunkPosition = chunkPos,
+                    tiles = tiles.toMap()
+                  )
+                }
               }
-              .asFlow()
           }
+          .awaitAll()
+          .asFlow()
       }
       .map { createCmd ->
         val filename = TilePngFilename(createCmd)
@@ -219,7 +200,7 @@ private class ServerMapChunkHandler : CoroutineScope {
         val img = createMapTileImage(
           createCmd.chunkPosition,
           createCmd.tiles,
-          createCmd.zoomLevel,
+          createCmd.chunkSize,
         )
 
         Cmd.SaveImage(filename, img)
@@ -232,11 +213,45 @@ private class ServerMapChunkHandler : CoroutineScope {
       }
     }
 
-    return flow
+    return subdivisionFlow
   }
 
 
+  /** Create (but don't save) a PNG for the given chunk. */
+  private fun createMapTileImage(
+    chunkPosition: MapChunkPosition,
+    chunkColours: Map<MapTilePosition, ColourHex>,
+    chunkSize: ChunkSize
+  ): ImmutableImage {
+
+    val chunkImage = ImmutableImage.filled(
+      chunkSize.tilesPerChunk,
+      chunkSize.tilesPerChunk,
+      TRANSPARENT_AWT,
+      BufferedImage.TYPE_INT_ARGB
+    )
+
+    val chunkOriginX: Int = chunkPosition.x * chunkSize.tilesPerChunk
+    val chunkOriginY: Int = chunkPosition.y * chunkSize.tilesPerChunk
+
+    chunkColours.forEach { (tilePosition, colour) ->
+
+      val rgbColour = colour.toRgbColor()
+
+      val pixelX = abs(abs(tilePosition.x) - abs(chunkOriginX))
+      val pixelY = abs(abs(tilePosition.y) - abs(chunkOriginY))
+
+      chunkImage.setColor(
+        pixelX,
+        pixelY,
+        rgbColour
+      )
+    }
+
+    return chunkImage.scaleTo(WEB_MAP_TILE_SIZE_PX, WEB_MAP_TILE_SIZE_PX, ScaleMethod.FastScale)
+  }
 }
+
 
 private sealed interface Cmd {
 
@@ -247,7 +262,7 @@ private sealed interface Cmd {
 
   data class CreateImage(
     val surfaceIndex: SurfaceIndex,
-    val zoomLevel: ZoomLevel,
+    val chunkSize: ChunkSize,
     val chunkPosition: MapChunkPosition,
     val tiles: Map<MapTilePosition, ColourHex>,
   ) : Cmd

@@ -3,15 +3,16 @@ package dev.adamko.kafkatorio.processor.misc
 import dev.adamko.kafkatorio.events.schema.ColourHex
 import dev.adamko.kafkatorio.events.schema.MapChunkPosition
 import dev.adamko.kafkatorio.events.schema.MapTilePosition
+import dev.adamko.kafkatorio.events.schema.SurfaceIndex
 import dev.adamko.kafkatorio.processor.serdes.kxsBinary
+import dev.adamko.kafkatorio.processor.topology.ChunkSize
 import dev.adamko.kafkatorio.processor.topology.FactorioServerId
 import dev.adamko.kafkatorio.processor.topology.ServerMapChunkId
 import dev.adamko.kafkatorio.processor.topology.ServerMapChunkTiles
-import dev.adamko.kafkatorio.processor.topology.SurfaceIndex
-import dev.adamko.kafkatorio.processor.topology.ZoomLevel
 import java.util.UUID
 import kotlinx.serialization.encodeToByteArray
 import org.junit.jupiter.api.Test
+
 
 class Blah {
 
@@ -22,8 +23,8 @@ class Blah {
       chunkId = ServerMapChunkId(
         serverId = FactorioServerId(UUID.randomUUID().toString()),
         chunkPosition = MapChunkPosition(Int.MAX_VALUE, Int.MAX_VALUE),
-        surfaceIndex = SurfaceIndex(Int.MAX_VALUE),
-        zoomLevel = ZoomLevel.ZOOM_0
+        surfaceIndex = SurfaceIndex(UInt.MAX_VALUE),
+        chunkSize = ChunkSize.MAX
       ),
       buildMap {
         repeat(512) { x ->

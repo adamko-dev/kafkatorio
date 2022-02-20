@@ -5,15 +5,6 @@ import kotlin.math.roundToInt
 import kotlinx.serialization.Serializable
 
 
-@Serializable
-@JvmInline
-value class SurfaceIndex(
-  val index: Int
-) {
-  override fun toString() = "$index"
-}
-
-
 @JvmInline
 @Serializable
 value class FactorioServerId(val id: String) {
@@ -21,23 +12,35 @@ value class FactorioServerId(val id: String) {
 }
 
 
-enum class ZoomLevel(
-  val level: Int
-) {
-  ZOOM_0(0), // 512
-  ZOOM_1(1), // 256
-  ZOOM_2(2), // 128
-  ZOOM_3(3), // 64
-  ZOOM_4(4), // 32
+@Serializable
+enum class ChunkSize(
+  val zoomLevel: Int,
+) : Comparable<ChunkSize> {
+  CHUNK_512(-1), // 512
+  CHUNK_256(0), // 256
+  CHUNK_128(1), // 128
+  CHUNK_064(2), // 64
+  CHUNK_032(3), // 32
   ;
 
-  val chunkSize: Int = 2f.pow(9 - level).roundToInt()
+  val tilesPerChunk: Int = 2f.pow(8 - zoomLevel).roundToInt()
 
   init {
-    require(chunkSize > 0) { "chunkSize must be positive" }
+    require(tilesPerChunk > 0) { "chunkSize must be positive" }
+    // 1000 & 0111 = 0000 =>  pow^2
+    // 1001 & 1000 = 1000 => !pow^2
+    require(tilesPerChunk and (tilesPerChunk - 1) == 0) {
+      "tilesPerChunk must be a power-of-two number"
+    }
   }
 
   companion object {
-    val values: List<ZoomLevel> = values().asList() // better performance, KT-48872
+    // cache values for better performance. KT-48872
+    val values: List<ChunkSize> = values().asList()
+
+    val MAX: ChunkSize = values.maxByOrNull { it.tilesPerChunk }!!
+    val MIN: ChunkSize = values.minByOrNull { it.tilesPerChunk }!!
+    val STANDARD: ChunkSize = values.first { it.zoomLevel == 0 }
+
   }
 }
