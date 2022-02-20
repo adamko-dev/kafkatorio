@@ -65,7 +65,7 @@ class KxsDataOutputEncoder(
     descriptor: SerialDescriptor,
     collectionSize: Int
   ): CompositeEncoder {
-    encodeInt(collectionSize)
+    encodeCompactSize(collectionSize)
     return this
   }
 
@@ -125,7 +125,7 @@ class KxsDataInputDecoder(
   override fun decodeSequentially(): Boolean = true
 
   override fun decodeCollectionSize(descriptor: SerialDescriptor): Int =
-    decodeInt().also { elementsCount = it }
+    decodeCompactSize().also { elementsCount = it }
 
   override fun decodeNotNullMark(): Boolean = decodeBoolean()
 
