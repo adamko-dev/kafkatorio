@@ -1,3 +1,5 @@
+import dev.adamko.kafkatorio.gradle.excludeGeneratedGradleDsl
+
 plugins {
   idea
   base
@@ -23,6 +25,12 @@ idea {
   module {
     isDownloadSources = true
     isDownloadJavadoc = true
+    excludeGeneratedGradleDsl(layout)
+    excludeDirs = excludeDirs + layout.files(
+      ".idea",
+      "gradle/kotlin-js-store",
+      "gradle/wrapper",
+    )
   }
 }
 

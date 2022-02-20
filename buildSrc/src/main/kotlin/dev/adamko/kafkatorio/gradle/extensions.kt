@@ -6,10 +6,12 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.specs.Spec
 import org.gradle.kotlin.dsl.invoke
+import org.gradle.plugins.ide.idea.model.IdeaModule
 
 
 operator fun <T> Spec<T>.not(): Spec<T> = Spec<T> { !this(it) }
@@ -49,4 +51,23 @@ fun Project.areJsonPropertiesUpToDate(
 
     isUpToDate
   }
+}
+
+
+/** exclude generated Gradle code, so it doesn't clog up search results */
+fun IdeaModule.excludeGeneratedGradleDsl(layout: ProjectLayout) {
+  excludeDirs.addAll(
+    layout.files(
+      "buildSrc/build/generated-sources/kotlin-dsl-accessors",
+      "buildSrc/build/generated-sources/kotlin-dsl-accessors/kotlin",
+      "buildSrc/build/generated-sources/kotlin-dsl-accessors/kotlin/gradle",
+      "buildSrc/build/generated-sources/kotlin-dsl-external-plugin-spec-builders",
+      "buildSrc/build/generated-sources/kotlin-dsl-external-plugin-spec-builders/kotlin",
+      "buildSrc/build/generated-sources/kotlin-dsl-external-plugin-spec-builders/kotlin/gradle",
+      "buildSrc/build/generated-sources/kotlin-dsl-plugins",
+      "buildSrc/build/generated-sources/kotlin-dsl-plugins/kotlin",
+      "buildSrc/build/generated-sources/kotlin-dsl-plugins/kotlin/dev",
+      "buildSrc/build/pluginUnderTestMetadata",
+    )
+  )
 }
