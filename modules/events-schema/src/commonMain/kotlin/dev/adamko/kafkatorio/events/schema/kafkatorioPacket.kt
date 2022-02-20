@@ -52,7 +52,7 @@ object KafkatorioPacketJsonSerializer : JsonContentPolymorphicSerializer<Kafkato
       KafkatorioPacket.PacketType.EVENT      -> FactorioEvent.serializer()
       KafkatorioPacket.PacketType.CONFIG     -> FactorioConfigurationUpdate.serializer()
       KafkatorioPacket.PacketType.PROTOTYPES -> FactorioPrototypes.serializer()
-      KafkatorioPacket.PacketType.UPDATE -> FactorioEventUpdatePacket.serializer()
+      KafkatorioPacket.PacketType.UPDATE     -> FactorioEventUpdatePacket.serializer()
     }
   }
 }

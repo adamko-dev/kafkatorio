@@ -33,16 +33,18 @@ object KafkatorioKafkaAdmin {
         add(KafkatorioTopology.TOPIC_GROUPED_MAP_CHUNKS)
         add(KafkatorioTopology.TOPIC_SRC_SERVER_LOG)
 
+        val base = topicNameBase(packetType)
+
         when (packetType) {
           KafkatorioPacket.PacketType.EVENT      ->
             FactorioObjectData.ObjectName.values.forEach { objectName ->
-              add("kafkatorio.${packetType.name}.${objectName.name}")
+              add("$base.${objectName.name}")
             }
-          KafkatorioPacket.PacketType.CONFIG     ->
-            add("kafkatorio.${packetType.name}.FactorioConfigurationUpdate")
-          KafkatorioPacket.PacketType.PROTOTYPES ->
-            add("kafkatorio.${packetType.name}.all")
+          KafkatorioPacket.PacketType.CONFIG     -> add("$base.FactorioConfigurationUpdate")
+          KafkatorioPacket.PacketType.PROTOTYPES -> add("$base.all")
+          KafkatorioPacket.PacketType.UPDATE     -> add("$base.all")
         }
+
 
       }
     }.minus(currentTopics.toSet())
@@ -87,4 +89,7 @@ object KafkatorioKafkaAdmin {
       .listings()
       .get()
   }
+
+  fun topicNameBase(packetType: KafkatorioPacket.PacketType): String =
+    "kafkatorio.${packetType.name}"
 }

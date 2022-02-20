@@ -18,6 +18,7 @@ fun main(args: Array<String>) {
         addAll(FactorioPrototype::class.sealedSubclasses)
         add(FactorioPrototypes::class)
         add(FactorioConfigurationUpdate::class)
+        add(FactorioEventUpdatePacket::class)
         addAll(FactorioEventUpdate::class.sealedSubclasses)
       },
       mappings = mapOf(

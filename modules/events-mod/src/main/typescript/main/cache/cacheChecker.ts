@@ -1,6 +1,5 @@
 import {EventDataCache} from "./EventDataCache";
 import {emitPacket} from "../emitKafkatorioPacket";
-// import { global } from "../global";
 
 /** Every 0.1 seconds */
 script.on_nth_tick(6, (nthTick: NthTickEventData) => {

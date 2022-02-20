@@ -4,10 +4,10 @@ import dev.adamko.kafkatorio.events.schema.ConsoleChatMessage
 import dev.adamko.kafkatorio.events.schema.EntityData
 import dev.adamko.kafkatorio.events.schema.FactorioConfigurationUpdate
 import dev.adamko.kafkatorio.events.schema.FactorioEvent
+import dev.adamko.kafkatorio.events.schema.FactorioEventUpdatePacket
 import dev.adamko.kafkatorio.events.schema.FactorioPrototypes
 import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
 import dev.adamko.kafkatorio.events.schema.MapChunk
-import dev.adamko.kafkatorio.events.schema.MapTile
 import dev.adamko.kafkatorio.events.schema.MapTiles
 import dev.adamko.kafkatorio.events.schema.PlayerData
 import dev.adamko.kafkatorio.events.schema.SurfaceData
@@ -52,8 +52,10 @@ class WebsocketService(
             }
           }
         }
+        is FactorioEventUpdatePacket,
         is FactorioConfigurationUpdate,
         is FactorioPrototypes -> {
+          // to be continued...
         }
       }
 
