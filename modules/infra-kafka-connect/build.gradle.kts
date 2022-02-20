@@ -79,8 +79,8 @@ val downloadCamelConnectors by tasks.registering(Sync::class) {
       fileTree(temporaryDir)
         .asFileTree
         .forEach { zip ->
-        from(tarTree(zip))
-      }
+          from(tarTree(zip))
+        }
       into(connectorJarDir)
     }
   }
@@ -100,4 +100,10 @@ tasks.dockerEnv {
     "CONNECTOR_ID" to "kafkatorio-connect",
     "KAFKA_CONNECT_VERSION" to libs.versions.confluent.kafkaConnect.get(),
   )
+}
+
+idea {
+  module {
+    excludeDirs.add(file("src/main/docker/camel-kafka-connectors"))
+  }
 }

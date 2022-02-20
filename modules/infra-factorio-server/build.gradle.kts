@@ -50,3 +50,10 @@ tasks.dockerEnv {
 }
 
 tasks.build { dependsOn(deployModToServer) }
+
+
+idea {
+  module {
+    excludeDirs.add(file("src/factorio-server"))
+  }
+}
