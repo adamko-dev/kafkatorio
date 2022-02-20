@@ -1,10 +1,17 @@
 package dev.adamko.kafkatorio.events.schema
 
+import kotlin.jvm.JvmInline
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
 
 
 const val MAP_CHUNK_SIZE = 32
+
+
+@Serializable
+@JvmInline
+value class Tick(val value: UInt)
+
 
 /**
  * Coordinates of a [EntityData] on a map.
@@ -60,7 +67,7 @@ data class MapBoundingBox(
  */
 @Serializable
 data class Colour(
-  @EncodeDefault
+  @EncodeDefault // remove encode default?
   val red: Float = 0f,
   @EncodeDefault
   val green: Float = 0f,
@@ -74,7 +81,7 @@ data class Colour(
 /** Size-efficient version of [Colour] (`4*4` bytes vs `4*1` bytes) */
 @Serializable
 data class ColourHex(
-  @EncodeDefault
+  @EncodeDefault // remove encode default?
   val red: UByte = UByte.MIN_VALUE,
   @EncodeDefault
   val green: UByte = UByte.MIN_VALUE,
@@ -91,6 +98,6 @@ data class ColourHex(
 
 @Serializable
 data class MapTile(
-  val prototypeName: String,
+  val prototypeName: PrototypeName,
   val position: MapTilePosition,
 )

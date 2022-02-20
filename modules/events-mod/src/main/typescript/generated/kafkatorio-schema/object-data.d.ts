@@ -6,30 +6,6 @@ interface FactorioObjectData {
   objectName: ObjectName;
 }
 
-interface PlayerData extends FactorioObjectData {
-  associatedCharactersUnitNumbers: uint[];
-  characterUnitNumber: uint | null;
-  chatColour: Colour;
-  colour: Colour;
-  lastOnline: uint;
-  name: string;
-  objectName: ObjectName;
-  position: MapEntityPosition;
-}
-
-interface EntityData extends FactorioObjectData {
-  active: boolean;
-  health: double | null;
-  healthRatio: double;
-  name: string;
-  objectName: ObjectName;
-  playerIndex: uint | null;
-  position: MapEntityPosition;
-  surfaceIndex: int;
-  type: string;
-  unitNumber: uint | null;
-}
-
 interface SurfaceData extends FactorioObjectData {
   daytime: double;
   index: uint;
@@ -39,7 +15,7 @@ interface SurfaceData extends FactorioObjectData {
 
 interface MapTiles extends FactorioObjectData {
   objectName: ObjectName;
-  surfaceIndex: int;
+  surfaceIndex: uint;
   tiles: MapTile[];
 }
 

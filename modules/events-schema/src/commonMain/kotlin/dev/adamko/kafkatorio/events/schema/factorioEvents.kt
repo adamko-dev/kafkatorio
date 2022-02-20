@@ -10,7 +10,7 @@ data class FactorioEvent(
   /** the initial Factorio event (`defines.events`) trigger */
   val eventType: String,
   /** game time */
-  val tick: UInt,
+  val tick: Tick,
   val data: FactorioObjectData,
 ) : KafkatorioPacket() {
   @EncodeDefault

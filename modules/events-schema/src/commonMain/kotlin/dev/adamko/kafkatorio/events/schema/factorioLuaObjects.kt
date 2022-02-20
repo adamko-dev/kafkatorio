@@ -10,6 +10,7 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
+
 @Serializable(with = FactorioObjectDataJsonSerializer::class)
 sealed class FactorioObjectData {
 
@@ -41,8 +42,14 @@ sealed class FactorioObjectData {
     //    LuaTile,
     LuaTiles,
     ConsoleChatMessage,
+    ;
+
+    companion object {
+      val values: List<ObjectName> = values().toList()
+    }
   }
 }
+
 
 object FactorioObjectDataJsonSerializer : JsonContentPolymorphicSerializer<FactorioObjectData>(
   FactorioObjectData::class
@@ -56,7 +63,7 @@ object FactorioObjectDataJsonSerializer : JsonContentPolymorphicSerializer<Facto
       ?.jsonPrimitive
       ?.contentOrNull
       ?.let { json ->
-        FactorioObjectData.ObjectName.values().firstOrNull { it.name == json }
+        FactorioObjectData.ObjectName.values.firstOrNull { it.name == json }
       }
 
     requireNotNull(type) { "Unknown FactorioObjectData $key: $element" }
@@ -74,47 +81,60 @@ object FactorioObjectDataJsonSerializer : JsonContentPolymorphicSerializer<Facto
 }
 
 
+/** [`LuaControl`](https://lua-api.factorio.com/latest/LuaControl.html) */
+interface FactorioLuaControl {
+  val position: MapEntityPosition
+  val surface: SurfaceIndex
+  val force: ForceIndex
+}
+
+
 @Serializable
 data class PlayerData(
-//  @Serializable(with = FactorioJsonListSerializer::class)
+  override val force: ForceIndex,
+  override val position: MapEntityPosition,
+  override val surface: SurfaceIndex,
   @Contextual
-  val associatedCharactersUnitNumbers: List<UInt>,
-  val characterUnitNumber: UInt?,
-  val name: String,
-  val position: MapEntityPosition,
-  val colour: Colour,
+  val associatedCharactersUnitNumbers: List<UnitNumber>,
+  val characterUnitNumber: UnitNumber?,
   val chatColour: Colour,
-  val lastOnline: UInt,
-) : FactorioObjectData() {
+  val colour: Colour,
+  val lastOnline: Tick,
+  val name: String,
+) : FactorioObjectData(), FactorioLuaControl {
   @EncodeDefault
   override val objectName = ObjectName.LuaPlayer
 }
 
+
 @Serializable
 data class EntityData(
+  override val force: ForceIndex,
+  override val position: MapEntityPosition,
+  override val surface: SurfaceIndex,
   val active: Boolean,
   val health: Double?,
   val healthRatio: Double,
   val name: String,
-  val position: MapEntityPosition,
-  val surfaceIndex: Int,
+  val playerIndex: PlayerIndex? = null,
   val type: String,
-  val unitNumber: UInt? = null,
-  val playerIndex: UInt? = null,
-) : FactorioObjectData() {
+  val unitNumber: UnitNumber? = null,
+) : FactorioObjectData(), FactorioLuaControl {
   @EncodeDefault
   override val objectName = ObjectName.LuaEntity
 }
 
+
 @Serializable
 data class SurfaceData(
   val daytime: Double,
-  val index: UInt,
+  val index: SurfaceIndex,
   val name: String,
 ) : FactorioObjectData() {
   @EncodeDefault
   override val objectName = ObjectName.LuaSurface
 }
+
 
 /** This isn't a Factorio Lua type, but a helpful collection of Chunk info */
 @Serializable
@@ -127,19 +147,21 @@ data class MapChunk(
   override val objectName = ObjectName.MapChunk
 }
 
+
 /** This isn't a Factorio Lua type, but a helpful collection of [MapTile]s */
 @Serializable
 data class MapTiles(
-  val surfaceIndex: Int,
+  val surfaceIndex: SurfaceIndex,
   val tiles: List<MapTile>,
 ) : FactorioObjectData() {
   @EncodeDefault
   override val objectName = ObjectName.LuaTiles
 }
 
+
 @Serializable
 data class ConsoleChatMessage(
-  val authorPlayerIndex: UInt?,
+  val authorPlayerIndex: PlayerIndex?,
   val content: String,
 ) : FactorioObjectData() {
   @EncodeDefault

@@ -18,6 +18,7 @@ fun main(args: Array<String>) {
         addAll(FactorioPrototype::class.sealedSubclasses)
         add(FactorioPrototypes::class)
         add(FactorioConfigurationUpdate::class)
+        addAll(FactorioEventUpdate::class.sealedSubclasses)
       },
       mappings = mapOf(
         // builtin Factorio numeric types > `typed-factorio/generated/builtin-types.d.ts`
@@ -31,16 +32,16 @@ fun main(args: Array<String>) {
         ULong::class to "uint64",
       ),
       classTransformers = listOf(
+        ValueClassTransformer,
 //        PropertyNameTransformer,
-      )
+      ),
+//      voidType = VoidType.UNDEFINED,
     )
 
   val definitions = gen.definitionsText
 
   when (val filename = args.firstOrNull()) {
-    null -> {
-      println(definitions)
-    }
+    null -> println(definitions)
     else -> {
       val outPath = Path(filename)
       outPath.createDirectories()

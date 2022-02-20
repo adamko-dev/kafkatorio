@@ -50,7 +50,9 @@ class FactorioEventTest : FunSpec({
         val expected = FactorioEvent(
           data = PlayerData(
             name = "fredthedeadhead",
-            characterUnitNumber = 1u,
+            surface = SurfaceIndex(1u),
+            force = ForceIndex(1u),
+            characterUnitNumber = UnitNumber(1u),
             associatedCharactersUnitNumbers = emptyList(),
             position = MapEntityPosition(
               x = 30.6,
@@ -68,11 +70,11 @@ class FactorioEventTest : FunSpec({
               blue = 0.25f,
               alpha = 1f
             ),
-            lastOnline = 2287061u
+            lastOnline = Tick(2287061u)
           ),
           eventType = "on_player_joined_game",
           modVersion = "0.2.1",
-          tick = 2287072u
+          tick = Tick(2287072u)
         )
 
         actual shouldBe expected
@@ -112,12 +114,12 @@ class FactorioEventTest : FunSpec({
         val expected = FactorioEvent(
           data = SurfaceData(
             name = "nauvis",
-            index = 1u,
+            index = SurfaceIndex(1u),
             daytime = 0.745
           ),
           eventType = "on_tick",
           modVersion = "0.2.1",
-          tick = 2301240u
+          tick = Tick(2301240u)
         )
 
         actual shouldBe expected
@@ -168,8 +170,9 @@ class FactorioEventTest : FunSpec({
             active = true,
             health = 250.0,
             healthRatio = 1.0,
-            surfaceIndex = 1,
-            unitNumber = 1u,
+            surface = SurfaceIndex(1u),
+            unitNumber = UnitNumber(1u),
+            force = ForceIndex(1u),
             playerIndex = null,
             position = MapEntityPosition(
               x = 37.5,
@@ -178,7 +181,7 @@ class FactorioEventTest : FunSpec({
           ),
           eventType = "on_player_changed_position",
           modVersion = "0.2.1",
-          tick = 2301231u
+          tick = Tick(2301231u)
         )
 
         actual shouldBe expected
@@ -245,7 +248,7 @@ class FactorioEventTest : FunSpec({
 
         val expected = FactorioEvent(
           data = MapTiles(
-            surfaceIndex = 1,
+            surfaceIndex = SurfaceIndex(1u),
             tiles = listOf(
               MapTile(
                 prototypeName = "refined-concrete",
@@ -267,7 +270,7 @@ class FactorioEventTest : FunSpec({
           ),
           eventType = "on_player_built_tile",
           modVersion = "0.2.2",
-          tick = 2429929u
+          tick = Tick(2429929u)
         )
 
         actual shouldBe expected

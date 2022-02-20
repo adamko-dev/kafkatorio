@@ -21,6 +21,11 @@ sealed class KafkatorioPacket {
     EVENT,
     CONFIG,
     PROTOTYPES,
+    ;
+
+    companion object {
+      val values: List<PacketType> = values().toList()
+    }
   }
 }
 
@@ -37,7 +42,7 @@ object KafkatorioPacketJsonSerializer : JsonContentPolymorphicSerializer<Kafkato
       ?.jsonPrimitive
       ?.contentOrNull
       ?.let { json ->
-        KafkatorioPacket.PacketType.values().firstOrNull { it.name == json }
+        KafkatorioPacket.PacketType.values.firstOrNull { it.name == json }
       }
 
     requireNotNull(type) { "Unknown KafkatorioPacket ${key}: $element" }

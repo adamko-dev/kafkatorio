@@ -28,7 +28,12 @@ sealed class FactorioPrototype {
   abstract val prototypeObjectName: PrototypeObjectName
 
   enum class PrototypeObjectName {
-    LuaTilePrototype
+    LuaTilePrototype,
+    ;
+
+    companion object {
+      val values: List<PrototypeObjectName> = values().toList()
+    }
   }
 }
 
@@ -45,7 +50,7 @@ object FactorioPrototypeJsonSerializer : JsonContentPolymorphicSerializer<Factor
       ?.jsonPrimitive
       ?.contentOrNull
       ?.let { json ->
-        PrototypeObjectName.values().firstOrNull { it.name == json }
+        PrototypeObjectName.values.firstOrNull { it.name == json }
       }
 
     requireNotNull(type) { "Unknown FactorioPrototype ${key}: $element" }
