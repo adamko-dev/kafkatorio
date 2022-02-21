@@ -209,32 +209,24 @@ class FactorioEventTest : FunSpec({
           "surfaceIndex": 1,
           "tiles": [
             {
-              "position": {
-                "y": 10,
-                "x": -65
-              },
-              "prototypeName": "refined-concrete"
+              "y": 10,
+              "x": -65,
+              "proto": "refined-concrete"
             },
             {
-              "position": {
-                "y": 11,
-                "x": -65
-              },
-              "prototypeName": "red-earth"
+              "y": 11,
+              "x": -65,
+              "proto": "red-earth"
             },
             {
-              "position": {
-                "y": 10,
-                "x": -64
-              },
-              "prototypeName": "blue-cheese"
+              "y": 10,
+              "x": -64,
+              "proto": "blue-cheese"
             },
             {
-              "position": {
-                "y": 11,
-                "x": -64
-              },
-              "prototypeName": "refined-concrete"
+              "y": 11,
+              "x": -64,
+              "proto": "refined-concrete"
             }
           ]
         },
@@ -254,20 +246,24 @@ class FactorioEventTest : FunSpec({
             surfaceIndex = SurfaceIndex(1u),
             tiles = listOf(
               MapTile(
-                prototypeName = PrototypeName("refined-concrete"),
-                position = MapTilePosition(-65, 10)
+                proto = PrototypeName("refined-concrete"),
+                x = -65,
+                y = 10,
               ),
               MapTile(
-                prototypeName = PrototypeName("red-earth"),
-                position = MapTilePosition(-65, 11)
+                proto = PrototypeName("red-earth"),
+                x = -65,
+                y = 11,
               ),
               MapTile(
-                prototypeName = PrototypeName("blue-cheese"),
-                position = MapTilePosition(-64, 10)
+                proto = PrototypeName("blue-cheese"),
+                x = -64,
+                y = 10,
               ),
               MapTile(
-                prototypeName = PrototypeName("refined-concrete"),
-                position = MapTilePosition(-64, 11)
+                proto = PrototypeName("refined-concrete"),
+                x = -64,
+                y = 11,
               ),
             )
           ),

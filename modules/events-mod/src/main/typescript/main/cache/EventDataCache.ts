@@ -5,20 +5,20 @@ export namespace EventDataCache {
 
   declare const global: {
     cache: LuaTable<CacheKey<FactorioEventUpdateType>, CacheEntry<FactorioEventUpdateType>>,
-    DEFAULT_CACHE_DURATION_TICKS: LuaTable<FactorioEventUpdateType, uint>,
     DEFAULT_CACHE_DURATION_TICKS2: Record<FactorioEventUpdateType | "default", uint>,
-    MAP_CHUNK_CACHE_DURATION_TICKS: uint,
+  }
+
+
+  export function reset() {
+    log("Resetting EventDataCache")
+    global.cache = new LuaTable<CacheKey<FactorioEventUpdateType>, CacheEntry<FactorioEventUpdateType>>()
   }
 
 
   export function init() {
     if (typeof global.cache == undefined) {
-      global.cache = new LuaTable<CacheKey<FactorioEventUpdateType>, CacheEntry<FactorioEventUpdateType>>()
-
-      global.DEFAULT_CACHE_DURATION_TICKS = new LuaTable<FactorioEventUpdateType, uint>()
-      global.DEFAULT_CACHE_DURATION_TICKS.set("PLAYER", 30)         //  0.5 seconds
-      global.DEFAULT_CACHE_DURATION_TICKS.set("MAP_CHUNK", 60 * 15) // ~ 15 seconds
-      global.DEFAULT_CACHE_DURATION_TICKS.set("ENTITY", 60 * 2)     //   ~2 seconds
+      log("Initialising EventDataCache")
+      reset()
 
       global.DEFAULT_CACHE_DURATION_TICKS2 = {
         "PLAYER": 30, //  0.5 seconds

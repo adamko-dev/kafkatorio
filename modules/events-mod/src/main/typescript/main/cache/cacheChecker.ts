@@ -6,16 +6,20 @@ script.on_nth_tick(6, (nthTick: NthTickEventData) => {
 
   const cachedEvents: Array<EventDataCache.CacheData<any>> = EventDataCache.extractExpired()
 
-  for (const event of cachedEvents) {
+  if (cachedEvents.length > 0) {
+    log(`nth tick ${nthTick.tick} has ${cachedEvents.length} events`)
 
-    const packet: FactorioEventUpdatePacket = {
-      tick: nthTick.tick,
-      modVersion: global.MOD_VERSION,
-      packetType: "UPDATE",
-      update: event,
+    for (const event of cachedEvents) {
+
+      const packet: FactorioEventUpdatePacket = {
+        tick: nthTick.tick,
+        modVersion: global.MOD_VERSION,
+        packetType: "UPDATE",
+        update: event,
+      }
+
+      emitPacket(packet)
     }
-
-    emitPacket(packet)
   }
 })
 

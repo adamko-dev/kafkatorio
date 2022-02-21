@@ -2,9 +2,8 @@ import {
   handleChunkUpdate,
   handleConsoleChat,
   handleEntityUpdate,
-  // handlePlayerUpdate,
   handleSurfaceUpdate,
-  handleTilesUpdate
+  // handleTilesUpdate
 } from "./handlers";
 import {Queue} from "../queue/queue";
 import {EventName} from "../types";
@@ -15,18 +14,6 @@ for (const [eventName, eventId] of pairs(defines.events)) {
   mapEventIdToName.set(eventId, eventName)
 }
 
-// const mapEventIdToDefinedType = new LuaTable<EventId<EventData>, EventId<EventData>>()
-// for (const [eventName, eventId] of pairs(defines.events)) {
-//   let definedType = defines.events[eventName]
-//   mapEventIdToDefinedType.set(eventId, definedType)
-// }
-
-// script.on_event(
-//     [defines.events.on_pre_build, defines.events.on_player_dropped_item],
-//     (e: OnPreBuildEvent | OnPlayerDroppedItemEvent) => {
-//       game.print("player " + e.player_index + " dropped item, tick:" + e.tick)
-//     }
-// );
 
 script.on_event(
     defines.events.on_player_mined_entity,
@@ -91,25 +78,25 @@ script.on_event(
     }
 )
 
-script.on_event(
-    defines.events.on_chunk_generated,
-    (e: OnChunkGeneratedEvent) => {
-      handleChunkUpdate(e.tick, mapEventIdToName.get(e.name), e.surface.index, e.position, e.area)
-    }
-)
-
-script.on_event(
-    [
-      defines.events.on_player_built_tile,
-      defines.events.on_robot_built_tile,
-    ],
-    (builtTilesEvent) => {
-      handleTilesUpdate(
-          builtTilesEvent.tick,
-          mapEventIdToName.get(builtTilesEvent.name),
-          builtTilesEvent.surface_index,
-          builtTilesEvent.tile,
-          builtTilesEvent.tiles,
-      )
-    }
-)
+// script.on_event(
+//     defines.events.on_chunk_generated,
+//     (e: OnChunkGeneratedEvent) => {
+//       handleChunkUpdate(e.tick, mapEventIdToName.get(e.name), e.surface.index, e.position, e.area)
+//     }
+// )
+//
+// script.on_event(
+//     [
+//       defines.events.on_player_built_tile,
+//       defines.events.on_robot_built_tile,
+//     ],
+//     (builtTilesEvent) => {
+//       handleTilesUpdate(
+//           builtTilesEvent.tick,
+//           mapEventIdToName.get(builtTilesEvent.name),
+//           builtTilesEvent.surface_index,
+//           builtTilesEvent.tile,
+//           builtTilesEvent.tiles,
+//       )
+//     }
+// )

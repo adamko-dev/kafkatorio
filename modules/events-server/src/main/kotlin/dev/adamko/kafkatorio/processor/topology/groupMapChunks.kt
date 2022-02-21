@@ -4,6 +4,7 @@ import dev.adamko.kafkatorio.events.schema.ColourHex
 import dev.adamko.kafkatorio.events.schema.FactorioEvent
 import dev.adamko.kafkatorio.events.schema.MapChunk
 import dev.adamko.kafkatorio.events.schema.MapChunkPosition
+import dev.adamko.kafkatorio.events.schema.MapTile
 import dev.adamko.kafkatorio.events.schema.MapTilePosition
 import dev.adamko.kafkatorio.events.schema.MapTiles
 import dev.adamko.kafkatorio.events.schema.SurfaceIndex
@@ -141,3 +142,6 @@ fun groupTilesIntoChunksWithColours(
   return colourisedChunkTable
 
 }
+
+val MapTile.position
+  get() = MapTilePosition(x, y)

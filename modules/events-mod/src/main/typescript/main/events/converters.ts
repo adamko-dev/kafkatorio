@@ -99,8 +99,9 @@ export namespace Converters {
 
   export function convertTile(tile: LuaTile): MapTile {
     return {
-      position: mapTilePosition(tile.position),
-      prototypeName: tile.prototype.name,
+      x: tile.position.x,
+      y: tile.position.y,
+      proto: tile.prototype.name,
     }
   }
 

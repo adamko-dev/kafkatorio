@@ -89,8 +89,9 @@ interface MapChunkPosition {
 }
 
 interface MapTile {
-  position: MapTilePosition;
-  prototypeName: string;
+  proto: string;
+  x: int;
+  y: int;
 }
 
 interface EntityIdentifiers {

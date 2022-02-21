@@ -1,10 +1,6 @@
 import {emitPacket} from "../emitKafkatorioPacket";
-import {updateGlobal} from "./updateGlobal";
-import {emitPrototypes} from "./prototypes";
-import {Queue} from "../queue/queue";
 
-export function handleConfigurationUpdate(changeData: ConfigurationChangedData) {
-  updateGlobal()
+export function emitConfigurationUpdate(changeData: ConfigurationChangedData) {
 
   emitPacket<FactorioConfigurationUpdate>({
     modVersion: global.MOD_VERSION,
@@ -13,8 +9,6 @@ export function handleConfigurationUpdate(changeData: ConfigurationChangedData) 
     factorioData: factorioData(changeData)
   })
 
-  Queue.reset()
-  emitPrototypes()
 }
 
 function factorioData(changeData: ConfigurationChangedData): FactorioGameDataUpdate {

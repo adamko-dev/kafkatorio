@@ -1,6 +1,6 @@
 import {Converters} from "../events/converters";
 import {emitPacket} from "../emitKafkatorioPacket";
-// import { global } from "../global";
+
 
 export function emitPrototypes() {
   emitPacket<FactorioPrototypes>({
@@ -20,7 +20,7 @@ function prototypes(): FactorioPrototype[] {
 
 function getMapTilePrototypes(): MapTilePrototype[] {
   let tiles: MapTilePrototype[] = []
-  for (let [, tile] of pairs(game.tile_prototypes)) {
+  for (let [, tile] of game.tile_prototypes) {
     tiles.push(
         <MapTilePrototype>{
           prototypeObjectName: tile.object_name,

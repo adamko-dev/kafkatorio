@@ -64,7 +64,7 @@ object FactorioPrototypeJsonSerializer : JsonContentPolymorphicSerializer<Factor
 
 @Serializable
 data class MapTilePrototype(
-  val name: String,
+  val name: PrototypeName,
   val layer: UInt,
   val mapColour: Colour,
 //  @Serializable(with = FactorioJsonListSerializer::class)

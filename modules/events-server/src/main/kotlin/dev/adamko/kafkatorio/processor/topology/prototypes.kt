@@ -17,19 +17,12 @@ import org.apache.kafka.streams.kstream.KStream
 import org.apache.kafka.streams.kstream.KTable
 
 
-@Serializable
-@JvmInline
-value class PrototypeName(val name: String) {
-  override fun toString() = name
-}
-
-
 /** Use the hashcode of Prototypes names as keys - more efficient storage */
 @JvmInline
 @Serializable
 value class TileProtoHashCode private constructor(val code: Int) {
   constructor(prototype: MapTilePrototype) : this(prototype.name.hashCode())
-  constructor(tile: MapTile) : this(tile.prototypeName.hashCode())
+  constructor(tile: MapTile) : this(tile.proto.hashCode())
 }
 
 

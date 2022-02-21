@@ -98,8 +98,9 @@ data class ColourHex(
 
 @Serializable
 data class MapTile(
-  val prototypeName: PrototypeName,
-  val position: MapTilePosition,
+  val x: Int,
+  val y: Int,
+  val proto: PrototypeName,
 )
 
 
