@@ -3,23 +3,16 @@ import {
   handleConsoleChat,
   handleEntityUpdate,
   handleSurfaceUpdate,
-  // handleTilesUpdate
 } from "./handlers";
 import {Queue} from "../queue/queue";
-import {EventName} from "../types";
 import {isEventType} from "./eventTypeCheck";
-
-
-const mapEventIdToName = new LuaTable<defines.Events, EventName>()
-for (const [eventName, eventId] of pairs(defines.events)) {
-  mapEventIdToName.set(eventId, eventName)
-}
+import {Converters} from "./converters";
 
 
 script.on_event(
     defines.events.on_player_mined_entity,
     (e: OnPlayerMinedEntityEvent) => {
-      let eventName = mapEventIdToName.get(e.name)
+      let eventName = Converters.eventNameString(e.name)
       // handlePlayerUpdate(e.tick, eventName, e.player_index)
       handleEntityUpdate(e.tick, eventName, e.entity)
     }
@@ -44,7 +37,7 @@ script.on_event(
     (e: OnTickEvent) => {
       if (e.tick % 1000 == 0) {
         for (const [, surface] of game.surfaces) {
-          handleSurfaceUpdate(e.tick, mapEventIdToName.get(e.name), surface)
+          handleSurfaceUpdate(e.tick, Converters.eventNameString(e.name), surface)
         }
 
         // let packets = new KafkatorioPacketQueue().dequeueValues(1)
@@ -61,7 +54,7 @@ script.on_event(
 
           for (const event of events) {
             if (isEventType(event, defines.events.on_chunk_generated)) {
-              let eName = mapEventIdToName.get(event.name)
+              let eName = Converters.eventNameString(event.name)
 
               log(`[${e.tick}] dequed event ${eName}`)
               handleChunkUpdate(e.tick, eName, event.surface.index, event.position, event.area)
@@ -75,29 +68,15 @@ script.on_event(
 script.on_event(
     defines.events.on_console_chat,
     (e: OnConsoleChatEvent) => {
-      handleConsoleChat(e.tick, mapEventIdToName.get(e.name), e.player_index, e.message)
+      handleConsoleChat(e.tick, Converters.eventNameString(e.name), e.player_index, e.message)
     }
 )
 
 // script.on_event(
 //     defines.events.on_chunk_generated,
 //     (e: OnChunkGeneratedEvent) => {
-//       handleChunkUpdate(e.tick, mapEventIdToName.get(e.name), e.surface.index, e.position, e.area)
-//     }
-// )
-//
-// script.on_event(
-//     [
-//       defines.events.on_player_built_tile,
-//       defines.events.on_robot_built_tile,
-//     ],
-//     (builtTilesEvent) => {
-//       handleTilesUpdate(
-//           builtTilesEvent.tick,
-//           mapEventIdToName.get(builtTilesEvent.name),
-//           builtTilesEvent.surface_index,
-//           builtTilesEvent.tile,
-//           builtTilesEvent.tiles,
-//       )
-//     }
-// )
+//       handleChunkUpdate(e.tick, mapEventIdToName.get(e.name), e.surface.index, e.position,
+// e.area) } )  script.on_event( [ defines.events.on_player_built_tile,
+// defines.events.on_robot_built_tile, ], (builtTilesEvent) => { handleTilesUpdate(
+// builtTilesEvent.tick, mapEventIdToName.get(builtTilesEvent.name), builtTilesEvent.surface_index,
+// builtTilesEvent.tile, builtTilesEvent.tiles, ) } )

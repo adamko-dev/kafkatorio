@@ -6,11 +6,8 @@ interface FactorioEventUpdateKey {
   updateType: FactorioEventUpdateType;
 }
 
-interface FactorioEventUpdateData {
-  updateType: FactorioEventUpdateType;
-}
-
-interface FactorioEventUpdate extends FactorioEventUpdateKey, FactorioEventUpdateData {
+interface FactorioEventUpdate extends FactorioEventUpdateKey {
+  events: string[] | null;
   updateType: FactorioEventUpdateType;
 }
 
@@ -25,7 +22,7 @@ interface PlayerUpdateKey extends FactorioEventUpdateKey {
   index: uint;
 }
 
-interface PlayerUpdateData extends FactorioEventUpdateData {
+interface PlayerUpdate extends FactorioEventUpdate, PlayerUpdateKey {
   afkTime: uint | null;
   bannedReason: string | null;
   characterUnitNumber: uint | null;
@@ -33,30 +30,7 @@ interface PlayerUpdateData extends FactorioEventUpdateData {
   colour: Colour | null;
   diedCause: EntityIdentifiers | null;
   disconnectReason: string | null;
-  forceIndex: uint | null;
-  isAdmin: boolean | null;
-  isConnected: boolean | null;
-  isRemoved: boolean | null;
-  isShowOnMap: boolean | null;
-  isSpectator: boolean | null;
-  kickedReason: string | null;
-  lastOnline: uint | null;
-  name: string | null;
-  onlineTime: uint | null;
-  position: MapEntityPosition | null;
-  surfaceIndex: uint | null;
-  tag: string | null;
-  ticksToRespawn: uint | null;
-}
-
-interface PlayerUpdate extends FactorioEventUpdate, PlayerUpdateKey, PlayerUpdateData {
-  afkTime: uint | null;
-  bannedReason: string | null;
-  characterUnitNumber: uint | null;
-  chatColour: Colour | null;
-  colour: Colour | null;
-  diedCause: EntityIdentifiers | null;
-  disconnectReason: string | null;
+  events: string[] | null;
   forceIndex: uint | null;
   index: uint;
   isAdmin: boolean | null;
@@ -81,20 +55,9 @@ interface EntityUpdateKey extends EntityIdentifiers, FactorioEventUpdateKey {
   unitNumber: uint;
 }
 
-interface EntityUpdateData extends FactorioEventUpdateData {
+interface EntityUpdate extends FactorioEventUpdate, EntityIdentifiers, EntityUpdateKey {
   chunkPosition: MapChunkPosition | null;
-  graphicsVariation: number | null;
-  health: float | null;
-  isActive: boolean | null;
-  isRotatable: boolean | null;
-  lastUser: int | null;
-  localisedDescription: string | null;
-  localisedName: string | null;
-  prototype: string | null;
-}
-
-interface EntityUpdate extends FactorioEventUpdate, EntityIdentifiers, EntityUpdateKey, EntityUpdateData {
-  chunkPosition: MapChunkPosition | null;
+  events: string[] | null;
   graphicsVariation: number | null;
   health: float | null;
   isActive: boolean | null;
@@ -114,16 +77,9 @@ interface MapChunkUpdateKey extends FactorioEventUpdateKey {
   surfaceIndex: uint;
 }
 
-interface MapChunkUpdateData extends FactorioEventUpdateData {
-  force: uint | null;
-  isDeleted: boolean | null;
-  player: uint | null;
-  robot: EntityIdentifiers | null;
-  tiles: MapTile[] | null;
-}
-
-interface MapChunkUpdate extends FactorioEventUpdate, MapChunkUpdateKey, MapChunkUpdateData {
+interface MapChunkUpdate extends FactorioEventUpdate, MapChunkUpdateKey {
   chunkPosition: MapChunkPosition;
+  events: string[] | null;
   force: uint | null;
   isDeleted: boolean | null;
   player: uint | null;

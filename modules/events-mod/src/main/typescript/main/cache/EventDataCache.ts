@@ -1,5 +1,3 @@
-import {NonNullableKeys} from "../types";
-
 export namespace EventDataCache {
 
 
@@ -88,8 +86,7 @@ export namespace EventDataCache {
     const expiredData: Array<FactorioEventUpdate> = []
     for (let [key, entry] of global.cache) {
       if (isExpired(entry)) {
-        const update: FactorioEventUpdate = {...key, ...entry.data}
-        expiredData.push(update)
+        expiredData.push(entry.data)
         global.cache.delete(key)
       }
     }
@@ -104,7 +101,7 @@ export namespace EventDataCache {
       return undefined
     }
     const value: CacheEntry<any> = global.cache.get(key)
-    if (isType(value, key.updateType)) {
+    if (isEntryInstanceOf(value, key.updateType)) {
       return value
     } else {
       // Type mismatch. This shouldn't happen...
@@ -117,8 +114,7 @@ export namespace EventDataCache {
       key: CacheKey<TYPE>,
       mutate: CacheDataMutator<TYPE>,
   ): CacheEntry<TYPE> {
-    // @ts-ignore // TODO resolve ts-ignore for "not assignable to type"
-    const data: CacheData<TYPE> = {updateType: key.updateType}
+    const data: CacheData<TYPE> = <CacheData<TYPE>>{updateType: key.updateType}
     mutate(data)
     let entry: CacheEntry<TYPE> = new CacheEntry<TYPE>(data)
     global.cache.set(key, entry)
@@ -127,34 +123,35 @@ export namespace EventDataCache {
 
 
   // /** Map a {@link FactorioEventUpdateType} to a {@link FactorioEventUpdate} DTO */
-  // type ConvertUpdateType<TYPE extends FactorioEventUpdateType> =
-  //     TYPE extends "PLAYER" ? PlayerUpdate :
-  //     TYPE extends "MAP_CHUNK" ? MapChunkUpdate :
-  //     TYPE extends "ENTITY" ? EntityUpdate :
-  //     never
+  type ConvertToUpdate<TYPE extends FactorioEventUpdateType> =
+      TYPE extends "PLAYER" ? PlayerUpdate :
+      TYPE extends "MAP_CHUNK" ? MapChunkUpdate :
+      TYPE extends "ENTITY" ? EntityUpdate :
+      never
 
-  type ConvertKeyType<TYPE extends FactorioEventUpdateType> =
+  type ConvertToUpdateKey<TYPE extends FactorioEventUpdateType> =
       TYPE extends "PLAYER" ? PlayerUpdateKey :
       TYPE extends "MAP_CHUNK" ? MapChunkUpdateKey :
       TYPE extends "ENTITY" ? EntityUpdateKey :
       never
-  type ConvertKeyData<TYPE extends FactorioEventUpdateType> =
-      TYPE extends "PLAYER" ? PlayerUpdateData :
-      TYPE extends "MAP_CHUNK" ? MapChunkUpdateData :
-      TYPE extends "ENTITY" ? EntityUpdateData :
-      never
+  // type ConvertToUpdateData<TYPE extends FactorioEventUpdateType> =
+  //     TYPE extends "PLAYER" ? PlayerUpdateData :
+  //     TYPE extends "MAP_CHUNK" ? MapChunkUpdateData :
+  //     TYPE extends "ENTITY" ? EntityUpdateData :
+  //     never
 
 
-  /** Only include the non-null properties, and make `updateType` specific */
+  /** Make `updateType` specific */
   export type CacheKey<TYPE extends FactorioEventUpdateType> =
       CacheTyped<TYPE>
-      & Omit<ConvertKeyType<TYPE>, "updateType">
+      & Omit<ConvertToUpdateKey<TYPE>, "updateType">
 
 
-  /** Exclude {@link CacheKey} fields, and make `updateType` specific */
+  /** Make nullable-fields optional, and `updateType` specific */
   export type CacheData<TYPE extends FactorioEventUpdateType> =
       CacheTyped<TYPE>
-      & NonNullableKeys<Partial<Omit<ConvertKeyData<TYPE>, "updateType">>>
+      & Omit<ConvertToUpdate<TYPE>, "updateType">
+  // & NullablePartial<Omit<ConvertToUpdate<TYPE>, "updateType">>
 
 
   export type CacheTyped<TYPE extends FactorioEventUpdateType> = {
@@ -189,54 +186,19 @@ export namespace EventDataCache {
   }
 
 
-  function isType<TYPE extends FactorioEventUpdateType>(
-      data: CacheEntry<TYPE>,
+  function isEntryInstanceOf<TYPE extends FactorioEventUpdateType>(
+      data: CacheEntry<any>,
       updateType: TYPE,
   ): data is CacheEntry<TYPE> {
-    return data.data.updateType == updateType
+    return isDataInstanceOf<TYPE>(data.data, updateType)
+  }
+
+
+  function isDataInstanceOf<TYPE extends FactorioEventUpdateType>(
+      data: CacheData<any>,
+      updateType: TYPE,
+  ): data is CacheData<TYPE> {
+    return data.updateType == updateType
   }
 
 }
-
-// interface FactorioEventUpdate {
-//     type: string
-// }
-//
-// interface Update<TYPE extends FactorioEventUpdateTypeType> {
-//   type: T
-// }
-//
-// export interface PlayerUpdate extends Update<"PLAYER"> {
-//   index: uint
-//
-//   unhandledEvents?: string[]
-//
-//   characterUnitNumber?: uint
-//   chatColour?: Colour
-//   colour?: Colour
-//   disconnectReason?: string
-//   forceIndex?: uint
-//   isAdmin?: boolean
-//   isConnected?: boolean
-//   isShowOnMap?: boolean
-//   isSpectator?: boolean
-//   lastOnline?: uint
-//   afkTime?: uint
-//   name?: string
-//   onlineTime?: uint
-//   position?: MapEntityPosition
-//   surfaceIndex?: uint
-//   ticksToRespawn?: uint
-//   tag?: string
-// }
-
-// export type CacheKey<Type> = MapChunkCacheKey | EntityCacheKey | PlayerCacheKey & {
-//   type: Type
-// }
-//
-// export function isCacheType<CK extends CacheKey>(
-//     cacheKey: CacheKey,
-//     type: CacheType
-// ): cacheKey is CK {
-//   return cacheKey.type == type
-// }

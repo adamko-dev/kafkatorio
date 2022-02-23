@@ -6,6 +6,7 @@ type PlayerUpdater = (player: LuaPlayer, data: CacheData<"PLAYER">) => void
 
 function playerUpdateThrottle(
     playerIndex: uint,
+    eventName: string,
     mutate: PlayerUpdater,
 ) {
   EventDataCache.throttle<"PLAYER">(
@@ -14,6 +15,13 @@ function playerUpdateThrottle(
         const player = game.players[playerIndex]
         if (player != undefined) {
           mutate(player, data)
+        }
+
+        if (data.events == null) {
+          data.events = []
+        }
+        if (eventName ! in data.events) {
+          data.events.push(eventName)
         }
       })
   )
@@ -41,9 +49,10 @@ script.on_event(
     (e: OnPlayerJoinedGameEvent) => {
       playerUpdateThrottle(
           e.player_index,
+          Converters.eventNameString(e.name),
           (player, data) => {
             data.isAdmin = player.admin
-            data.characterUnitNumber = player.character?.unit_number
+            data.characterUnitNumber = player.character?.unit_number ?? null
             data.chatColour = Converters.mapColour(player.chat_color)
             data.colour = Converters.mapColour(player.color)
             data.forceIndex = player.force.index
@@ -62,6 +71,7 @@ script.on_event(
     (e: OnPlayerChangedPositionEvent) => {
       playerUpdateThrottle(
           e.player_index,
+          Converters.eventNameString(e.name),
           (player, data) => {
             data.position = player.position
           }
@@ -74,6 +84,7 @@ script.on_event(
     (e: OnPlayerChangedSurfaceEvent) => {
       playerUpdateThrottle(
           e.player_index,
+          Converters.eventNameString(e.name),
           (player, data) => {
             data.position = player.position
             data.surfaceIndex = player.surface.index
@@ -87,8 +98,9 @@ script.on_event(
     (e: OnPlayerDiedEvent) => {
       playerUpdateThrottle(
           e.player_index,
+          Converters.eventNameString(e.name),
           (player, data) => {
-            data.ticksToRespawn = player.ticks_to_respawn
+            data.ticksToRespawn = player.ticks_to_respawn ?? null
             playerOnlineInfo(player, data)
             if (e.cause != undefined) {
               data.diedCause = {
@@ -102,43 +114,31 @@ script.on_event(
     }
 )
 
-script.on_event(
-    defines.events.on_player_banned,
-    (e: OnPlayerBannedEvent) => {
-      if (e.player_index != undefined) {
-        playerUpdateThrottle(
-            e.player_index,
-            (player, data) => {
-              data.bannedReason = e.reason
-              playerOnlineInfo(player, data)
-            }
-        )
-      }
-    }
-)
+script.on_event(defines.events.on_player_banned, handleBannedEvent)
+script.on_event(defines.events.on_player_unbanned, handleBannedEvent)
 
-script.on_event(
-    defines.events.on_player_unbanned,
-    (e: OnPlayerUnbannedEvent) => {
-      if (e.player_index != undefined) {
-        playerUpdateThrottle(
-            e.player_index,
-            (player, data) => {
-              data.bannedReason = e.reason
-              playerOnlineInfo(player, data)
-            }
-        )
-      }
-    }
-)
+function handleBannedEvent(e: OnPlayerBannedEvent | OnPlayerUnbannedEvent) {
+
+  if (e.player_index != undefined) {
+    playerUpdateThrottle(
+        e.player_index,
+        Converters.eventNameString(e.name),
+        (player, data) => {
+          data.bannedReason = e.reason ?? null
+          playerOnlineInfo(player, data)
+        }
+    )
+  }
+}
 
 script.on_event(
     defines.events.on_player_kicked,
     (e: OnPlayerKickedEvent) => {
       playerUpdateThrottle(
           e.player_index,
+          Converters.eventNameString(e.name),
           (player, data) => {
-            data.kickedReason = e.reason
+            data.kickedReason = e.reason ?? null
             playerOnlineInfo(player, data)
           }
       )
@@ -156,6 +156,7 @@ script.on_event(
     (e: OnPrePlayerLeftGameEvent) => {
       playerUpdateThrottle(
           e.player_index,
+          Converters.eventNameString(e.name),
           (player, data) => {
             data.disconnectReason = disconnectReasons.get(e.reason)
             playerOnlineInfo(player, data)
@@ -169,6 +170,7 @@ script.on_event(
     (e: OnPlayerRemovedEvent) => {
       playerUpdateThrottle(
           e.player_index,
+          Converters.eventNameString(e.name),
           (player, data) => {
             data.isRemoved = true
             playerOnlineInfo(player, data)

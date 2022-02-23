@@ -1,5 +1,6 @@
 import {EventDataCache} from "../cache/EventDataCache";
 import {isEventType} from "./eventTypeCheck";
+import {Converters} from "./converters";
 import CacheKey = EventDataCache.CacheKey;
 import CacheData = EventDataCache.CacheData;
 
@@ -11,8 +12,10 @@ function mapTilesUpdateDebounce(
     surface: LuaSurface | undefined,
     chunkPosition: ChunkPositionTable,
     tiles: TileRead[],
-    updater?: MapChunkUpdater
+    eventName: string,
+    updater?: MapChunkUpdater,
 ) {
+
   if (surface == undefined) {
     return
   }
@@ -36,6 +39,13 @@ function mapTilesUpdateDebounce(
                 proto: tile.name,
               }
           )
+        }
+
+        if (data.events == null) {
+          data.events = []
+        }
+        if (eventName ! in data.events) {
+          data.events.push(eventName)
         }
 
         if (updater != undefined) {
@@ -67,7 +77,7 @@ script.on_event(
       log(`on_chunk_generated ${e.tick}`)
 
       let tiles = getTiles(e.surface, e.area)
-      mapTilesUpdateDebounce(e.surface, e.position, tiles)
+      mapTilesUpdateDebounce(e.surface, e.position, tiles, Converters.eventNameString(e.name))
     }
 )
 
@@ -76,15 +86,15 @@ script.on_event(
     (e: OnChunkChartedEvent) => {
       log(`on_chunk_charted ${e.tick}`)
 
-      const surface = getSurface(e.surface_index)
-      if (surface == undefined) {
-        return
-      }
-
-      let tiles = getTiles(surface, e.area)
-      mapTilesUpdateDebounce(surface, e.position, tiles, (data => {
-        data.force = e.force.index
-      }))
+      // const surface = getSurface(e.surface_index)
+      // if (surface == undefined) {
+      //   return
+      // }
+      //
+      // let tiles = getTiles(surface, e.area)
+      // mapTilesUpdateDebounce(surface, e.position, tiles, (data => {
+      //   data.force = e.force.index
+      // }))
     }
 )
 
@@ -101,7 +111,7 @@ script.on_event(
       const groupedTiles = groupTiles(e.tiles)
 
       for (const [chunkPos, tiles] of groupedTiles) {
-        mapTilesUpdateDebounce(surface, chunkPos, tiles)
+        mapTilesUpdateDebounce(surface, chunkPos, tiles,  Converters.eventNameString(e.name))
       }
     }
 )
@@ -146,12 +156,14 @@ function onBuildTileEvent(event: OnPlayerBuiltTileEvent | OnRobotBuiltTileEvent)
 
   const tiles: TileRead[] = convertOldPosition(event.tiles, event.tile)
   const groupedTiles = groupTiles(tiles)
+  const eventName = Converters.eventNameString(event.name)
 
   for (const [chunkPos, tiles] of groupedTiles) {
     mapTilesUpdateDebounce(
         surface,
         chunkPos,
         tiles,
+        eventName,
         (data => {
               if (isEventType(event, defines.events.on_player_built_tile)) {
                 data.player = event.player_index

@@ -25,7 +25,7 @@ fun main(args: Array<String>) {
         add(FactorioEventUpdatePacket::class)
         addAll(FactorioEventUpdate::class.sealedSubclasses)
         addAll(FactorioEventUpdateKey::class.sealedSubclasses)
-        addAll(FactorioEventUpdateData::class.sealedSubclasses)
+//        addAll(FactorioEventUpdateData::class.sealedSubclasses)
 
       },
       mappings = mapOf(

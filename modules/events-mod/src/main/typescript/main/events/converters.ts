@@ -1,3 +1,5 @@
+import {EventName} from "../types";
+
 export namespace Converters {
 
   // export function playerToTable(player: LuaPlayer): PlayerData {
@@ -14,6 +16,18 @@ export namespace Converters {
   //     lastOnline: player.last_online
   //   }
   // }
+
+
+  const mapEventIdToName = new LuaTable<defines.Events, EventName>()
+  for (const [eventName, eventId] of pairs(defines.events)) {
+    mapEventIdToName.set(eventId, eventName)
+  }
+
+
+  export function eventNameString(event: defines.Events): EventName {
+    return mapEventIdToName.get(event)
+  }
+
 
   export function entityToTable(entity: LuaEntity): EntityData {
 
