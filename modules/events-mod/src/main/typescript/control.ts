@@ -3,8 +3,8 @@ import {emitPrototypes} from "./main/config-update/prototypes";
 import {initGlobal} from "./main/global-init";
 
 require("./main/events/registerHandlers")
-require("./main/events/playerEvents")
-require("./main/events/mapEvents")
+require("./main/events/onMapChunkEventListeners")
+require("./main/events/onPlayerEventListeners")
 require("./main/commands/kafkatorioCommands")
 require("./main/cache/cacheChecker")
 
