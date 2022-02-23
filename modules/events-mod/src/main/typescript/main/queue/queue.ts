@@ -10,24 +10,27 @@ export namespace Queue {
   }
 
 
-  export function init() {
-    if (global.store == undefined) {
-      log("initialising EventQueue")
-      reset()
+  export function init(force?: boolean) {
+
+    const isAnythingUndefined = global.store == undefined ||
+                                global.size == undefined ||
+                                global.head == undefined ||
+                                global.tail == undefined
+
+    log(`Initialising EventQueue globals (force=${force}, isAnythingUndefined=${isAnythingUndefined})`)
+
+    if (force == true || isAnythingUndefined) {
+      global.store = {}
+      global.head = null
+      global.tail = null
+      global.size = 0
     }
+
+    log(`Finished initialising EventQueue`)
   }
 
 
-  export function reset() {
-    log("Resetting EventQueue")
-    global.store = {}
-    global.head = null
-    global.tail = null
-    global.size = 0
-  }
-
-
-  export function size(): uint {
+  export function size(): uint | undefined {
     return global.size
   }
 

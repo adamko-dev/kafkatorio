@@ -1,4 +1,5 @@
 import {EventDataCache} from "../cache/EventDataCache";
+import {isEventType} from "./eventTypeCheck";
 import CacheKey = EventDataCache.CacheKey;
 import CacheData = EventDataCache.CacheData;
 
@@ -24,12 +25,17 @@ function mapTilesUpdateDebounce(
       },
       data => {
         if (data.tiles == undefined) {
-          data.tiles = new Map<MapTilePosition, string>()
+          data.tiles = []
         }
 
         for (const tile of tiles) {
-          const position: MapTilePosition = {x: tile.position.x, y: tile.position.y}
-          data.tiles.set(position, tile.name)
+          data.tiles.push(
+              {
+                x: tile.position.x,
+                y: tile.position.y,
+                proto: tile.name,
+              }
+          )
         }
 
         if (updater != undefined) {
@@ -58,6 +64,8 @@ function getSurface(surfaceIndex: uint): LuaSurface | undefined {
 script.on_event(
     defines.events.on_chunk_generated,
     (e: OnChunkGeneratedEvent) => {
+      log(`on_chunk_generated ${e.tick}`)
+
       let tiles = getTiles(e.surface, e.area)
       mapTilesUpdateDebounce(e.surface, e.position, tiles)
     }
@@ -66,6 +74,7 @@ script.on_event(
 script.on_event(
     defines.events.on_chunk_charted,
     (e: OnChunkChartedEvent) => {
+      log(`on_chunk_charted ${e.tick}`)
 
       const surface = getSurface(e.surface_index)
       if (surface == undefined) {
@@ -82,6 +91,7 @@ script.on_event(
 script.on_event(
     defines.events.script_raised_set_tiles,
     (e: ScriptRaisedSetTilesEvent) => {
+      log(`script_raised_set_tiles ${e.tick}`)
 
       const surface = getSurface(e.surface_index)
       if (surface == undefined) {
@@ -164,8 +174,14 @@ function onBuildTileEvent(event: OnPlayerBuiltTileEvent | OnRobotBuiltTileEvent)
   }
 }
 
-script.on_event(defines.events.on_player_built_tile, (e: OnPlayerBuiltTileEvent) => onBuildTileEvent(e))
-script.on_event(defines.events.on_robot_built_tile, (e: OnRobotBuiltTileEvent) => onBuildTileEvent(e))
+script.on_event(defines.events.on_player_built_tile, (e: OnPlayerBuiltTileEvent) => {
+  log(`on_player_built_tile ${e.tick}`)
+  onBuildTileEvent(e)
+})
+script.on_event(defines.events.on_robot_built_tile, (e: OnRobotBuiltTileEvent) => {
+  log(`on_robot_built_tile ${e.tick}`)
+  onBuildTileEvent(e)
+})
 
 // script.on_event(
 //     defines.events.on_player_mined_tile,
@@ -187,6 +203,7 @@ script.on_event(defines.events.on_robot_built_tile, (e: OnRobotBuiltTileEvent) =
 script.on_event(
     defines.events.on_pre_chunk_deleted,
     (e: OnPreChunkDeletedEvent) => {
+      log(`on_pre_chunk_deleted ${e.tick}`)
 
       const surface = getSurface(e.surface_index)
       if (surface == undefined) {

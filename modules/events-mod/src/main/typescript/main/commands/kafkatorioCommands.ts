@@ -1,5 +1,6 @@
 import {emitPrototypes} from "../config-update/prototypes";
 import {Queue} from "../queue/queue";
+import {initGlobal} from "../global-init";
 import floor = math.floor;
 
 
@@ -8,18 +9,20 @@ commands.add_command(
     "kafkatorio innit bruv",
     (e: CustomCommandData) => {
 
-      let player = (e.player_index != null) ? game.get_player(e.player_index) : null
+      const player = (e.player_index != null) ? game.get_player(e.player_index) : null
 
-      if (e.parameter == undefined) {
+      const paramUppercase = e.parameter?.toUpperCase()
+
+      if (paramUppercase == undefined) {
         if (player != null) {
           player.print("no parameter")
         }
         // do nothing
-      } else if ("PROTOTYPES" == e.parameter.toUpperCase()) {
+      } else if ("PROTOTYPES" == paramUppercase) {
         emitPrototypes()
-      } else if (e.parameter.toUpperCase().startsWith("CHUNKS")) {
+      } else if (paramUppercase.startsWith("CHUNKS")) {
 
-        let size = e.parameter.split(" ")?.[1] ?? null
+        let size = paramUppercase.split(" ")?.[1] ?? null
         let radius = (size != null) ? parseInt(size) : 1
 
         if (e.player_index != undefined) {
@@ -60,10 +63,8 @@ commands.add_command(
             }
           }
         }
-      } else if ("QUEUE_RESET" == e.parameter.toUpperCase()) {
-        Queue.reset()
-      } else if ("QUEUE_INIT" == e.parameter.toUpperCase()) {
-        Queue.init()
+      } else if (paramUppercase.startsWith("INIT_GLOBAL")) {
+        initGlobal(paramUppercase.startsWith("INIT_GLOBAL FORCE"))
       }
     }
 )

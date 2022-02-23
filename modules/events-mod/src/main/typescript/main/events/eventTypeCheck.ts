@@ -1,5 +1,5 @@
 
-function isEventType<ED extends EventData | CustomInputEvent>(
+export function isEventType<ED extends EventData | CustomInputEvent>(
     eventData: EventData,
     type: ED extends CustomInputEvent ? string : EventId<ED>
 ): eventData is ED {

@@ -14,12 +14,19 @@ fun main(args: Array<String>) {
     TypeScriptGenerator(
       rootClasses = buildSet {
         addAll(KafkatorioPacket::class.sealedSubclasses)
+
         addAll(FactorioObjectData::class.sealedSubclasses)
+
         addAll(FactorioPrototype::class.sealedSubclasses)
         add(FactorioPrototypes::class)
         add(FactorioConfigurationUpdate::class)
+
+
         add(FactorioEventUpdatePacket::class)
         addAll(FactorioEventUpdate::class.sealedSubclasses)
+        addAll(FactorioEventUpdateKey::class.sealedSubclasses)
+        addAll(FactorioEventUpdateData::class.sealedSubclasses)
+
       },
       mappings = mapOf(
         // builtin Factorio numeric types > `typed-factorio/generated/builtin-types.d.ts`
@@ -66,18 +73,38 @@ private fun splitDefinitions(definitions: String): Map<String, String> {
   return definitions
     .split("\n\n")
     .groupBy { def ->
+
+
       when {
-        "extends FactorioObjectData " in def ||
-            "interface FactorioObjectData " in def ||
-            "type ObjectName " in def          -> "object-data.d.ts"
+
+        "interface FactorioObjectData " in def ||
+            "type ObjectName " in def ||
+            def.contains(Regex("interface.+extends.+(FactorioObjectData).*"))
+                                               -> "object-data.d.ts"
+
         "extends FactorioPrototype " in def ||
             "interface FactorioPrototypes " in def ||
             "interface FactorioPrototype " in def ||
             "type PrototypeObjectName " in def -> "prototype.d.ts"
+
         "extends FactorioConfigurationUpdate " in def ||
             "interface FactorioConfigurationUpdate " in def ||
             "FactorioGameDataUpdate " in def ||
             "FactorioModInfo " in def          -> "config-update.d.ts"
+
+        "interface FactorioEventUpdatePacket" in def ||
+            "type FactorioEventUpdateType =" in def ||
+            "interface FactorioEventUpdateKey {" in def ||
+            "interface FactorioEventUpdateData {" in def ||
+            def.contains(
+              Regex(
+                """
+                interface.+extends.+(FactorioEventUpdate|PlayerUpdateKey|PlayerUpdateData).*
+                """.trimIndent()
+              )
+            )
+                                               -> "update.d.ts"
+
         else                                   -> "schema.d.ts"
       }
     }

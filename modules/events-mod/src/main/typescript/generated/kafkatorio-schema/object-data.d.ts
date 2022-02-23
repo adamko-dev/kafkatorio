@@ -6,6 +6,33 @@ interface FactorioObjectData {
   objectName: ObjectName;
 }
 
+interface PlayerData extends FactorioObjectData, FactorioLuaControl {
+  associatedCharactersUnitNumbers: uint[];
+  characterUnitNumber: uint | null;
+  chatColour: Colour;
+  colour: Colour;
+  force: uint;
+  lastOnline: uint;
+  name: string;
+  objectName: ObjectName;
+  position: MapEntityPosition;
+  surface: uint;
+}
+
+interface EntityData extends FactorioObjectData, FactorioLuaControl {
+  active: boolean;
+  force: uint;
+  health: double | null;
+  healthRatio: double;
+  name: string;
+  objectName: ObjectName;
+  playerIndex: uint | null;
+  position: MapEntityPosition;
+  surface: uint;
+  type: string;
+  unitNumber: uint | null;
+}
+
 interface SurfaceData extends FactorioObjectData {
   daytime: double;
   index: uint;

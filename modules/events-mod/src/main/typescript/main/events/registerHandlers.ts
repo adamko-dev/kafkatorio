@@ -7,6 +7,7 @@ import {
 } from "./handlers";
 import {Queue} from "../queue/queue";
 import {EventName} from "../types";
+import {isEventType} from "./eventTypeCheck";
 
 
 const mapEventIdToName = new LuaTable<defines.Events, EventName>()
