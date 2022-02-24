@@ -32,19 +32,13 @@ sealed interface FactorioEventUpdateKey {
 }
 
 
-//sealed interface FactorioEventUpdateData {
-//  val updateType: FactorioEventUpdateType
-//  val event: String?
-//}
-
-
 @Serializable(with = FactorioEventUpdate.Companion.JsonSerializer::class)
 sealed class FactorioEventUpdate : FactorioEventUpdateKey {
 
   @EncodeDefault
   abstract override val updateType: FactorioEventUpdateType
   @Contextual
-  abstract val events: List<String>?
+  abstract val events: List<String>? // TODO change this to Map<String, UInt>
 
   @Serializable
   enum class FactorioEventUpdateType {
@@ -97,34 +91,6 @@ sealed interface PlayerUpdateKey : FactorioEventUpdateKey {
 }
 
 
-//sealed interface PlayerUpdateData : FactorioEventUpdateData {
-//  val characterUnitNumber: UnitNumber?
-//  val chatColour: Colour?
-//  val colour: Colour?
-//  val name: String?
-//
-//  val afkTime: Tick?
-//  val ticksToRespawn: Tick?
-//  val forceIndex: ForceIndex?
-//  val isAdmin: Boolean?
-//  val isConnected: Boolean?
-//  val isShowOnMap: Boolean?
-//  val isSpectator: Boolean?
-//  val lastOnline: Tick?
-//  val onlineTime: Tick?
-//  val position: MapEntityPosition?
-//  val surfaceIndex: SurfaceIndex?
-//  val tag: String?
-//  val diedCause: EntityIdentifiers?
-//
-//  val bannedReason: String?
-//  val kickedReason: String?
-//  val disconnectReason: String?
-//  /** `true` when a player is removed (deleted) from the game */
-//  val isRemoved: Boolean?
-//}
-
-
 @Serializable
 data class PlayerUpdate(
   override val index: PlayerIndex,
@@ -172,17 +138,6 @@ sealed interface EntityUpdateKey : EntityIdentifiers, FactorioEventUpdateKey {
   override val type: String
 }
 
-//sealed interface EntityUpdateData : FactorioEventUpdateData {
-//  val chunkPosition: MapChunkPosition?
-//  val graphicsVariation: UShort?
-//  val health: Float?
-//  val isActive: Boolean?
-//  val isRotatable: Boolean?
-//  val lastUser: UInt?
-//  val localisedDescription: String?
-//  val localisedName: String?
-//  val prototype: PrototypeName?
-//}
 
 @Serializable
 data class EntityUpdate(
@@ -215,15 +170,6 @@ sealed interface MapChunkUpdateKey : FactorioEventUpdateKey {
   val chunkPosition: MapChunkPosition
   val surfaceIndex: SurfaceIndex
 }
-
-
-//sealed interface MapChunkUpdateData : FactorioEventUpdateData {
-//  val player: PlayerIndex?
-//  val robot: EntityIdentifiers?
-//  val force: ForceIndex?
-//  val tiles: List<MapTile>?
-//  val isDeleted: Boolean?
-//}
 
 
 @Serializable

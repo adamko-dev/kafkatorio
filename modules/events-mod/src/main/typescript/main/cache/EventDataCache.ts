@@ -3,7 +3,6 @@ export namespace EventDataCache {
 
   declare const global: {
     cache: LuaTable<string, CacheEntry<FactorioEventUpdateType>>,
-    // cache: Map<string, CacheEntry<FactorioEventUpdateType>>,
     defaultCacheDurationTicks: Record<FactorioEventUpdateType | "default", uint>,
   }
 
@@ -94,7 +93,6 @@ export namespace EventDataCache {
         countExpired++
         expiredData.push(entry.data)
         global.cache.delete(key)
-
       }
     }
     log(`cache expired items count: ${countExpired}, total: ${countTotal}`)
@@ -106,7 +104,6 @@ export namespace EventDataCache {
       key: CacheKey<TYPE>
   ): CacheEntry<TYPE> | undefined {
     const hash = game.encode_string(game.table_to_json(key))!!
-    // const value: CacheEntry<any> | undefined = global.cache.get(hash)
     if (!global.cache.has(hash)) {
       return undefined
     }
@@ -140,16 +137,12 @@ export namespace EventDataCache {
       TYPE extends "ENTITY" ? EntityUpdate :
       never
 
+
   type ConvertToUpdateKey<TYPE extends FactorioEventUpdateType> =
       TYPE extends "PLAYER" ? PlayerUpdateKey :
       TYPE extends "MAP_CHUNK" ? MapChunkUpdateKey :
       TYPE extends "ENTITY" ? EntityUpdateKey :
       never
-  // type ConvertToUpdateData<TYPE extends FactorioEventUpdateType> =
-  //     TYPE extends "PLAYER" ? PlayerUpdateData :
-  //     TYPE extends "MAP_CHUNK" ? MapChunkUpdateData :
-  //     TYPE extends "ENTITY" ? EntityUpdateData :
-  //     never
 
 
   /** Make `updateType` specific */
