@@ -2,7 +2,8 @@ export namespace EventDataCache {
 
 
   declare const global: {
-    cache: LuaTable<CacheKey<FactorioEventUpdateType>, CacheEntry<FactorioEventUpdateType>>,
+    cache: LuaTable<string, CacheEntry<FactorioEventUpdateType>>,
+    // cache: Map<string, CacheEntry<FactorioEventUpdateType>>,
     defaultCacheDurationTicks: Record<FactorioEventUpdateType | "default", uint>,
   }
 
@@ -16,7 +17,8 @@ export namespace EventDataCache {
 
     if (force == true || isAnythingUndefined) {
       log("Initialising global.cache")
-      global.cache = new LuaTable<CacheKey<FactorioEventUpdateType>, CacheEntry<FactorioEventUpdateType>>()
+      // global.cache = new Map<CacheKey<FactorioEventUpdateType>, CacheEntry<FactorioEventUpdateType>>()
+      global.cache = new LuaTable<string, CacheEntry<FactorioEventUpdateType>>()
 
       log("Initialising global.DEFAULT_CACHE_DURATION_TICKS")
       global.defaultCacheDurationTicks = {
@@ -83,13 +85,19 @@ export namespace EventDataCache {
 
 
   export function extractExpired(): Array<FactorioEventUpdate> {
+    let countExpired = 0
+    let countTotal = 0
     const expiredData: Array<FactorioEventUpdate> = []
     for (let [key, entry] of global.cache) {
+      countTotal++
       if (isExpired(entry)) {
+        countExpired++
         expiredData.push(entry.data)
         global.cache.delete(key)
+
       }
     }
+    log(`cache expired items count: ${countExpired}, total: ${countTotal}`)
     return expiredData
   }
 
@@ -97,10 +105,12 @@ export namespace EventDataCache {
   function getCacheEntry<TYPE extends FactorioEventUpdateType>(
       key: CacheKey<TYPE>
   ): CacheEntry<TYPE> | undefined {
-    if (!global.cache.has(key)) {
+    const hash = game.encode_string(game.table_to_json(key))!!
+    // const value: CacheEntry<any> | undefined = global.cache.get(hash)
+    if (!global.cache.has(hash)) {
       return undefined
     }
-    const value: CacheEntry<any> = global.cache.get(key)
+    const value: CacheEntry<any> = global.cache.get(hash)
     if (isEntryInstanceOf(value, key.updateType)) {
       return value
     } else {
@@ -114,10 +124,11 @@ export namespace EventDataCache {
       key: CacheKey<TYPE>,
       mutate: CacheDataMutator<TYPE>,
   ): CacheEntry<TYPE> {
-    const data: CacheData<TYPE> = <CacheData<TYPE>>{updateType: key.updateType}
+    const data: CacheData<TYPE> = <CacheData<TYPE>>{...key}
     mutate(data)
     let entry: CacheEntry<TYPE> = new CacheEntry<TYPE>(data)
-    global.cache.set(key, entry)
+    const hash = game.encode_string(game.table_to_json(key))!!
+    global.cache.set(hash, entry)
     return entry
   }
 
@@ -151,7 +162,6 @@ export namespace EventDataCache {
   export type CacheData<TYPE extends FactorioEventUpdateType> =
       CacheTyped<TYPE>
       & Omit<ConvertToUpdate<TYPE>, "updateType">
-  // & NullablePartial<Omit<ConvertToUpdate<TYPE>, "updateType">>
 
 
   export type CacheTyped<TYPE extends FactorioEventUpdateType> = {
@@ -187,18 +197,26 @@ export namespace EventDataCache {
 
 
   function isEntryInstanceOf<TYPE extends FactorioEventUpdateType>(
-      data: CacheEntry<any>,
+      entry: CacheEntry<any> | undefined,
       updateType: TYPE,
-  ): data is CacheEntry<TYPE> {
-    return isDataInstanceOf<TYPE>(data.data, updateType)
+  ): entry is CacheEntry<TYPE> {
+    return isDataInstanceOf<TYPE>(entry?.data, updateType)
   }
 
 
   function isDataInstanceOf<TYPE extends FactorioEventUpdateType>(
-      data: CacheData<any>,
+      data: CacheData<any> | undefined,
       updateType: TYPE,
   ): data is CacheData<TYPE> {
-    return data.updateType == updateType
+    return data != undefined && data.updateType == updateType
+  }
+
+
+  function isKeyInstanceOf<TYPE extends FactorioEventUpdateType>(
+      key: CacheKey<any> | undefined,
+      updateType: TYPE,
+  ): key is CacheKey<TYPE> {
+    return key != undefined && key.updateType == updateType
   }
 
 }

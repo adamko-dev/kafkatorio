@@ -58,7 +58,7 @@ fun splitFactorioServerPacketStream(
         is FactorioEvent               -> value.data.objectName.name
         is FactorioConfigurationUpdate -> "FactorioConfigurationUpdate"
         is FactorioPrototypes          -> "all"
-        is FactorioEventUpdatePacket   -> "all"
+        is FactorioEventUpdatePacket   -> value.update.updateType.name
       }
 
       "$base.$type"

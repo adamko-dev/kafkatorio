@@ -20,9 +20,7 @@ function playerUpdateThrottle(
         if (data.events == null) {
           data.events = []
         }
-        if (eventName ! in data.events) {
-          data.events.push(eventName)
-        }
+        data.events.push(eventName)
       })
   )
 }
