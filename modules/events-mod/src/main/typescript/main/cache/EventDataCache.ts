@@ -16,7 +16,6 @@ export namespace EventDataCache {
 
     if (force == true || isAnythingUndefined) {
       log("Initialising global.cache")
-      // global.cache = new Map<CacheKey<FactorioEventUpdateType>, CacheEntry<FactorioEventUpdateType>>()
       global.cache = new LuaTable<string, CacheEntry<FactorioEventUpdateType>>()
 
       log("Initialising global.DEFAULT_CACHE_DURATION_TICKS")
@@ -95,7 +94,9 @@ export namespace EventDataCache {
         global.cache.delete(key)
       }
     }
-    log(`cache expired items count: ${countExpired}, total: ${countTotal}`)
+    if (countExpired + countTotal > 0) {
+      log(`cache expired items count: ${countExpired}, total: ${countTotal}`)
+    }
     return expiredData
   }
 
@@ -130,7 +131,7 @@ export namespace EventDataCache {
   }
 
 
-  // /** Map a {@link FactorioEventUpdateType} to a {@link FactorioEventUpdate} DTO */
+  /** Map a {@link FactorioEventUpdateType} to a {@link FactorioEventUpdate} DTO */
   type ConvertToUpdate<TYPE extends FactorioEventUpdateType> =
       TYPE extends "PLAYER" ? PlayerUpdate :
       TYPE extends "MAP_CHUNK" ? MapChunkUpdate :
@@ -138,6 +139,7 @@ export namespace EventDataCache {
       never
 
 
+  /** Map a {@link FactorioEventUpdateType} to a {@link FactorioEventUpdateKey} */
   type ConvertToUpdateKey<TYPE extends FactorioEventUpdateType> =
       TYPE extends "PLAYER" ? PlayerUpdateKey :
       TYPE extends "MAP_CHUNK" ? MapChunkUpdateKey :
@@ -151,7 +153,7 @@ export namespace EventDataCache {
       & Omit<ConvertToUpdateKey<TYPE>, "updateType">
 
 
-  /** Make nullable-fields optional, and `updateType` specific */
+  /** Make `updateType` specific */
   export type CacheData<TYPE extends FactorioEventUpdateType> =
       CacheTyped<TYPE>
       & Omit<ConvertToUpdate<TYPE>, "updateType">
@@ -205,11 +207,11 @@ export namespace EventDataCache {
   }
 
 
-  function isKeyInstanceOf<TYPE extends FactorioEventUpdateType>(
-      key: CacheKey<any> | undefined,
-      updateType: TYPE,
-  ): key is CacheKey<TYPE> {
-    return key != undefined && key.updateType == updateType
-  }
+  // function isKeyInstanceOf<TYPE extends FactorioEventUpdateType>(
+  //     key: CacheKey<any> | undefined,
+  //     updateType: TYPE,
+  // ): key is CacheKey<TYPE> {
+  //   return key != undefined && key.updateType == updateType
+  // }
 
 }
