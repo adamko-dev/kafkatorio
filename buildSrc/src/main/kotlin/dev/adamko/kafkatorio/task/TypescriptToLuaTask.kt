@@ -8,6 +8,7 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SkipWhenEmpty
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 abstract class TypescriptToLuaTask : NpmTask() {
@@ -15,6 +16,8 @@ abstract class TypescriptToLuaTask : NpmTask() {
   @get:InputDirectory
   @get:SkipWhenEmpty
   @get:PathSensitive(PathSensitivity.RELATIVE)
+  @Suppress("UnstableApiUsage")
+  @get:NormalizeLineEndings
   abstract val sourceFiles: DirectoryProperty
 
   @get:OutputDirectory

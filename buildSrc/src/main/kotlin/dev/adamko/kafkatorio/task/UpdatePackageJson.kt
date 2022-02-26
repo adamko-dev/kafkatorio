@@ -7,8 +7,10 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputFile
 
 abstract class UpdatePackageJson : DefaultTask() {
+
   @get:Input
   abstract val propertiesToCheck: MapProperty<String, String>
+
   @get:OutputFile
   abstract val packageJsonFile: RegularFileProperty
 

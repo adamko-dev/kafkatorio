@@ -1,5 +1,5 @@
+import dev.adamko.kafkatorio.task.KafkaConsumersResetTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
   dev.adamko.kafkatorio.lang.`kotlin-jvm`
@@ -58,39 +58,14 @@ tasks.withType<KotlinCompile> {
   kotlinOptions.freeCompilerArgs += listOf(
     "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
     "-opt-in=kotlinx.coroutines.FlowPreview",
+    "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
   )
 }
 
-val kafkatorioEventsServerKafkaForceReset by tasks.registering {
+
+val kafkaConsumersReset by tasks.registering(KafkaConsumersResetTask::class) {
   group = project.name
-
-  fun reset(applicationId: String) = """
-    /kafka/bin/kafka-streams-application-reset.sh --application-id $applicationId --force
-  """.trimIndent()
-
-  doLast {
-
-    exec {
-      val cmd = reset("kafkatorio-events-processor.saveTiles")
-      logging.captureStandardOutput(LogLevel.LIFECYCLE)
-      commandLine = parseSpaceSeparatedArgs(""" docker exec -d kafka $cmd """)
-    }
-    exec {
-      val cmd = reset("kafkatorio-events-processor.splitPackets")
-      logging.captureStandardOutput(LogLevel.LIFECYCLE)
-      commandLine = parseSpaceSeparatedArgs(""" docker exec -d kafka $cmd  --input-topics factorio-server-log  """)
-    }
-    exec {
-      val cmd = reset("kafkatorio-events-processor.playerUpdates")
-      logging.captureStandardOutput(LogLevel.LIFECYCLE)
-      commandLine = parseSpaceSeparatedArgs(""" docker exec -d kafka $cmd """)
-    }
-    exec {
-      val cmd = reset("kafkatorio-events-processor.groupTilesMapChunks")
-      logging.captureStandardOutput(LogLevel.LIFECYCLE)
-      commandLine = parseSpaceSeparatedArgs(""" docker exec -d kafka $cmd """)
-    }
-  }
+  kafkaStateDir.set(project.layout.buildDirectory.dir("kafka-state"))
 }
 
 //tasks.run.configure {

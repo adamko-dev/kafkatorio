@@ -12,6 +12,7 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.specs.Spec
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.plugins.ide.idea.model.IdeaModule
+import org.gradle.process.ExecSpec
 
 
 operator fun <T> Spec<T>.not(): Spec<T> = Spec<T> { !this(it) }
@@ -70,4 +71,18 @@ fun IdeaModule.excludeGeneratedGradleDsl(layout: ProjectLayout) {
       "buildSrc/build/pluginUnderTestMetadata",
     )
   )
+}
+
+
+// https://stackoverflow.com/a/70317110/4161471
+fun Project.execCapture(spec: ExecSpec.() -> Unit): String {
+  return ByteArrayOutputStream().use { outputStream ->
+    exec {
+      this.spec()
+      this.standardOutput = outputStream
+    }
+    val output = outputStream.toString().trim()
+    logger.lifecycle(output)
+    output
+  }
 }
