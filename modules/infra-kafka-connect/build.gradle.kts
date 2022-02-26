@@ -1,4 +1,5 @@
 import dev.adamko.kafkatorio.gradle.asConsumer
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
@@ -106,4 +107,10 @@ idea {
   module {
     excludeDirs.add(file("src/main/docker/camel-kafka-connectors"))
   }
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+  kotlinOptions.freeCompilerArgs += listOf(
+    "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
+  )
 }
