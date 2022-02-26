@@ -17,10 +17,10 @@ function playerUpdateThrottle(
           mutate(player, data)
         }
 
-        if (data.events == null) {
-          data.events = []
+        if (data.eventCounts == undefined) {
+          data.eventCounts = {}
         }
-        data.events.push(eventName)
+        data.eventCounts[eventName] = ((data.eventCounts ?? {}) [eventName] ?? 0) + 1
       })
   )
 }
@@ -57,6 +57,7 @@ script.on_event(
             data.name = player.name
             data.isShowOnMap = player.show_on_map
             data.isSpectator = player.spectator
+            data.surfaceIndex = player.surface.index
             data.tag = player.tag
             playerOnlineInfo(player, data)
           }

@@ -41,12 +41,10 @@ function mapTilesUpdateDebounce(
           )
         }
 
-        if (data.events == null) {
-          data.events = []
+        if (data.eventCounts == undefined) {
+          data.eventCounts = {}
         }
-        if (eventName ! in data.events) {
-          data.events.push(eventName)
-        }
+        data.eventCounts[eventName] = ((data.eventCounts ?? {}) [eventName] ?? 0) + 1
 
         if (updater != undefined) {
           updater(data)
@@ -111,7 +109,7 @@ script.on_event(
       const groupedTiles = groupTiles(e.tiles)
 
       for (const [chunkPos, tiles] of groupedTiles) {
-        mapTilesUpdateDebounce(surface, chunkPos, tiles,  Converters.eventNameString(e.name))
+        mapTilesUpdateDebounce(surface, chunkPos, tiles, Converters.eventNameString(e.name))
       }
     }
 )

@@ -13,7 +13,7 @@ import kotlinx.serialization.json.jsonPrimitive
 
 
 @Serializable
-class FactorioEventUpdatePacket(
+data class FactorioEventUpdatePacket(
   override val modVersion: String,
   /** game time */
   val tick: Tick,
@@ -37,8 +37,8 @@ sealed class FactorioEventUpdate : FactorioEventUpdateKey {
 
   @EncodeDefault
   abstract override val updateType: FactorioEventUpdateType
-  @Contextual
-  abstract val events: List<String>? // TODO change this to Map<String, UInt>
+
+  abstract val eventCounts: Map<String, UInt>?
 
   @Serializable
   enum class FactorioEventUpdateType {
@@ -95,8 +95,7 @@ sealed interface PlayerUpdateKey : FactorioEventUpdateKey {
 data class PlayerUpdate(
   override val index: PlayerIndex,
 
-  @Contextual
-  override val events: List<String>? = null,
+  override val eventCounts: Map<String, UInt>? = null,
 
   val characterUnitNumber: UnitNumber? = null,
   val chatColour: Colour? = null,
@@ -145,8 +144,7 @@ data class EntityUpdate(
   override val name: String,
   override val type: String,
 
-  @Contextual
-  override val events: List<String>? = null,
+  override val eventCounts: Map<String, UInt>? = null,
 
   val chunkPosition: MapChunkPosition? = null,
   val graphicsVariation: UShort? = null,
@@ -177,8 +175,7 @@ data class MapChunkUpdate(
   override val chunkPosition: MapChunkPosition,
   override val surfaceIndex: SurfaceIndex,
 
-  @Contextual
-  override val events: List<String>? = null,
+  override val eventCounts: Map<String, UInt>? = null,
 
   val player: PlayerIndex? = null,
   val robot: EntityIdentifiers? = null,

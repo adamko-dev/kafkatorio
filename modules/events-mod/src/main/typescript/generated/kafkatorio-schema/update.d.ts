@@ -7,7 +7,7 @@ interface FactorioEventUpdateKey {
 }
 
 interface FactorioEventUpdate extends FactorioEventUpdateKey {
-  events: string[] | null;
+  eventCounts: { [key: string]: int } | null;
   updateType: FactorioEventUpdateType;
 }
 
@@ -30,7 +30,7 @@ interface PlayerUpdate extends FactorioEventUpdate, PlayerUpdateKey {
   colour: Colour | null;
   diedCause: EntityIdentifiers | null;
   disconnectReason: string | null;
-  events: string[] | null;
+  eventCounts: { [key: string]: int } | null;
   forceIndex: uint | null;
   index: uint;
   isAdmin: boolean | null;
@@ -57,7 +57,7 @@ interface EntityUpdateKey extends EntityIdentifiers, FactorioEventUpdateKey {
 
 interface EntityUpdate extends FactorioEventUpdate, EntityIdentifiers, EntityUpdateKey {
   chunkPosition: MapChunkPosition | null;
-  events: string[] | null;
+  eventCounts: { [key: string]: int } | null;
   graphicsVariation: number | null;
   health: float | null;
   isActive: boolean | null;
@@ -79,7 +79,7 @@ interface MapChunkUpdateKey extends FactorioEventUpdateKey {
 
 interface MapChunkUpdate extends FactorioEventUpdate, MapChunkUpdateKey {
   chunkPosition: MapChunkPosition;
-  events: string[] | null;
+  eventCounts: { [key: string]: int } | null;
   force: uint | null;
   isDeleted: boolean | null;
   player: uint | null;
