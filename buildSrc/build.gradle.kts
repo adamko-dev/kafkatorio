@@ -71,7 +71,7 @@ tasks.withType<KotlinCompile>().configureEach {
     "-opt-in=kotlin.RequiresOptIn",
     "-opt-in=kotlin.ExperimentalStdlibApi",
     "-opt-in=kotlin.time.ExperimentalTime",
-    "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+//    "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
     "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
   )
 }
