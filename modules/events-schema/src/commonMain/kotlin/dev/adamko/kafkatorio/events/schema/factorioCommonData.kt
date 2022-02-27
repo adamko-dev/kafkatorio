@@ -67,13 +67,9 @@ data class MapBoundingBox(
  */
 @Serializable
 data class Colour(
-  @EncodeDefault // remove encode default?
   val red: Float = 0f,
-  @EncodeDefault
   val green: Float = 0f,
-  @EncodeDefault
   val blue: Float = 0f,
-  @EncodeDefault
   val alpha: Float = 1f,
 )
 
@@ -81,13 +77,9 @@ data class Colour(
 /** Size-efficient version of [Colour] (`4*4` bytes vs `4*1` bytes) */
 @Serializable
 data class ColourHex(
-  @EncodeDefault // remove encode default?
   val red: UByte = UByte.MIN_VALUE,
-  @EncodeDefault
   val green: UByte = UByte.MIN_VALUE,
-  @EncodeDefault
   val blue: UByte = UByte.MIN_VALUE,
-  @EncodeDefault
   val alpha: UByte = UByte.MAX_VALUE,
 ) {
   companion object {

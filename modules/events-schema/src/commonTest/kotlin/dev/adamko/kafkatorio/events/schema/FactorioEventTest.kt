@@ -33,8 +33,7 @@ class FactorioEventTest : FunSpec({
            "chatColour": {
              "red": 1,
              "green": 0.62,
-             "blue": 0.25,
-             "alpha": 1
+             "blue": 0.25
            },
            "lastOnline": 2287061
          },

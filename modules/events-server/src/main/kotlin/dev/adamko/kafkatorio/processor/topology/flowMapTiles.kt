@@ -70,7 +70,7 @@ private value class TilePngFilename(
 ) {
   constructor(cmd: Cmd.CreateImage) : this(buildString {
     append("src/main/resources/kafkatorio-web-map")
-    append("/s${cmd.surfaceIndex.value}")
+    append("/s${cmd.surfaceIndex}")
     append("/z${cmd.chunkSize.zoomLevel}")
     append("/x${cmd.chunkPosition.x}")
     append("/y${cmd.chunkPosition.y}")

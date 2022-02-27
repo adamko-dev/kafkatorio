@@ -11,26 +11,36 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 @JvmInline
-value class SurfaceIndex(val value: UInt)
+value class SurfaceIndex(private val id: UInt) {
+  override fun toString(): String = "$id"
+}
 
 
 @Serializable
 @JvmInline
-value class ForceIndex(val value: UInt)
+value class ForceIndex(private val id: UInt) {
+  override fun toString(): String = "$id"
+}
 
 
 /** The player's index in `LuaGameScript::players` */
 @Serializable
 @JvmInline
-value class PlayerIndex(val value: UInt)
+value class PlayerIndex(private val id: UInt) {
+  override fun toString(): String = "$id"
+}
 
 
 /** This is universally unique for every entity that has one, for the lifetime of a whole game. */
 @Serializable
 @JvmInline
-value class UnitNumber(val value: UInt)
+value class UnitNumber(private val id: UInt) {
+  override fun toString(): String = "$id"
+}
 
 
 @Serializable
 @JvmInline
-value class PrototypeName(val value: String)
+value class PrototypeName(private val id: String) {
+  override fun toString(): String = id
+}

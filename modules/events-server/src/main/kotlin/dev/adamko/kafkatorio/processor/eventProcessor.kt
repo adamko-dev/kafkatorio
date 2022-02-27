@@ -9,9 +9,6 @@ import org.http4k.server.Undertow
 import org.http4k.server.asServer
 
 
-//private val appProps = ApplicationProperties()
-
-
 fun main(): Unit = runBlocking {
 
   KafkatorioKafkaAdmin.createKafkatorioTopics()
