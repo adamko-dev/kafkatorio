@@ -1,4 +1,4 @@
-import dev.adamko.kafkatorio.task.KafkaConsumersResetTask
+import dev.adamko.kafkatorio.task.KafkaConsumerGroupsTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -63,9 +63,14 @@ tasks.withType<KotlinCompile> {
 }
 
 
-val kafkaConsumersReset by tasks.registering(KafkaConsumersResetTask::class) {
+val kafkaStateDirDelete by tasks.registering(Delete::class) {
   group = project.name
-  kafkaStateDir.set(project.layout.buildDirectory.dir("kafka-state"))
+  mustRunAfter(kafkaConsumersDelete)
+  delete(layout.buildDirectory.dir("kafka-state"))
+}
+
+val kafkaConsumersDelete by tasks.registering(KafkaConsumerGroupsTask.DeleteAll::class) {
+  group = project.name
 }
 
 //tasks.run.configure {
