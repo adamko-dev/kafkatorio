@@ -1,12 +1,17 @@
 package dev.adamko.kafkatorio.webmap
 
-import dev.adamko.kafkatorio.events.schema.FactorioEvent
-import dev.adamko.kafkatorio.events.schema.PlayerData
+import dev.adamko.kafkatorio.events.schema.Colour
+import dev.adamko.kafkatorio.events.schema.MapEntityPosition
+import dev.adamko.kafkatorio.events.schema.PlayerIndex
+import dev.adamko.kafkatorio.events.schema.PlayerUpdate
+import dev.adamko.kafkatorio.events.schema.SurfaceIndex
+import dev.adamko.kafkatorio.events.schema.Tick
 import dev.adamko.kafkatorio.events.schema.converters.toHexString
-import io.kvision.maps.externals.leaflet.layer.overlay.Tooltip
-import io.kvision.maps.externals.leaflet.layer.vector.CircleMarker
 import io.kvision.maps.Maps
 import io.kvision.maps.Maps.Companion.L
+import io.kvision.maps.externals.leaflet.geo.LatLng
+import io.kvision.maps.externals.leaflet.layer.overlay.Tooltip
+import io.kvision.maps.externals.leaflet.layer.vector.CircleMarker
 import io.kvision.redux.ReduxStore
 import io.kvision.redux.createReduxStore
 import io.kvision.utils.obj
@@ -25,71 +30,166 @@ fun createFactorioReduxStore(): ReduxStore<FactorioGameState, FactorioUpdate> =
 
 data class FactorioGameState(
   val kvMaps: Maps,
-  val players: Map<String, PlayerState>,
+  val players: Map<PlayerIndex, PlayerState>,
 )
 
 
 sealed class FactorioUpdate : RAction {
-  data class PlayerUpdate(val event: FactorioEvent, val playerData: PlayerData) :
-    FactorioUpdate()
+  data class Player(val tick: Tick, val data: PlayerUpdate) : FactorioUpdate()
 }
 
 
 fun factorioGameReducer(state: FactorioGameState, update: FactorioUpdate): FactorioGameState =
   when (update) {
-    is FactorioUpdate.PlayerUpdate -> {
+    is FactorioUpdate.Player -> {
 
-      val playerState = state.players.getOrElse(update.playerData.name) {
-        val newState = PlayerState(update.playerData)
-        state.kvMaps.leafletMap {
-          addLayer(newState.mapMarker)
-          newState.mapMarker.openPopup()
-//          setView(update.playerData.latLng())
-        }
-        newState
+      val playerState = state.players.getOrElse(update.data.index) {
+        PlayerState(update.data.index, update.tick)
       }
 
-      playerState.update(update.playerData)
+      playerState.update(update.tick, update.data)
 
-      val updatedPlayersState = state.players + (update.playerData.name to playerState)
+      state.kvMaps.leafletMap {
+
+        val playerMarker = playerState.mapMarker
+
+        if (playerMarker != null) {
+          when (playerState.playerDetails) {
+            is PlayerDetailsState.Known   -> if (!hasLayer(playerMarker)) addLayer(playerMarker)
+            is PlayerDetailsState.Unknown -> if (hasLayer(playerMarker)) removeLayer(playerMarker)
+          }
+        }
+      }
+
+      val updatedPlayersState = state.players + (playerState.index to playerState)
       state.copy(players = updatedPlayersState)
     }
   }
 
 
-data class PlayerState(
-  private var playerData: PlayerData,
-  val mapMarker: CircleMarker = createMapMarker(playerData)
+class PlayerState(
+  val index: PlayerIndex,
+  private var lastTick: Tick,
 ) {
+  var playerDetails: PlayerDetailsState = PlayerDetailsState.Unknown(index)
+    private set
 
-  fun update(playerData: PlayerData) {
-    this.playerData = playerData
-    mapMarker.setLatLng(playerData.latLng())
-    println("updated player ${playerData.name}")
+  var mapMarker: CircleMarker? = null
+    private set
+
+  fun update(tick: Tick, update: PlayerUpdate) {
+
+    if (lastTick.value > tick.value) {
+      println("discarding old PlayerUpdate, ${lastTick.value} > ${tick.value}")
+      return
+    }
+    this.lastTick = tick
+    this.playerDetails = updatePlayerDetails(update)
+
+    updateMapPosition()
+
+    println("updated PlayerState index:${playerDetails.index}, name:${playerDetails.name}")
   }
 
-  companion object {
+  private fun updatePlayerDetails(update: PlayerUpdate): PlayerDetailsState {
 
-    fun createMapMarker(playerData: PlayerData): CircleMarker {
+    val position = update.position ?: playerDetails.position
+    val surfaceIndex = update.surfaceIndex ?: playerDetails.surfaceIndex
+    val colour = update.colour ?: playerDetails.colour
+    val name = update.name ?: playerDetails.name
 
-      val playerLatLng = playerData.latLng()
-      val playerMapTooltip = "${playerData.name} [$playerLatLng]"
+    return when {
+      position != null && surfaceIndex != null && colour != null && name != null ->
+        PlayerDetailsState.Known(
+          index = playerDetails.index,
+          position = position,
+          surfaceIndex = surfaceIndex,
+          colour = colour,
+          name = name,
+        )
 
-      val circle = L.circleMarker(playerLatLng) {
-        color = playerData.colour.toHexString(false)
-        fillColor = color
+      else                                                                       ->
+        PlayerDetailsState.Unknown(
+          index = playerDetails.index,
+          position = position,
+          surfaceIndex = surfaceIndex,
+          colour = colour,
+          name = name,
+        )
+    }
+  }
+
+
+  private fun updateMapPosition() {
+
+    when (val details = playerDetails) {
+      is PlayerDetailsState.Unknown -> {
+        println("removing player ${details.index} map marker")
+        mapMarker?.remove()
+      }
+      is PlayerDetailsState.Known   -> updateMapMarker(details)
+    }
+
+  }
+
+  private fun updateMapMarker(playerDetails: PlayerDetailsState.Known) {
+
+    if (mapMarker == null) {
+      mapMarker = L.circleMarker(playerDetails.latLng) {
         fillOpacity = 1f
         radius = 10
-        className = playerData.objectName.name
+        className = "player-marker"
 //        interactive = false
+      }.also { circle ->
+        circle.bindTooltip("", obj<Tooltip.TooltipOptions> {
+//        interactive = false
+        })
       }
-
-      circle.bindTooltip(playerMapTooltip, obj<Tooltip.TooltipOptions> {
-//        interactive = false
-      })
-
-      return circle
     }
+
+    mapMarker?.apply {
+      val playerColour = playerDetails.colour.toHexString(false)
+      options.color = playerColour
+      options.fillColor = playerColour
+
+      setTooltipContent("${playerDetails.name} [${playerDetails.latLng}]")
+      setLatLng(playerDetails.latLng)
+    }
+
+  }
+}
+
+
+sealed interface PlayerDetailsState {
+
+  val index: PlayerIndex
+
+  val position: MapEntityPosition?
+  val surfaceIndex: SurfaceIndex?
+  val colour: Colour?
+  val name: String?
+  val latLng: LatLng?
+
+  data class Unknown(
+    override val index: PlayerIndex,
+
+    override val position: MapEntityPosition? = null,
+    override val surfaceIndex: SurfaceIndex? = null,
+    override val colour: Colour? = null,
+    override val name: String? = null,
+  ) : PlayerDetailsState {
+    override val latLng: LatLng? = null
+  }
+
+  data class Known(
+    override val index: PlayerIndex,
+
+    override val position: MapEntityPosition,
+    override val surfaceIndex: SurfaceIndex,
+    override val colour: Colour,
+    override val name: String,
+  ) : PlayerDetailsState {
+    override val latLng: LatLng = position.latLng()
   }
 
 }

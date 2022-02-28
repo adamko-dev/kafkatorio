@@ -1,16 +1,13 @@
 package dev.adamko.kafkatorio.webmap
 
-import dev.adamko.kafkatorio.events.schema.ConsoleChatMessage
-import dev.adamko.kafkatorio.events.schema.EntityData
+import dev.adamko.kafkatorio.events.schema.EntityUpdate
 import dev.adamko.kafkatorio.events.schema.FactorioConfigurationUpdate
 import dev.adamko.kafkatorio.events.schema.FactorioEvent
 import dev.adamko.kafkatorio.events.schema.FactorioEventUpdatePacket
 import dev.adamko.kafkatorio.events.schema.FactorioPrototypes
 import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
-import dev.adamko.kafkatorio.events.schema.MapChunk
-import dev.adamko.kafkatorio.events.schema.MapTiles
-import dev.adamko.kafkatorio.events.schema.PlayerData
-import dev.adamko.kafkatorio.events.schema.SurfaceData
+import dev.adamko.kafkatorio.events.schema.MapChunkUpdate
+import dev.adamko.kafkatorio.events.schema.PlayerUpdate
 import io.kvision.redux.ReduxStore
 import kotlinx.serialization.decodeFromString
 import org.w3c.dom.MessageEvent
@@ -39,22 +36,18 @@ class WebsocketService(
       println(data.replace('\n', ' '))
 
       when (val event: KafkatorioPacket = jsonMapper.decodeFromString(data)) {
-        is FactorioEvent      -> {
-          when (val eventData = event.data) {
-            is PlayerData ->
-              reduxStore.dispatch(FactorioUpdate.PlayerUpdate(event, eventData))
-            is ConsoleChatMessage,
-            is EntityData,
-            is MapChunk,
-//            is MapTile,
-            is SurfaceData,
-            is MapTiles   -> {
+        is FactorioEvent             -> {
+        }
+        is FactorioEventUpdatePacket -> {
+          when (val eventUpdate = event.update) {
+            is PlayerUpdate   -> reduxStore.dispatch(FactorioUpdate.Player(event.tick, eventUpdate))
+            is EntityUpdate,
+            is MapChunkUpdate -> {
             }
           }
         }
-        is FactorioEventUpdatePacket,
         is FactorioConfigurationUpdate,
-        is FactorioPrototypes -> {
+        is FactorioPrototypes        -> {
           // to be continued...
         }
       }
