@@ -1,7 +1,6 @@
 package dev.adamko.kafkatorio.events.schema
 
 import kotlin.jvm.JvmInline
-import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
 
 
@@ -101,3 +100,41 @@ interface EntityIdentifiers {
   val name: String
   val type: String
 }
+
+
+/**
+ * Size-optimised 2D map of x/y tile positions and prototype-name.
+ *
+ * Each X/Y coordinate maps to an arbitrary [PrototypeKey] (which is only valid for any specific
+ * instance). [protos] is specific to each instance of [MapTileDictionary], can be used to convert from a
+ */
+@Serializable
+data class MapTileDictionary(
+  /** Map an X,Y coordinate a prototype name */
+  val tilesXY: Map<String, Map<String, PrototypeKey>>,
+  val protos: Map<PrototypeKey, PrototypeName>
+) {
+  fun toMapTileList(): List<MapTile> = buildList {
+    tilesXY.forEach { (xString, row) ->
+      row.forEach { (yString, protoIndex) ->
+        val x = xString.toIntOrNull()
+        val y = yString.toIntOrNull()
+        val protoName = protos[protoIndex]
+        if (x != null && y != null && protoName != null) {
+          add(MapTile(x, y, protoName))
+        }
+      }
+    }
+  }
+
+  companion object {
+    fun MapTileDictionary?.isNullOrEmpty(): Boolean {
+      return this == null || (tilesXY.isEmpty() && tilesXY.all { it.value.isEmpty() })
+    }
+  }
+}
+
+
+@Serializable
+@JvmInline
+value class PrototypeKey(val index: String)

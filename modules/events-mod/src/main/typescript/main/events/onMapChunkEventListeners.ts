@@ -8,6 +8,17 @@ import CacheData = EventDataCache.CacheData;
 type MapChunkUpdater = (data: CacheData<"MAP_CHUNK">) => void
 
 
+const mapProtoNameToKey: { [key: string]: string } = {}
+let protoIndex: uint = 0
+
+function getProtoKey(protoName: string): string {
+  if (mapProtoNameToKey[protoName] == undefined) {
+    mapProtoNameToKey[protoName] = `${protoIndex++}`
+  }
+  return mapProtoNameToKey[protoName]
+}
+
+
 function mapTilesUpdateDebounce(
     surface: LuaSurface | undefined,
     chunkPosition: ChunkPositionTable,
@@ -27,24 +38,26 @@ function mapTilesUpdateDebounce(
         updateType: "MAP_CHUNK",
       },
       data => {
-        if (data.tiles == undefined) {
-          data.tiles = []
+        data.tileDictionary ??= <MapTileDictionary>{
+          tilesXY: {},
+          protos: {},
         }
 
-        for (const tile of tiles) {
-          data.tiles.push(
-              {
-                x: tile.position.x,
-                y: tile.position.y,
-                proto: tile.name,
-              }
-          )
+        for (let tile of tiles) {
+
+          const xString = `${tile.position.x}`
+          const yString = `${tile.position.y}`
+          const protoKey = getProtoKey(tile.name)
+
+          data.tileDictionary.protos[protoKey] = tile.name
+
+          data.tileDictionary.tilesXY[xString] ??= {}
+          data.tileDictionary.tilesXY[xString][yString] = protoKey
         }
 
-        if (data.eventCounts == undefined) {
-          data.eventCounts = {}
-        }
-        data.eventCounts[eventName] = ((data.eventCounts ?? {}) [eventName] ?? 0) + 1
+        data.eventCounts ??= {}
+        data.eventCounts[eventName] ??= 0
+        data.eventCounts[eventName]++
 
         if (updater != undefined) {
           updater(data)

@@ -21,12 +21,9 @@ fun main(args: Array<String>) {
         add(FactorioPrototypes::class)
         add(FactorioConfigurationUpdate::class)
 
-
         add(FactorioEventUpdatePacket::class)
         addAll(FactorioEventUpdate::class.sealedSubclasses)
         addAll(FactorioEventUpdateKey::class.sealedSubclasses)
-//        addAll(FactorioEventUpdateData::class.sealedSubclasses)
-
       },
       mappings = mapOf(
         // builtin Factorio numeric types > `typed-factorio/generated/builtin-types.d.ts`
@@ -73,7 +70,6 @@ private fun splitDefinitions(definitions: String): Map<String, String> {
   return definitions
     .split("\n\n")
     .groupBy { def ->
-
 
       when {
 

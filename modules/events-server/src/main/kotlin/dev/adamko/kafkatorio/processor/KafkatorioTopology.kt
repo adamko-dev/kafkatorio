@@ -2,6 +2,8 @@ package dev.adamko.kafkatorio.processor
 
 import dev.adamko.kafkatorio.events.schema.ColourHex
 import dev.adamko.kafkatorio.events.schema.FactorioEvent
+import dev.adamko.kafkatorio.events.schema.FactorioEventUpdate
+import dev.adamko.kafkatorio.events.schema.FactorioEventUpdatePacket
 import dev.adamko.kafkatorio.events.schema.FactorioObjectData
 import dev.adamko.kafkatorio.events.schema.FactorioPrototypes
 import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
@@ -33,6 +35,7 @@ import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.StreamsConfig
 import org.apache.kafka.streams.Topology
+import org.apache.kafka.streams.TopologyDescription
 import org.apache.kafka.streams.kstream.KStream
 import org.apache.kafka.streams.kstream.KTable
 
@@ -69,20 +72,29 @@ internal class KafkatorioTopology(
     val tileProtoColourDict = tileProtoColourDictionary(protosStream)
 
 
-    val mapTilesStream: KStream<FactorioServerId, FactorioEvent> =
+//    val mapTilesStream: KStream<FactorioServerId, FactorioEvent> =
+//      builder.stream(
+//        "kafkatorio.${KafkatorioPacket.PacketType.EVENT}.${FactorioObjectData.ObjectName.LuaTiles}",
+//        consumedAs("consume.map-tiles", jsonMapper.serde(), jsonMapper.serde())
+//      )
+//
+//    val mapChunksStream: KStream<FactorioServerId, FactorioEvent> =
+//      builder.stream(
+//        "kafkatorio.${KafkatorioPacket.PacketType.EVENT}.${FactorioObjectData.ObjectName.MapChunk}",
+//        consumedAs("consume.map-chunks", jsonMapper.serde(), jsonMapper.serde())
+//      )
+
+    val mapChunksUpdatesStream: KStream<FactorioServerId, FactorioEventUpdatePacket> =
       builder.stream(
-        "kafkatorio.${KafkatorioPacket.PacketType.EVENT}.${FactorioObjectData.ObjectName.LuaTiles}",
-        consumedAs("consume.map-tiles", jsonMapper.serde(), jsonMapper.serde())
+        "kafkatorio.${KafkatorioPacket.PacketType.UPDATE}.${FactorioEventUpdate.FactorioEventUpdateType.MAP_CHUNK}",
+        consumedAs("consume.map-chunk-updates", jsonMapper.serde(), jsonMapper.serde())
       )
-    val mapChunksStream: KStream<FactorioServerId, FactorioEvent> =
-      builder.stream(
-        "kafkatorio.${KafkatorioPacket.PacketType.EVENT}.${FactorioObjectData.ObjectName.MapChunk}",
-        consumedAs("consume.map-chunks", jsonMapper.serde(), jsonMapper.serde())
-      )
+
     val groupedMapChunkTiles: KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
       groupTilesIntoChunksWithColours(
-        mapTilesStream,
-        mapChunksStream,
+//        mapTilesStream,
+//        mapChunksStream,
+        mapChunksUpdatesStream,
         tileProtoColourDict,
       )
 
@@ -90,7 +102,11 @@ internal class KafkatorioTopology(
       .toStream("stream-grouped-map-tiles")
       .to(
         TOPIC_GROUPED_MAP_CHUNKS,
-        producedAs("produce.grouped-map-chunks", kxsBinary.serde(), kxsBinary.serde())
+        producedAs(
+          "produce.grouped-map-chunks",
+          kxsBinary.serde<ServerMapChunkId?>(),
+          kxsBinary.serde<ServerMapChunkTiles<ColourHex>?>()
+        )
       )
 
 
@@ -140,9 +156,18 @@ internal class KafkatorioTopology(
     val appId = props.compute(StreamsConfig.APPLICATION_ID_CONFIG) { _, v -> "$v.$id" } as? String
     props.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, appId)
 
-
     val streams = KafkaStreams(topology, props)
     streams.setUncaughtExceptionHandler(StreamsExceptionHandler())
+
+    val description: TopologyDescription = topology.describe()
+    println(
+      """
+        |----------------
+        |$appId
+        |$description
+        |----------------
+      """.trimMargin()
+    )
 
     coroutineContext.job.invokeOnCompletion {
       println("closing $id KafkaStreams")

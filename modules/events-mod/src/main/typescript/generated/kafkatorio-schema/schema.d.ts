@@ -59,3 +59,8 @@ interface EntityIdentifiers {
   type: string;
   unitNumber: uint | null;
 }
+
+interface MapTileDictionary {
+  protos: { [key: string]: string };
+  tilesXY: { [key: string]: { [key: string]: string } };
+}

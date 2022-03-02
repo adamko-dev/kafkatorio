@@ -1,10 +1,11 @@
 package dev.adamko.kafkatorio.processor.topology
 
 import dev.adamko.kafkatorio.events.schema.ColourHex
-import dev.adamko.kafkatorio.events.schema.FactorioEvent
-import dev.adamko.kafkatorio.events.schema.MapChunk
+import dev.adamko.kafkatorio.events.schema.FactorioEventUpdatePacket
 import dev.adamko.kafkatorio.events.schema.MapChunkPosition
+import dev.adamko.kafkatorio.events.schema.MapChunkUpdate
 import dev.adamko.kafkatorio.events.schema.MapTile
+import dev.adamko.kafkatorio.events.schema.MapTileDictionary.Companion.isNullOrEmpty
 import dev.adamko.kafkatorio.events.schema.MapTilePosition
 import dev.adamko.kafkatorio.events.schema.MapTiles
 import dev.adamko.kafkatorio.events.schema.SurfaceIndex
@@ -13,10 +14,8 @@ import dev.adamko.kafkatorio.processor.serdes.kxsBinary
 import dev.adamko.kotka.extensions.groupedAs
 import dev.adamko.kotka.extensions.materializedAs
 import dev.adamko.kotka.extensions.materializedWith
-import dev.adamko.kotka.extensions.streams.filter
 import dev.adamko.kotka.extensions.streams.flatMap
 import dev.adamko.kotka.extensions.streams.mapValues
-import dev.adamko.kotka.extensions.streams.merge
 import dev.adamko.kotka.extensions.streams.reduce
 import dev.adamko.kotka.extensions.tables.join
 import dev.adamko.kotka.kxs.serde
@@ -44,39 +43,70 @@ data class ServerMapChunkTiles<Data>(
 
 
 fun groupTilesIntoChunksWithColours(
-  mapTilePacketsStream: KStream<FactorioServerId, FactorioEvent>,
-  mapChunksPacketsStream: KStream<FactorioServerId, FactorioEvent>,
+//  mapTilePacketsStream: KStream<FactorioServerId, FactorioEvent>,
+//  mapChunksPacketsStream: KStream<FactorioServerId, FactorioEvent>,
+  mapChunkUpdatePacketsStream: KStream<FactorioServerId, FactorioEventUpdatePacket>,
   tileProtoColourDict: KTable<FactorioServerId, TileColourDict>,
 ): KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> {
 
 
-  val mapChunkTilesStream: KStream<FactorioServerId, MapTiles> =
-    mapChunksPacketsStream
-      .filter { _, packet: FactorioEvent? ->
-        packet != null
-            && packet.data is MapChunk
-            && !((packet.data as? MapChunk)?.tiles?.tiles.isNullOrEmpty())
+//  val mapChunkTilesStream: KStream<FactorioServerId, MapTiles> =
+//    mapChunksPacketsStream
+//      .filter { _, packet: FactorioEvent? ->
+//        when (val data = packet?.data) {
+//          is MapChunk -> data.tiles.tiles.isNotEmpty()
+//          else        -> false
+//        }
+//      }
+//      .mapValues("map-chunk-packets.convert-to-map-tiles") { _, packet: FactorioEvent ->
+//        (packet.data as MapChunk).tiles
+//      }
+//
+//
+//  val mapTilesStream: KStream<FactorioServerId, MapTiles> =
+//    mapTilePacketsStream
+//      .filter { _, packet: FactorioEvent? ->
+//        when (val data = packet?.data) {
+//          is MapTiles -> data.tiles.isNotEmpty()
+//          else        -> false
+//        }
+//      }
+//      .mapValues("map-tiles-packets.convert-to-map-tiles") { _, packet: FactorioEvent ->
+//        packet.data as MapTiles
+//      }
+
+  val mapChunkUpdatesStream: KStream<FactorioServerId, MapTiles> =
+    mapChunkUpdatePacketsStream
+      .filter { _, packet: FactorioEventUpdatePacket? ->
+        when (val data = packet?.update) {
+          is MapChunkUpdate -> !data.tileDictionary.isNullOrEmpty()
+          else              -> false
+        }
       }
-      .mapValues("map-chunk-packets.convert-to-map-tiles") { _, packet: FactorioEvent ->
-        (packet.data as MapChunk).tiles
+      .mapValues("map-chunk-update-packets.convert-to-map-tiles") { _, packet: FactorioEventUpdatePacket ->
+
+        val mapChunkUpdate: MapChunkUpdate = requireNotNull(packet.update as? MapChunkUpdate) {
+          "invalid UpdatePacket type $packet"
+        }
+
+        val tiles: List<MapTile> = requireNotNull(mapChunkUpdate.tileDictionary?.toMapTileList()) {
+          "invalid MapChunkUpdate packet, tiles must not be null"
+        }
+        require(tiles.isNotEmpty()) {
+          "invalid MapChunkUpdate packet, tiles must not be empty"
+        }
+
+        MapTiles(mapChunkUpdate.surfaceIndex, tiles)
       }
 
-  val mapTilesStream: KStream<FactorioServerId, MapTiles> =
-    mapTilePacketsStream
-      .filter { _, packet: FactorioEvent? ->
-        packet != null
-            && packet.data is MapTiles
-            && !((packet.data as? MapTiles)?.tiles.isNullOrEmpty())
-      }
-      .mapValues("map-tiles-packets.convert-to-map-tiles") { _, packet: FactorioEvent ->
-        packet.data as MapTiles
-      }
 
   // group tiles by server & surface & chunk
   val chunkedTilesTable: KTable<ServerMapChunkId, ServerMapChunkTiles<TileProtoHashCode>> =
-    mapTilesStream
-      .merge("merge-map-chunk-tiles-with-map-tiles", mapChunkTilesStream)
-      .filter { _, value -> value != null && value.tiles.isNotEmpty() }
+    mapChunkUpdatesStream
+//    mapTilesStream
+//      .merge("merge-mapTilesStream-with-mapChunkTilesStream", mapChunkTilesStream)
+//      .merge("merge-mapTilesStream-with-mapChunkUpdatesStream", mapChunkUpdatesStream)
+//      .filter { _, value -> !value?.tiles.isNullOrEmpty() }
       .flatMap("server-map-data.tiles.flatMapByChunk") { key: FactorioServerId, mapTiles: MapTiles ->
 
         val standardChunkSize = ChunkSize.MAX
@@ -102,11 +132,15 @@ fun groupTilesIntoChunksWithColours(
             chunkId to chunkTiles
           }
       }
-      .filter("server-map-data.tiles.filter-not-empty") { _, value ->
-        value.map.isNotEmpty()
-      }
+//      .filter("server-map-data.tiles.filter-not-empty") { _, value ->
+//        value.map.isNotEmpty()
+//      }
       .groupByKey(
-        groupedAs("server-map-data.tiles.group", kxsBinary.serde(), kxsBinary.serde())
+        groupedAs(
+          "server-map-data.tiles.group",
+          kxsBinary.serde<ServerMapChunkId>(),
+          kxsBinary.serde<ServerMapChunkTiles<TileProtoHashCode>>()
+        )
       )
       .reduce(
         "server-map-data.tiles.reduce",

@@ -1,6 +1,6 @@
 package dev.adamko.kafkatorio.processor.topology
 
-import dev.adamko.kafkatorio.events.schema.FactorioObjectData
+import dev.adamko.kafkatorio.events.schema.FactorioEventUpdate
 import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
 import dev.adamko.kafkatorio.processor.WebsocketServer
 import dev.adamko.kafkatorio.processor.serdes.jsonMapper
@@ -15,8 +15,8 @@ fun playerUpdatesToWsServer(
   builder: StreamsBuilder = StreamsBuilder(),
 ) {
   builder.stream<FactorioServerId, KafkatorioPacket>(
-    "kafkatorio.${KafkatorioPacket.PacketType.EVENT}.${FactorioObjectData.ObjectName.LuaPlayer}",
-    consumedAs("stream-player-updates-for-ws-server", jsonMapper.serde(), jsonMapper.serde())
+    "kafkatorio.${KafkatorioPacket.PacketType.UPDATE}.${FactorioEventUpdate.FactorioEventUpdateType.PLAYER}",
+    consumedAs("EventUpdate.Player-updates-for-ws-server", jsonMapper.serde(), jsonMapper.serde()),
   )
     .foreach { _, value ->
 //      println("sending ${value.packetType} packet to websocket")

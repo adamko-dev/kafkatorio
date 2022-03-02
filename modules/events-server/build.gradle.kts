@@ -66,7 +66,7 @@ tasks.withType<KotlinCompile> {
 val kafkaStateDirDelete by tasks.registering(Delete::class) {
   group = project.name
   mustRunAfter(kafkaConsumersDelete)
-  delete(layout.buildDirectory.dir("kafka-state"))
+  delete(layout.projectDirectory.dir("kafka-state"))
 }
 
 val kafkaConsumersDelete by tasks.registering(KafkaConsumerGroupsTask.DeleteAll::class) {

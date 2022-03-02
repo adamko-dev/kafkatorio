@@ -20,7 +20,7 @@ export namespace EventDataCache {
 
       log("Initialising global.DEFAULT_CACHE_DURATION_TICKS")
       global.defaultCacheDurationTicks = {
-        "PLAYER": 60, //              1 second
+        "PLAYER": 15, //           0.25 seconds
         "MAP_CHUNK": 60 * 30,  //    30 seconds
         "ENTITY": 60 * 2, //          2 seconds
         "default": 60 * 5, //         5 seconds

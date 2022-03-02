@@ -147,7 +147,7 @@ data class EntityUpdate(
   override val eventCounts: Map<String, UInt>? = null,
 
   val chunkPosition: MapChunkPosition? = null,
-  val graphicsVariation: UShort? = null,
+  val graphicsVariation: UByte? = null,
   val health: Float? = null,
   val isActive: Boolean? = null,
   val isRotatable: Boolean? = null,
@@ -180,11 +180,8 @@ data class MapChunkUpdate(
   val player: PlayerIndex? = null,
   val robot: EntityIdentifiers? = null,
   val force: ForceIndex? = null,
-  /** updated tiles - might be partial */
-  // note: this must be a List, not a Map<Location, ProtoName>
-  // because JSON can't have non-string keys.
-  @Contextual
-  val tiles: List<MapTile>? = null,
+  /** updated tiles - might be partial and not all tiles in the chunk */
+  val tileDictionary: MapTileDictionary? = null,
   val isDeleted: Boolean? = null,
 ) : FactorioEventUpdate(), MapChunkUpdateKey {
   @EncodeDefault

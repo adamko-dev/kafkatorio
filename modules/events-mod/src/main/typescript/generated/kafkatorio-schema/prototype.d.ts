@@ -15,7 +15,7 @@ interface FactorioPrototypes extends KafkatorioPacket {
 interface MapTilePrototype extends FactorioPrototype {
   canBeMined: boolean;
   collisionMasks: string[];
-  layer: int;
+  layer: uint;
   mapColour: Colour;
   name: string;
   order: string;

@@ -7,7 +7,7 @@ interface FactorioEventUpdateKey {
 }
 
 interface FactorioEventUpdate extends FactorioEventUpdateKey {
-  eventCounts: { [key: string]: int } | null;
+  eventCounts: { [key: string]: uint } | null;
   updateType: FactorioEventUpdateType;
 }
 
@@ -30,7 +30,7 @@ interface PlayerUpdate extends FactorioEventUpdate, PlayerUpdateKey {
   colour: Colour | null;
   diedCause: EntityIdentifiers | null;
   disconnectReason: string | null;
-  eventCounts: { [key: string]: int } | null;
+  eventCounts: { [key: string]: uint } | null;
   forceIndex: uint | null;
   index: uint;
   isAdmin: boolean | null;
@@ -57,12 +57,12 @@ interface EntityUpdateKey extends EntityIdentifiers, FactorioEventUpdateKey {
 
 interface EntityUpdate extends FactorioEventUpdate, EntityIdentifiers, EntityUpdateKey {
   chunkPosition: MapChunkPosition | null;
-  eventCounts: { [key: string]: int } | null;
-  graphicsVariation: number | null;
+  eventCounts: { [key: string]: uint } | null;
+  graphicsVariation: uint8 | null;
   health: float | null;
   isActive: boolean | null;
   isRotatable: boolean | null;
-  lastUser: int | null;
+  lastUser: uint | null;
   localisedDescription: string | null;
   localisedName: string | null;
   name: string;
@@ -79,12 +79,12 @@ interface MapChunkUpdateKey extends FactorioEventUpdateKey {
 
 interface MapChunkUpdate extends FactorioEventUpdate, MapChunkUpdateKey {
   chunkPosition: MapChunkPosition;
-  eventCounts: { [key: string]: int } | null;
+  eventCounts: { [key: string]: uint } | null;
   force: uint | null;
   isDeleted: boolean | null;
   player: uint | null;
   robot: EntityIdentifiers | null;
   surfaceIndex: uint;
-  tiles: MapTile[] | null;
+  tileDictionary: MapTileDictionary | null;
   updateType: FactorioEventUpdateType;
 }
