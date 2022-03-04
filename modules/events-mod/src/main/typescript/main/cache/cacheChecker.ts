@@ -3,7 +3,6 @@ import {emitPacket} from "../emitKafkatorioPacket";
 
 /** Every 0.1 seconds */
 script.on_nth_tick(6, (nthTick: NthTickEventData) => {
-
   const cachedEvents: Array<FactorioEventUpdate> = EventDataCache.extractExpired()
 
   if (cachedEvents.length > 0) {

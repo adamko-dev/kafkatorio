@@ -21,6 +21,8 @@ fun main(args: Array<String>) {
         add(FactorioPrototypes::class)
         add(FactorioConfigurationUpdate::class)
 
+        add(FactorioEvent::class)
+
         add(FactorioEventUpdatePacket::class)
         addAll(FactorioEventUpdate::class.sealedSubclasses)
         addAll(FactorioEventUpdateKey::class.sealedSubclasses)

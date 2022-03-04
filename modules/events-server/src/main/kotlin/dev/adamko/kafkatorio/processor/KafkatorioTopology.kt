@@ -109,7 +109,6 @@ internal class KafkatorioTopology(
         )
       )
 
-
     val topology = builder.build()
     launchTopology("groupTilesMapChunks", topology)
   }
@@ -117,7 +116,7 @@ internal class KafkatorioTopology(
   private fun saveTiles() {
     val builder = StreamsBuilder()
 
-    val groupedMapChunkTiles: KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
+    val groupedMapChunkTiles: KTable<ServerMapChunkId?, ServerMapChunkTiles<ColourHex>?> =
       builder.table(
         TOPIC_GROUPED_MAP_CHUNKS,
         consumedAs("consume.grouped-map-chunks", kxsBinary.serde(), kxsBinary.serde())

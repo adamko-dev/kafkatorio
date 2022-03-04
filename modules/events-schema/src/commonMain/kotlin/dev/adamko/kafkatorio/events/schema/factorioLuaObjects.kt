@@ -114,7 +114,7 @@ data class EntityData(
   override val surface: SurfaceIndex,
   val active: Boolean,
   val health: Double?,
-  val healthRatio: Double,
+  val healthRatio: Double?,
   val name: String,
   val playerIndex: PlayerIndex? = null,
   val type: String,

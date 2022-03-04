@@ -41,7 +41,7 @@ export namespace Converters {
       type: entity.type,
       active: entity.active,
       health: entity.health ?? null,
-      healthRatio: entity.get_health_ratio(),
+      healthRatio: entity.get_health_ratio() ?? null,
       surface: entity.surface.index,
       unitNumber: entity.unit_number ?? null,
       position: mapEntityPosition(entity.position),

@@ -6,12 +6,6 @@ interface FactorioPrototype {
   prototypeObjectName: PrototypeObjectName;
 }
 
-interface FactorioPrototypes extends KafkatorioPacket {
-  modVersion: string;
-  packetType: PacketType;
-  prototypes: FactorioPrototype[];
-}
-
 interface MapTilePrototype extends FactorioPrototype {
   canBeMined: boolean;
   collisionMasks: string[];
@@ -20,4 +14,10 @@ interface MapTilePrototype extends FactorioPrototype {
   name: string;
   order: string;
   prototypeObjectName: PrototypeObjectName;
+}
+
+interface FactorioPrototypes extends KafkatorioPacket {
+  modVersion: string;
+  packetType: PacketType;
+  prototypes: FactorioPrototype[];
 }

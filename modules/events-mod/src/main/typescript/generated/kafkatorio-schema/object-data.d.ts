@@ -23,7 +23,7 @@ interface EntityData extends FactorioObjectData, FactorioLuaControl {
   active: boolean;
   force: uint;
   health: double | null;
-  healthRatio: double;
+  healthRatio: double | null;
   name: string;
   objectName: ObjectName;
   playerIndex: uint | null;

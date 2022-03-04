@@ -31,19 +31,21 @@ function mapTilesUpdateDebounce(
     return
   }
 
+  const key: CacheKey<"MAP_CHUNK"> = {
+    surfaceIndex: surface.index,
+    chunkPosition: chunkPosition,
+    updateType: "MAP_CHUNK",
+  }
+
   EventDataCache.debounce<"MAP_CHUNK">(
-      {
-        surfaceIndex: surface.index,
-        chunkPosition: chunkPosition,
-        updateType: "MAP_CHUNK",
-      },
+      key,
       data => {
         data.tileDictionary ??= <MapTileDictionary>{
           tilesXY: {},
           protos: {},
         }
 
-        for (let tile of tiles) {
+        for (const tile of tiles) {
 
           const xString = `${tile.position.x}`
           const yString = `${tile.position.y}`

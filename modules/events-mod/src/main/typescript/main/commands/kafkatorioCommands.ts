@@ -40,8 +40,8 @@ commands.add_command(
             let chunkYMin = chunkPosition.y - radius
             let chunkYMax = chunkPosition.y + radius
 
-            for (let [, surface] of game.surfaces) {
-              for (let chunk of surface.get_chunks()) {
+            for (const [, surface] of game.surfaces) {
+              for (const chunk of surface.get_chunks()) {
                 if (
                     (chunk.x >= chunkXMin && chunk.x <= chunkXMax)
                     &&

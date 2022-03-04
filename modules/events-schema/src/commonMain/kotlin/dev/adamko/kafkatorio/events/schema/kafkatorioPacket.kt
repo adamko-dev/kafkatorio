@@ -38,7 +38,7 @@ object KafkatorioPacketJsonSerializer : JsonContentPolymorphicSerializer<Kafkato
 
   override fun selectDeserializer(element: JsonElement): DeserializationStrategy<out KafkatorioPacket> {
 
-    val type = element
+    val type: KafkatorioPacket.PacketType? = element
       .jsonObject[key]
       ?.jsonPrimitive
       ?.contentOrNull

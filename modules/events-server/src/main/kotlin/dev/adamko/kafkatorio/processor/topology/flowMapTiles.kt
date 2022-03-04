@@ -47,7 +47,7 @@ private val serverMapChunkHandler = ServerMapChunkHandler()
 
 
 fun saveMapTiles(
-  serverMapTable: KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>
+  serverMapTable: KTable<ServerMapChunkId?, ServerMapChunkTiles<ColourHex>?>
 ) {
 
   serverMapTable
