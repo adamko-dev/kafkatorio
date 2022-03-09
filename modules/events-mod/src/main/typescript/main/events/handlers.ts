@@ -78,31 +78,31 @@ export function handleChunkUpdate(
   emitEvent(mapChunk, tick, eventType)
 }
 
-export function handleTilesUpdate(
-    tick: uint,
-    eventType: string,
-    surfaceIndex: uint,
-    newTileType: LuaTilePrototype,
-    updatedTiles: OldTileAndPosition[],
-) {
-
-  if (!newTileType.collision_mask["ground-tile"] && !newTileType.collision_mask["water-tile"]) {
-    return
-  } else {
-
-    let convertedTiles: MapTile[] = updatedTiles.map((it) => {
-      return {
-        x: it.position.x,
-        y: it.position.y,
-        proto: newTileType.name
-      }
-    })
-
-    let mapTiles: MapTiles = createMapTiles(surfaceIndex, convertedTiles)
-
-    emitEvent(mapTiles, tick, eventType)
-  }
-}
+// export function handleTilesUpdate(
+//     tick: uint,
+//     eventType: string,
+//     surfaceIndex: uint,
+//     newTileType: LuaTilePrototype,
+//     updatedTiles: OldTileAndPosition[],
+// ) {
+//
+//   if (!newTileType.collision_mask["ground-tile"] && !newTileType.collision_mask["water-tile"]) {
+//     return
+//   } else {
+//
+//     let convertedTiles: MapTile[] = updatedTiles.map((it) => {
+//       return {
+//         x: it.position.x,
+//         y: it.position.y,
+//         proto: newTileType.name
+//       }
+//     })
+//
+//     let mapTiles: MapTiles = createMapTiles(surfaceIndex, convertedTiles)
+//
+//     emitEvent(mapTiles, tick, eventType)
+//   }
+// }
 
 function createMapTiles(
     surfaceIndex: uint,

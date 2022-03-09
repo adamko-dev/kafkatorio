@@ -1,6 +1,7 @@
-import {EventDataCache} from "../cache/EventDataCache";
 import {Converters} from "./converters";
-import CacheData = EventDataCache.CacheData;
+import EventUpdatesManager, {EventUpdates} from "../cache/EventDataCache";
+import CacheData = EventUpdates.CacheData;
+
 
 type PlayerUpdater = (player: LuaPlayer, data: CacheData<"PLAYER">) => void
 
@@ -9,9 +10,9 @@ function playerUpdateThrottle(
     eventName: string,
     mutate: PlayerUpdater,
 ) {
-  EventDataCache.throttle<"PLAYER">(
+  EventUpdatesManager.throttle<"PLAYER">(
       {index: playerIndex, updateType: "PLAYER"},
-      (data => {
+      data => {
         const player = game.players[playerIndex]
         if (player != undefined) {
           mutate(player, data)
@@ -21,19 +22,19 @@ function playerUpdateThrottle(
           data.eventCounts = {}
         }
         data.eventCounts[eventName] = ((data.eventCounts ?? {}) [eventName] ?? 0) + 1
-      })
+      }
   )
 }
 
-function playerUpdateDebounce(playerIndex: uint, mutate: PlayerUpdater) {
-  EventDataCache.debounce<"PLAYER">(
-      {index: playerIndex, updateType: "PLAYER"},
-      (data => {
-        const player = game.players[playerIndex]
-        mutate(player, data)
-      })
-  )
-}
+// function playerUpdateDebounce(playerIndex: uint, mutate: PlayerUpdater) {
+//   EventUpdatesManager.debounce<"PLAYER">(
+//       {index: playerIndex, updateType: "PLAYER"},
+//       data => {
+//         const player = game.players[playerIndex]
+//         mutate(player, data)
+//       }
+//   )
+// }
 
 function playerOnlineInfo(player: LuaPlayer, data: CacheData<"PLAYER">) {
   data.lastOnline = player.last_online

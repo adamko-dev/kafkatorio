@@ -7,6 +7,7 @@ import {
 import {Queue} from "../queue/queue";
 import {isEventType} from "./eventTypeCheck";
 import {Converters} from "./converters";
+import KafkatorioSettings from "../settings/KafkatorioSettings";
 
 
 script.on_event(
@@ -46,22 +47,22 @@ script.on_event(
         // }
       }
 
-      if (e.tick % 30 == 0) {
-        let events: EventData[] = Queue.dequeueValues(1)
-
-        if (events.length > 0) {
-          log(`[${e.tick}] dequed ${events.length} events, current size: ${Queue.size()}`)
-
-          for (const event of events) {
-            if (isEventType(event, defines.events.on_chunk_generated)) {
-              let eName = Converters.eventNameString(event.name)
-
-              log(`[${e.tick}] dequed event ${eName}`)
-              handleChunkUpdate(e.tick, eName, event.surface.index, event.position, event.area)
-            }
-          }
-        }
-      }
+      // if (e.tick % 30 == 0) {
+      //   let events: EventData[] = Queue.dequeueValues(1)
+      //
+      //   if (events.length > 0) {
+      //     log(`[${e.tick}] dequed ${events.length} events, current size: ${Queue.size()}`)
+      //
+      //     for (const event of events) {
+      //       if (isEventType(event, defines.events.on_chunk_generated)) {
+      //         let eName = Converters.eventNameString(event.name)
+      //
+      //         log(`[${e.tick}] dequed event ${eName}`)
+      //         handleChunkUpdate(e.tick, eName, event.surface.index, event.position, event.area)
+      //       }
+      //     }
+      //   }
+      // }
     }
 )
 
@@ -80,3 +81,11 @@ script.on_event(
 // defines.events.on_robot_built_tile, ], (builtTilesEvent) => { handleTilesUpdate(
 // builtTilesEvent.tick, mapEventIdToName.get(builtTilesEvent.name), builtTilesEvent.surface_index,
 // builtTilesEvent.tile, builtTilesEvent.tiles, ) } )
+
+script.on_event(
+    defines.events.on_runtime_mod_setting_changed,
+    (e: OnRuntimeModSettingChangedEvent) => {
+      print(`Settings changed ${e.setting_type}, ${e.player_index}, ${e.setting}, ${e.mod_name}`)
+      KafkatorioSettings.loadSettings()
+    }
+)

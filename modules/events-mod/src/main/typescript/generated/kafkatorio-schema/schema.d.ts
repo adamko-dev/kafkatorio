@@ -7,6 +7,14 @@ interface KafkatorioPacket {
   packetType: PacketType;
 }
 
+interface FactorioEvent extends KafkatorioPacket {
+  data: FactorioObjectData;
+  eventType: string;
+  modVersion: string;
+  packetType: PacketType;
+  tick: uint;
+}
+
 interface MapEntityPosition {
   x: double;
   y: double;
@@ -44,14 +52,6 @@ interface MapTile {
   proto: string;
   x: int;
   y: int;
-}
-
-interface FactorioEvent extends KafkatorioPacket {
-  data: FactorioObjectData;
-  eventType: string;
-  modVersion: string;
-  packetType: PacketType;
-  tick: uint;
 }
 
 interface EntityIdentifiers {

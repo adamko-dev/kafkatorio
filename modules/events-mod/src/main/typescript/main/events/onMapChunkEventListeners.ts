@@ -1,8 +1,8 @@
-import {EventDataCache} from "../cache/EventDataCache";
 import {isEventType} from "./eventTypeCheck";
 import {Converters} from "./converters";
-import CacheKey = EventDataCache.CacheKey;
-import CacheData = EventDataCache.CacheData;
+import EventUpdatesManager, {EventUpdates} from "../cache/EventDataCache";
+import CacheKey = EventUpdates.CacheKey;
+import CacheData = EventUpdates.CacheData;
 
 
 type MapChunkUpdater = (data: CacheData<"MAP_CHUNK">) => void
@@ -37,7 +37,7 @@ function mapTilesUpdateDebounce(
     updateType: "MAP_CHUNK",
   }
 
-  EventDataCache.debounce<"MAP_CHUNK">(
+  EventUpdatesManager.debounce<"MAP_CHUNK">(
       key,
       data => {
         data.tileDictionary ??= <MapTileDictionary>{
@@ -242,14 +242,14 @@ script.on_event(
           updateType: "MAP_CHUNK",
         }
 
-        EventDataCache.debounce<"MAP_CHUNK">(
+        EventUpdatesManager.debounce<"MAP_CHUNK">(
             key,
             data => {
               data.isDeleted = true
             }
         )
         // deletion is important - emit ASAP
-        EventDataCache.setExpiration(key, 0)
+        EventUpdatesManager.setExpiration(key, 0)
       }
     }
 )
