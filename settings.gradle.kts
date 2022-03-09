@@ -28,12 +28,12 @@ dependencyResolutionManagement {
 
   repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
 
-  repositories {
-    mavenLocal {
-////      content {
-////        includeGroup("io.kvision")
-////        includeGroup("dev.adamko.kotka")
-////      }
-    }
-  }
+//  repositories {
+//    mavenLocal {
+//      content {
+//        includeGroup("io.kvision")
+//        includeGroup("dev.adamko.kotka")
+//      }
+//    }
+//  }
 }

@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
-  id("dev.adamko.kafkatorio.lang.kotlin-js")
+  dev.adamko.kafkatorio.lang.`kotlin-js`
   kotlin("plugin.serialization")
   id("io.kvision")
 }
@@ -39,8 +39,10 @@ kotlin {
   sourceSets {
 
     all {
-      languageSettings.optIn("kotlin.RequiresOptIn")
-      languageSettings.optIn("kotlinx.serialization.ExperimentalSerializationApi")
+      languageSettings.apply {
+        optIn("kotlin.RequiresOptIn")
+        optIn("kotlinx.serialization.ExperimentalSerializationApi")
+      }
     }
 
     main {

@@ -98,7 +98,7 @@ class KxsDataOutputEncoder(
 class KxsDataInputDecoder(
   private val input: DataInput,
   override val serializersModule: SerializersModule = EmptySerializersModule,
-  var elementsCount: Int = 0,
+  private var elementsCount: Int = 0,
 ) : AbstractDecoder() {
 
   private var elementIndex = 0

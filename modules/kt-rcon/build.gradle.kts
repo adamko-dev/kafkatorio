@@ -1,5 +1,5 @@
 plugins {
-  id("dev.adamko.kafkatorio.lang.kotlin-jvm")
+  dev.adamko.kafkatorio.lang.`kotlin-jvm`
 }
 
 //group = "${rootProject.group}.server"

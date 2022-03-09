@@ -31,6 +31,16 @@ val dockerDown by tasks.registering(Exec::class) {
   commandLine = parseSpaceSeparatedArgs(""" docker-compose down """)
 }
 
+
+val dockerRemove by tasks.registering(Exec::class) {
+  group = dockerComposeTaskGroup
+
+  logging.captureStandardOutput(LogLevel.LIFECYCLE)
+
+  workingDir = dockerSrcDir.asFile
+  commandLine = parseSpaceSeparatedArgs(""" docker-compose rm --stop -v -f """)
+}
+
 afterEvaluate {
   tasks.named("processRun") { dependsOn(dockerUp, dockerEnv) }
   tasks.named("processKill") { dependsOn(dockerDown) }

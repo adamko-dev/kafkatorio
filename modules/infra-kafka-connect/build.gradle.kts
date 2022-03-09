@@ -3,8 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
-  id("dev.adamko.kafkatorio.infra.docker-compose")
-  id("dev.adamko.kafkatorio.lang.kotlin-jvm")
+  dev.adamko.kafkatorio.infra.`docker-compose`
+  dev.adamko.kafkatorio.lang.`kotlin-jvm`
 }
 
 val dockerSrcDir: Directory by extra(layout.projectDirectory.dir("src/main/docker"))

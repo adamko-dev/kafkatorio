@@ -39,7 +39,7 @@ dependencies {
 
   implementation("com.sksamuel.scrimage:scrimage-core:4.0.24")
 
-  val kotkaVersion = "v0.0.12"
+  val kotkaVersion = "v0.0.13"
   implementation("com.github.adamko-dev.kotka-streams:kotka-streams:$kotkaVersion") {
     isChanging = true
   }

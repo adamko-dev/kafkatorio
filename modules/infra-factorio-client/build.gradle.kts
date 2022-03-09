@@ -5,7 +5,7 @@ import dev.adamko.kafkatorio.gradle.not
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
-  id("dev.adamko.kafkatorio.infra.process-runner")
+  dev.adamko.kafkatorio.infra.`process-runner`
 }
 
 description = "Start the Factorio game client"

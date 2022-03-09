@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.incremental.md5
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
-  id("dev.adamko.kafkatorio.infra.docker-compose")
+  dev.adamko.kafkatorio.infra.`docker-compose`
 }
 
 description = "Send events from a Factorio server to a Kafka topic "

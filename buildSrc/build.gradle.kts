@@ -15,13 +15,12 @@ object Versions {
   const val kotlin = "1.6.10"
 
   const val gradleNodePlugin = "3.2.1"
-  const val gradleDockerComposePlugin = "0.15.0"
+  const val gradleDockerComposePlugin = "0.15.1"
 
   const val kotlinXSerialization = "1.3.2"
   const val kvision = "5.8.1"
   const val semver = "1.1.2"
   const val http4k = "4.19.1.0"
-  const val jsoup = "1.14.3"
 
   const val kotest = "5.1.0"
 }
@@ -54,7 +53,10 @@ dependencies {
   implementation("org.http4k:http4k-core")
   implementation("org.http4k:http4k-client-okhttp")
 
-  implementation("org.jsoup:jsoup:${Versions.jsoup}")
+
+  // https://github.com/gradle/gradle/issues/15383#issuecomment-779893192
+  // https://youtrack.jetbrains.com/issue/IDEA-262280#focus=Comments-27-5397040.0-0
+//  implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
 }
 
 

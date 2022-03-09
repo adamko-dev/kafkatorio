@@ -13,8 +13,6 @@ dependencyResolutionManagement {
     mavenCentral()
     jitpack()
     gradlePluginPortal()
-//    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/")
-//    maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven")
 
     // Declare the Node.js download repository
     ivy("https://nodejs.org/dist/") {
@@ -32,25 +30,15 @@ dependencyResolutionManagement {
   }
 
   pluginManagement {
-
     repositories {
       gradlePluginPortal()
       mavenCentral()
       jitpack()
-//      maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/")
     }
-
   }
 
 }
 
 fun RepositoryHandler.jitpack() {
-  maven("https://jitpack.io") {
-//    content {
-//      includeGroup("com.github.aSemy")
-//      includeGroup("com.github.adamko-dev")
-//      includeGroup("com.github.adamko-dev.kotka-streams")
-//      includeGroup("dev.adamko.kotka")
-//    }
-  }
+  maven("https://jitpack.io")
 }

@@ -3,7 +3,7 @@ import dev.adamko.kafkatorio.gradle.factorioModAttributes
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
-  id("dev.adamko.kafkatorio.infra.docker-compose")
+  dev.adamko.kafkatorio.infra.`docker-compose`
 }
 
 val dockerSrcDir: Directory by extra
@@ -56,4 +56,18 @@ idea {
   module {
     excludeDirs.add(file("src/factorio-server"))
   }
+}
+
+
+tasks.hardReset  {
+
+  dependsOn(tasks.dockerRemove)
+
+  delete(
+    factorioServerDataDir.dir("saves"),
+    factorioServerDataDir.dir("temp"),
+    factorioServerDataDir.file("factorio-current.log"),
+    factorioServerDataDir.file("factorio-previous.log"),
+    factorioServerDataDir.file(".lock"),
+  )
 }
