@@ -9,6 +9,7 @@ import dev.adamko.kafkatorio.events.schema.MapChunkPosition
 import dev.adamko.kafkatorio.events.schema.MapTilePosition
 import dev.adamko.kafkatorio.events.schema.SurfaceIndex
 import dev.adamko.kafkatorio.events.schema.converters.toMapChunkPosition
+import dev.adamko.kotka.extensions.streams.*
 import java.awt.image.BufferedImage
 import java.io.File
 import kotlin.coroutines.CoroutineContext
@@ -52,7 +53,7 @@ fun saveMapTiles(
 
   serverMapTable
     .toStream()
-    .foreach { _, value ->
+    .forEach("save-chunked-tiles") { _, value ->
       if (value != null) {
         runBlocking(Dispatchers.Default) {
           println("emitting chunkedTiles ${value.chunkId} tiles: ${value.map.size}")

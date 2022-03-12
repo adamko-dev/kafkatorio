@@ -6,7 +6,8 @@ export function emitPrototypes() {
   emitPacket<FactorioPrototypes>({
     modVersion: global.MOD_VERSION,
     packetType: "PROTOTYPES",
-    prototypes: prototypes()
+    prototypes: prototypes(),
+    tick: game.tick,
   })
 }
 

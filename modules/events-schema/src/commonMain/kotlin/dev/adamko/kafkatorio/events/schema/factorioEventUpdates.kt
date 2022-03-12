@@ -15,8 +15,7 @@ import kotlinx.serialization.json.jsonPrimitive
 @Serializable
 data class FactorioEventUpdatePacket(
   override val modVersion: String,
-  /** game time */
-  val tick: Tick,
+  override val tick: Tick,
   val update: FactorioEventUpdate,
 ) : KafkatorioPacket() {
   @EncodeDefault

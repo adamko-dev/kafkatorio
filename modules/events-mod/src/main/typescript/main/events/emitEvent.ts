@@ -7,6 +7,6 @@ export function emitEvent<T extends FactorioObjectData>(eventData: T, tick: uint
     packetType: "EVENT",
     eventType: eventType,
     modVersion: global.MOD_VERSION,
-    tick: tick
+    tick: tick,
   })
 }

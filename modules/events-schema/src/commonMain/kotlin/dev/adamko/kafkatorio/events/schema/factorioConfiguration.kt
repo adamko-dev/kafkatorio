@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FactorioConfigurationUpdate(
   override val modVersion: String,
+  override val tick: Tick,
   val factorioData: FactorioGameDataUpdate,
   val allMods: List<FactorioModInfo>,
 ) : KafkatorioPacket() {

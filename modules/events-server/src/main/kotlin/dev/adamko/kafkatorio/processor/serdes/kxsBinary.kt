@@ -60,12 +60,14 @@ class KxsDataOutputEncoder(
   override fun encodeLong(value: Long) = output.writeLong(value)
   override fun encodeShort(value: Short) = output.writeShort(value.toInt())
   override fun encodeString(value: String) = output.writeUTF(value)
+//  override fun encodeString(value: String) = encodeByteArray(value.toByteArray(Charsets.UTF_8))
 
   override fun beginCollection(
     descriptor: SerialDescriptor,
     collectionSize: Int
   ): CompositeEncoder {
-    encodeCompactSize(collectionSize)
+    encodeInt(collectionSize)
+//    encodeCompactSize(collectionSize)
     return this
   }
 
@@ -113,6 +115,7 @@ class KxsDataInputDecoder(
   override fun decodeLong(): Long = input.readLong()
   override fun decodeShort(): Short = input.readShort()
   override fun decodeString(): String = input.readUTF()
+//  override fun decodeString(): String = decodeByteArray().toString(Charsets.UTF_8)
 
   override fun decodeElementIndex(descriptor: SerialDescriptor): Int {
     if (elementIndex == elementsCount) return CompositeDecoder.DECODE_DONE
@@ -125,7 +128,8 @@ class KxsDataInputDecoder(
   override fun decodeSequentially(): Boolean = true
 
   override fun decodeCollectionSize(descriptor: SerialDescriptor): Int =
-    decodeCompactSize().also { elementsCount = it }
+    decodeInt().also { elementsCount = it }
+//    decodeCompactSize().also { elementsCount = it }
 
   override fun decodeNotNullMark(): Boolean = decodeBoolean()
 

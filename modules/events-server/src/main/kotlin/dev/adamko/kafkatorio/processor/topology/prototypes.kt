@@ -7,7 +7,9 @@ import dev.adamko.kafkatorio.events.schema.MapTile
 import dev.adamko.kafkatorio.events.schema.MapTilePrototype
 import dev.adamko.kafkatorio.events.schema.converters.toHex
 import dev.adamko.kafkatorio.processor.serdes.jsonMapper
+import dev.adamko.kafkatorio.processor.serdes.kxsBinary
 import dev.adamko.kotka.extensions.materializedAs
+import dev.adamko.kotka.extensions.materializedWith
 import dev.adamko.kotka.extensions.streams.filter
 import dev.adamko.kotka.extensions.streams.mapValues
 import dev.adamko.kotka.extensions.streams.toTable
@@ -54,10 +56,10 @@ fun tileProtoColourDictionary(
     }
     .toTable(
       "server-map-data.tile-prototypes",
-      materializedAs(
-        "server-map-data.tile-prototypes.store",
-        jsonMapper.serde(),
-        jsonMapper.serde(),
+      materializedWith(
+//        "server-map-data.tile-prototypes.store",
+        kxsBinary.serde(),
+        kxsBinary.serde(),
       )
     )
 

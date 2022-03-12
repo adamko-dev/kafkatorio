@@ -289,6 +289,7 @@ class FactorioEventTest : FunSpec({
                {
                  "modVersion": "0.2.8",
                  "packetType": "CONFIG",
+                 "tick": 534,
                  "allMods": [
                    {
                      "modName": "kafkatorio-events",
@@ -310,6 +311,7 @@ class FactorioEventTest : FunSpec({
 
         val expected = FactorioConfigurationUpdate(
           modVersion = "0.2.8",
+          tick = Tick(534u),
           factorioData = FactorioGameDataUpdate(null, null),
           allMods = listOf(
             FactorioModInfo(

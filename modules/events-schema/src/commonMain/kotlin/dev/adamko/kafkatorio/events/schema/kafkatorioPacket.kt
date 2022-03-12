@@ -14,6 +14,7 @@ import kotlinx.serialization.json.jsonPrimitive
 sealed class KafkatorioPacket {
   /** Schema versioning */
   abstract val modVersion: String
+  abstract val tick: Tick
   @EncodeDefault
   abstract val packetType: PacketType
 

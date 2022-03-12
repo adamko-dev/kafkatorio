@@ -12,6 +12,7 @@ class PrototypesTest : BehaviorSpec({
       {
          "modVersion":"0.2.4",
          "packetType":"PROTOTYPES",
+         "tick": 534,
          "prototypes":[ 
             {
                "prototypeObjectName":"LuaTilePrototype",
@@ -46,6 +47,7 @@ class PrototypesTest : BehaviorSpec({
       {
          "modVersion":"0.3.2",
          "packetType":"PROTOTYPES",
+         "tick": 534,
          "prototypes":[
             {
                "prototypeObjectName":"LuaTilePrototype",

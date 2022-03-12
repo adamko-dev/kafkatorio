@@ -112,8 +112,9 @@ interface EntityIdentifiers {
 data class MapTileDictionary(
   /** Map an X,Y coordinate a prototype name */
   val tilesXY: Map<String, Map<String, PrototypeKey>>,
-  val protos: Map<PrototypeKey, PrototypeName>
+  val protos: Map<PrototypeKey, PrototypeName>,
 ) {
+
   fun toMapTileList(): List<MapTile> = buildList {
     tilesXY.forEach { (xString, row) ->
       row.forEach { (yString, protoIndex) ->

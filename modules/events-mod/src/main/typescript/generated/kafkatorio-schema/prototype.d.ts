@@ -10,6 +10,7 @@ interface FactorioPrototypes extends KafkatorioPacket {
   modVersion: string;
   packetType: PacketType;
   prototypes: FactorioPrototype[];
+  tick: uint;
 }
 
 interface MapTilePrototype extends FactorioPrototype {

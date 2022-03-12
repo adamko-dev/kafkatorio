@@ -20,6 +20,7 @@ val kafkaStateDir = layout.projectDirectory.dir("kafka-state")
 dependencies {
 
   implementation(libs.kafka.streams)
+  testImplementation(libs.kafka.streamsTestUtils)
 
   implementation(projects.modules.eventsSchema)
 
@@ -40,7 +41,7 @@ dependencies {
 
   implementation("com.sksamuel.scrimage:scrimage-core:4.0.24")
 
-  val kotkaVersion = "v0.0.14"
+  val kotkaVersion = "v0.0.15"
   implementation("com.github.adamko-dev.kotka-streams:kotka-streams:$kotkaVersion") {
     isChanging = true
   }

@@ -1,30 +1,20 @@
 package dev.adamko.kafkatorio.processor
 
 import dev.adamko.kafkatorio.events.schema.ColourHex
-import dev.adamko.kafkatorio.events.schema.FactorioEvent
-import dev.adamko.kafkatorio.events.schema.FactorioEventUpdate
-import dev.adamko.kafkatorio.events.schema.FactorioEventUpdatePacket
-import dev.adamko.kafkatorio.events.schema.FactorioObjectData
-import dev.adamko.kafkatorio.events.schema.FactorioPrototypes
-import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
 import dev.adamko.kafkatorio.processor.config.ApplicationProperties
-import dev.adamko.kafkatorio.processor.serdes.jsonMapper
 import dev.adamko.kafkatorio.processor.serdes.kxsBinary
-import dev.adamko.kafkatorio.processor.topology.FactorioServerId
 import dev.adamko.kafkatorio.processor.topology.ServerMapChunkId
 import dev.adamko.kafkatorio.processor.topology.ServerMapChunkTiles
 import dev.adamko.kafkatorio.processor.topology.factorioServerPacketStream
-import dev.adamko.kafkatorio.processor.topology.groupTilesIntoChunksWithColours
+import dev.adamko.kafkatorio.processor.topology.groupMapChunks
 import dev.adamko.kafkatorio.processor.topology.playerUpdatesToWsServer
 import dev.adamko.kafkatorio.processor.topology.saveMapTiles
 import dev.adamko.kafkatorio.processor.topology.splitFactorioServerPacketStream
-import dev.adamko.kafkatorio.processor.topology.tileProtoColourDictionary
 import dev.adamko.kotka.extensions.consumedAs
-import dev.adamko.kotka.extensions.producedAs
-import dev.adamko.kotka.extensions.tables.toStream
 import dev.adamko.kotka.kxs.serde
 import java.time.Duration
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,7 +26,6 @@ import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.StreamsConfig
 import org.apache.kafka.streams.Topology
 import org.apache.kafka.streams.TopologyDescription
-import org.apache.kafka.streams.kstream.KStream
 import org.apache.kafka.streams.kstream.KTable
 
 
@@ -62,54 +51,7 @@ internal class KafkatorioTopology(
 
   private fun groupTilesMapChunks() {
     val builder = StreamsBuilder()
-
-
-    val protosStream: KStream<FactorioServerId, FactorioPrototypes> =
-      builder.stream(
-        "kafkatorio.${KafkatorioPacket.PacketType.PROTOTYPES}.all",
-        consumedAs("consume.factorio-protos.all", jsonMapper.serde(), jsonMapper.serde())
-      )
-    val tileProtoColourDict = tileProtoColourDictionary(protosStream)
-
-
-//    val mapTilesStream: KStream<FactorioServerId, FactorioEvent> =
-//      builder.stream(
-//        "kafkatorio.${KafkatorioPacket.PacketType.EVENT}.${FactorioObjectData.ObjectName.LuaTiles}",
-//        consumedAs("consume.map-tiles", jsonMapper.serde(), jsonMapper.serde())
-//      )
-//
-//    val mapChunksStream: KStream<FactorioServerId, FactorioEvent> =
-//      builder.stream(
-//        "kafkatorio.${KafkatorioPacket.PacketType.EVENT}.${FactorioObjectData.ObjectName.MapChunk}",
-//        consumedAs("consume.map-chunks", jsonMapper.serde(), jsonMapper.serde())
-//      )
-
-    val mapChunksUpdatesStream: KStream<FactorioServerId, FactorioEventUpdatePacket> =
-      builder.stream(
-        "kafkatorio.${KafkatorioPacket.PacketType.UPDATE}.${FactorioEventUpdate.FactorioEventUpdateType.MAP_CHUNK}",
-        consumedAs("consume.map-chunk-updates", jsonMapper.serde(), jsonMapper.serde())
-      )
-
-    val groupedMapChunkTiles: KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
-      groupTilesIntoChunksWithColours(
-//        mapTilesStream,
-//        mapChunksStream,
-        mapChunksUpdatesStream,
-        tileProtoColourDict,
-      )
-
-    groupedMapChunkTiles
-      .toStream("stream-grouped-map-tiles")
-      .to(
-        TOPIC_GROUPED_MAP_CHUNKS,
-        producedAs(
-          "produce.grouped-map-chunks",
-          kxsBinary.serde<ServerMapChunkId?>(),
-          kxsBinary.serde<ServerMapChunkTiles<ColourHex>?>()
-        )
-      )
-
-    val topology = builder.build()
+    val topology = groupMapChunks(builder)
     launchTopology("groupTilesMapChunks", topology)
   }
 

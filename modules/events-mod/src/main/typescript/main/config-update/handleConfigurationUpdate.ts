@@ -6,7 +6,8 @@ export function emitConfigurationUpdate(changeData: ConfigurationChangedData) {
     modVersion: global.MOD_VERSION,
     packetType: "CONFIG",
     allMods: allMods(changeData),
-    factorioData: factorioData(changeData)
+    factorioData: factorioData(changeData),
+    tick: game.tick,
   })
 
 }

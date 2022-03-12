@@ -7,10 +7,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FactorioEvent(
   override val modVersion: String,
+  override val tick: Tick,
   /** the initial Factorio event (`defines.events`) trigger */
   val eventType: String,
-  /** game time */
-  val tick: Tick,
   val data: FactorioObjectData,
 ) : KafkatorioPacket() {
   @EncodeDefault

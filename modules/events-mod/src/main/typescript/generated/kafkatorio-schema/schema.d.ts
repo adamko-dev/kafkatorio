@@ -5,6 +5,7 @@ type PacketType = "EVENT" | "CONFIG" | "PROTOTYPES" | "UPDATE";
 interface KafkatorioPacket {
   modVersion: string;
   packetType: PacketType;
+  tick: uint;
 }
 
 interface FactorioEvent extends KafkatorioPacket {
