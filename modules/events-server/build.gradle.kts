@@ -15,6 +15,7 @@ description = """
 
 val projectId: String by project.extra
 
+val kafkaStateDir = layout.projectDirectory.dir("kafka-state")
 
 dependencies {
 
@@ -66,7 +67,7 @@ tasks.withType<KotlinCompile> {
 val kafkaStateDirDelete by tasks.registering(Delete::class) {
   group = project.name
   mustRunAfter(kafkaConsumersDelete)
-  delete(layout.projectDirectory.dir("kafka-state"))
+  delete(kafkaStateDir)
 }
 
 val kafkaConsumersDelete by tasks.registering(KafkaConsumerGroupsTask.DeleteAll::class) {
@@ -76,3 +77,9 @@ val kafkaConsumersDelete by tasks.registering(KafkaConsumerGroupsTask.DeleteAll:
 //tasks.run.configure {
 //  dependsOn(kafkatorioEventsServerKafkaForceReset)
 //}
+
+idea {
+  module {
+    excludeDirs = excludeDirs + kafkaStateDir.asFile
+  }
+}
