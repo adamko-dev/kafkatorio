@@ -1,5 +1,6 @@
 package dev.adamko.kafkatorio.processor.admin
 
+import dev.adamko.kafkatorio.events.schema.FactorioEventUpdate
 import dev.adamko.kafkatorio.events.schema.FactorioObjectData
 import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
 import dev.adamko.kafkatorio.processor.KafkatorioTopology
@@ -42,9 +43,13 @@ object KafkatorioKafkaAdmin {
             }
           KafkatorioPacket.PacketType.CONFIG     -> add("$base.FactorioConfigurationUpdate")
           KafkatorioPacket.PacketType.PROTOTYPES -> add("$base.all")
-          KafkatorioPacket.PacketType.UPDATE     -> add("$base.all")
+          KafkatorioPacket.PacketType.UPDATE     -> {
+            add("$base.all")
+            FactorioEventUpdate.FactorioEventUpdateType.values.forEach { objectName ->
+              add("$base.${objectName.name}")
+            }
+          }
         }
-
 
       }
     }.minus(currentTopics.toSet())
