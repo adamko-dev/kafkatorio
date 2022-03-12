@@ -31,7 +31,7 @@ value class PlayerIndex(private val id: UInt) {
 }
 
 
-/** This is universally unique for every entity that has one, for the lifetime of a whole game. */
+/** > This is universally unique for every entity that has one, for the lifetime of a whole game. */
 @Serializable
 @JvmInline
 value class UnitNumber(private val id: UInt) {

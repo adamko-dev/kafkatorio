@@ -156,7 +156,9 @@ internal class KafkatorioTopology(
     props.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, appId)
 
     val streams = KafkaStreams(topology, props)
-    streams.setUncaughtExceptionHandler(StreamsExceptionHandler())
+    streams.setUncaughtExceptionHandler(StreamsExceptionHandler {
+      coroutineContext.job.cancel(CancellationException(cause = it))
+    })
 
     val description: TopologyDescription = topology.describe()
     println(
