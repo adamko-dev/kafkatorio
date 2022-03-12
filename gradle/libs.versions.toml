@@ -6,7 +6,6 @@
 
 ## compilation ##
 jvm        = "11"
-#kotlin     = "1.6.20-M1"
 kotlin     = "1.6.10"
 
 ## libs ##
@@ -14,10 +13,10 @@ camel-kafkaConnectors = "0.11.0"
 http4k                = "4.19.1.0"
 kafka                 = "3.1.0"
 kotlinx-serialization = "1.3.2"
-kvision               = "5.8.1"
-log4j2                = "2.14.1"
-qosLogback            = "1.2.5"
-slf4j                 = "1.7.30"
+kvision               = "5.8.2"
+log4j2                = "2.17.2"
+qosLogback            = "1.2.11"
+slf4j                 = "1.7.36"
 
 ## test ##
 junit      = "5.8.2"
@@ -35,7 +34,7 @@ kotlinJvm           = { id = "org.jetbrains.kotlin.jvm",                    vers
 kotlinJs            = { id = "org.jetbrains.kotlin.js",                     version.ref  = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.kotlin-serialization",   version.ref  = "kotlin" }
 
-loggingCapabilities = { id = "dev.jacomet.logging-capabilities",            version      = "0.9.0"  }
+loggingCapabilities = { id = "dev.jacomet.logging-capabilities",            version      = "0.10.0"  }
 shadowJar           = { id = "com.github.jengelman.gradle.plugins.shadow",  version      = "6.1.0"  }
 dependencyCheck     = { id = "com.github.ben-manes.versions",               version      = "0.39.0" }
 
@@ -47,10 +46,12 @@ dependencyCheck     = { id = "com.github.ben-manes.versions",               vers
 ## kotlin ##
 kotlin-bom = { group = "org.jetbrains.kotlin", name = "kotlin-bom", version.ref = "kotlin" }
 
-kotlinx-serialization-bom  = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-bom",  version.ref = "kotlinx-serialization" }
-kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core" }
-kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json" }
-kotlinx-serialization-yaml = { group = "com.charleskorn.kaml",  name = "kaml",                       version = "0.37.0"    }
+kotlinx-serialization-bom      = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-bom",  version.ref = "kotlinx-serialization" }
+kotlinx-serialization-core     = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core" }
+kotlinx-serialization-json     = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json" }
+kotlinx-serialization-protobuf = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-protobuf" }
+
+kotlinx-serialization-yaml     = { group = "com.charleskorn.kaml",  name = "kaml",                       version = "0.37.0"    }
 
 kotlinx-coroutines         = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core",    version = "1.6.0" }
 
@@ -78,15 +79,15 @@ http4k-graphql        = { group = "org.http4k",  name = "http4k-graphql"        
 
 ## logging ##
 slf4j-api       = { group = "org.slf4j",             name = "slf4j-api",                 version.ref = "slf4j"      }
-kotlin-logging  = { group = "io.github.microutils",  name = "kotlin-logging-jvm",        version     = "2.0.11"     }
+kotlin-logging  = { group = "io.github.microutils",  name = "kotlin-logging-jvm",        version     = "2.1.21"     }
 logback-core    = { group = "ch.qos.logback",        name = "logback-core",              version.ref = "qosLogback" }
 logback-classic = { group = "ch.qos.logback",        name = "logback-classic",           version.ref = "qosLogback" }
 logback-encoder = { group = "net.logstash.logback",  name = "logstash-logback-encoder",  version     = "6.6"        }
 
 ## gcp ##
-gcp-bom    = { group = "com.google.cloud",  name = "libraries-bom",       version = "23.1.0" }
-gcp-pubsub = { group = "com.google.cloud",  name = "google-cloud-pubsub"                     }
-gcp-speech = { group = "com.google.cloud",  name = "google-cloud-speech"                     }
+#gcp-bom    = { group = "com.google.cloud",  name = "libraries-bom",       version = "23.1.0" }
+#gcp-pubsub = { group = "com.google.cloud",  name = "google-cloud-pubsub"                     }
+#gcp-speech = { group = "com.google.cloud",  name = "google-cloud-speech"                     }
 
 
 ## kafka ##
@@ -95,15 +96,18 @@ kafka-streamsTestUtils = { group = "org.apache.kafka", name = "kafka-streams-tes
 # kafka helpers
 #kotka         = { group = "com.github.blueanvil", name = "kotka",         version =     "1.1.1" }
 
+kafka-kotkaStreams = { group = "com.github.adamko-dev.kotka-streams", name = "kotka-streams", version = "0.0.15" }
+
 jsoup = { group = "org.jsoup", name = "jsoup", version = "1.14.3" }
 skrapeit = { group = "it.skrape", name = "skrapeit", version = "1.2.0" }
 
+scrimage-core = { group = "com.sksamuel.scrimage", name = "scrimage-core", version = "4.0.31" }
 
 #############
 ### test  ###
 #############
 
-mockk = { group = "io.mockk", name = "mockk", version = "1.12.2" }
+mockk = { group = "io.mockk", name = "mockk", version = "1.12.3" }
 
 ## junit ##
 junit-bom      = { group = "org.junit",          name = "junit-bom",                version.ref = "junit"  }

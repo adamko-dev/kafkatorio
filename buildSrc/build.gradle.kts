@@ -11,14 +11,14 @@ plugins {
 object Versions {
   const val jvmTarget = "11"
   const val kotlinTarget = "1.6"
-//  const val kotlin = "1.6.20-M1"
+
   const val kotlin = "1.6.10"
 
   const val gradleNodePlugin = "3.2.1"
   const val gradleDockerComposePlugin = "0.15.1"
 
   const val kotlinXSerialization = "1.3.2"
-  const val kvision = "5.8.1"
+  const val kvision = "5.8.2"
   const val semver = "1.1.2"
   const val http4k = "4.19.1.0"
 

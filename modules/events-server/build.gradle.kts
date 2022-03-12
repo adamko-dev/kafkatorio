@@ -29,7 +29,7 @@ dependencies {
   implementation(platform(libs.kotlinx.serialization.bom))
   implementation(libs.kotlinx.serialization.core)
   implementation(libs.kotlinx.serialization.json)
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf")
+//  implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf")
 
   implementation(libs.kotlinx.coroutines)
 
@@ -39,10 +39,9 @@ dependencies {
 
   implementation(libs.bundles.logging)
 
-  implementation("com.sksamuel.scrimage:scrimage-core:4.0.24")
+  implementation(libs.scrimage.core)
 
-  val kotkaVersion = "v0.0.15"
-  implementation("com.github.adamko-dev.kotka-streams:kotka-streams:$kotkaVersion") {
+  implementation(libs.kafka.kotkaStreams) {
     isChanging = true
   }
 
