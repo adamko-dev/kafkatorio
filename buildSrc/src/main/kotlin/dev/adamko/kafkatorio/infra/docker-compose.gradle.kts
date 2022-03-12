@@ -3,6 +3,7 @@ package dev.adamko.kafkatorio.infra
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
+  base
   id("dev.adamko.kafkatorio.infra.process-runner")
 }
 
