@@ -41,7 +41,7 @@ fun createFactorioMap() = Maps {
       // NOTE: offset the zoom, so 1 meter = 1 tile
       maxNativeZoom = 3
       minNativeZoom = -1
-      zoomOffset = 1
+//      zoomOffset = 1
 
       noWrap = true
       updateWhenIdle = false
