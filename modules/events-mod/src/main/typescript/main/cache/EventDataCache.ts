@@ -32,8 +32,9 @@ export namespace EventUpdates {
     public throttle<TYPE extends FactorioEventUpdateType>(
         key: CacheKey<TYPE>,
         mutate: CacheDataMutator<TYPE>,
+        expirationDurationTicks?: uint,
     ) {
-      this.update(key, mutate, false)
+      this.update(key, mutate, false, expirationDurationTicks)
     }
 
 
@@ -44,8 +45,9 @@ export namespace EventUpdates {
     public debounce<TYPE extends FactorioEventUpdateType>(
         key: CacheKey<TYPE>,
         mutate: CacheDataMutator<TYPE>,
+        expirationDurationTicks?: uint,
     ) {
-      this.update(key, mutate, true)
+      this.update(key, mutate, true, expirationDurationTicks)
     }
 
 
@@ -53,11 +55,15 @@ export namespace EventUpdates {
         key: CacheKey<TYPE>,
         mutate: CacheDataMutator<TYPE>,
         resetLastUpdated: boolean,
+        expirationDurationTicks?: uint,
     ) {
-      const entry = this.getCacheEntry(key) ?? this.createCacheEntry(key, mutate)
+      const entry: CacheEntry<TYPE> = this.getCacheEntry(key) ?? this.createCacheEntry(key, mutate)
       mutate(entry.data)
       if (resetLastUpdated) {
         entry.lastUpdatedTick = game.tick
+      }
+      if (expirationDurationTicks != undefined) {
+        entry.expirationDurationTicks = expirationDurationTicks
       }
     }
 

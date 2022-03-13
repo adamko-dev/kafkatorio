@@ -1,7 +1,7 @@
 import {emitPrototypes} from "../config-update/prototypes";
-import {Queue} from "../queue/queue";
 import {initGlobal} from "../global-init";
 import floor = math.floor;
+import {Queue} from "../queue/queue";
 
 
 commands.add_command(
@@ -24,22 +24,24 @@ commands.add_command(
           emitPrototypes()
         } else if (paramUppercase.startsWith("CHUNKS")) {
 
-          let size = paramUppercase.split(" ")?.[1] ?? null
+          const size = paramUppercase.split(" ")?.[1] ?? null
           let radius = (size != null) ? parseInt(size) : 1
+          // radius = Math.max(radius, 10)
 
           if (e.player_index != undefined) {
             let player = game.players[e.player_index]
 
-            let chunkPosition: ChunkPosition = {
+            const chunkPosition: ChunkPosition = {
               x: floor(player.position.x / 32),
               y: floor(player.position.y / 32),
             }
 
-            let chunkXMin = chunkPosition.x - radius
-            let chunkXMax = chunkPosition.x + radius
-            let chunkYMin = chunkPosition.y - radius
-            let chunkYMax = chunkPosition.y + radius
+            const chunkXMin = chunkPosition.x - radius
+            const chunkXMax = chunkPosition.x + radius
+            const chunkYMin = chunkPosition.y - radius
+            const chunkYMax = chunkPosition.y + radius
 
+            // let i = 100
             for (const [, surface] of game.surfaces) {
               for (const chunk of surface.get_chunks()) {
                 if (
@@ -48,7 +50,7 @@ commands.add_command(
                     (chunk.y >= chunkYMin && chunk.y <= chunkYMax)
                 ) {
 
-                  let data: OnChunkGeneratedEvent = {
+                  const data: OnChunkGeneratedEvent = {
                     name: defines.events.on_chunk_generated,
                     position: {x: chunk.x, y: chunk.y},
                     area: chunk.area,
@@ -61,6 +63,9 @@ commands.add_command(
                       data,
                       50
                   )
+
+                  // handleChunkGeneratedEvent(data, i)
+                  // i = i + 10
                 }
               }
             }

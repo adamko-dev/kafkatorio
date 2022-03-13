@@ -1,23 +1,19 @@
-import {
-  handleChunkUpdate,
-  handleConsoleChat,
-  handleEntityUpdate,
-  handleSurfaceUpdate,
-} from "./handlers";
+import {handleConsoleChat, handleSurfaceUpdate,} from "./handlers";
 import {Queue} from "../queue/queue";
 import {isEventType} from "./eventTypeCheck";
 import {Converters} from "./converters";
 import KafkatorioSettings from "../settings/KafkatorioSettings";
+import {handleChunkGeneratedEvent} from "./onMapChunkEventListeners";
 
 
-script.on_event(
-    defines.events.on_player_mined_entity,
-    (e: OnPlayerMinedEntityEvent) => {
-      let eventName = Converters.eventNameString(e.name)
-      // handlePlayerUpdate(e.tick, eventName, e.player_index)
-      handleEntityUpdate(e.tick, eventName, e.entity)
-    }
-)
+// script.on_event(
+//     defines.events.on_player_mined_entity,
+//     (e: OnPlayerMinedEntityEvent) => {
+//       let eventName = Converters.eventNameString(e.name)
+//       // handlePlayerUpdate(e.tick, eventName, e.player_index)
+//       handleEntityUpdate(e.tick, eventName, e.entity)
+//     }
+// )
 
 // script.on_event(
 //     defines.events.on_player_joined_game,
@@ -47,22 +43,24 @@ script.on_event(
         // }
       }
 
-      // if (e.tick % 30 == 0) {
-      //   let events: EventData[] = Queue.dequeueValues(1)
-      //
-      //   if (events.length > 0) {
-      //     log(`[${e.tick}] dequed ${events.length} events, current size: ${Queue.size()}`)
-      //
-      //     for (const event of events) {
-      //       if (isEventType(event, defines.events.on_chunk_generated)) {
-      //         let eName = Converters.eventNameString(event.name)
-      //
-      //         log(`[${e.tick}] dequed event ${eName}`)
-      //         handleChunkUpdate(e.tick, eName, event.surface.index, event.position, event.area)
-      //       }
-      //     }
-      //   }
-      // }
+      if (e.tick % 7 == 0) {
+        const events: EventData[] = Queue.dequeueValues(1)
+
+        if (events.length > 0) {
+          log(`[${e.tick}] dequed ${events.length} events, current size: ${Queue.size()}`)
+
+          let i = 100
+          for (const event of events) {
+            if (isEventType(event, defines.events.on_chunk_generated)) {
+              let eName = Converters.eventNameString(event.name)
+
+              log(`[${e.tick}] dequed event ${eName}`)
+              handleChunkGeneratedEvent(event, i)
+              i += 10
+            }
+          }
+        }
+      }
     }
 )
 

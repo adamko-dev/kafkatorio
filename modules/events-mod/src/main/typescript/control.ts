@@ -11,7 +11,6 @@ require("./main/cache/cacheChecker")
 
 script.on_configuration_changed((data: ConfigurationChangedData) => {
   // runs whenever the version of the base game, or a mod, changes
-
   initGlobal(true)
   KafkatorioSettings.loadSettings()
   emitConfigurationUpdate(data)

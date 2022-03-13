@@ -11,6 +11,7 @@ type MapChunkUpdater = (data: CacheData<"MAP_CHUNK">) => void
 const mapProtoNameToKey: { [key: string]: string } = {}
 let protoIndex: uint = 0
 
+
 function getProtoKey(protoName: string): string {
   if (mapProtoNameToKey[protoName] == undefined) {
     mapProtoNameToKey[protoName] = `${protoIndex++}`
@@ -25,6 +26,7 @@ function mapTilesUpdateDebounce(
     tiles: TileRead[],
     eventName: string,
     updater?: MapChunkUpdater,
+    expirationDurationTicks?: uint,
 ) {
 
   if (surface == undefined) {
@@ -64,7 +66,8 @@ function mapTilesUpdateDebounce(
         if (updater != undefined) {
           updater(data)
         }
-      }
+      },
+      expirationDurationTicks,
   )
 }
 
@@ -80,19 +83,36 @@ function getTiles(
   ) ?? []
 }
 
+
 function getSurface(surfaceIndex: uint): LuaSurface | undefined {
   return game.surfaces[surfaceIndex]
 }
+
 
 script.on_event(
     defines.events.on_chunk_generated,
     (e: OnChunkGeneratedEvent) => {
       log(`on_chunk_generated ${e.tick}`)
-
-      let tiles = getTiles(e.surface, e.area)
-      mapTilesUpdateDebounce(e.surface, e.position, tiles, Converters.eventNameString(e.name))
+      handleChunkGeneratedEvent(e)
     }
 )
+
+
+export function handleChunkGeneratedEvent(
+    e: OnChunkGeneratedEvent,
+    expirationDurationTicks?: uint,
+) {
+  let tiles = getTiles(e.surface, e.area)
+  mapTilesUpdateDebounce(
+      e.surface,
+      e.position,
+      tiles,
+      Converters.eventNameString(e.name),
+      undefined,
+      expirationDurationTicks,
+  )
+}
+
 
 script.on_event(
     defines.events.on_chunk_charted,
@@ -110,6 +130,7 @@ script.on_event(
       // }))
     }
 )
+
 
 script.on_event(
     defines.events.script_raised_set_tiles,
@@ -146,6 +167,7 @@ function groupTiles(tiles: TileRead[]): Map<MapChunkPosition, TileRead[]> {
   return mapChunkPositionToTiles
 }
 
+
 function convertOldPosition(
     oldTiles: OldTileAndPosition[],
     placedTile: LuaTilePrototype,
@@ -159,6 +181,7 @@ function convertOldPosition(
       }
   )
 }
+
 
 function onBuildTileEvent(event: OnPlayerBuiltTileEvent | OnRobotBuiltTileEvent) {
 
@@ -198,6 +221,7 @@ function onBuildTileEvent(event: OnPlayerBuiltTileEvent | OnRobotBuiltTileEvent)
     )
   }
 }
+
 
 script.on_event(defines.events.on_player_built_tile, (e: OnPlayerBuiltTileEvent) => {
   log(`on_player_built_tile ${e.tick}`)
@@ -246,10 +270,9 @@ script.on_event(
             key,
             data => {
               data.isDeleted = true
-            }
+            },
+            0, // deletion is important - emit ASAP
         )
-        // deletion is important - emit ASAP
-        EventUpdatesManager.setExpiration(key, 0)
       }
     }
 )

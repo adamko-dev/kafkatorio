@@ -16,17 +16,6 @@ interface FactorioEvent extends KafkatorioPacket {
   tick: uint;
 }
 
-interface MapEntityPosition {
-  x: double;
-  y: double;
-}
-
-interface FactorioLuaControl {
-  force: uint;
-  position: MapEntityPosition;
-  surface: uint;
-}
-
 interface Colour {
   alpha: float;
   blue: float;
@@ -34,31 +23,26 @@ interface Colour {
   red: float;
 }
 
-interface MapTilePosition {
-  x: int;
-  y: int;
+interface EntityIdentifiers {
+  name: string;
+  type: string;
+  unitNumber: uint | null;
 }
 
-interface MapBoundingBox {
-  bottomRight: MapTilePosition;
-  topLeft: MapTilePosition;
+interface EntityIdentifiersData extends EntityIdentifiers {
+  name: string;
+  type: string;
+  unitNumber: uint | null;
+}
+
+interface MapEntityPosition {
+  x: double;
+  y: double;
 }
 
 interface MapChunkPosition {
   x: int;
   y: int;
-}
-
-interface MapTile {
-  proto: string;
-  x: int;
-  y: int;
-}
-
-interface EntityIdentifiers {
-  name: string;
-  type: string;
-  unitNumber: uint | null;
 }
 
 interface MapTileDictionary {
