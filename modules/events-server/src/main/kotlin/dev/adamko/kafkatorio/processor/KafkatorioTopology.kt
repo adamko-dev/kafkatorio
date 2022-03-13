@@ -9,6 +9,7 @@ import dev.adamko.kafkatorio.processor.topology.splitFactorioServerPacketStream
 import java.time.Duration
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -80,6 +81,7 @@ internal class KafkatorioTopology(
 
     val appId = props.compute(StreamsConfig.APPLICATION_ID_CONFIG) { _, v -> "$v.$id" } as? String
     props.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, appId)
+    props.setProperty(StreamsConfig.MAX_TASK_IDLE_MS_CONFIG, "${1.minutes.inWholeMilliseconds}")
 
     val streams = KafkaStreams(topology, props)
     streams.setUncaughtExceptionHandler(StreamsExceptionHandler {
