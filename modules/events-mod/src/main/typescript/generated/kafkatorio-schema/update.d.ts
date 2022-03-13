@@ -28,7 +28,7 @@ interface PlayerUpdate extends FactorioEventUpdate, PlayerUpdateKey {
   characterUnitNumber: uint | null;
   chatColour: Colour | null;
   colour: Colour | null;
-  diedCause: EntityIdentifiers | null;
+  diedCause: EntityIdentifiersData | null;
   disconnectReason: string | null;
   eventCounts: { [key: string]: uint } | null;
   forceIndex: uint | null;
@@ -55,7 +55,7 @@ interface EntityUpdateKey extends EntityIdentifiers, FactorioEventUpdateKey {
   unitNumber: uint;
 }
 
-interface EntityUpdate extends FactorioEventUpdate, EntityIdentifiers, EntityUpdateKey {
+interface EntityUpdate extends FactorioEventUpdate, EntityUpdateKey {
   chunkPosition: MapChunkPosition | null;
   eventCounts: { [key: string]: uint } | null;
   graphicsVariation: uint8 | null;
@@ -83,7 +83,7 @@ interface MapChunkUpdate extends FactorioEventUpdate, MapChunkUpdateKey {
   force: uint | null;
   isDeleted: boolean | null;
   player: uint | null;
-  robot: EntityIdentifiers | null;
+  robot: EntityIdentifiersData | null;
   surfaceIndex: uint;
   tileDictionary: MapTileDictionary | null;
   updateType: FactorioEventUpdateType;

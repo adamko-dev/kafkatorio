@@ -62,7 +62,7 @@ class UpdatePacketsTest : FunSpec({
           bannedReason = null,
           characterUnitNumber = null,
           chatColour = Colour(red = 1f, green = 0.4f, blue = 0.6f, alpha = 1f),
-          colour =  Colour(red = 0.8f, green = 0.5f, blue = 0.2f, alpha = 0.5f),
+          colour = Colour(red = 0.8f, green = 0.5f, blue = 0.2f, alpha = 0.5f),
           diedCause = null,
           disconnectReason = null,
           eventCounts = mapOf("on_player_changed_position" to 7u, "on_player_joined_game" to 1u),
@@ -141,9 +141,70 @@ class UpdatePacketsTest : FunSpec({
     }
   }
 
+  context("player died") {
+    // language=JSON
+    val json = """
+      {
+        "tick": 227934,
+        "modVersion": "0.3.2",
+        "packetType": "UPDATE",
+        "update": {
+          "index": 1,
+          "updateType": "PLAYER",
+          "lastOnline": 227932,
+          "onlineTime": 227888,
+          "afkTime": 324,
+          "isConnected": true,
+          "diedCause": {
+            "unitNumber": 66,
+            "name": "small-biter",
+            "type": "unit"
+          },
+          "eventCounts": {
+            "on_player_died": 2
+          }
+        }
+      }
+    """.trimIndent()
+
+    test("decode") {
+      val packet: FactorioEventUpdatePacket = jsonMapperKafkatorio.decodeFromString(json)
+
+      packet shouldBe FactorioEventUpdatePacket(
+        modVersion = "0.3.2",
+        tick = Tick(227934u),
+        update = PlayerUpdate(
+          afkTime = Tick(324u),
+          bannedReason = null,
+          characterUnitNumber = null,
+          chatColour = null,
+          colour = null,
+          diedCause = EntityIdentifiersData(
+            unitNumber = UnitNumber(66u),
+            name = "small-biter",
+            type = "unit",
+          ),
+          disconnectReason = null,
+          eventCounts = mapOf("on_player_died" to 2u),
+          forceIndex = null,
+          index = PlayerIndex(1u),
+          isAdmin = null,
+          isConnected = true,
+          isRemoved = null,
+          isShowOnMap = null,
+          isSpectator = null,
+          kickedReason = null,
+          lastOnline = Tick(227932u),
+          name = null,
+          onlineTime = Tick(227888u),
+          position = null,
+          surfaceIndex = null,
+          tag = null,
+          ticksToRespawn = null,
+        )
+      )
+    }
+
+  }
 
 })
-
-/*
-{"tick":66,"modVersion":"0.3.2","packetType":"UPDATE","update":{"index":1,"updateType":"PLAYER","position":{"y":13.5234375,"x":-58.9375},"eventCounts":{"on_player_changed_position":7,"on_player_joined_game":1},"isAdmin":true,"chatColour":{"red":1,"green":0.62999999523162841796875,"blue":0.259000003337860107421875,"alpha":1},"colour":{"red":0.869000017642974853515625,"green":0.5,"blue":0.12999999523162841796875,"alpha":0.5},"forceIndex":1,"name":"fredthedeadhead","isShowOnMap":true,"isSpectator":false,"tag":"","lastOnline":0,"onlineTime":0,"afkTime":0,"isConnected":true}}
- */

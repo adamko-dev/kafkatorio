@@ -102,6 +102,16 @@ interface EntityIdentifiers {
 }
 
 
+// instant of EntityIdentifiers, because kxs needs a concrete instance
+@Serializable
+data class EntityIdentifiersData(
+  override val unitNumber: UnitNumber? = null,
+  override val name: String,
+  /** The prototype-type of the entity. */
+  override val type: String,
+) : EntityIdentifiers
+
+
 /**
  * Size-optimised 2D map of x/y tile positions and prototype-name.
  *

@@ -113,7 +113,7 @@ data class PlayerUpdate(
   val position: MapEntityPosition? = null,
   val surfaceIndex: SurfaceIndex? = null,
   val tag: String? = null,
-  val diedCause: EntityIdentifiers? = null,
+  val diedCause: EntityIdentifiersData? = null,
 
   val bannedReason: String? = null,
   val kickedReason: String? = null,
@@ -154,7 +154,7 @@ data class EntityUpdate(
   val localisedDescription: String? = null,
   val localisedName: String? = null,
   val prototype: PrototypeName? = null,
-) : FactorioEventUpdate(), EntityIdentifiers, EntityUpdateKey {
+) : FactorioEventUpdate(), EntityUpdateKey {
   @EncodeDefault
   override val updateType: FactorioEventUpdateType = FactorioEventUpdateType.ENTITY
 }
@@ -177,7 +177,7 @@ data class MapChunkUpdate(
   override val eventCounts: Map<String, UInt>? = null,
 
   val player: PlayerIndex? = null,
-  val robot: EntityIdentifiers? = null,
+  val robot: EntityIdentifiersData? = null,
   val force: ForceIndex? = null,
   /** updated tiles - might be partial and not all tiles in the chunk */
   val tileDictionary: MapTileDictionary? = null,
