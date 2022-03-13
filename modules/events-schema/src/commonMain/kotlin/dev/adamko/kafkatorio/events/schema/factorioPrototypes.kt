@@ -68,7 +68,6 @@ data class MapTilePrototype(
   val name: PrototypeName,
   val layer: UInt,
   val mapColour: Colour,
-//  @Serializable(with = FactorioJsonListSerializer::class)
   @Contextual
   val collisionMasks: List<String>,
   val order: String,

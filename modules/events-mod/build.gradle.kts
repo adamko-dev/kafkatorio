@@ -24,8 +24,7 @@ val distributionZipName: String by extra("${modName}_${project.version}.zip")
 // version of Factorio that the mod is compatible with (must only be "major.minor" - patch causes error)
 val modFactorioCompatibility: String by extra(
   libs.versions.factorio
-    .map { SemVer.parse(it) }
-    .map { it.run { "$major.$minor" } }
+    .map { SemVer.parse(it).run { "$major.$minor" } }
     .get()
 )
 
