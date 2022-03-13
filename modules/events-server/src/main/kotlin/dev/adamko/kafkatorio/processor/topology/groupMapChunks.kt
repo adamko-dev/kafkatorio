@@ -18,7 +18,6 @@ import dev.adamko.kafkatorio.processor.serdes.jsonMapper
 import dev.adamko.kafkatorio.processor.serdes.kxsBinary
 import dev.adamko.kotka.extensions.consumedAs
 import dev.adamko.kotka.extensions.groupedAs
-import dev.adamko.kotka.extensions.materializedAs
 import dev.adamko.kotka.extensions.materializedWith
 import dev.adamko.kotka.extensions.producedAs
 import dev.adamko.kotka.extensions.repartitionedAs
@@ -34,13 +33,20 @@ import dev.adamko.kotka.extensions.tables.join
 import dev.adamko.kotka.extensions.tables.mapValues
 import dev.adamko.kotka.extensions.tables.toStream
 import dev.adamko.kotka.kxs.serde
-import kotlin.coroutines.CoroutineContext
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.runBlocking
+import kotlin.collections.List
+import kotlin.collections.Map
+import kotlin.collections.associate
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.getOrElse
+import kotlin.collections.groupBy
+import kotlin.collections.isNotEmpty
+import kotlin.collections.isNullOrEmpty
+import kotlin.collections.joinToString
+import kotlin.collections.map
+import kotlin.collections.mapValues
+import kotlin.collections.mutableSetOf
+import kotlin.collections.plus
 import kotlinx.serialization.Serializable
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.Topology
@@ -120,10 +126,6 @@ fun groupMapChunks(
 }
 
 
-private val coroutineContext: CoroutineContext =
-  Dispatchers.Default + SupervisorJob() + CoroutineName("groupTilesIntoChunksWithColours")
-
-
 private fun groupTilesIntoChunksWithColours(
   mapChunkUpdatePacketsStream: KStream<FactorioServerId, FactorioEventUpdatePacket>,
   tileProtoColourDict: KTable<FactorioServerId, TileColourDict>,
@@ -163,35 +165,30 @@ private fun groupTilesIntoChunksWithColours(
 
         val flatMappedChunkTiles: List<Pair<ServerMapChunkId, ServerMapChunkTiles<TileProtoHashCode>>> =
           //        println("[${System.currentTimeMillis()}] Flat-mapped ${flatMappedChunkTiles.size} chunk, with ${flatMappedChunkTiles.joinToString { it.second.map.size.toString() }} tiles")
-          runBlocking(coroutineContext) {
 
-            mapTiles
-              .tiles
-              .groupBy { tile ->
-                tile.position.toMapChunkPosition(standardChunkSize.tilesPerChunk)
-              }
-              .map { (chunkPos, tiles) ->
+          mapTiles
+            .tiles
+            .groupBy { tile ->
+              tile.position.toMapChunkPosition(standardChunkSize.tilesPerChunk)
+            }
+            .map { (chunkPos, tiles) ->
 
-                async {
+              val chunkId = ServerMapChunkId(
+                serverId = serverId,
+                chunkPosition = chunkPos,
+                surfaceIndex = mapTiles.surfaceIndex,
+                chunkSize = standardChunkSize,
+              )
 
-                  val chunkId = ServerMapChunkId(
-                    serverId = serverId,
-                    chunkPosition = chunkPos,
-                    surfaceIndex = mapTiles.surfaceIndex,
-                    chunkSize = standardChunkSize,
-                  )
+              val tilesMap = tiles.associate { it.position to TileProtoHashCode(it) }
 
-                  val tilesMap = tiles.associate { it.position to TileProtoHashCode(it) }
+              val chunkTiles = ServerMapChunkTiles(chunkId, tilesMap)
 
-                  val chunkTiles = ServerMapChunkTiles(chunkId, tilesMap)
-
-                  chunkId to chunkTiles
-                }
-              }.awaitAll()
+              chunkId to chunkTiles
+            }
 
 //        println("[${System.currentTimeMillis()}] Flat-mapped ${flatMappedChunkTiles.size} chunk, with ${flatMappedChunkTiles.joinToString { it.second.map.size.toString() }} tiles")
 
-          }
         flatMappedChunkTiles
       }
       .filter("server-map-data.tiles.filter-not-empty") { _, value ->
@@ -206,8 +203,7 @@ private fun groupTilesIntoChunksWithColours(
       )
       .reduce(
         "server-map-data.tiles.reduce",
-        materializedAs(
-          "server-map-data.tiles.store",
+        materializedWith(
           kxsBinary.serde<ServerMapChunkId>(),
           kxsBinary.serde<ServerMapChunkTiles<TileProtoHashCode>>(),
         )
@@ -222,8 +218,7 @@ private fun groupTilesIntoChunksWithColours(
         )
       ).toTable(
         "server-map-data.tiles.repartition.to-table",
-        materializedAs(
-          "server-map-data.tiles.repartition.to-table.store",
+        materializedWith(
           kxsBinary.serde<ServerMapChunkId>(),
           kxsBinary.serde<ServerMapChunkTiles<TileProtoHashCode>?>(),
         )
@@ -255,8 +250,7 @@ private fun groupTilesIntoChunksWithColours(
         )
       ).toTable(
         "tileProtoColourDict.repartition.to-table",
-        materializedAs(
-          "tileProtoColourDict.repartition.to-table.store",
+        materializedWith(
           kxsBinary.serde<FactorioServerId>(),
           kxsBinary.serde<TileColourDict?>(),
         )
@@ -280,8 +274,8 @@ private fun groupTilesIntoChunksWithColours(
       .join(
         other = tileProtoColourDictRepartitioned,
         tableJoined = tableJoined("server-map-data.join-tiles-with-prototypes"),
-        materialized = materializedAs(
-          "server-map-data.join-tiles-with-prototypes.store",
+        materialized = materializedWith(
+//          "server-map-data.join-tiles-with-prototypes.store",
           kxsBinary.serde<ServerMapChunkId>(),
           kxsBinary.serde<ServerMapChunkTiles<ColourHex>>(),
         ),
