@@ -12,6 +12,7 @@ import io.kvision.maps.Maps
 import io.kvision.module
 import io.kvision.panel.root
 import io.kvision.redux.ReduxStore
+import io.kvision.require
 import io.kvision.startApplication
 
 
@@ -27,6 +28,7 @@ class App(
   init {
     this.reduxStore = reduxStore
     this.wsService = wsService
+    require("./css/kafkatorio.css")
   }
 
   private val kvMaps: Maps

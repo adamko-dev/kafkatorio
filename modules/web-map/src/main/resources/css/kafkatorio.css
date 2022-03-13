@@ -1,0 +1,5 @@
+/* https://github.com/Leaflet/Leaflet/issues/3575 */
+.leaflet-tile {
+  width: 257px !important;
+  height: 257px !important;
+}
