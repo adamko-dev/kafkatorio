@@ -9,7 +9,11 @@ import dev.adamko.kafkatorio.events.schema.MapChunkPosition
 import dev.adamko.kafkatorio.events.schema.MapTilePosition
 import dev.adamko.kafkatorio.events.schema.SurfaceIndex
 import dev.adamko.kafkatorio.events.schema.converters.toMapChunkPosition
-import dev.adamko.kotka.extensions.streams.*
+import dev.adamko.kafkatorio.processor.KafkatorioTopology
+import dev.adamko.kafkatorio.processor.serdes.kxsBinary
+import dev.adamko.kotka.extensions.consumedAs
+import dev.adamko.kotka.extensions.streams.forEach
+import dev.adamko.kotka.kxs.serde
 import java.awt.image.BufferedImage
 import java.io.File
 import kotlin.coroutines.CoroutineContext
@@ -33,7 +37,9 @@ import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.supervisorScope
-import org.apache.kafka.streams.kstream.KTable
+import org.apache.kafka.streams.StreamsBuilder
+import org.apache.kafka.streams.Topology
+import org.apache.kafka.streams.kstream.KStream
 
 
 private const val WEB_MAP_TILE_SIZE_PX = 256
@@ -48,11 +54,16 @@ private val serverMapChunkHandler = ServerMapChunkHandler()
 
 
 fun saveMapTiles(
-  serverMapTable: KTable<ServerMapChunkId?, ServerMapChunkTiles<ColourHex>?>
-) {
+  builder: StreamsBuilder,
+): Topology {
 
-  serverMapTable
-    .toStream()
+  val groupedMapChunkTiles: KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
+    builder.stream(
+      KafkatorioTopology.TOPIC_GROUPED_MAP_CHUNKS,
+      consumedAs("consume.grouped-map-chunks", kxsBinary.serde(), kxsBinary.serde())
+    )
+
+  groupedMapChunkTiles
     .forEach("save-chunked-tiles") { _, value ->
       if (value != null) {
         runBlocking(Dispatchers.Default) {
@@ -62,6 +73,7 @@ fun saveMapTiles(
       }
     }
 
+  return builder.build()
 }
 
 

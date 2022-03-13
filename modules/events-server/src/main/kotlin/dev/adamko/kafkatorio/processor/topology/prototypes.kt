@@ -56,8 +56,8 @@ fun tileProtoColourDictionary(
     }
     .toTable(
       "server-map-data.tile-prototypes",
-      materializedWith(
-//        "server-map-data.tile-prototypes.store",
+      materializedAs(
+        "server-map-data.tile-prototypes.store",
         kxsBinary.serde(),
         kxsBinary.serde(),
       )

@@ -1,17 +1,11 @@
 package dev.adamko.kafkatorio.processor
 
-import dev.adamko.kafkatorio.events.schema.ColourHex
 import dev.adamko.kafkatorio.processor.config.ApplicationProperties
-import dev.adamko.kafkatorio.processor.serdes.kxsBinary
-import dev.adamko.kafkatorio.processor.topology.ServerMapChunkId
-import dev.adamko.kafkatorio.processor.topology.ServerMapChunkTiles
 import dev.adamko.kafkatorio.processor.topology.factorioServerPacketStream
 import dev.adamko.kafkatorio.processor.topology.groupMapChunks
 import dev.adamko.kafkatorio.processor.topology.playerUpdatesToWsServer
 import dev.adamko.kafkatorio.processor.topology.saveMapTiles
 import dev.adamko.kafkatorio.processor.topology.splitFactorioServerPacketStream
-import dev.adamko.kotka.extensions.consumedAs
-import dev.adamko.kotka.kxs.serde
 import java.time.Duration
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.cancellation.CancellationException
@@ -26,7 +20,6 @@ import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.StreamsConfig
 import org.apache.kafka.streams.Topology
 import org.apache.kafka.streams.TopologyDescription
-import org.apache.kafka.streams.kstream.KTable
 
 
 internal class KafkatorioTopology(
@@ -57,16 +50,7 @@ internal class KafkatorioTopology(
 
   private fun saveTiles() {
     val builder = StreamsBuilder()
-
-    val groupedMapChunkTiles: KTable<ServerMapChunkId?, ServerMapChunkTiles<ColourHex>?> =
-      builder.table(
-        TOPIC_GROUPED_MAP_CHUNKS,
-        consumedAs("consume.grouped-map-chunks", kxsBinary.serde(), kxsBinary.serde())
-      )
-
-    saveMapTiles(groupedMapChunkTiles)
-
-    val topology = builder.build()
+    val topology = saveMapTiles(builder)
     launchTopology("saveTiles", topology)
   }
 

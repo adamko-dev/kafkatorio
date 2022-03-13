@@ -95,12 +95,12 @@ class GroupMapChunksTest : FunSpec({
       )
     )
 
-    val outputTopic: TestOutputTopic<ServerMapChunkId?, ServerMapChunkTiles<ColourHex>?> =
+    val outputTopic: TestOutputTopic<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
       testDriver
         .createOutputTopic(
           KafkatorioTopology.TOPIC_GROUPED_MAP_CHUNKS,
-          kxsBinary.serde<ServerMapChunkId?>().deserializer(),
-          kxsBinary.serde<ServerMapChunkTiles<ColourHex>?>().deserializer(),
+          kxsBinary.serde<ServerMapChunkId>().deserializer(),
+          kxsBinary.serde<ServerMapChunkTiles<ColourHex>>().deserializer(),
         )
 
     val records = outputTopic.readRecordsToList()
