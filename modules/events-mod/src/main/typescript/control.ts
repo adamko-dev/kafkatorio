@@ -23,4 +23,5 @@ script.on_init(() => {
   // runs only once (when the mod is first added to the save)
   initGlobal(true)
   KafkatorioSettings.loadSettings()
+  emitPrototypes()
 })
