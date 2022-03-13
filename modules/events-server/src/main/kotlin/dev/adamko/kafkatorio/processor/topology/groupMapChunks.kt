@@ -19,19 +19,28 @@ import dev.adamko.kafkatorio.processor.serdes.kxsBinary
 import dev.adamko.kotka.extensions.consumedAs
 import dev.adamko.kotka.extensions.groupedAs
 import dev.adamko.kotka.extensions.materializedAs
+import dev.adamko.kotka.extensions.materializedWith
 import dev.adamko.kotka.extensions.producedAs
+import dev.adamko.kotka.extensions.repartitionedAs
 import dev.adamko.kotka.extensions.streams.filter
 import dev.adamko.kotka.extensions.streams.flatMap
 import dev.adamko.kotka.extensions.streams.mapValues
 import dev.adamko.kotka.extensions.streams.peek
 import dev.adamko.kotka.extensions.streams.reduce
+import dev.adamko.kotka.extensions.streams.toTable
+import dev.adamko.kotka.extensions.tableJoined
+import dev.adamko.kotka.extensions.tables.filter
 import dev.adamko.kotka.extensions.tables.join
+import dev.adamko.kotka.extensions.tables.mapValues
 import dev.adamko.kotka.extensions.tables.toStream
 import dev.adamko.kotka.kxs.serde
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.Topology
@@ -71,19 +80,6 @@ fun groupMapChunks(
   val tileProtoColourDict: KTable<FactorioServerId, TileColourDict> =
     tileProtoColourDictionary(protosStream)
 
-
-//    val mapTilesStream: KStream<FactorioServerId, FactorioEvent> =
-//      builder.stream(
-//        "kafkatorio.${KafkatorioPacket.PacketType.EVENT}.${FactorioObjectData.ObjectName.LuaTiles}",
-//        consumedAs("consume.map-tiles", jsonMapper.serde(), jsonMapper.serde())
-//      )
-//
-//    val mapChunksStream: KStream<FactorioServerId, FactorioEvent> =
-//      builder.stream(
-//        "kafkatorio.${KafkatorioPacket.PacketType.EVENT}.${FactorioObjectData.ObjectName.MapChunk}",
-//        consumedAs("consume.map-chunks", jsonMapper.serde(), jsonMapper.serde())
-//      )
-
   val mapChunksUpdatesStream: KStream<FactorioServerId, FactorioEventUpdatePacket> =
     builder.stream(
       mapChunkUpdatesTopicName,
@@ -93,19 +89,9 @@ fun groupMapChunks(
         jsonMapper.serde<FactorioEventUpdatePacket>(),
       )
     )
-//        .repartition(
-//        repartitionedAs(
-//          "map-chunk-updates.repartition.change-serde",
-//          kxsBinary.serde<FactorioServerId>(),
-//          kxsBinary.serde<FactorioEventUpdatePacket>(),
-//          numberOfPartitions = 3,
-//        )
-//      )
 
   val groupedMapChunkTiles: KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
     groupTilesIntoChunksWithColours(
-//        mapTilesStream,
-//        mapChunksStream,
       mapChunksUpdatesStream,
       tileProtoColourDict,
     )
@@ -132,6 +118,11 @@ fun groupMapChunks(
 
   return builder.build()
 }
+
+
+private val coroutineContext: CoroutineContext =
+  Dispatchers.Default + SupervisorJob() + CoroutineName("groupTilesIntoChunksWithColours")
+
 
 private fun groupTilesIntoChunksWithColours(
   mapChunkUpdatePacketsStream: KStream<FactorioServerId, FactorioEventUpdatePacket>,
@@ -171,29 +162,36 @@ private fun groupTilesIntoChunksWithColours(
         val standardChunkSize = ChunkSize.MAX
 
         val flatMappedChunkTiles: List<Pair<ServerMapChunkId, ServerMapChunkTiles<TileProtoHashCode>>> =
-          mapTiles
-            .tiles
-            .groupBy { tile ->
-              tile.position.toMapChunkPosition(standardChunkSize.tilesPerChunk)
-            }
-            .map { (chunkPos, tiles) ->
+          //        println("[${System.currentTimeMillis()}] Flat-mapped ${flatMappedChunkTiles.size} chunk, with ${flatMappedChunkTiles.joinToString { it.second.map.size.toString() }} tiles")
+          runBlocking(coroutineContext) {
 
-              val chunkId = ServerMapChunkId(
-                serverId = serverId,
-                chunkPosition = chunkPos,
-                surfaceIndex = mapTiles.surfaceIndex,
-                chunkSize = standardChunkSize,
-              )
+            mapTiles
+              .tiles
+              .groupBy { tile ->
+                tile.position.toMapChunkPosition(standardChunkSize.tilesPerChunk)
+              }
+              .map { (chunkPos, tiles) ->
 
-              val tilesMap = tiles.associate { it.position to TileProtoHashCode(it) }
+                async {
 
-              val chunkTiles = ServerMapChunkTiles(chunkId, tilesMap)
+                  val chunkId = ServerMapChunkId(
+                    serverId = serverId,
+                    chunkPosition = chunkPos,
+                    surfaceIndex = mapTiles.surfaceIndex,
+                    chunkSize = standardChunkSize,
+                  )
 
-              chunkId to chunkTiles
-            }
+                  val tilesMap = tiles.associate { it.position to TileProtoHashCode(it) }
+
+                  val chunkTiles = ServerMapChunkTiles(chunkId, tilesMap)
+
+                  chunkId to chunkTiles
+                }
+              }.awaitAll()
 
 //        println("[${System.currentTimeMillis()}] Flat-mapped ${flatMappedChunkTiles.size} chunk, with ${flatMappedChunkTiles.joinToString { it.second.map.size.toString() }} tiles")
 
+          }
         flatMappedChunkTiles
       }
       .filter("server-map-data.tiles.filter-not-empty") { _, value ->
@@ -214,13 +212,74 @@ private fun groupTilesIntoChunksWithColours(
           kxsBinary.serde<ServerMapChunkTiles<TileProtoHashCode>>(),
         )
       ) { chunkTiles, other -> chunkTiles + other }
+      .toStream("server-map-data.tiles.repartition.to-stream")
+      .repartition(
+        repartitionedAs(
+          "server-map-data.tiles.repartition.config",
+          kxsBinary.serde<ServerMapChunkId>(),
+          kxsBinary.serde<ServerMapChunkTiles<TileProtoHashCode>?>(),
+          3,
+        )
+      ).toTable(
+        "server-map-data.tiles.repartition.to-table",
+        materializedAs(
+          "server-map-data.tiles.repartition.to-table.store",
+          kxsBinary.serde<ServerMapChunkId>(),
+          kxsBinary.serde<ServerMapChunkTiles<TileProtoHashCode>?>(),
+        )
+      )
+      .filter("server-map-data.tiles.repartition.filter-not-null") { _: ServerMapChunkId, v: ServerMapChunkTiles<TileProtoHashCode>? ->
+        v != null
+      }
+      .mapValues(
+        "server-map-data.tiles.repartition.map-not-null",
+        materializedWith(
+          kxsBinary.serde<ServerMapChunkId>(),
+          kxsBinary.serde<ServerMapChunkTiles<TileProtoHashCode>>(),
+        )
+      ) { _: ServerMapChunkId, v: ServerMapChunkTiles<TileProtoHashCode>? ->
+        v as ServerMapChunkTiles<TileProtoHashCode>
+      }
+
+
+  // repartition to try and fix KTable-KTable joining skipping records
+  val tileProtoColourDictRepartitioned =
+    tileProtoColourDict
+      .toStream("tileProtoColourDict.repartition.to-stream")
+      .repartition(
+        repartitionedAs(
+          "tileProtoColourDict.repartition.config",
+          kxsBinary.serde<FactorioServerId>(),
+          kxsBinary.serde<TileColourDict?>(),
+          3,
+        )
+      ).toTable(
+        "tileProtoColourDict.repartition.to-table",
+        materializedAs(
+          "tileProtoColourDict.repartition.to-table.store",
+          kxsBinary.serde<FactorioServerId>(),
+          kxsBinary.serde<TileColourDict?>(),
+        )
+      )
+      .filter("tileProtoColourDict.repartition.filter-not-null") { _: FactorioServerId, v: TileColourDict? ->
+        v != null
+      }
+      .mapValues(
+        "tileProtoColourDict.repartition.map-not-null",
+        materializedWith(
+          kxsBinary.serde<FactorioServerId>(),
+          kxsBinary.serde<TileColourDict>(),
+        )
+      ) { _: FactorioServerId, v: TileColourDict? ->
+        v as TileColourDict
+      }
 
 
   val colourisedChunkTable: KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
     chunkedTilesTable
       .join(
-        other = tileProtoColourDict,
-        name = "server-map-data.join-tiles-with-prototypes",
+        other = tileProtoColourDictRepartitioned,
+        tableJoined = tableJoined("server-map-data.join-tiles-with-prototypes"),
         materialized = materializedAs(
           "server-map-data.join-tiles-with-prototypes.store",
           kxsBinary.serde<ServerMapChunkId>(),
