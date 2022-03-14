@@ -99,7 +99,10 @@ class PlayerState(
     val name = update.name ?: playerDetails.name
 
     return when {
-      position != null && surfaceIndex != null && colour != null && name != null ->
+      position != null
+          && surfaceIndex != null
+          && colour != null
+          && name != null ->
         PlayerDetailsState.Known(
           index = playerDetails.index,
           position = position,
@@ -108,7 +111,7 @@ class PlayerState(
           name = name,
         )
 
-      else                                                                       ->
+      else                ->
         PlayerDetailsState.Unknown(
           index = playerDetails.index,
           position = position,

@@ -25,8 +25,7 @@ fun createFactorioMap() = Maps {
   margin = 10.px
 
   configureLeafletMap {
-    setView(LatLng(0, 0), 1)
-
+    setView(center = LatLng(0, 0), zoom = 0)
 
     L.tileLayer(
       """http://localhost:9073/tiles/s1/z{z}/x{x}/y{y}.png"""
@@ -38,10 +37,8 @@ fun createFactorioMap() = Maps {
       minZoom = -2
       maxZoom = 6
 
-      // NOTE: offset the zoom, so 1 meter = 1 tile
       maxNativeZoom = 3
       minNativeZoom = -1
-//      zoomOffset = 1
 
       noWrap = true
       updateWhenIdle = false
