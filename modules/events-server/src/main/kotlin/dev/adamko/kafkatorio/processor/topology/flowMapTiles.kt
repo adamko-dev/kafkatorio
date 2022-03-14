@@ -161,7 +161,9 @@ private class ServerMapChunkHandler : CoroutineScope {
         }
 
         val savedTile = img.output(PngWriter.NoCompression, chunkImageFile)
-        println("savedTile: $savedTile")
+        if (filename.value.contains("z-1")) {
+          println("savedTile: $savedTile")
+        }
       }
       .launchIn(this)
 
