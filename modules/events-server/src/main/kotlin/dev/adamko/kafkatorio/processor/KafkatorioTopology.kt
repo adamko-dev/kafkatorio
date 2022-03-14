@@ -81,7 +81,7 @@ internal class KafkatorioTopology(
 
     val appId = props.compute(StreamsConfig.APPLICATION_ID_CONFIG) { _, v -> "$v.$id" } as? String
     props.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, appId)
-    props.setProperty(StreamsConfig.MAX_TASK_IDLE_MS_CONFIG, "${1.minutes.inWholeMilliseconds}")
+//    props.setProperty(StreamsConfig.MAX_TASK_IDLE_MS_CONFIG, "${30.minutes.inWholeMilliseconds}")
 
     val streams = KafkaStreams(topology, props)
     streams.setUncaughtExceptionHandler(StreamsExceptionHandler {
