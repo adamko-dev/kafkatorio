@@ -10,6 +10,7 @@ import kotlinx.serialization.json.JsonTransformingSerializer
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.modules.SerializersModule
 
+
 val jsonMapperKafkatorio = Json {
   prettyPrint = true
   prettyPrintIndent = "  "
@@ -23,7 +24,7 @@ val jsonMapperKafkatorio = Json {
 
 /**
  * Factorio outputs an *empty* list as an *empty* Json object. This serde performs the same
- * conversion
+ * conversion.
  */
 class FactorioJsonListSerializer<T>(dataSerializer: KSerializer<T>) :
   JsonTransformingSerializer<List<T>>(ListSerializer(dataSerializer)) {
@@ -43,26 +44,3 @@ class FactorioJsonListSerializer<T>(dataSerializer: KSerializer<T>) :
   }
 
 }
-
-//internal class FactorioListSerializer<T : Any>(
-//  private val tSerializer: KSerializer<T>
-//) : KSerializer<List<T>> {
-//
-//  override val descriptor: SerialDescriptor get() = tSerializer.descriptor
-//  private val tListSerializer = ListSerializer(tSerializer)
-//  private val jsonTransformer = FactorioJsonListSerializer(tSerializer)
-//
-//  override fun serialize(encoder: Encoder, value: List<T>) {
-//    when (encoder) {
-//      is JsonEncoder -> jsonTransformer.serialize(encoder, value)
-//      else           -> tListSerializer.serialize(encoder, value)
-//    }
-//  }
-//
-//  override fun deserialize(decoder: Decoder): List<T> {
-//    return when (decoder) {
-//      is JsonDecoder -> jsonTransformer.deserialize(decoder)
-//      else           -> tListSerializer.deserialize(decoder)
-//    }
-//  }
-//}

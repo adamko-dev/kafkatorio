@@ -1,7 +1,6 @@
 package dev.adamko.kafkatorio.events.schema
 
-import dev.adamko.kafkatorio.events.schema.FactorioEventUpdate.FactorioEventUpdateType
-import kotlinx.serialization.Contextual
+import dev.adamko.kafkatorio.events.schema.FactorioUpdateData.FactorioUpdateDataType
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
@@ -13,71 +12,77 @@ import kotlinx.serialization.json.jsonPrimitive
 
 
 @Serializable
-data class FactorioEventUpdatePacket(
-  override val modVersion: String,
-  override val tick: Tick,
-  val update: FactorioEventUpdate,
-) : KafkatorioPacket() {
-  @EncodeDefault
-  override val packetType: PacketType = PacketType.UPDATE
+sealed class KafkatorioPacket {
+  /** Schema versioning */
+  abstract val modVersion: String
+  abstract val tick: Tick
+  abstract val update: FactorioUpdateData
 }
 
 
 /* *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  * */
 
 
-sealed interface FactorioEventUpdateKey {
-  val updateType: FactorioEventUpdateType
+sealed interface FactorioUpdateDataKey {
+  val updateType: FactorioUpdateDataType
 }
 
 
-@Serializable(with = FactorioEventUpdate.Companion.JsonSerializer::class)
-sealed class FactorioEventUpdate : FactorioEventUpdateKey {
+@Serializable(with = FactorioUpdateData.JsonSerializer::class)
+sealed class FactorioUpdateData : FactorioUpdateDataKey {
 
+  /** Discriminator for [FactorioUpdateData] */
   @EncodeDefault
-  abstract override val updateType: FactorioEventUpdateType
+  abstract override val updateType: FactorioUpdateDataType
 
+  /** the initial Factorio event (`defines.events`) trigger */
   abstract val eventCounts: Map<String, UInt>?
 
   @Serializable
-  enum class FactorioEventUpdateType {
+  enum class FactorioUpdateDataType {
     PLAYER,
     MAP_CHUNK,
     ENTITY,
+    CONSOLE_CHAT,
+    CONSOLE_COMMAND,
+    SURFACE,
+    CONFIG,
+    PROTOTYPES,
     ;
 
     companion object {
-      val values: List<FactorioEventUpdateType> = values().toList()
+      val values: List<FactorioUpdateDataType> = values().toList()
     }
   }
 
-  companion object {
+  object JsonSerializer : JsonContentPolymorphicSerializer<FactorioUpdateData>(
+    FactorioUpdateData::class
+  ) {
+    private val key = FactorioUpdateData::updateType.name
 
-    object JsonSerializer : JsonContentPolymorphicSerializer<FactorioEventUpdate>(
-      FactorioEventUpdate::class
-    ) {
-      private val key = FactorioEventUpdate::updateType.name
+    override fun selectDeserializer(element: JsonElement): DeserializationStrategy<out FactorioUpdateData> {
 
-      override fun selectDeserializer(element: JsonElement): DeserializationStrategy<out FactorioEventUpdate> {
-
-        val type = element
-          .jsonObject[key]
-          ?.jsonPrimitive
-          ?.contentOrNull
-          ?.let { json ->
-            FactorioEventUpdateType.values.firstOrNull { it.name == json }
-          }
-
-        requireNotNull(type) { "Unknown FactorioEventUpdate $key: $element" }
-
-        return when (type) {
-          FactorioEventUpdateType.PLAYER    -> PlayerUpdate.serializer()
-          FactorioEventUpdateType.MAP_CHUNK -> MapChunkUpdate.serializer()
-          FactorioEventUpdateType.ENTITY    -> EntityUpdate.serializer()
+      val type = element
+        .jsonObject[key]
+        ?.jsonPrimitive
+        ?.contentOrNull
+        ?.let { json ->
+          FactorioUpdateDataType.values.firstOrNull { it.name == json }
         }
+
+      requireNotNull(type) { "Unknown FactorioEventUpdate $key: $element" }
+
+      return when (type) {
+        FactorioUpdateDataType.PLAYER          -> PlayerUpdate.serializer()
+        FactorioUpdateDataType.MAP_CHUNK       -> MapChunkUpdate.serializer()
+        FactorioUpdateDataType.ENTITY          -> EntityUpdate.serializer()
+        FactorioUpdateDataType.CONSOLE_CHAT    -> ConsoleChatUpdate.serializer()
+        FactorioUpdateDataType.CONSOLE_COMMAND -> ConsoleCommandUpdate.serializer()
+        FactorioUpdateDataType.SURFACE         -> SurfaceUpdate.serializer()
+        FactorioUpdateDataType.CONFIG          -> ConfigurationUpdate.serializer()
+        FactorioUpdateDataType.PROTOTYPES      -> PrototypesUpdate.serializer()
       }
     }
-
   }
 }
 
@@ -85,7 +90,7 @@ sealed class FactorioEventUpdate : FactorioEventUpdateKey {
 /* *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  * */
 
 
-sealed interface PlayerUpdateKey : FactorioEventUpdateKey {
+sealed interface PlayerUpdateKey : FactorioUpdateDataKey {
   val index: PlayerIndex
 }
 
@@ -120,16 +125,16 @@ data class PlayerUpdate(
   val disconnectReason: String? = null,
   /** `true` when a player is removed (deleted) from the game */
   val isRemoved: Boolean? = null,
-) : FactorioEventUpdate(), PlayerUpdateKey {
+) : FactorioUpdateData(), PlayerUpdateKey {
   @EncodeDefault
-  override val updateType: FactorioEventUpdateType = FactorioEventUpdateType.PLAYER
+  override val updateType: FactorioUpdateDataType = FactorioUpdateDataType.PLAYER
 }
 
 
 /* *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  * */
 
 
-sealed interface EntityUpdateKey : EntityIdentifiers, FactorioEventUpdateKey {
+sealed interface EntityUpdateKey : EntityIdentifiers, FactorioUpdateDataKey {
   /** A [unitNumber] is required for caching */
   override val unitNumber: UnitNumber
   override val name: String
@@ -154,16 +159,16 @@ data class EntityUpdate(
   val localisedDescription: String? = null,
   val localisedName: String? = null,
   val prototype: PrototypeName? = null,
-) : FactorioEventUpdate(), EntityUpdateKey {
+) : FactorioUpdateData(), EntityUpdateKey {
   @EncodeDefault
-  override val updateType: FactorioEventUpdateType = FactorioEventUpdateType.ENTITY
+  override val updateType: FactorioUpdateDataType = FactorioUpdateDataType.ENTITY
 }
 
 
 /* *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  * */
 
 
-sealed interface MapChunkUpdateKey : FactorioEventUpdateKey {
+sealed interface MapChunkUpdateKey : FactorioUpdateDataKey {
   val chunkPosition: MapChunkPosition
   val surfaceIndex: SurfaceIndex
 }
@@ -182,9 +187,100 @@ data class MapChunkUpdate(
   /** updated tiles - might be partial and not all tiles in the chunk */
   val tileDictionary: MapTileDictionary? = null,
   val isDeleted: Boolean? = null,
-) : FactorioEventUpdate(), MapChunkUpdateKey {
+) : FactorioUpdateData(), MapChunkUpdateKey {
   @EncodeDefault
-  override val updateType: FactorioEventUpdateType = FactorioEventUpdateType.MAP_CHUNK
+  override val updateType: FactorioUpdateDataType = FactorioUpdateDataType.MAP_CHUNK
+}
+
+
+/* *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  * */
+
+
+@Serializable
+data class ConsoleChatUpdate(
+  override val eventCounts: Map<String, UInt>? = null,
+
+  val authorPlayerIndex: PlayerIndex?,
+  val content: String,
+) : FactorioUpdateData() {
+  @EncodeDefault
+  override val updateType: FactorioUpdateDataType = FactorioUpdateDataType.CONSOLE_CHAT
+
+}
+
+@Serializable
+data class ConsoleCommandUpdate(
+  override val eventCounts: Map<String, UInt>? = null,
+
+  val authorPlayerIndex: PlayerIndex?,
+  val command: String,
+  val parameters: String,
+) : FactorioUpdateData() {
+  @EncodeDefault
+  override val updateType: FactorioUpdateDataType = FactorioUpdateDataType.CONSOLE_COMMAND
+}
+
+
+/* *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  * */
+
+
+sealed interface SurfaceUpdateKey : FactorioUpdateDataKey {
+  val index: SurfaceIndex
+}
+
+@Serializable
+data class SurfaceUpdate(
+  override val index: SurfaceIndex,
+
+  override val eventCounts: Map<String, UInt>? = null,
+
+  val daytime: Double,
+  val name: String,
+) : FactorioUpdateData(), SurfaceUpdateKey {
+  @EncodeDefault
+  override val updateType: FactorioUpdateDataType = FactorioUpdateDataType.SURFACE
+}
+
+
+/* *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  * */
+
+
+@Serializable
+data class ConfigurationUpdate(
+  override val eventCounts: Map<String, UInt>? = null,
+
+  val factorioData: GameData,
+  val allMods: List<ModData>,
+) : FactorioUpdateData() {
+  @EncodeDefault
+  override val updateType: FactorioUpdateDataType = FactorioUpdateDataType.CONFIG
+
+  @Serializable
+  data class GameData(
+    val oldVersion: String? = null,
+    val newVersion: String? = null,
+  )
+
+  @Serializable
+  data class ModData(
+    val modName: String,
+    val currentVersion: String? = null,
+    val previousVersion: String? = null,
+  )
+}
+
+
+/* *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  * */
+
+
+@Serializable
+data class PrototypesUpdate(
+  override val eventCounts: Map<String, UInt>? = null,
+
+  val prototypes: List<FactorioPrototype>,
+) : FactorioUpdateData() {
+  @EncodeDefault
+  override val updateType: FactorioUpdateDataType = FactorioUpdateDataType.PROTOTYPES
 }
 
 

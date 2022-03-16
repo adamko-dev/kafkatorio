@@ -88,6 +88,13 @@ data class ColourHex(
 
 
 @Serializable
+data class MapTiles(
+  val surfaceIndex: SurfaceIndex,
+  val tiles: List<MapTile>,
+)
+
+
+@Serializable
 data class MapTile(
   val x: Int,
   val y: Int,

@@ -12,16 +12,6 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 
-@Serializable
-data class FactorioPrototypes(
-  override val modVersion: String,
-  override val tick: Tick,
-  val prototypes: List<FactorioPrototype>,
-) : KafkatorioPacket() {
-  @EncodeDefault
-  override val packetType = PacketType.PROTOTYPES
-}
-
 
 @Serializable(with = FactorioPrototypeJsonSerializer::class)
 sealed class FactorioPrototype {
