@@ -1,11 +1,5 @@
 package dev.adamko.kafkatorio.processor.serdes
 
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.DataInput
-import java.io.DataInputStream
-import java.io.DataOutput
-import java.io.DataOutputStream
 import kotlinx.serialization.BinaryFormat
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.SerializationStrategy
@@ -17,6 +11,9 @@ import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.CompositeEncoder
 import kotlinx.serialization.modules.EmptySerializersModule
 import kotlinx.serialization.modules.SerializersModule
+import okio.Buffer
+import okio.BufferedSink
+import okio.BufferedSource
 
 
 val kxsBinary: KxsBinary = KxsBinary()
@@ -27,18 +24,18 @@ class KxsBinary(
 ) : BinaryFormat {
 
   override fun <T> encodeToByteArray(serializer: SerializationStrategy<T>, value: T): ByteArray {
-    val output = ByteArrayOutputStream()
-    val encoder = KxsDataOutputEncoder(DataOutputStream(output), serializersModule)
+    val output = Buffer()
+    val encoder = KxsDataOutputEncoder(output, serializersModule)
     encoder.encodeSerializableValue(serializer, value)
-    return output.toByteArray()
+    return output.readByteArray()
   }
 
   override fun <T> decodeFromByteArray(
     deserializer: DeserializationStrategy<T>,
     bytes: ByteArray
   ): T {
-    val input = ByteArrayInputStream(bytes)
-    val decoder = KxsDataInputDecoder(DataInputStream(input), serializersModule)
+    val input = Buffer().write(bytes)
+    val decoder = KxsDataInputDecoder(input, serializersModule)
     return decoder.decodeSerializableValue(deserializer)
   }
 }
@@ -46,28 +43,31 @@ class KxsBinary(
 private val byteArraySerializer = ByteArraySerializer()
 
 class KxsDataOutputEncoder(
-  private val output: DataOutput,
+  private val output: BufferedSink,
   override val serializersModule: SerializersModule = EmptySerializersModule,
 ) : AbstractEncoder() {
 
-  override fun encodeBoolean(value: Boolean) = output.writeByte(if (value) 1 else 0)
-  override fun encodeByte(value: Byte) = output.writeByte(value.toInt())
-  override fun encodeChar(value: Char) = output.writeChar(value.code)
-  override fun encodeDouble(value: Double) = output.writeDouble(value)
-  override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int) = output.writeInt(index)
-  override fun encodeFloat(value: Float) = output.writeFloat(value)
-  override fun encodeInt(value: Int) = output.writeInt(value)
-  override fun encodeLong(value: Long) = output.writeLong(value)
-  override fun encodeShort(value: Short) = output.writeShort(value.toInt())
-  override fun encodeString(value: String) = output.writeUTF(value)
-//  override fun encodeString(value: String) = encodeByteArray(value.toByteArray(Charsets.UTF_8))
+  private operator fun BufferedSink.invoke(action: BufferedSink.() -> Unit): Unit = action()
+
+  override fun encodeBoolean(value: Boolean) = output { writeByte(if (value) 1 else 0) }
+  override fun encodeByte(value: Byte) = output { writeByte(value.toInt()) }
+  override fun encodeChar(value: Char) = output { writeUtf8CodePoint(value.code) }
+  override fun encodeDouble(value: Double) = output { writeLong(value.toRawBits()) }
+  override fun encodeEnum(enumDescriptor: SerialDescriptor, index: Int) = output { writeInt(index) }
+  override fun encodeFloat(value: Float) = output { writeInt(value.toRawBits()) }
+  override fun encodeInt(value: Int) = output { writeInt(value) }
+  override fun encodeLong(value: Long) = output { writeLong(value) }
+  override fun encodeShort(value: Short) = output { writeShort(value.toInt()) }
+  override fun encodeString(value: String) = output {
+    encodeCompactSize(value.length)
+    writeUtf8(value)
+  }
 
   override fun beginCollection(
     descriptor: SerialDescriptor,
     collectionSize: Int
   ): CompositeEncoder {
-    encodeInt(collectionSize)
-//    encodeCompactSize(collectionSize)
+    encodeCompactSize(collectionSize)
     return this
   }
 
@@ -98,7 +98,7 @@ class KxsDataOutputEncoder(
 
 
 class KxsDataInputDecoder(
-  private val input: DataInput,
+  private val input: BufferedSource,
   override val serializersModule: SerializersModule = EmptySerializersModule,
   private var elementsCount: Int = 0,
 ) : AbstractDecoder() {
@@ -107,15 +107,17 @@ class KxsDataInputDecoder(
 
   override fun decodeBoolean(): Boolean = input.readByte().toInt() != 0
   override fun decodeByte(): Byte = input.readByte()
-  override fun decodeChar(): Char = input.readChar()
-  override fun decodeDouble(): Double = input.readDouble()
+  override fun decodeChar(): Char = input.readUtf8CodePoint().toChar()
+  override fun decodeDouble(): Double = Double.fromBits(input.readLong())
   override fun decodeEnum(enumDescriptor: SerialDescriptor): Int = input.readInt()
-  override fun decodeFloat(): Float = input.readFloat()
+  override fun decodeFloat(): Float = Float.fromBits(input.readInt())
   override fun decodeInt(): Int = input.readInt()
   override fun decodeLong(): Long = input.readLong()
   override fun decodeShort(): Short = input.readShort()
-  override fun decodeString(): String = input.readUTF()
-//  override fun decodeString(): String = decodeByteArray().toString(Charsets.UTF_8)
+  override fun decodeString(): String {
+    val size = decodeCompactSize()
+    return input.readUtf8(size.toLong())
+  }
 
   override fun decodeElementIndex(descriptor: SerialDescriptor): Int {
     if (elementIndex == elementsCount) return CompositeDecoder.DECODE_DONE
@@ -128,8 +130,7 @@ class KxsDataInputDecoder(
   override fun decodeSequentially(): Boolean = true
 
   override fun decodeCollectionSize(descriptor: SerialDescriptor): Int =
-    decodeInt().also { elementsCount = it }
-//    decodeCompactSize().also { elementsCount = it }
+    decodeCompactSize().also { elementsCount = it }
 
   override fun decodeNotNullMark(): Boolean = decodeBoolean()
 

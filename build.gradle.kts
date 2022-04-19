@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "dev.adamko.kafkatorio"
-version = "0.3.2"
+version = "0.4.0"
 
 val licenseFile: RegularFile by extra(layout.projectDirectory.file("LICENSE"))
 
@@ -35,7 +35,7 @@ idea {
 }
 
 tasks.wrapper {
-  gradleVersion = "7.4.1"
+  gradleVersion = "7.4.2"
   distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -55,5 +55,14 @@ val runKafkatorio by tasks.registering {
   dependsOn(
     ":modules:infra-factorio-client:processRestart",
     ":modules:infra-factorio-server:processRestart",
+  )
+}
+
+
+val runEventsServer by tasks.registering {
+  group = project.name
+
+  dependsOn(
+    ":modules:events-server:run",
   )
 }

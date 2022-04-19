@@ -1,5 +1,6 @@
-import {Converters} from "./converters"
-import {emitEvent} from "./emitEvent";
+import PacketEmitter from "../PacketEmitter";
+import {KafkatorioPacketData2} from "../../generated/kafkatorio-schema/kafkatorio-schema";
+import Type = KafkatorioPacketData2.Type;
 
 // export function handlePlayerUpdate(tick: uint, eventType: string, playerIndex: uint) {
 //   let player: LuaPlayer = game.players[playerIndex]
@@ -29,24 +30,23 @@ import {emitEvent} from "./emitEvent";
 //   emitEvent(table, tick, eventType)
 // }
 
+
 export function handleSurfaceUpdate(
-    tick: uint,
+    event: OnTickEvent,
     eventType: string,
     surface: LuaSurface,
 ) {
-  let table = Converters.surfaceToTable(surface)
-  emitEvent(table, tick, eventType)
+  const update: KafkatorioPacketData2.SurfaceUpdate = {
+    type: Type.SurfaceUpdate,
+
+    name: surface.name,
+    index: surface.index,
+    daytime: surface.daytime
+  }
+
+  PacketEmitter.emitInstantPacket(update)
 }
 
-export function handleConsoleChat(
-    tick: uint,
-    eventType: string,
-    playerIndex: uint | undefined,
-    message: string,
-) {
-  let table = Converters.consoleChat(message, playerIndex)
-  emitEvent(table, tick, eventType)
-}
 
 // export function handleChunkUpdate(
 //     tick: uint,

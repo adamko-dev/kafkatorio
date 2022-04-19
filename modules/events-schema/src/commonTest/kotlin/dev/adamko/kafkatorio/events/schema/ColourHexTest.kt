@@ -1,7 +1,10 @@
 package dev.adamko.kafkatorio.events.schema
 
-import dev.adamko.kafkatorio.events.schema.converters.toHex
-import dev.adamko.kafkatorio.events.schema.converters.toPercentile
+import dev.adamko.kafkatorio.schema.common.Colour
+import dev.adamko.kafkatorio.schema.common.ColourHex
+import dev.adamko.kafkatorio.schema.common.toHex
+import dev.adamko.kafkatorio.schema.common.toPercentile
+import dev.adamko.kafkatorio.schema.jsonMapperKafkatorio
 import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.floats.shouldBeWithinPercentageOf
@@ -81,6 +84,4 @@ class ColourHexTest : BehaviorSpec({
 
     }
   }
-
-
 })

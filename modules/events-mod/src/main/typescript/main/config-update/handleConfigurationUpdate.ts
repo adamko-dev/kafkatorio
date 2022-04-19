@@ -1,25 +1,33 @@
-import {emitPacket} from "../emitKafkatorioPacket";
+import PacketEmitter from "../PacketEmitter";
+import {
+  ConfigurationUpdateGameData,
+  ConfigurationUpdateModData,
+  KafkatorioPacketData2
+} from "../../generated/kafkatorio-schema/kafkatorio-schema";
+import Type = KafkatorioPacketData2.Type;
+import ConfigurationUpdate = KafkatorioPacketData2.ConfigurationUpdate;
 
 export function emitConfigurationUpdate(changeData: ConfigurationChangedData) {
 
-  emitPacket<FactorioConfigurationUpdate>({
-    modVersion: global.MOD_VERSION,
-    packetType: "CONFIG",
+  const configUpdateData: ConfigurationUpdate = {
+    type: Type.ConfigurationUpdate,
+    migrationApplied: changeData.migration_applied,
+    modStartupSettingsChange: changeData.mod_startup_settings_changed,
     allMods: allMods(changeData),
-    factorioData: factorioData(changeData),
-    tick: game.tick,
-  })
+    factorioData: factorioData(changeData)
+  }
 
+  PacketEmitter.emitInstantPacket(configUpdateData)
 }
 
-function factorioData(changeData: ConfigurationChangedData): FactorioGameDataUpdate {
+function factorioData(changeData: ConfigurationChangedData): ConfigurationUpdateGameData {
   return {
     oldVersion: changeData.old_version ?? null,
     newVersion: changeData.new_version ?? null,
   }
 }
 
-function allMods(e: ConfigurationChangedData): FactorioModInfo[] {
+function allMods(e: ConfigurationChangedData): ConfigurationUpdateModData[] {
 
   let namesOfChangedMods: string[] = Object.keys(e.mod_changes)
   let namesOfCurrentMods: string[] = Object.keys(script.active_mods)
@@ -33,7 +41,7 @@ function allMods(e: ConfigurationChangedData): FactorioModInfo[] {
     let currentVer = script.active_mods[modName] ?? e.mod_changes[modName].new_version ?? null
     let previousVer = e.mod_changes[modName]?.old_version ?? null
 
-    return <FactorioModInfo>{
+    return <ConfigurationUpdateModData>{
       modName: modName,
       currentVersion: currentVer,
       previousVersion: previousVer,

@@ -10,6 +10,7 @@ dependencyResolutionManagement {
 //  repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
 
   repositories {
+    myMavenLocal()
     mavenCentral()
     jitpack()
     gradlePluginPortal()
@@ -31,6 +32,7 @@ dependencyResolutionManagement {
 
   pluginManagement {
     repositories {
+      myMavenLocal()
       gradlePluginPortal()
       mavenCentral()
       jitpack()
@@ -39,6 +41,20 @@ dependencyResolutionManagement {
 
 }
 
+
 fun RepositoryHandler.jitpack() {
   maven("https://jitpack.io")
+}
+
+
+fun RepositoryHandler.myMavenLocal(enabled: Boolean = true) {
+  if (enabled) {
+    logger.lifecycle("Maven local is enabled")
+    mavenLocal {
+      content {
+        includeGroup("dev.adamko")
+        includeGroup("dev.adamko.kxtsgen")
+      }
+    }
+  }
 }

@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   kafka-pipe:
-    image: openjdk:11-jre-buster
+    image: dev-adamko/kafka-pipe/${KAFKATORIO_VERSION}
     container_name: "kafka-pipe"
     build:
       dockerfile: "kafka-pipe.Dockerfile"

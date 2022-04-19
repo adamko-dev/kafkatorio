@@ -1,8 +1,38 @@
-package dev.adamko.kafkatorio.events.schema.converters
+package dev.adamko.kafkatorio.schema.common
 
-import dev.adamko.kafkatorio.events.schema.Colour
-import dev.adamko.kafkatorio.events.schema.ColourHex
 import kotlin.math.roundToInt
+import kotlinx.serialization.Serializable
+
+/**
+ * Red, green, blue and alpha values, all in range `[0, 1]` or all in range `[0, 255]` if any
+ * value is > 1.
+ *
+ * All values here are optional. Colour channels default to `0`, the alpha channel defaults to `1`.
+ */
+@Serializable
+data class Colour(
+  val red: Float = 0f,
+  val green: Float = 0f,
+  val blue: Float = 0f,
+  val alpha: Float = 1f,
+)
+
+
+/** Size-efficient version of [Colour] (`4*4` bytes vs `4*1` bytes) */
+@Serializable
+data class ColourHex(
+  val red: UByte = UByte.MIN_VALUE,
+  val green: UByte = UByte.MIN_VALUE,
+  val blue: UByte = UByte.MIN_VALUE,
+  val alpha: UByte = UByte.MAX_VALUE,
+) {
+  companion object {
+    val TRANSPARENT = ColourHex(0u, 0u, 0u, 0u)
+  }
+}
+
+
+/* *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  * */
 
 
 /** True if any value is greater than 1, so the values are hexadecimal. */
@@ -74,7 +104,9 @@ fun Colour.toHex(): ColourHex {
   )
 }
 
+
 private fun UByte.toPercentileFloat() = (this.toFloat() / ubyteMaxFloat).coerceIn(0f..1f)
+
 
 fun ColourHex.toPercentile(): Colour {
   return Colour(

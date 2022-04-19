@@ -1,9 +1,5 @@
 package dev.adamko.kafkatorio.processor.admin
 
-import dev.adamko.kafkatorio.events.schema.FactorioEventUpdate
-import dev.adamko.kafkatorio.events.schema.FactorioObjectData
-import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
-import dev.adamko.kafkatorio.processor.KafkatorioTopology
 import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
 import org.apache.kafka.clients.admin.Admin
@@ -28,34 +24,9 @@ object KafkatorioKafkaAdmin {
 
     val currentTopics = currentTopics().map { it.name() }
 
-    val kafkatorioTopics = buildSet {
-      KafkatorioPacket.PacketType.values.forEach { packetType ->
-
-        add(KafkatorioTopology.TOPIC_GROUPED_MAP_CHUNKS)
-        add(KafkatorioTopology.TOPIC_SRC_SERVER_LOG)
-
-        val base = topicNameBase(packetType)
-
-        when (packetType) {
-          KafkatorioPacket.PacketType.EVENT      ->
-            FactorioObjectData.ObjectName.values.forEach { objectName ->
-              add("$base.${objectName.name}")
-            }
-          KafkatorioPacket.PacketType.CONFIG     -> add("$base.FactorioConfigurationUpdate")
-          KafkatorioPacket.PacketType.PROTOTYPES -> add("$base.all")
-          KafkatorioPacket.PacketType.UPDATE     -> {
-            add("$base.all")
-            FactorioEventUpdate.FactorioEventUpdateType.values.forEach { objectName ->
-              add("$base.${objectName.name}")
-            }
-          }
-        }
-
-      }
-    }.minus(currentTopics.toSet())
+    val kafkatorioTopics = allTopics() - currentTopics.toSet()
 
     if (kafkatorioTopics.isNotEmpty()) {
-
       logger.info("Creating ${kafkatorioTopics.size} topics")
       val result = kafkaAdmin.createTopics { kafkatorioTopics }
 
@@ -83,11 +54,14 @@ object KafkatorioKafkaAdmin {
     replicationFactor: Short = 1,
     topicNames: () -> Collection<String>,
   ): CreateTopicsResult =
-    createTopics(topicNames()
-      .distinct()
-      .map {
-        NewTopic(it, numPartitions, replicationFactor)
-      })
+    createTopics(
+      topicNames()
+        .distinct()
+        .map {
+          NewTopic(it, numPartitions, replicationFactor)
+//            .configs(mapOf("cleanup.policy" to "compact"))
+        }
+    )
 
   private fun currentTopics(): MutableCollection<TopicListing> {
     return kafkaAdmin.listTopics()
@@ -95,6 +69,6 @@ object KafkatorioKafkaAdmin {
       .get()
   }
 
-  fun topicNameBase(packetType: KafkatorioPacket.PacketType): String =
-    "kafkatorio.${packetType.name}"
+//  fun topicNameBase(packetType: KafkatorioPacketDataType): String =
+//    "kafkatorio.${packetType.name}"
 }

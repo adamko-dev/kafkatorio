@@ -3,6 +3,7 @@
 .secret.*
 
 .idea
+!.idea/icon.svg
 
 node_modules
 

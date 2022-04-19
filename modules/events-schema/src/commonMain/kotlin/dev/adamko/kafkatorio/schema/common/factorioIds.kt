@@ -1,7 +1,12 @@
-package dev.adamko.kafkatorio.events.schema
+package dev.adamko.kafkatorio.schema.common
 
 import kotlin.jvm.JvmInline
 import kotlinx.serialization.Serializable
+
+
+@Serializable
+@JvmInline
+value class Tick(val value: UInt)
 
 
 /**
@@ -44,3 +49,20 @@ value class UnitNumber(private val id: UInt) {
 value class PrototypeName(private val id: String) {
   override fun toString(): String = id
 }
+
+
+interface EntityIdentifiers {
+  val unitNumber: UnitNumber?
+  val name: String
+  /** The prototype-type of the entity. */
+  val protoType: String
+}
+
+
+// instant of EntityIdentifiers, because kxs needs a concrete instance
+@Serializable
+data class EntityIdentifiersData(
+  override val unitNumber: UnitNumber? = null,
+  override val name: String,
+  override val protoType: String,
+) : EntityIdentifiers

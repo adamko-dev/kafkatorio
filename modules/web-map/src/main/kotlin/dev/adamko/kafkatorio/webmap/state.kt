@@ -1,12 +1,12 @@
 package dev.adamko.kafkatorio.webmap
 
-import dev.adamko.kafkatorio.events.schema.Colour
-import dev.adamko.kafkatorio.events.schema.MapEntityPosition
-import dev.adamko.kafkatorio.events.schema.PlayerIndex
-import dev.adamko.kafkatorio.events.schema.PlayerUpdate
-import dev.adamko.kafkatorio.events.schema.SurfaceIndex
-import dev.adamko.kafkatorio.events.schema.Tick
-import dev.adamko.kafkatorio.events.schema.converters.toHexString
+import dev.adamko.kafkatorio.schema.common.Colour
+import dev.adamko.kafkatorio.schema.common.MapEntityPosition
+import dev.adamko.kafkatorio.schema.common.PlayerIndex
+import dev.adamko.kafkatorio.schema.common.SurfaceIndex
+import dev.adamko.kafkatorio.schema.common.Tick
+import dev.adamko.kafkatorio.schema.common.toHexString
+import dev.adamko.kafkatorio.schema2.PlayerUpdate
 import io.kvision.maps.Maps
 import io.kvision.maps.Maps.Companion.L
 import io.kvision.maps.externals.leaflet.geo.LatLng
@@ -43,8 +43,8 @@ fun factorioGameReducer(state: FactorioGameState, update: FactorioUpdate): Facto
   when (update) {
     is FactorioUpdate.Player -> {
 
-      val playerState = state.players.getOrElse(update.data.index) {
-        PlayerState(update.data.index, update.tick)
+      val playerState = state.players.getOrElse(update.data.key.index) {
+        PlayerState(update.data.key.index, update.tick)
       }
 
       playerState.update(update.tick, update.data)

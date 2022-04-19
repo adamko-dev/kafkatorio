@@ -47,7 +47,6 @@ tasks.withType<KotlinCompile>().configureEach {
     "-opt-in=kotlin.RequiresOptIn",
     "-opt-in=kotlin.ExperimentalStdlibApi",
     "-opt-in=kotlin.time.ExperimentalTime",
-//    "-Xextended-compiler-checks",
 //    "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
 //    "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
   )

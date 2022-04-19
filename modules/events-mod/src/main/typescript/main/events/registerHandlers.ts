@@ -1,9 +1,9 @@
-import {handleConsoleChat, handleSurfaceUpdate,} from "./handlers";
 import {Queue} from "../queue/queue";
 import {isEventType} from "./eventTypeCheck";
 import {Converters} from "./converters";
 import KafkatorioSettings from "../settings/KafkatorioSettings";
 import {handleChunkGeneratedEvent} from "./onMapChunkEventListeners";
+import {handleSurfaceUpdate} from "./handlers";
 
 
 // script.on_event(
@@ -34,13 +34,8 @@ script.on_event(
     (e: OnTickEvent) => {
       if (e.tick % 1000 == 0) {
         for (const [, surface] of game.surfaces) {
-          handleSurfaceUpdate(e.tick, Converters.eventNameString(e.name), surface)
+          handleSurfaceUpdate(e, Converters.eventNameString(e.name), surface)
         }
-
-        // let packets = new KafkatorioPacketQueue().dequeueValues(1)
-        // for (const packet of packets) {
-        //   emitPacket(packet)
-        // }
       }
 
       if (e.tick % 7 == 0) {
@@ -64,21 +59,6 @@ script.on_event(
     }
 )
 
-script.on_event(
-    defines.events.on_console_chat,
-    (e: OnConsoleChatEvent) => {
-      handleConsoleChat(e.tick, Converters.eventNameString(e.name), e.player_index, e.message)
-    }
-)
-
-// script.on_event(
-//     defines.events.on_chunk_generated,
-//     (e: OnChunkGeneratedEvent) => {
-//       handleChunkUpdate(e.tick, mapEventIdToName.get(e.name), e.surface.index, e.position,
-// e.area) } )  script.on_event( [ defines.events.on_player_built_tile,
-// defines.events.on_robot_built_tile, ], (builtTilesEvent) => { handleTilesUpdate(
-// builtTilesEvent.tick, mapEventIdToName.get(builtTilesEvent.name), builtTilesEvent.surface_index,
-// builtTilesEvent.tile, builtTilesEvent.tiles, ) } )
 
 script.on_event(
     defines.events.on_runtime_mod_setting_changed,

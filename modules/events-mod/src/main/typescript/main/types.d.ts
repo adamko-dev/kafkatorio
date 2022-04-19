@@ -1,3 +1,5 @@
+import {KafkatorioPacketData2} from "../generated/kafkatorio-schema/kafkatorio-schema";
+
 export type EventName = keyof typeof defines.events
 
 
@@ -15,3 +17,10 @@ type ExcludeNullKeys<TYPE> = Pick<TYPE, NonNullKeys<TYPE>>
 type NonNullableKeys<TYPE> = {
   [KEY in keyof TYPE]: NonNullable<TYPE[KEY]>;
 }
+
+
+type KafkatorioKeyedPacketData = Extract<KafkatorioPacketData2, { key: object }>
+
+type KafkatorioKeyedPacketTypes = KafkatorioKeyedPacketData["type"];
+
+type KafkatorioKeyedPacketKeys = KafkatorioKeyedPacketData["key"];

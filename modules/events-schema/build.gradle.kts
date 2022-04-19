@@ -1,5 +1,6 @@
 import dev.adamko.kafkatorio.gradle.asProvider
 import dev.adamko.kafkatorio.gradle.typescriptAttributes
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
 plugins {
@@ -11,6 +12,7 @@ plugins {
 
 
 kotlin {
+
   js(IR) {
     binaries.executable()
     // browser{} causes this error:
@@ -32,6 +34,11 @@ kotlin {
     nodejs()
   }
   jvm {
+    val main by compilations.getting {
+      kotlinOptions {
+        jvmTarget = "11"
+      }
+    }
     testRuns["test"].executionTask.configure {
       useJUnitPlatform()
     }
@@ -56,6 +63,10 @@ kotlin {
         implementation(project.dependencies.platform(libs.kotlinx.serialization.bom))
         implementation(libs.kotlinx.serialization.core)
         implementation(libs.kotlinx.serialization.json)
+        api("dev.adamko.kxtsgen:kxs-ts-gen-core:dev-SNAPSHOT")
+//        implementation("com.github.adamko-dev:kotlinx-serialization-typescript-generator:dev-SNAPSHOT") {
+//          isChanging = true
+//        }
       }
     }
 
@@ -76,7 +87,9 @@ kotlin {
       dependencies {
         implementation("com.github.aSemy:ts-generator:v1.2.1")
 //        implementation("com.github.ntrrgc:ts-generator:1.1.2")
-        implementation("org.jetbrains.kotlin:kotlin-reflect")
+        implementation(kotlin("reflect"))
+
+//        implementation("com.github.adamko-dev:kotlinx-serialization-typescript-generator:0.0.5")
       }
     }
 
@@ -105,7 +118,8 @@ val generateTypescript by tasks.registering(JavaExec::class) {
     main.runtimeDependencyFiles
   )
 
-  mainClass.set("dev.adamko.kafkatorio.events.schema.Kt2tsKt")
+//  mainClass.set("dev.adamko.kafkatorio.events.schema.Kt2tsKt")
+  mainClass.set("dev.adamko.kafkatorio.events.schema.Kt2ts2Kt")
 
   val tempOutputDirectory = file("$temporaryDir")
   args(tempOutputDirectory)

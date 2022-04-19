@@ -1,21 +1,15 @@
 package dev.adamko.kafkatorio.processor.topology
 
-import dev.adamko.kafkatorio.events.schema.Colour
-import dev.adamko.kafkatorio.events.schema.ColourHex
-import dev.adamko.kafkatorio.events.schema.FactorioEventUpdatePacket
-import dev.adamko.kafkatorio.events.schema.FactorioPrototypes
-import dev.adamko.kafkatorio.events.schema.MapChunkPosition
-import dev.adamko.kafkatorio.events.schema.MapChunkUpdate
-import dev.adamko.kafkatorio.events.schema.MapTileDictionary
-import dev.adamko.kafkatorio.events.schema.MapTilePosition
-import dev.adamko.kafkatorio.events.schema.MapTilePrototype
-import dev.adamko.kafkatorio.events.schema.PrototypeKey
-import dev.adamko.kafkatorio.events.schema.PrototypeName
-import dev.adamko.kafkatorio.events.schema.SurfaceIndex
-import dev.adamko.kafkatorio.events.schema.Tick
 import dev.adamko.kafkatorio.processor.KafkatorioTopology
+import dev.adamko.kafkatorio.processor.admin.TOPIC_GROUPED_MAP_CHUNKS_STATE
 import dev.adamko.kafkatorio.processor.serdes.jsonMapper
 import dev.adamko.kafkatorio.processor.serdes.kxsBinary
+import dev.adamko.kafkatorio.schema.common.*
+import dev.adamko.kafkatorio.schema.common.MapTileDictionary.PrototypeKey
+import dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype2
+import dev.adamko.kafkatorio.schema2.MapChunkUpdate
+import dev.adamko.kafkatorio.schema2.MapChunkUpdateKey
+import dev.adamko.kafkatorio.schema2.PrototypesUpdate
 import dev.adamko.kotka.kxs.serde
 import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
@@ -32,34 +26,29 @@ import org.apache.kafka.streams.TopologyTestDriver
 class GroupMapChunksTest : FunSpec({
 
   test("basic test") {
+    val streamsBuilder = StreamsBuilder()
 
     val prototypesTopicName = "prototypes-topic"
     val mapChunkUpdatesTopicName = "map-chunk-updates-topic"
 
-    val topology = groupMapChunks(
-      StreamsBuilder(),
-      prototypesTopicName,
-      mapChunkUpdatesTopicName,
-    )
+    val topology = groupMapChunks(streamsBuilder)
 
     val testDriver = TopologyTestDriver(topology)
 
-    val prototypesTestInputTopic: TestInputTopic<FactorioServerId, FactorioPrototypes> =
+    val prototypesTestInputTopic: TestInputTopic<FactorioServerId, PrototypesUpdate> =
       testDriver.createInputTopic(
         prototypesTopicName,
         jsonMapper.serde<FactorioServerId>().serializer(),
-        jsonMapper.serde<FactorioPrototypes>().serializer(),
+        jsonMapper.serde<PrototypesUpdate>().serializer(),
       )
 
     val serverId = FactorioServerId("test-server-id")
 
     prototypesTestInputTopic.pipeInput(
       serverId,
-      FactorioPrototypes(
-        modVersion = "1.2.3",
-        tick = Tick(456u),
+      PrototypesUpdate(
         listOf(
-          MapTilePrototype(
+          FactorioPrototype2.MapTile(
             PrototypeName("fake-proto"),
             layer = 1u,
             mapColour = Colour(0.3f, 0.2f, 0.1f, 1.0f),
@@ -71,26 +60,25 @@ class GroupMapChunksTest : FunSpec({
       )
     )
 
-    val mapChunkUpdatesInputTopic: TestInputTopic<FactorioServerId, FactorioEventUpdatePacket> =
+    val mapChunkUpdatesInputTopic: TestInputTopic<FactorioServerId, MapChunkUpdate> =
       testDriver.createInputTopic(
         mapChunkUpdatesTopicName,
         jsonMapper.serde<FactorioServerId>().serializer(),
-        jsonMapper.serde<FactorioEventUpdatePacket>().serializer(),
+        jsonMapper.serde<MapChunkUpdate>().serializer(),
       )
+
     mapChunkUpdatesInputTopic.pipeInput(
       serverId,
-      FactorioEventUpdatePacket(
-        modVersion = "1.2.3",
-        tick = Tick(854u),
-        update = MapChunkUpdate(
+      MapChunkUpdate(
+        key = MapChunkUpdateKey(
           MapChunkPosition(11, 22),
           SurfaceIndex(1u),
-          tileDictionary = MapTileDictionary(
-            tilesXY = mapOf(
-              "1" to mapOf("2" to PrototypeKey("33"))
-            ),
-            protos = mapOf(PrototypeKey("33") to PrototypeName("fake-proto"))
-          )
+        ),
+        tileDictionary = MapTileDictionary(
+          tilesXY = mapOf(
+            "1" to mapOf("2" to PrototypeKey(33))
+          ),
+          protos = mapOf(PrototypeName("fake-proto") to PrototypeKey(33))
         )
       )
     )
@@ -98,7 +86,7 @@ class GroupMapChunksTest : FunSpec({
     val outputTopic: TestOutputTopic<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
       testDriver
         .createOutputTopic(
-          KafkatorioTopology.TOPIC_GROUPED_MAP_CHUNKS,
+          TOPIC_GROUPED_MAP_CHUNKS_STATE,
           kxsBinary.serde<ServerMapChunkId>().deserializer(),
           kxsBinary.serde<ServerMapChunkTiles<ColourHex>>().deserializer(),
         )

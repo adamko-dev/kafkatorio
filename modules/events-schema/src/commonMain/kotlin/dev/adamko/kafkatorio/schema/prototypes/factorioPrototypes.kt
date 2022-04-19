@@ -1,9 +1,14 @@
-package dev.adamko.kafkatorio.events.schema
+package dev.adamko.kafkatorio.schema.prototypes
 
-import dev.adamko.kafkatorio.events.schema.FactorioPrototype.PrototypeObjectName
+import dev.adamko.kafkatorio.schema.SerializerProvider
+import dev.adamko.kafkatorio.schema.SerializerProviderDeserializer
+import dev.adamko.kafkatorio.schema.common.Colour
+import dev.adamko.kafkatorio.schema.common.PrototypeName
+import dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.PrototypeObjectName
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import kotlinx.serialization.json.JsonElement
@@ -12,45 +17,29 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 
-
-@Serializable(with = FactorioPrototypeJsonSerializer::class)
+@Serializable(with = FactorioPrototype.JsonSerializer::class)
 sealed class FactorioPrototype {
   @EncodeDefault
   abstract val prototypeObjectName: PrototypeObjectName
 
-  enum class PrototypeObjectName {
-    LuaTilePrototype,
+  enum class PrototypeObjectName(
+    override val serializer: KSerializer<out FactorioPrototype>
+  ) : SerializerProvider<FactorioPrototype> {
+    LuaTilePrototype(MapTilePrototype.serializer()),
     ;
 
     companion object {
-      val values: List<PrototypeObjectName> = values().toList()
+      val entries: Set<PrototypeObjectName> = values().toSet()
     }
   }
+
+  object JsonSerializer : SerializerProviderDeserializer<FactorioPrototype>(
+    FactorioPrototype::class,
+    FactorioPrototype::prototypeObjectName.name,
+    { json -> PrototypeObjectName.entries.firstOrNull { it.name == json } }
+  )
 }
 
-
-object FactorioPrototypeJsonSerializer : JsonContentPolymorphicSerializer<FactorioPrototype>(
-  FactorioPrototype::class
-) {
-  private val key = FactorioPrototype::prototypeObjectName.name
-
-  override fun selectDeserializer(element: JsonElement): DeserializationStrategy<out FactorioPrototype> {
-
-    val type = element
-      .jsonObject[key]
-      ?.jsonPrimitive
-      ?.contentOrNull
-      ?.let { json ->
-        PrototypeObjectName.values.firstOrNull { it.name == json }
-      }
-
-    requireNotNull(type) { "Unknown FactorioPrototype ${key}: $element" }
-
-    return when (type) {
-      PrototypeObjectName.LuaTilePrototype -> MapTilePrototype.serializer()
-    }
-  }
-}
 
 
 @Serializable

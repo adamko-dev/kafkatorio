@@ -1,4 +1,5 @@
 import {EventName} from "../types";
+import {Colour} from "../../generated/kafkatorio-schema/kafkatorio-schema";
 
 export namespace Converters {
 
@@ -62,15 +63,6 @@ export namespace Converters {
   //   return result
   // }
 
-  export function surfaceToTable(surface: LuaSurface): SurfaceData {
-    return {
-      objectName: surface.object_name,
-
-      name: surface.name,
-      index: surface.index,
-      daytime: surface.daytime,
-    }
-  }
 
   // export function mapEntityPosition(mapPos: MapPositionTable): MapEntityPosition {
   //   return {
@@ -102,14 +94,6 @@ export namespace Converters {
     }
   }
 
-  export function consoleChat(content: string, playerIndex?: uint): ConsoleChatMessage {
-    return {
-      objectName: "ConsoleChatMessage",
-
-      authorPlayerIndex: playerIndex ?? null,
-      content: content
-    }
-  }
 
   // export function convertTile(tile: LuaTile): MapTile {
   //   return {

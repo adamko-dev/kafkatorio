@@ -1,13 +1,14 @@
 package dev.adamko.kafkatorio.webmap
 
-import dev.adamko.kafkatorio.events.schema.EntityUpdate
-import dev.adamko.kafkatorio.events.schema.FactorioConfigurationUpdate
-import dev.adamko.kafkatorio.events.schema.FactorioEvent
-import dev.adamko.kafkatorio.events.schema.FactorioEventUpdatePacket
-import dev.adamko.kafkatorio.events.schema.FactorioPrototypes
-import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
-import dev.adamko.kafkatorio.events.schema.MapChunkUpdate
-import dev.adamko.kafkatorio.events.schema.PlayerUpdate
+import dev.adamko.kafkatorio.schema2.ConfigurationUpdate
+import dev.adamko.kafkatorio.schema2.ConsoleChatUpdate
+import dev.adamko.kafkatorio.schema2.ConsoleCommandUpdate
+import dev.adamko.kafkatorio.schema2.EntityUpdate
+import dev.adamko.kafkatorio.schema2.KafkatorioPacket2
+import dev.adamko.kafkatorio.schema2.MapChunkUpdate
+import dev.adamko.kafkatorio.schema2.PlayerUpdate
+import dev.adamko.kafkatorio.schema2.PrototypesUpdate
+import dev.adamko.kafkatorio.schema2.SurfaceUpdate
 import io.kvision.redux.ReduxStore
 import kotlinx.serialization.decodeFromString
 import org.w3c.dom.MessageEvent
@@ -35,26 +36,23 @@ class WebsocketService(
 
       println(data.replace('\n', ' '))
 
-      when (val event: KafkatorioPacket = jsonMapper.decodeFromString(data)) {
-        is FactorioEvent             -> {
-        }
-        is FactorioEventUpdatePacket -> {
-          when (val eventUpdate = event.update) {
-            is PlayerUpdate   -> reduxStore.dispatch(FactorioUpdate.Player(event.tick, eventUpdate))
-            is EntityUpdate,
-            is MapChunkUpdate -> {
-            }
-          }
-        }
-        is FactorioConfigurationUpdate,
-        is FactorioPrototypes        -> {
+      val packet: KafkatorioPacket2 = jsonMapper.decodeFromString(data)
+
+      when (val packetData = packet.data) {
+
+        is PlayerUpdate   -> reduxStore.dispatch(FactorioUpdate.Player(packet.tick, packetData))
+        is ConfigurationUpdate,
+        is ConsoleChatUpdate,
+        is ConsoleCommandUpdate,
+        is PrototypesUpdate,
+        is SurfaceUpdate,
+        is EntityUpdate,
+        is MapChunkUpdate -> {
           // to be continued...
         }
       }
-
     } else {
       println(data)
     }
-
   }
 }

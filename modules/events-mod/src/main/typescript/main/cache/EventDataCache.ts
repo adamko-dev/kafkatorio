@@ -1,10 +1,12 @@
 import KafkatorioSettings from "../settings/KafkatorioSettings";
+import {KafkatorioKeyedPacketData} from "../types";
 
 export namespace EventUpdates {
 
 
   declare const global: {
-    cache: LuaTable<string, CacheEntry<FactorioEventUpdateType>>,
+    /** Map the hash of the key, as a string, a cache entry */
+    cache: LuaTable<string, CacheEntry<KafkatorioKeyedPacketData>>,
   }
 
 
@@ -19,7 +21,7 @@ export namespace EventUpdates {
 
       if (force == true || isAnythingUndefined) {
         log("Initialising global.cache")
-        global.cache = new LuaTable<string, CacheEntry<FactorioEventUpdateType>>()
+        global.cache = new LuaTable<string, CacheEntry<KafkatorioKeyedPacketData>>()
       }
       log(`Finished initialising EventDataCache`)
     }
@@ -29,12 +31,13 @@ export namespace EventUpdates {
      * Update the cache data without restarting the 'time-to-emit' countdown, so that the data won't
      * be emitted more than once per {@link CacheEntry.expirationDurationTicks}.
      */
-    public throttle<TYPE extends FactorioEventUpdateType>(
-        key: CacheKey<TYPE>,
-        mutate: CacheDataMutator<TYPE>,
+    public throttle<PACKET extends KafkatorioKeyedPacketData>(
+        key: PacketKey<PACKET>,
+        type: PacketType<PACKET>,
+        mutate: CacheDataMutator<PACKET>,
         expirationDurationTicks?: uint,
     ) {
-      this.update(key, mutate, false, expirationDurationTicks)
+      this.update(key, type, mutate, false, expirationDurationTicks)
     }
 
 
@@ -42,23 +45,26 @@ export namespace EventUpdates {
      * Update the cache data and reset the 'time-to-emit' countdown, so the data won't be emitted
      * until there's an inactivity gap of {@link CacheEntry.expirationDurationTicks}.
      */
-    public debounce<TYPE extends FactorioEventUpdateType>(
-        key: CacheKey<TYPE>,
-        mutate: CacheDataMutator<TYPE>,
+    public debounce<PACKET extends KafkatorioKeyedPacketData>(
+        key: PacketKey<PACKET>,
+        type: PacketType<PACKET>,
+        mutate: CacheDataMutator<PACKET>,
         expirationDurationTicks?: uint,
     ) {
-      this.update(key, mutate, true, expirationDurationTicks)
+      this.update(key, type, mutate, true, expirationDurationTicks)
     }
 
 
-    private update<TYPE extends FactorioEventUpdateType>(
-        key: CacheKey<TYPE>,
-        mutate: CacheDataMutator<TYPE>,
+    private update<PACKET extends KafkatorioKeyedPacketData>(
+        key: PacketKey<PACKET>,
+        type: PacketType<PACKET>,
+        mutate: CacheDataMutator<PACKET>,
         resetLastUpdated: boolean,
         expirationDurationTicks?: uint,
     ) {
-      const entry: CacheEntry<TYPE> = this.getCacheEntry(key) ?? this.createCacheEntry(key, mutate)
-      mutate(entry.data)
+      const entry: CacheEntry<PACKET> = this.getCacheEntry(key) ??
+                                        Manager.createCacheEntry(key, type)
+      mutate(entry.packet)
       if (resetLastUpdated) {
         entry.lastUpdatedTick = game.tick
       }
@@ -72,8 +78,8 @@ export namespace EventUpdates {
      * Usage example: If an urgent update comes in, then the expiration can be reduced so that
      * it's transmitted sooner.
      */
-    public setExpiration(
-        key: CacheKey<FactorioEventUpdateType>,
+    public setExpiration<PACKET extends KafkatorioKeyedPacketData>(
+        key: PacketKey<PACKET>,
         expirationDurationTicks: uint,
     ) {
       const entry = this.getCacheEntry(key)
@@ -83,15 +89,16 @@ export namespace EventUpdates {
     }
 
 
-    public extractExpired(): Array<FactorioEventUpdate> {
+    // use in/out v4.7.0 https://github.com/microsoft/TypeScript/pull/48240
+    public extractExpired(): Array<KafkatorioKeyedPacketData> {
       let countExpired = 0
       let countTotal = 0
-      const expiredData: Array<FactorioEventUpdate> = []
+      const expiredData: Array<KafkatorioKeyedPacketData> = []
       for (let [key, entry] of global.cache) {
         countTotal++
         if (this.isExpired(entry)) {
           countExpired++
-          expiredData.push(entry.data)
+          expiredData.push(entry.packet)
           global.cache.delete(key)
         }
       }
@@ -102,15 +109,15 @@ export namespace EventUpdates {
     }
 
 
-    private getCacheEntry<TYPE extends FactorioEventUpdateType>(
-        key: CacheKey<TYPE>
-    ): CacheEntry<TYPE> | undefined {
-      const hash = game.encode_string(game.table_to_json(key))!!
+    private getCacheEntry<PACKET extends KafkatorioKeyedPacketData>(
+        key: PacketKey<PACKET>
+    ): CacheEntry<PACKET> | undefined {
+      const hash = Manager.hashKey(key)
       if (!global.cache.has(hash)) {
         return undefined
       }
       const value: CacheEntry<any> = global.cache.get(hash)
-      if (this.isEntryInstanceOf(value, key.updateType)) {
+      if (this.isEntryInstanceOf(value, key)) {
         return value
       } else {
         // Type mismatch. This shouldn't happen...
@@ -119,40 +126,53 @@ export namespace EventUpdates {
     }
 
 
-    private createCacheEntry<TYPE extends FactorioEventUpdateType>(
-        key: CacheKey<TYPE>,
-        mutate: CacheDataMutator<TYPE>,
-    ): CacheEntry<TYPE> {
-      const data: CacheData<TYPE> = <CacheData<TYPE>>{...key}
-      mutate(data)
-      let entry: CacheEntry<TYPE> = new CacheEntry<TYPE>(data)
-      const hash = game.encode_string(game.table_to_json(key))!!
+    private static createCacheEntry<PACKET extends KafkatorioKeyedPacketData>(
+        key: PacketKey<PACKET>,
+        type: PacketType<PACKET>,
+    ): CacheEntry<PACKET> {
+      const data: PACKET = <PACKET>{
+        type: type,
+        key: key,
+      }
+      let entry: CacheEntry<PACKET> = new CacheEntry<PACKET>(data)
+      const hash = Manager.hashKey(key)
       global.cache.set(hash, entry)
       return entry
     }
 
 
-    isExpired<TYPE extends FactorioEventUpdateType>(entry: CacheEntry<TYPE>): boolean {
-      const expiryDuration = entry.expirationDurationTicks
-                             ??
-                             KafkatorioSettings.getEventCacheExpirationTicks(entry.data.updateType)
-      return game.tick - entry.lastUpdatedTick > expiryDuration
+    isExpired<TYPE extends KafkatorioKeyedPacketData>(entry: CacheEntry<TYPE>): boolean {
+      const expiryDuration =
+          entry.expirationDurationTicks
+          ?? KafkatorioSettings.getEventCacheExpirationTicks(entry.packet)
+
+      if (expiryDuration == undefined) {
+        return true
+      } else {
+        return game.tick - entry.lastUpdatedTick > expiryDuration
+      }
     }
 
 
-    isEntryInstanceOf<TYPE extends FactorioEventUpdateType>(
+    isEntryInstanceOf<PACKET extends KafkatorioKeyedPacketData>(
         entry: CacheEntry<any> | undefined,
-        updateType: TYPE,
-    ): entry is CacheEntry<TYPE> {
-      return this.isDataInstanceOf<TYPE>(entry?.data, updateType)
+        key: PacketKey<PACKET>,
+    ): entry is CacheEntry<PACKET> {
+      return this.isDataInstanceOf(entry?.packet, key)
     }
 
 
-    isDataInstanceOf<TYPE extends FactorioEventUpdateType>(
-        data: CacheData<any> | undefined,
-        updateType: TYPE,
-    ): data is CacheData<TYPE> {
-      return data != undefined && data.updateType == updateType
+    isDataInstanceOf<PACKET extends KafkatorioKeyedPacketData>(
+        packet: PACKET | undefined,
+        key: PacketKey<PACKET>,
+    ): packet is PACKET {
+      return packet != undefined && packet.key == key
+    }
+
+    private static hashKey<PACKET extends KafkatorioKeyedPacketData>(
+        key: PacketKey<PACKET>,
+    ): string {
+      return game.encode_string(game.table_to_json(key))!!
     }
 
 
@@ -166,54 +186,56 @@ export namespace EventUpdates {
   }
 
 
-  /** Map a {@link FactorioEventUpdateType} to a {@link FactorioEventUpdate} DTO */
-  type ConvertToUpdate<TYPE extends FactorioEventUpdateType> =
-      TYPE extends "PLAYER" ? PlayerUpdate :
-      TYPE extends "MAP_CHUNK" ? MapChunkUpdate :
-      TYPE extends "ENTITY" ? EntityUpdate :
-      never
+  // export type KeyedPacketType = Exclude<KafkatorioPacketDataType,
+  //     "CONFIG" | "CONSOLE_CHAT" | "CONSOLE_COMMAND" | "PROTOTYPES" | "SURFACE">
+
+  // /** Map a {@link KeyedPacketType} to a {@link KafkatorioPacketData} DTO */
+  // type ConvertToUpdate<TYPE extends KafkatorioKeyedPacketData> =
+  //     TYPE extends "PLAYER" ? PlayerUpdate :
+  //     TYPE extends "MAP_CHUNK" ? MapChunkUpdate :
+  //     TYPE extends "ENTITY" ? EntityUpdate :
+  //     never
 
 
-  /** Map a {@link FactorioEventUpdateType} to a {@link FactorioEventUpdateKey} */
-  type ConvertToUpdateKey<TYPE extends FactorioEventUpdateType> =
-      TYPE extends "PLAYER" ? PlayerUpdateKey :
-      TYPE extends "MAP_CHUNK" ? MapChunkUpdateKey :
-      TYPE extends "ENTITY" ? EntityUpdateKey :
-      never
+  // /** Map a {@link KeyedPacketType} to a {@link KafkatorioKeyedPacketKey} */
+  // type ConvertToUpdateKey<TYPE extends KafkatorioKeyedPacketData> =
+  //     TYPE extends "PLAYER" ? PlayerUpdateKey :
+  //     TYPE extends "MAP_CHUNK" ? MapChunkUpdateKey :
+  //     TYPE extends "ENTITY" ? EntityUpdateKey :
+  //     never
 
 
-  /** Make `updateType` specific */
-  export type CacheKey<TYPE extends FactorioEventUpdateType> =
-      CacheTyped<TYPE>
-      & Omit<ConvertToUpdateKey<TYPE>, "updateType">
+  // /** Make `updateType` specific */
+  export type PacketKey<PACKET extends KafkatorioKeyedPacketData> = PACKET["key"]
+  export type PacketType<PACKET extends KafkatorioKeyedPacketData> = PACKET["type"]
+  //
+  //
+  // /** Make `updateType` specific */
+  // export type CacheData<TYPE extends KafkatorioKeyedPacketData> =
+  //     CacheTyped<TYPE>
+  //     & Omit<ConvertToUpdate<TYPE>, "updateType">
+  //
+  //
+  // export type CacheTyped<TYPE extends KafkatorioKeyedPacketData> = {
+  //   readonly updateType: TYPE
+  // }
 
 
-  /** Make `updateType` specific */
-  export type CacheData<TYPE extends FactorioEventUpdateType> =
-      CacheTyped<TYPE>
-      & Omit<ConvertToUpdate<TYPE>, "updateType">
+  export type CacheDataMutator<PACKET extends KafkatorioKeyedPacketData> = (packet: PACKET) => void
 
 
-  export type CacheTyped<TYPE extends FactorioEventUpdateType> = {
-    readonly updateType: TYPE
-  }
-
-
-  export type CacheDataMutator<TYPE extends FactorioEventUpdateType> =
-      (data: CacheData<TYPE>) => void
-
-
-  class CacheEntry<TYPE extends FactorioEventUpdateType> {
+  class CacheEntry<PACKET extends KafkatorioKeyedPacketData> {
     lastUpdatedTick: uint = game.tick
     expirationDurationTicks?: uint
 
-    data: CacheData<TYPE>
+    packet: PACKET
 
     constructor(
-        data: CacheData<TYPE>,
+        packet: PACKET,
         expirationDurationTicks?: uint,
     ) {
-      this.data = data
+
+      this.packet = packet
       this.expirationDurationTicks = expirationDurationTicks
     }
   }
@@ -222,4 +244,5 @@ export namespace EventUpdates {
 }
 
 const EventUpdatesManager = new EventUpdates.Manager()
+
 export default EventUpdatesManager

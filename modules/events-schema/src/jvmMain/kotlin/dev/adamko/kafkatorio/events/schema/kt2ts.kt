@@ -1,5 +1,10 @@
 package dev.adamko.kafkatorio.events.schema
 
+import dev.adamko.kafkatorio.schema.events.KafkatorioInstantPacketData
+import dev.adamko.kafkatorio.schema.events.KafkatorioKeyedPacketData
+import dev.adamko.kafkatorio.schema.events.KafkatorioKeyedPacketKey
+//import dev.adamko.kafkatorio.schema.events.KafkatorioPacket
+import dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype
 import kotlin.io.path.Path
 import kotlin.io.path.createDirectories
 import me.ntrrgc.tsGenerator.TypeScriptGenerator
@@ -10,40 +15,38 @@ import org.intellij.lang.annotations.Language
  */
 fun main(args: Array<String>) {
 
-  val gen =
-    TypeScriptGenerator(
-      rootClasses = buildSet {
-        addAll(KafkatorioPacket::class.sealedSubclasses)
+  val gen = TypeScriptGenerator(
+    rootClasses = buildSet {
+//      add(KafkatorioPacket::class)
+//      addAll(KafkatorioPacket::class.sealedSubclasses)
 
-        addAll(FactorioObjectData::class.sealedSubclasses)
+      add(KafkatorioInstantPacketData::class)
+      addAll(KafkatorioInstantPacketData::class.sealedSubclasses)
 
-        addAll(FactorioPrototype::class.sealedSubclasses)
-        add(FactorioPrototypes::class)
-        add(FactorioConfigurationUpdate::class)
+      add(KafkatorioKeyedPacketData::class)
+      addAll(KafkatorioKeyedPacketData::class.sealedSubclasses)
+      addAll(KafkatorioKeyedPacketKey::class.sealedSubclasses)
 
-        add(FactorioEvent::class)
-
-        add(FactorioEventUpdatePacket::class)
-        addAll(FactorioEventUpdate::class.sealedSubclasses)
-        addAll(FactorioEventUpdateKey::class.sealedSubclasses)
-      },
-      mappings = mapOf(
-        // builtin Factorio numeric types > `typed-factorio/generated/builtin-types.d.ts`
-        Float::class to "float",
-        Double::class to "double",
-        Int::class to "int",
-        Byte::class to "int8",
-        UInt::class to "uint",
-        UByte::class to "uint8",
-        UShort::class to "uint16",
-        ULong::class to "uint64",
-      ),
-      classTransformers = listOf(
-        ValueClassTransformer,
+      add(FactorioPrototype::class)
+      addAll(FactorioPrototype::class.sealedSubclasses)
+    },
+    mappings = mapOf(
+      // builtin Factorio numeric types > `typed-factorio/generated/builtin-types.d.ts`
+      Float::class to "float",
+      Double::class to "double",
+      Int::class to "int",
+      Byte::class to "int8",
+      UInt::class to "uint",
+      UByte::class to "uint8",
+      UShort::class to "uint16",
+      ULong::class to "uint64",
+    ),
+    classTransformers = listOf(
+      ValueClassTransformer,
 //        PropertyNameTransformer,
-      ),
+    ),
 //      voidType = VoidType.UNDEFINED,
-    )
+  )
 
   val definitions = gen.definitionsText
 
@@ -57,7 +60,7 @@ fun main(args: Array<String>) {
         .forEach { (defFile, def) ->
           val outFile = outPath.resolve(defFile).toFile()
           outFile.printWriter().use {
-            it.println(header)
+            it.println(kt2tsHeader)
             it.print(def)
           }
           println("Generated file: $outFile")
@@ -67,6 +70,7 @@ fun main(args: Array<String>) {
   }
 }
 
+
 /** Split the TypeScript interfaces into different files */
 private fun splitDefinitions(definitions: String): Map<String, String> {
   return definitions
@@ -74,50 +78,63 @@ private fun splitDefinitions(definitions: String): Map<String, String> {
     .groupBy { def ->
 
       when {
+        def isInterface "KafkatorioPacket"
+            || def extendsAny listOf("KafkatorioPacket")
+            || def isType "KafkatorioPacketDataType"
+             -> "kafkatorio-packet.d.ts"
 
-        "interface FactorioObjectData " in def ||
-            "type ObjectName " in def ||
-            def.contains(Regex("interface.+extends.+(FactorioObjectData).*"))
-                                               -> "object-data.d.ts"
+        def isInterface "KafkatorioInstantPacketData"
+            || def extends "KafkatorioInstantPacketData"
+            || def isType "KafkatorioInstantPacketDataType"
 
-        "extends FactorioPrototype " in def ||
-            "interface FactorioPrototypes " in def ||
-            "interface FactorioPrototype " in def ||
-            "type PrototypeObjectName " in def -> "prototype.d.ts"
+            || def isInterface "ConfigurationUpdateGameData"
+            || def isInterface "ConfigurationUpdateModData"
+             -> "kafkatorio-instant-packet.d.ts"
 
-        "extends FactorioConfigurationUpdate " in def ||
-            "interface FactorioConfigurationUpdate " in def ||
-            "FactorioGameDataUpdate " in def ||
-            "FactorioModInfo " in def          -> "config-update.d.ts"
+        def isInterface "KafkatorioKeyedPacket"
+            || def isInterface "KafkatorioKeyedPacketData"
+            || def extends "KafkatorioKeyedPacket"
+            || def isType "KafkatorioKeyedPacketDataType"
 
-        "interface FactorioEventUpdatePacket" in def ||
-            "type FactorioEventUpdateType =" in def ||
-            "interface FactorioEventUpdateKey {" in def ||
-            "interface FactorioEventUpdateData {" in def ||
-            def.contains(
-              Regex(
-                """
-                interface.+extends.+(FactorioEventUpdate|PlayerUpdateKey|PlayerUpdateData).*
-                """.trimIndent()
-              )
-            )
-                                               -> "update.d.ts"
+            || def isInterface "KafkatorioKeyedPacketKey"
+             -> "kafkatorio-keyed-packet.d.ts"
 
-        else                                   -> "schema.d.ts"
+        def isInterface "FactorioPrototypes"
+            || def isInterface "FactorioPrototype"
+            || def extends "FactorioPrototype"
+            || def isType "PrototypeObjectName"
+             -> "prototype.d.ts"
+
+        else -> "schema.d.ts"
       }
     }
     .mapValues { (_, def) ->
       def
+        .sorted()
         .joinToString("\n\n", postfix = "\n")
         .replace("    ", "  ")
     }
 }
 
 @Language("TypeScript")
-val header = """
+val kt2tsHeader = """
   |// Generated by TypeScriptGenerator - do not edit this file manually
   |
 """.trimMargin()
+
+private infix fun String.extends(types: String): Boolean =
+  contains(Regex(".+extends.*(${types})"))
+
+private infix fun String.extendsAny(types: List<String>): Boolean =
+  extends(types.joinToString("|") { "$it,".replaceAfterLast(',', "") })
+
+private infix fun String.isInterface(type: String): Boolean =
+  contains(Regex("interface $type.*"))
+
+
+private infix fun String.isType(type: String): Boolean =
+  contains(Regex("type $type.*"))
+
 
 //object PropertyNameTransformer : ClassTransformer {
 //  override fun transformPropertyName(

@@ -1,52 +1,31 @@
 package dev.adamko.kafkatorio.processor.topology
 
-import dev.adamko.kafkatorio.events.schema.ColourHex
-import dev.adamko.kafkatorio.events.schema.FactorioEventUpdate
-import dev.adamko.kafkatorio.events.schema.FactorioEventUpdatePacket
-import dev.adamko.kafkatorio.events.schema.FactorioPrototypes
-import dev.adamko.kafkatorio.events.schema.KafkatorioPacket
-import dev.adamko.kafkatorio.events.schema.MapChunkPosition
-import dev.adamko.kafkatorio.events.schema.MapChunkUpdate
-import dev.adamko.kafkatorio.events.schema.MapTile
-import dev.adamko.kafkatorio.events.schema.MapTileDictionary.Companion.isNullOrEmpty
-import dev.adamko.kafkatorio.events.schema.MapTilePosition
-import dev.adamko.kafkatorio.events.schema.MapTiles
-import dev.adamko.kafkatorio.events.schema.SurfaceIndex
-import dev.adamko.kafkatorio.events.schema.converters.toMapChunkPosition
-import dev.adamko.kafkatorio.processor.KafkatorioTopology
-import dev.adamko.kafkatorio.processor.serdes.jsonMapper
+import dev.adamko.kafkatorio.processor.admin.TOPIC_GROUPED_MAP_CHUNKS_STATE
 import dev.adamko.kafkatorio.processor.serdes.kxsBinary
-import dev.adamko.kotka.extensions.consumedAs
+import dev.adamko.kafkatorio.schema.common.ColourHex
+import dev.adamko.kafkatorio.schema.common.MapChunkPosition
+import dev.adamko.kafkatorio.schema.common.MapTile
+import dev.adamko.kafkatorio.schema.common.MapTileDictionary.Companion.isNullOrEmpty
+import dev.adamko.kafkatorio.schema.common.MapTilePosition
+import dev.adamko.kafkatorio.schema.common.MapTiles
+import dev.adamko.kafkatorio.schema.common.SurfaceIndex
+import dev.adamko.kafkatorio.schema.common.toMapChunkPosition
+import dev.adamko.kafkatorio.schema2.MapChunkUpdate
+import dev.adamko.kafkatorio.schema2.PrototypesUpdate
 import dev.adamko.kotka.extensions.groupedAs
 import dev.adamko.kotka.extensions.materializedWith
 import dev.adamko.kotka.extensions.producedAs
-import dev.adamko.kotka.extensions.repartitionedAs
 import dev.adamko.kotka.extensions.streams.filter
 import dev.adamko.kotka.extensions.streams.flatMap
 import dev.adamko.kotka.extensions.streams.mapValues
 import dev.adamko.kotka.extensions.streams.peek
 import dev.adamko.kotka.extensions.streams.reduce
-import dev.adamko.kotka.extensions.streams.toTable
 import dev.adamko.kotka.extensions.tableJoined
-import dev.adamko.kotka.extensions.tables.filter
 import dev.adamko.kotka.extensions.tables.join
-import dev.adamko.kotka.extensions.tables.mapValues
 import dev.adamko.kotka.extensions.tables.toStream
 import dev.adamko.kotka.kxs.serde
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.associate
 import kotlin.collections.component1
 import kotlin.collections.component2
-import kotlin.collections.getOrElse
-import kotlin.collections.groupBy
-import kotlin.collections.isNotEmpty
-import kotlin.collections.isNullOrEmpty
-import kotlin.collections.joinToString
-import kotlin.collections.map
-import kotlin.collections.mapValues
-import kotlin.collections.mutableSetOf
-import kotlin.collections.plus
 import kotlinx.serialization.Serializable
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.Topology
@@ -72,33 +51,39 @@ data class ServerMapChunkTiles<Data>(
 }
 
 
-fun groupMapChunks(
-  builder: StreamsBuilder,
-  prototypesTopicName: String = "kafkatorio.${KafkatorioPacket.PacketType.PROTOTYPES}.all",
-  mapChunkUpdatesTopicName: String = "kafkatorio.${KafkatorioPacket.PacketType.UPDATE}.${FactorioEventUpdate.FactorioEventUpdateType.MAP_CHUNK}",
-): Topology {
+fun groupMapChunks(builder: StreamsBuilder): Topology {
 
-  val protosStream: KStream<FactorioServerId, FactorioPrototypes> =
-    builder.stream(
-      prototypesTopicName,
-      consumedAs("consume.factorio-protos.all", jsonMapper.serde(), jsonMapper.serde())
-    )
+  val mapChunksStream: KStream<FactorioServerId, MapChunkUpdate> = builder.streamPacketData()
+  val protosStream: KStream<FactorioServerId, PrototypesUpdate> = builder.streamPacketData()
+
+//  val protosStream: KStream<FactorioServerId, KafkatorioPacket2> =
+//    builder.stream<FactorioServerId?, KafkatorioPacket2?>(
+//      prototypesTopicName,
+//      consumedAs("consume.factorio-protos.all", jsonMapper.serde(), jsonMapper.serde())
+//    ).filter { key: FactorioServerId?, value: KafkatorioPacket2? ->
+//      key != null
+//          && value != null
+//          && value.data ==
+//    }
+//      .map
+
+
   val tileProtoColourDict: KTable<FactorioServerId, TileColourDict> =
     tileProtoColourDictionary(protosStream)
 
-  val mapChunksUpdatesStream: KStream<FactorioServerId, FactorioEventUpdatePacket> =
-    builder.stream(
-      mapChunkUpdatesTopicName,
-      consumedAs(
-        "consume.map-chunk-updates",
-        jsonMapper.serde<FactorioServerId>(),
-        jsonMapper.serde<FactorioEventUpdatePacket>(),
-      )
-    )
+//  val mapChunksUpdatesStream: KStream<FactorioServerId, FactorioEventUpdatePacket> =
+//    builder.stream(
+//      mapChunkUpdatesTopicName,
+//      consumedAs(
+//        "consume.map-chunk-updates",
+//        jsonMapper.serde<FactorioServerId>(),
+//        jsonMapper.serde<FactorioEventUpdatePacket>(),
+//      )
+//    )
 
   val groupedMapChunkTiles: KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
     groupTilesIntoChunksWithColours(
-      mapChunksUpdatesStream,
+      mapChunksStream,
       tileProtoColourDict,
     )
 
@@ -108,13 +93,13 @@ fun groupMapChunks(
       !v?.map.isNullOrEmpty()
     }
     .mapValues("stream-grouped-map-tiles.map-not-null") { _, v ->
-      v as ServerMapChunkTiles<ColourHex>
+      requireNotNull(v)
     }
     .peek("stream-grouped-map-tiles.peek") { _, v ->
       println("Grouping map tiles result: ${v.chunkId} / ${v.map.size}")
     }
     .to(
-      KafkatorioTopology.TOPIC_GROUPED_MAP_CHUNKS,
+      TOPIC_GROUPED_MAP_CHUNKS_STATE,
       producedAs(
         "produce.grouped-map-chunks",
         kxsBinary.serde<ServerMapChunkId>(),
@@ -127,37 +112,24 @@ fun groupMapChunks(
 
 
 private fun groupTilesIntoChunksWithColours(
-  mapChunkUpdatePacketsStream: KStream<FactorioServerId, FactorioEventUpdatePacket>,
+  mapChunksStream: KStream<FactorioServerId, MapChunkUpdate>,
   tileProtoColourDict: KTable<FactorioServerId, TileColourDict>,
 ): KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> {
 
-  val mapChunkUpdatesStream: KStream<FactorioServerId, MapTiles> =
-    mapChunkUpdatePacketsStream
-      .filter { _, packet: FactorioEventUpdatePacket? ->
-        when (val data = packet?.update) {
-          is MapChunkUpdate -> !data.tileDictionary.isNullOrEmpty()
-          else              -> false
-        }
-      }
-      .mapValues("map-chunk-update-packets.convert-to-map-tiles") { _, packet: FactorioEventUpdatePacket ->
 
-        val mapChunkUpdate: MapChunkUpdate = requireNotNull(packet.update as? MapChunkUpdate) {
-          "invalid UpdatePacket type $packet"
-        }
-
-        val tiles: List<MapTile> = requireNotNull(mapChunkUpdate.tileDictionary?.toMapTileList()) {
-          "invalid MapChunkUpdate packet, tiles must not be null"
-        }
-        require(tiles.isNotEmpty()) {
-          "invalid MapChunkUpdate packet, tiles must not be empty"
-        }
-
-        MapTiles(mapChunkUpdate.surfaceIndex, tiles)
-      }
+  val mapTilesStream: KStream<FactorioServerId, MapTiles> =
+    mapChunksStream.filter { _, value ->
+      !value.tileDictionary.isNullOrEmpty()
+    }.mapValues("map-chunk-update-packets.convert-to-map-tiles") { _, packet: MapChunkUpdate ->
+      val mapTiles = packet.tileDictionary?.toMapTileList() ?: emptyList()
+      MapTiles(packet.key.surfaceIndex, mapTiles)
+    }.filter { _, value ->
+      value.tiles.isNotEmpty()
+    }
 
 
   val chunkedTilesTable: KTable<ServerMapChunkId, ServerMapChunkTiles<TileProtoHashCode>> =
-    mapChunkUpdatesStream
+    mapTilesStream
       // group tiles by server & surface & chunk
       .flatMap("server-map-data.tiles.flatMapByChunk") { serverId: FactorioServerId, mapTiles: MapTiles ->
 
@@ -208,65 +180,65 @@ private fun groupTilesIntoChunksWithColours(
           kxsBinary.serde<ServerMapChunkTiles<TileProtoHashCode>>(),
         )
       ) { chunkTiles, other -> chunkTiles + other }
-      .toStream("server-map-data.tiles.repartition.to-stream")
-      .repartition(
-        repartitionedAs(
-          "server-map-data.tiles.repartition.config",
-          kxsBinary.serde<ServerMapChunkId>(),
-          kxsBinary.serde<ServerMapChunkTiles<TileProtoHashCode>?>(),
-          3,
-        )
-      ).toTable(
-        "server-map-data.tiles.repartition.to-table",
-        materializedWith(
-          kxsBinary.serde<ServerMapChunkId>(),
-          kxsBinary.serde<ServerMapChunkTiles<TileProtoHashCode>?>(),
-        )
-      )
-      .filter("server-map-data.tiles.repartition.filter-not-null") { _: ServerMapChunkId, v: ServerMapChunkTiles<TileProtoHashCode>? ->
-        v != null
-      }
-      .mapValues(
-        "server-map-data.tiles.repartition.map-not-null",
-        materializedWith(
-          kxsBinary.serde<ServerMapChunkId>(),
-          kxsBinary.serde<ServerMapChunkTiles<TileProtoHashCode>>(),
-        )
-      ) { _: ServerMapChunkId, v: ServerMapChunkTiles<TileProtoHashCode>? ->
-        v as ServerMapChunkTiles<TileProtoHashCode>
-      }
+//      .toStream("server-map-data.tiles.repartition.to-stream")
+//      .repartition(
+//        repartitionedAs(
+//          "server-map-data.tiles.repartition.config",
+//          kxsBinary.serde<ServerMapChunkId>(),
+//          kxsBinary.serde<ServerMapChunkTiles<TileProtoHashCode>?>(),
+//          3,
+//        )
+//      ).toTable(
+//        "server-map-data.tiles.repartition.to-table",
+//        materializedWith(
+//          kxsBinary.serde<ServerMapChunkId>(),
+//          kxsBinary.serde<ServerMapChunkTiles<TileProtoHashCode>?>(),
+//        )
+//      )
+//      .filter("server-map-data.tiles.repartition.filter-not-null") { _: ServerMapChunkId, v: ServerMapChunkTiles<TileProtoHashCode>? ->
+//        v != null
+//      }
+//      .mapValues(
+//        "server-map-data.tiles.repartition.map-not-null",
+//        materializedWith(
+//          kxsBinary.serde<ServerMapChunkId>(),
+//          kxsBinary.serde<ServerMapChunkTiles<TileProtoHashCode>>(),
+//        )
+//      ) { _: ServerMapChunkId, v: ServerMapChunkTiles<TileProtoHashCode>? ->
+//        v as ServerMapChunkTiles<TileProtoHashCode>
+//      }
 
 
   // repartition to try and fix KTable-KTable joining skipping records
   val tileProtoColourDictRepartitioned =
     tileProtoColourDict
-      .toStream("tileProtoColourDict.repartition.to-stream")
-      .repartition(
-        repartitionedAs(
-          "tileProtoColourDict.repartition.config",
-          kxsBinary.serde<FactorioServerId>(),
-          kxsBinary.serde<TileColourDict?>(),
-          3,
-        )
-      ).toTable(
-        "tileProtoColourDict.repartition.to-table",
-        materializedWith(
-          kxsBinary.serde<FactorioServerId>(),
-          kxsBinary.serde<TileColourDict?>(),
-        )
-      )
-      .filter("tileProtoColourDict.repartition.filter-not-null") { _: FactorioServerId, v: TileColourDict? ->
-        v != null
-      }
-      .mapValues(
-        "tileProtoColourDict.repartition.map-not-null",
-        materializedWith(
-          kxsBinary.serde<FactorioServerId>(),
-          kxsBinary.serde<TileColourDict>(),
-        )
-      ) { _: FactorioServerId, v: TileColourDict? ->
-        v as TileColourDict
-      }
+//      .toStream("tileProtoColourDict.repartition.to-stream")
+//      .repartition(
+//        repartitionedAs(
+//          "tileProtoColourDict.repartition.config",
+//          kxsBinary.serde<FactorioServerId>(),
+//          kxsBinary.serde<TileColourDict?>(),
+//          3,
+//        )
+//      ).toTable(
+//        "tileProtoColourDict.repartition.to-table",
+//        materializedWith(
+//          kxsBinary.serde<FactorioServerId>(),
+//          kxsBinary.serde<TileColourDict?>(),
+//        )
+//      )
+//      .filter("tileProtoColourDict.repartition.filter-not-null") { _: FactorioServerId, v: TileColourDict? ->
+//        v != null
+//      }
+//      .mapValues(
+//        "tileProtoColourDict.repartition.map-not-null",
+//        materializedWith(
+//          kxsBinary.serde<FactorioServerId>(),
+//          kxsBinary.serde<TileColourDict>(),
+//        )
+//      ) { _: FactorioServerId, v: TileColourDict? ->
+//        v as TileColourDict
+//      }
 
 
   val colourisedChunkTable: KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =

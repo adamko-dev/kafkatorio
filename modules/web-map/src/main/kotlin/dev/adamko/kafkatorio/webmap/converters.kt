@@ -1,7 +1,7 @@
 package dev.adamko.kafkatorio.webmap
 
-import dev.adamko.kafkatorio.events.schema.MapEntityPosition
-import dev.adamko.kafkatorio.events.schema.PlayerUpdate
+import dev.adamko.kafkatorio.schema.common.MapEntityPosition
+import dev.adamko.kafkatorio.schema2.PlayerUpdate
 import io.kvision.maps.Maps
 import io.kvision.maps.externals.leaflet.geo.LatLng
 

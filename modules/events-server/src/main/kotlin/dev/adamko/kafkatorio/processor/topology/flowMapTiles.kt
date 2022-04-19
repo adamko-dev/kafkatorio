@@ -4,12 +4,8 @@ import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.ScaleMethod
 import com.sksamuel.scrimage.color.RGBColor
 import com.sksamuel.scrimage.nio.PngWriter
-import dev.adamko.kafkatorio.events.schema.ColourHex
-import dev.adamko.kafkatorio.events.schema.MapChunkPosition
-import dev.adamko.kafkatorio.events.schema.MapTilePosition
-import dev.adamko.kafkatorio.events.schema.SurfaceIndex
-import dev.adamko.kafkatorio.events.schema.converters.toMapChunkPosition
-import dev.adamko.kafkatorio.processor.KafkatorioTopology
+import dev.adamko.kafkatorio.schema.common.*
+import dev.adamko.kafkatorio.processor.admin.TOPIC_GROUPED_MAP_CHUNKS_STATE
 import dev.adamko.kafkatorio.processor.serdes.kxsBinary
 import dev.adamko.kotka.extensions.consumedAs
 import dev.adamko.kotka.extensions.streams.forEach
@@ -17,7 +13,9 @@ import dev.adamko.kotka.kxs.serde
 import java.awt.image.BufferedImage
 import java.io.File
 import kotlin.coroutines.CoroutineContext
+import kotlin.io.path.fileSize
 import kotlin.math.abs
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,17 +23,18 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.runningFold
-import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.supervisorScope
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.Topology
@@ -43,10 +42,6 @@ import org.apache.kafka.streams.kstream.KStream
 
 
 private const val WEB_MAP_TILE_SIZE_PX = 256
-
-private val cScope = CoroutineScope(
-  Dispatchers.Default + SupervisorJob() + CoroutineName("f-server-map-updates")
-)
 
 
 /** A bridge between Kafka and Kotlin */
@@ -59,17 +54,15 @@ fun saveMapTiles(
 
   val groupedMapChunkTiles: KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
     builder.stream(
-      KafkatorioTopology.TOPIC_GROUPED_MAP_CHUNKS,
+      TOPIC_GROUPED_MAP_CHUNKS_STATE,
       consumedAs("consume.grouped-map-chunks", kxsBinary.serde(), kxsBinary.serde())
     )
 
   groupedMapChunkTiles
     .forEach("save-chunked-tiles") { _, value ->
       if (value != null) {
-        runBlocking(Dispatchers.Default) {
-          println("emitting chunkedTiles ${value.chunkId} tiles: ${value.map.size}")
-          serverMapChunkHandler.emit(value)
-        }
+        println("emitting chunkedTiles ${value.chunkId} tiles: ${value.map.size}")
+        serverMapChunkHandler.emit(value)
       }
     }
 
@@ -107,9 +100,8 @@ private fun ColourHex.toRgbColor(): RGBColor {
 
 private class ServerMapChunkHandler : CoroutineScope {
 
-  override val coroutineContext: CoroutineContext = Dispatchers.Default +
-      SupervisorJob(cScope.coroutineContext.job) +
-      CoroutineName("ServerMapChunkHandler")
+  override val coroutineContext: CoroutineContext =
+    Dispatchers.Default + SupervisorJob() + CoroutineName("ServerMapChunkHandler")
 
 
   /** The inbox for this handler. */
@@ -119,10 +111,8 @@ private class ServerMapChunkHandler : CoroutineScope {
     onBufferOverflow = BufferOverflow.SUSPEND,
   )
 
-  fun emit(mapChunkTiles: ServerMapChunkTiles<ColourHex>) {
-    launch {
-      allChunksFlow.emit(mapChunkTiles)
-    }
+  fun emit(mapChunkTiles: ServerMapChunkTiles<ColourHex>) = launch {
+    allChunksFlow.emit(mapChunkTiles)
   }
 
   /** This flow saves images one-by-one */
@@ -135,17 +125,18 @@ private class ServerMapChunkHandler : CoroutineScope {
   init {
 
     allChunksFlow
-      .runningFold(mapOf<ServerMapChunkId, MutableSharedFlow<Cmd.ChunkSubdivide>>()) { acc, src ->
+      .runningFold(mutableMapOf<ServerMapChunkId, MutableSharedFlow<Cmd.ChunkSubdivide>>()) { acc, src ->
 
-        val flow = acc.getOrElse(src.chunkId) {
+        val flow = acc.getOrPut(src.chunkId) {
           println("creating new subdivide-flow for chunkId ${src.chunkId}")
           createSubdivisionFlow()
         }
 
         flow.emit(Cmd.ChunkSubdivide(src.chunkId, src.map))
 
-        acc + (src.chunkId to flow)
+        acc
       }
+      .distinctUntilChangedBy { it.size }
       .onEach {
         println("allChunksFlow has ${it.size} subdivide-flows: ${it.keys.joinToString()}")
       }
@@ -160,9 +151,15 @@ private class ServerMapChunkHandler : CoroutineScope {
           println("created new map tile parentFile directory ${chunkImageFile.absolutePath}")
         }
 
+        val sizeBefore = chunkImageFile.takeIf { it.exists() }?.toPath()?.fileSize()
+
         val savedTile = img.output(PngWriter.NoCompression, chunkImageFile)
-        if (filename.value.contains("z-1")) {
-          println("savedTile: $savedTile")
+
+        val sizeAfter = savedTile.takeIf { it.exists() }?.toPath()?.fileSize()
+        if (sizeBefore != sizeAfter) {
+//          println("savedTile $sizeBefore/$sizeAfter: $savedTile")
+        } else {
+          println("savedTile NO-SIZE-CHANGE $sizeBefore/$sizeAfter: $savedTile")
         }
       }
       .launchIn(this)
@@ -183,43 +180,46 @@ private class ServerMapChunkHandler : CoroutineScope {
       onBufferOverflow = BufferOverflow.SUSPEND,
     )
 
-    val saveImgCommands = subdivisionFlow
-      .flatMapConcat { subdivideCmd ->
-        ChunkSize
-          .values
-          .flatMap { chunkSize ->
-            subdivideCmd.tiles
-              .entries
-              .groupBy(
-                { (tile, _) -> tile.toMapChunkPosition(chunkSize.tilesPerChunk) }
-              ) {
-                it.key to it.value
-              }
-              .map { (chunkPos, tiles) ->
-                async {
-                  Cmd.CreateImage(
-                    surfaceIndex = subdivideCmd.chunkId.surfaceIndex,
-                    chunkSize = chunkSize,
-                    chunkPosition = chunkPos,
-                    tiles = tiles.toMap()
-                  )
+    val saveImgCommands: Flow<Cmd.SaveImage> =
+      subdivisionFlow
+        .debounce(30.seconds)
+        .flatMapConcat { subdivideCmd ->
+          ChunkSize
+            .entries
+            .flatMap { chunkSize ->
+              subdivideCmd
+                .tiles
+                .entries
+                .groupBy(
+                  { (tile, _) -> tile.toMapChunkPosition(chunkSize.tilesPerChunk) }
+                ) { (tilePosition, colour) ->
+                  tilePosition to colour
                 }
-              }
-          }
-          .awaitAll()
-          .asFlow()
-      }
-      .map { createCmd ->
-        val filename = TilePngFilename(createCmd)
+                .map { (chunkPos, tiles) ->
+                  async {
+                    Cmd.CreateImage(
+                      surfaceIndex = subdivideCmd.chunkId.surfaceIndex,
+                      chunkSize = chunkSize,
+                      chunkPosition = chunkPos,
+                      tiles = tiles.toMap()
+                    )
+                  }
+                }
+            }
+            .awaitAll()
+            .asFlow()
+        }
+        .map { createCmd ->
+          val filename = TilePngFilename(createCmd)
 
-        val img = createMapTileImage(
-          createCmd.chunkPosition,
-          createCmd.tiles,
-          createCmd.chunkSize,
-        )
+          val img = createMapTileImage(
+            createCmd.chunkPosition,
+            createCmd.tiles,
+            createCmd.chunkSize,
+          )
 
-        Cmd.SaveImage(filename, img)
-      }
+          Cmd.SaveImage(filename, img)
+        }
 
     launch {
       supervisorScope {

@@ -6,7 +6,7 @@
 
 ## compilation ##
 jvm        = "11"
-kotlin     = "1.6.10"
+kotlin     = "1.6.20"
 
 ## libs ##
 camel-kafkaConnectors = "0.11.0"
@@ -17,13 +17,14 @@ kvision               = "5.8.2"
 log4j2                = "2.17.2"
 qosLogback            = "1.2.11"
 slf4j                 = "1.7.36"
+okio                  = "3.1.0"
 
 ## test ##
 junit      = "5.8.2"
-kotest     = "5.1.0"
+kotest     = "5.2.3"
 
 ## infra ##
-factorio               = "1.1.53"
+factorio               = "1.1.57"
 confluent-kafkaConnect = "7.0.1"
 
 #########
@@ -53,9 +54,9 @@ kotlinx-serialization-protobuf = { group = "org.jetbrains.kotlinx", name = "kotl
 
 kotlinx-serialization-yaml     = { group = "com.charleskorn.kaml",  name = "kaml",                       version = "0.37.0"    }
 
-kotlinx-coroutines         = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core",    version = "1.6.0" }
+kotlinx-coroutines         = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core",    version = "1.6.1" }
 
-kotlinx-html               = { group = "org.jetbrains.kotlinx", name = "kotlinx-html",               version = "0.7.3"     }
+kotlinx-html               = { group = "org.jetbrains.kotlinx", name = "kotlinx-html",               version = "0.7.5"     }
 kotlinx-nodejs             = { group = "org.jetbrains.kotlinx", name = "kotlinx-nodejs",             version = "0.0.7"     }
 
 
@@ -102,6 +103,12 @@ jsoup = { group = "org.jsoup", name = "jsoup", version = "1.14.3" }
 skrapeit = { group = "it.skrape", name = "skrapeit", version = "1.2.0" }
 
 scrimage-core = { group = "com.sksamuel.scrimage", name = "scrimage-core", version = "4.0.31" }
+
+
+## okio ##
+okio-bom  = { group = "com.squareup.okio", name = "okio-bom", version.ref = "okio" }
+okio-core = { group = "com.squareup.okio", name = "okio" }
+
 
 #############
 ### test  ###

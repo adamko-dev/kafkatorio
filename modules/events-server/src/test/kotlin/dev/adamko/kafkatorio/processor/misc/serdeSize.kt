@@ -1,14 +1,11 @@
 package dev.adamko.kafkatorio.processor.misc
 
-import dev.adamko.kafkatorio.events.schema.ColourHex
-import dev.adamko.kafkatorio.events.schema.MapChunkPosition
-import dev.adamko.kafkatorio.events.schema.MapTilePosition
-import dev.adamko.kafkatorio.events.schema.SurfaceIndex
 import dev.adamko.kafkatorio.processor.serdes.kxsBinary
 import dev.adamko.kafkatorio.processor.topology.ChunkSize
 import dev.adamko.kafkatorio.processor.topology.FactorioServerId
 import dev.adamko.kafkatorio.processor.topology.ServerMapChunkId
 import dev.adamko.kafkatorio.processor.topology.ServerMapChunkTiles
+import dev.adamko.kafkatorio.schema.common.*
 import java.util.UUID
 import kotlinx.serialization.encodeToByteArray
 import org.junit.jupiter.api.Test

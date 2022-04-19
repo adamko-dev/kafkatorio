@@ -19,7 +19,7 @@ while :; do
     sed -n -e 's/^KafkatorioPacket: //p' |
     kcat -P -T \
       -b "$KAFKA_HOST" \
-      -t factorio-server-log \
+      -t kafkatorio.src.server-log \
       -k "$INSTANCE_ID" \
       -H "KAFKA-PIPE-VERSION=$KAFKATORIO_VERSION"
 

@@ -41,6 +41,9 @@ dependencies {
 
   implementation(libs.scrimage.core)
 
+  implementation(platform(libs.okio.bom))
+  implementation(libs.okio.core)
+
   implementation(libs.kafka.kotkaStreams) {
     isChanging = true
   }

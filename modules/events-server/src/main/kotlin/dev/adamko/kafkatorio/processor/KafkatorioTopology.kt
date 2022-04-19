@@ -7,9 +7,9 @@ import dev.adamko.kafkatorio.processor.topology.playerUpdatesToWsServer
 import dev.adamko.kafkatorio.processor.topology.saveMapTiles
 import dev.adamko.kafkatorio.processor.topology.splitFactorioServerPacketStream
 import java.time.Duration
+import java.util.Properties
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.cancellation.CancellationException
-import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,15 +31,12 @@ internal class KafkatorioTopology(
   override val coroutineContext: CoroutineContext =
     Dispatchers.Default + SupervisorJob() + CoroutineName("KafkatorioTopology")
 
-  companion object {
-    const val TOPIC_SRC_SERVER_LOG = "factorio-server-log"
-    const val TOPIC_GROUPED_MAP_CHUNKS = "kafkatorio.MAP.grouped-map-chunks"
-  }
-
   fun start() {
+    splitPackets()
+
     groupTilesMapChunks()
     saveTiles()
-    splitPackets()
+
     playerUpdates()
   }
 
@@ -56,7 +53,6 @@ internal class KafkatorioTopology(
   }
 
   private fun splitPackets() {
-
     val builder = StreamsBuilder()
     val packets = factorioServerPacketStream(builder)
     splitFactorioServerPacketStream(packets)
@@ -75,12 +71,19 @@ internal class KafkatorioTopology(
     launchTopology("playerUpdates", topology)
   }
 
-  private fun launchTopology(id: String, topology: Topology) {
+  private fun launchTopology(
+    id: String,
+    topology: Topology,
+    config: Map<String, String> = mapOf()
+  ) {
 
-    val props = appProps.kafkaConfig
+    val props: Properties = appProps.kafkaConfig
+
+    config.forEach { (k, v) -> props.setProperty(k, v) }
 
     val appId = props.compute(StreamsConfig.APPLICATION_ID_CONFIG) { _, v -> "$v.$id" } as? String
     props.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, appId)
+
 //    props.setProperty(StreamsConfig.MAX_TASK_IDLE_MS_CONFIG, "${30.minutes.inWholeMilliseconds}")
 
     val streams = KafkaStreams(topology, props)

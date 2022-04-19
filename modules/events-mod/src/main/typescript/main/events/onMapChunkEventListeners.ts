@@ -1,20 +1,25 @@
 import {isEventType} from "./eventTypeCheck";
 import {Converters} from "./converters";
 import EventUpdatesManager, {EventUpdates} from "../cache/EventDataCache";
-import CacheKey = EventUpdates.CacheKey;
-import CacheData = EventUpdates.CacheData;
+import {
+  KafkatorioPacketData2,
+  MapChunkPosition,
+  MapTileDictionary
+} from "../../generated/kafkatorio-schema/kafkatorio-schema";
+import CacheKey = EventUpdates.PacketKey;
+import Type = KafkatorioPacketData2.Type;
 
 
-type MapChunkUpdater = (data: CacheData<"MAP_CHUNK">) => void
+type MapChunkUpdater = (data: KafkatorioPacketData2.MapChunkUpdate) => void
 
 
-const mapProtoNameToKey: { [key: string]: string } = {}
+const mapProtoNameToKey: { [key: string]: uint } = {}
 let protoIndex: uint = 0
 
 
-function getProtoKey(protoName: string): string {
+function getProtoKey(protoName: string): uint {
   if (mapProtoNameToKey[protoName] == undefined) {
-    mapProtoNameToKey[protoName] = `${protoIndex++}`
+    mapProtoNameToKey[protoName] = protoIndex++
   }
   return mapProtoNameToKey[protoName]
 }
@@ -22,7 +27,7 @@ function getProtoKey(protoName: string): string {
 
 function mapTilesUpdateDebounce(
     surface: LuaSurface | undefined,
-    chunkPosition: ChunkPositionTable,
+    chunkPosition: MapChunkPosition,
     tiles: TileRead[],
     eventName: string,
     updater?: MapChunkUpdater,
@@ -33,14 +38,14 @@ function mapTilesUpdateDebounce(
     return
   }
 
-  const key: CacheKey<"MAP_CHUNK"> = {
+  const key: KafkatorioPacketData2.MapChunkUpdate["key"] = {
     surfaceIndex: surface.index,
     chunkPosition: chunkPosition,
-    updateType: "MAP_CHUNK",
   }
 
-  EventUpdatesManager.debounce<"MAP_CHUNK">(
+  EventUpdatesManager.debounce<KafkatorioPacketData2.MapChunkUpdate>(
       key,
+      Type.MapChunkUpdate,
       data => {
         data.tileDictionary ??= <MapTileDictionary>{
           tilesXY: {},
@@ -53,7 +58,7 @@ function mapTilesUpdateDebounce(
           const yString = `${tile.position.y}`
           const protoKey = getProtoKey(tile.name)
 
-          data.tileDictionary.protos[protoKey] = tile.name
+          data.tileDictionary.protos[tile.name] = protoIndex
 
           data.tileDictionary.tilesXY[xString] ??= {}
           data.tileDictionary.tilesXY[xString][yString] = protoKey
@@ -105,7 +110,7 @@ export function handleChunkGeneratedEvent(
   let tiles = getTiles(e.surface, e.area)
   mapTilesUpdateDebounce(
       e.surface,
-      e.position,
+      [e.position.x, e.position.y],
       tiles,
       Converters.eventNameString(e.name),
       undefined,
@@ -114,22 +119,22 @@ export function handleChunkGeneratedEvent(
 }
 
 
-script.on_event(
-    defines.events.on_chunk_charted,
-    (e: OnChunkChartedEvent) => {
-      log(`on_chunk_charted ${e.tick}`)
-
-      // const surface = getSurface(e.surface_index)
-      // if (surface == undefined) {
-      //   return
-      // }
-      //
-      // let tiles = getTiles(surface, e.area)
-      // mapTilesUpdateDebounce(surface, e.position, tiles, (data => {
-      //   data.force = e.force.index
-      // }))
-    }
-)
+// script.on_event(
+//     defines.events.on_chunk_charted,
+//     (e: OnChunkChartedEvent) => {
+//       log(`on_chunk_charted ${e.tick}`)
+//
+//       // const surface = getSurface(e.surface_index)
+//       // if (surface == undefined) {
+//       //   return
+//       // }
+//       //
+//       // let tiles = getTiles(surface, e.area)
+//       // mapTilesUpdateDebounce(surface, e.position, tiles, (data => {
+//       //   data.force = e.force.index
+//       // }))
+//     }
+// )
 
 
 script.on_event(
@@ -155,14 +160,19 @@ function groupTiles(tiles: TileRead[]): Map<MapChunkPosition, TileRead[]> {
 
   const mapChunkPositionToTiles = new Map<MapChunkPosition, TileRead[]>()
   for (const tile of tiles) {
-    const chunkPosition = {
-      x: math.floor((tile.position.x / 32)),
-      y: math.floor((tile.position.y / 32)),
-    }
+    const chunkPosition: MapChunkPosition = [
+      math.floor((tile.position.x / 32)),
+      math.floor((tile.position.y / 32)),
+    ]
     if (!mapChunkPositionToTiles.has(chunkPosition)) {
       mapChunkPositionToTiles.set(chunkPosition, [])
     }
-    mapChunkPositionToTiles.get(chunkPosition)?.push(tile)
+    // https://github.com/TypeScriptToLua/TypeScriptToLua/issues/1256
+    // mapChunkPositionToTiles.get(chunkPosition)?.push(tile)
+    const tiles = mapChunkPositionToTiles.get(chunkPosition)
+    if (tiles != null) {
+      tiles.push(tile)
+    }
   }
   return mapChunkPositionToTiles
 }
@@ -183,7 +193,7 @@ function convertOldPosition(
 }
 
 
-function onBuildTileEvent(event: OnPlayerBuiltTileEvent | OnRobotBuiltTileEvent) {
+function handleBuiltTileEvent(event: OnPlayerBuiltTileEvent | OnRobotBuiltTileEvent) {
 
   const surface = getSurface(event.surface_index)
   if (surface == undefined) {
@@ -209,7 +219,7 @@ function onBuildTileEvent(event: OnPlayerBuiltTileEvent | OnRobotBuiltTileEvent)
                 data.robot = {
                   unitNumber: event.robot?.unit_number ?? null,
                   name: event.robot.name,
-                  type: event.robot.type,
+                  protoType: event.robot.type,
                 }
                 return
               }
@@ -225,28 +235,25 @@ function onBuildTileEvent(event: OnPlayerBuiltTileEvent | OnRobotBuiltTileEvent)
 
 script.on_event(defines.events.on_player_built_tile, (e: OnPlayerBuiltTileEvent) => {
   log(`on_player_built_tile ${e.tick}`)
-  onBuildTileEvent(e)
+  handleBuiltTileEvent(e)
 })
 script.on_event(defines.events.on_robot_built_tile, (e: OnRobotBuiltTileEvent) => {
   log(`on_robot_built_tile ${e.tick}`)
-  onBuildTileEvent(e)
+  handleBuiltTileEvent(e)
 })
 
-// script.on_event(
-//     defines.events.on_player_mined_tile,
-//     (e: OnPlayerMinedTileEvent) => {
-//       // need to group tiles by ChunkPosition...
-//
-//     }
-// )
 
-// script.on_event(
-//     defines.events.on_robot_mined_tile,
-//     (e: OnRobotMinedTileEvent) => {
-//       // need to group tiles by ChunkPosition...
+// function handleMinedTileEvent(event: OnPlayerMinedTileEvent | OnRobotMinedTileEvent) {
+// }
 //
-//     }
-// )
+// script.on_event(defines.events.on_player_mined_tile, (e: OnPlayerMinedTileEvent) => {
+//   log(`on_player_mined_tile ${e.tick}`)
+//   handleMinedTileEvent(e)
+// })
+// script.on_event(defines.events.on_robot_mined_tile, (e: OnRobotMinedTileEvent) => {
+//   log(`on_robot_mined_tile ${e.tick}`)
+//   handleMinedTileEvent(e)
+// })
 
 
 script.on_event(
@@ -260,17 +267,15 @@ script.on_event(
       }
 
       for (const position of e.positions) {
-        const key: CacheKey<"MAP_CHUNK"> = {
+        const key: CacheKey<KafkatorioPacketData2.MapChunkUpdate> = {
           surfaceIndex: surface.index,
-          chunkPosition: position,
-          updateType: "MAP_CHUNK",
+          chunkPosition: [position.x, position.y],
         }
 
-        EventUpdatesManager.debounce<"MAP_CHUNK">(
+        EventUpdatesManager.debounce<KafkatorioPacketData2.MapChunkUpdate>(
             key,
-            data => {
-              data.isDeleted = true
-            },
+            Type.MapChunkUpdate,
+            data => data.isDeleted = true,
             0, // deletion is important - emit ASAP
         )
       }

@@ -1,17 +1,20 @@
 import {Converters} from "./converters";
-import EventUpdatesManager, {EventUpdates} from "../cache/EventDataCache";
-import CacheData = EventUpdates.CacheData;
+import EventUpdatesManager from "../cache/EventDataCache";
+import {KafkatorioPacketData2} from "../../generated/kafkatorio-schema/kafkatorio-schema";
+import Type = KafkatorioPacketData2.Type;
 
 
-type PlayerUpdater = (player: LuaPlayer, data: CacheData<"PLAYER">) => void
+type PlayerUpdater = (player: LuaPlayer, data: KafkatorioPacketData2.PlayerUpdate) => void
 
 function playerUpdateThrottle(
     playerIndex: uint,
     eventName: string,
     mutate: PlayerUpdater,
 ) {
-  EventUpdatesManager.throttle<"PLAYER">(
-      {index: playerIndex, updateType: "PLAYER"},
+
+  EventUpdatesManager.throttle<KafkatorioPacketData2.PlayerUpdate>(
+      {index: playerIndex},
+      Type.PlayerUpdate,
       data => {
         const player = game.players[playerIndex]
         if (player != undefined) {
@@ -36,7 +39,7 @@ function playerUpdateThrottle(
 //   )
 // }
 
-function playerOnlineInfo(player: LuaPlayer, data: CacheData<"PLAYER">) {
+function playerOnlineInfo(player: LuaPlayer, data: KafkatorioPacketData2.PlayerUpdate) {
   data.lastOnline = player.last_online
   data.onlineTime = player.online_time
   data.afkTime = player.afk_time
@@ -73,7 +76,7 @@ script.on_event(
           e.player_index,
           Converters.eventNameString(e.name),
           (player, data) => {
-            data.position = player.position
+            data.position = [player.position.x, player.position.y]
           }
       )
     }
@@ -86,7 +89,7 @@ script.on_event(
           e.player_index,
           Converters.eventNameString(e.name),
           (player, data) => {
-            data.position = player.position
+            data.position = [player.position.x, player.position.y]
             data.surfaceIndex = player.surface.index
           }
       )
@@ -106,7 +109,7 @@ script.on_event(
               data.diedCause = {
                 unitNumber: e.cause.unit_number ?? null,
                 name: e.cause.name,
-                type: e.cause.type
+                protoType: e.cause.type
               }
             }
           }

@@ -36,11 +36,11 @@ enum class ChunkSize(
 
   companion object {
     // cache values for better performance. KT-48872
-    val values: List<ChunkSize> = values().asList()
+    val entries: Set<ChunkSize> = values().toSet()
 
-    val MAX: ChunkSize = values.maxByOrNull { it.tilesPerChunk }!!
-    val MIN: ChunkSize = values.minByOrNull { it.tilesPerChunk }!!
-    val STANDARD: ChunkSize = values.first { it.zoomLevel == 0 }
+    val MAX: ChunkSize = entries.maxByOrNull { it.tilesPerChunk }!!
+    val MIN: ChunkSize = entries.minByOrNull { it.tilesPerChunk }!!
+    val STANDARD: ChunkSize = entries.first { it.zoomLevel == 0 }
 
   }
 }
