@@ -19,6 +19,9 @@ qosLogback            = "1.2.11"
 slf4j                 = "1.7.36"
 okio                  = "3.1.0"
 
+kotlinJsWrappers = "0.0.1-pre.331-kotlin-1.6.20"
+
+
 ## test ##
 junit      = "5.8.2"
 kotest     = "5.2.3"
@@ -58,6 +61,8 @@ kotlinx-coroutines         = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 
 kotlinx-html               = { group = "org.jetbrains.kotlinx", name = "kotlinx-html",               version = "0.7.5"     }
 kotlinx-nodejs             = { group = "org.jetbrains.kotlinx", name = "kotlinx-nodejs",             version = "0.0.7"     }
+
+kotlin-jsWrappers-bom = { group = "org.jetbrains.kotlin-wrappers", name = "kotlin-wrappers-bom", version.ref = "kotlinJsWrappers" }
 
 
 ## http4k ##

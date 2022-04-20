@@ -66,9 +66,13 @@ kotlin {
 
         implementation(libs.kotlinx.coroutines)
 
-//        implementation(npm("follow-redirects", "^1.14.8"))
-//        implementation(npm("log4js", "^6.4.0"))
-//        implementation(npm("nanoid", "^3.1.31"))
+        implementation(dependencies.platform(libs.kotlin.jsWrappers.bom))
+
+        implementation(npm("follow-redirects", "^1.14.8"))
+        implementation(npm("nanoid", "^3.1.31"))
+        implementation(npm("minimist", "^1.2.6"))
+        implementation(npm("async", "^2.6.4"))
+        implementation(npm("node-forge", "^1.3.0"))
       }
 
       val webDir = file("src/main/web")
