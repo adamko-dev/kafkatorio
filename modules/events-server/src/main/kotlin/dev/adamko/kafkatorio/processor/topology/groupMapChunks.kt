@@ -56,30 +56,8 @@ fun groupMapChunks(builder: StreamsBuilder): Topology {
   val mapChunksStream: KStream<FactorioServerId, MapChunkUpdate> = builder.streamPacketData()
   val protosStream: KStream<FactorioServerId, PrototypesUpdate> = builder.streamPacketData()
 
-//  val protosStream: KStream<FactorioServerId, KafkatorioPacket2> =
-//    builder.stream<FactorioServerId?, KafkatorioPacket2?>(
-//      prototypesTopicName,
-//      consumedAs("consume.factorio-protos.all", jsonMapper.serde(), jsonMapper.serde())
-//    ).filter { key: FactorioServerId?, value: KafkatorioPacket2? ->
-//      key != null
-//          && value != null
-//          && value.data ==
-//    }
-//      .map
-
-
   val tileProtoColourDict: KTable<FactorioServerId, TileColourDict> =
     tileProtoColourDictionary(protosStream)
-
-//  val mapChunksUpdatesStream: KStream<FactorioServerId, FactorioEventUpdatePacket> =
-//    builder.stream(
-//      mapChunkUpdatesTopicName,
-//      consumedAs(
-//        "consume.map-chunk-updates",
-//        jsonMapper.serde<FactorioServerId>(),
-//        jsonMapper.serde<FactorioEventUpdatePacket>(),
-//      )
-//    )
 
   val groupedMapChunkTiles: KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
     groupTilesIntoChunksWithColours(

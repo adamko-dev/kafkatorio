@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 
 @JvmInline
 @Serializable
-value class FactorioServerId(val id: String) {
+value class FactorioServerId(private val id: String) {
   override fun toString() = id
 }
 
