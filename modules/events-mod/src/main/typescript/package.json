@@ -9,8 +9,7 @@
   "engines": {
     "node": "~14.19.1"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "dependencies": {
     "lua-types": "^2.11.0",
     "typescript-to-lua": "1.4.3",
@@ -19,10 +18,7 @@
   },
   "// @types/node": "^12.0.8",
   "license": "UNLICENSED",
-  "peerDependencies": {
-  },
-  "optionalDependencies": {
-  },
-  "bundledDependencies": [
-  ]
+  "peerDependencies": {},
+  "optionalDependencies": {},
+  "bundledDependencies": []
 }

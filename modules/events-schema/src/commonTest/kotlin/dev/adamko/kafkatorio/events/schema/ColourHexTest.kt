@@ -19,12 +19,7 @@ class ColourHexTest : BehaviorSpec({
 
     //Language=JSON
     val colourJson = """
-      {
-        "red": 0.1,
-        "green": 0.4,
-        "blue": 0.7,
-        "alpha": 0.6
-      }
+      [0.1, 0.4, 0.7, 0.6]
     """.trimIndent()
 
     val colour: Colour = jsonMapperKafkatorio.decodeFromString(colourJson)
@@ -68,12 +63,12 @@ class ColourHexTest : BehaviorSpec({
 
         //Language=JSON
         val colourJson = """
-          {
-            "red":   ${r.toFloat() / UByte.MAX_VALUE.toFloat()},
-            "green": ${g.toFloat() / UByte.MAX_VALUE.toFloat()},
-            "blue":  ${b.toFloat() / UByte.MAX_VALUE.toFloat()},
-            "alpha": ${a.toFloat() / UByte.MAX_VALUE.toFloat()}
-          }
+          [
+            ${r.toFloat() / UByte.MAX_VALUE.toFloat()},
+            ${g.toFloat() / UByte.MAX_VALUE.toFloat()},
+            ${b.toFloat() / UByte.MAX_VALUE.toFloat()},
+            ${a.toFloat() / UByte.MAX_VALUE.toFloat()}
+          ]
         """.trimIndent()
 
         val colour: Colour = jsonMapperKafkatorio.decodeFromString(colourJson)

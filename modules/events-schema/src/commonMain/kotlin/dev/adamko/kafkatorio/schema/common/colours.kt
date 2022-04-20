@@ -1,5 +1,6 @@
 package dev.adamko.kafkatorio.schema.common
 
+import dev.adamko.kxstsgen.core.experiments.TupleSerializer
 import kotlin.math.roundToInt
 import kotlinx.serialization.Serializable
 
@@ -9,13 +10,32 @@ import kotlinx.serialization.Serializable
  *
  * All values here are optional. Colour channels default to `0`, the alpha channel defaults to `1`.
  */
-@Serializable
+@Serializable(with = Colour.Serializer::class)
 data class Colour(
   val red: Float = 0f,
   val green: Float = 0f,
   val blue: Float = 0f,
   val alpha: Float = 1f,
-)
+) {
+  object Serializer : TupleSerializer<Colour>(
+    "Colour",
+    {
+      element(Colour::red)
+      element(Colour::green)
+      element(Colour::blue)
+      element(Colour::alpha)
+    }
+  ) {
+    override fun tupleConstructor(elements: Iterator<*>): Colour {
+      return Colour(
+        elements.next() as Float,
+        elements.next() as Float,
+        elements.next() as Float,
+        elements.next() as Float,
+      )
+    }
+  }
+}
 
 
 /** Size-efficient version of [Colour] (`4*4` bytes vs `4*1` bytes) */

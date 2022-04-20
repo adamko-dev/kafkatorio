@@ -171,12 +171,12 @@ export interface PlayerUpdateKey {
 
 export type UnitNumber = UInt;
 
-export interface Colour {
-  red?: Float;
-  green?: Float;
-  blue?: Float;
-  alpha?: Float;
-}
+export type Colour = [
+  red: Float,
+  green: Float,
+  blue: Float,
+  alpha: Float,
+];
 
 export type MapEntityPosition = [
   x: Double,

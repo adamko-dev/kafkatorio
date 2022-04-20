@@ -28,12 +28,7 @@ class PrototypesTest : BehaviorSpec({
         "order": "z-a",
         "layer": 0,
         "collisionMasks": {},
-        "mapColour": {
-          "red": 0,
-          "green": 0,
-          "blue": 0,
-          "alpha": 255
-        },
+        "mapColour": [0, 0, 0, 255],
         "canBeMined": false
       }
     ]
@@ -65,12 +60,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 86,
-                "green": 82,
-                "blue": 74,
-                "alpha": 255
-              },
+              "mapColour":  [86, 82, 74, 255],
               "canBeMined": true
             },
             {
@@ -81,12 +71,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 63,
-                "green": 61,
-                "blue": 59,
-                "alpha": 255
-              },
+              "mapColour":  [63, 61, 59, 255],
               "canBeMined": true
             },
             {
@@ -97,12 +82,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 176,
-                "green": 142,
-                "blue": 39,
-                "alpha": 255
-              },
+              "mapColour":  [176, 142, 39, 255],
               "canBeMined": true
             },
             {
@@ -113,12 +93,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 176,
-                "green": 142,
-                "blue": 39,
-                "alpha": 255
-              },
+              "mapColour":  [176, 142, 39, 255],
               "canBeMined": true
             },
             {
@@ -129,12 +104,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 49,
-                "green": 48,
-                "blue": 45,
-                "alpha": 255
-              },
+              "mapColour":  [49, 48, 45, 255],
               "canBeMined": true
             },
             {
@@ -145,12 +115,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 116,
-                "green": 94,
-                "blue": 26,
-                "alpha": 255
-              },
+              "mapColour":  [116, 94, 26, 255],
               "canBeMined": true
             },
             {
@@ -161,12 +126,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 116,
-                "green": 94,
-                "blue": 26,
-                "alpha": 255
-              },
+              "mapColour":  [116, 94, 26, 255],
               "canBeMined": true
             },
             {
@@ -177,12 +137,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 57,
-                "green": 39,
-                "blue": 26,
-                "alpha": 255
-              },
+              "mapColour":  [57, 39, 26, 255],
               "canBeMined": false
             },
             {
@@ -193,12 +148,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 142,
-                "green": 194,
-                "blue": 40,
-                "alpha": 127
-              },
+              "mapColour":  [142, 194, 40, 127],
               "canBeMined": false
             },
             {
@@ -209,12 +159,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 25,
-                "green": 25,
-                "blue": 25,
-                "alpha": 127
-              },
+              "mapColour":  [25, 25, 25, 127],
               "canBeMined": false
             },
             {
@@ -225,12 +170,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 39,
-                "green": 137,
-                "blue": 228,
-                "alpha": 127
-              },
+              "mapColour":  [39, 137, 228, 127],
               "canBeMined": false
             },
             {
@@ -241,12 +181,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 76,
-                "green": 29,
-                "blue": 0,
-                "alpha": 127
-              },
+              "mapColour":  [76, 29, 0, 127],
               "canBeMined": false
             },
             {
@@ -257,12 +192,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 70,
-                "green": 192,
-                "blue": 181,
-                "alpha": 127
-              },
+              "mapColour":  [70, 192, 181, 127],
               "canBeMined": false
             },
             {
@@ -273,12 +203,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 23,
-                "green": 195,
-                "blue": 43,
-                "alpha": 127
-              },
+              "mapColour":  [23, 195, 43, 127],
               "canBeMined": false
             },
             {
@@ -289,12 +214,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 221,
-                "green": 127,
-                "blue": 33,
-                "alpha": 127
-              },
+              "mapColour":  [221, 127, 33, 127],
               "canBeMined": false
             },
             {
@@ -305,12 +225,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 236,
-                "green": 98,
-                "blue": 131,
-                "alpha": 127
-              },
+              "mapColour":  [236, 98, 131, 127],
               "canBeMined": false
             },
             {
@@ -321,12 +236,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 123,
-                "green": 28,
-                "blue": 168,
-                "alpha": 127
-              },
+              "mapColour":  [123, 28, 168, 127],
               "canBeMined": false
             },
             {
@@ -337,12 +247,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 207,
-                "green": 6,
-                "blue": 0,
-                "alpha": 127
-              },
+              "mapColour":  [207, 6, 0, 127],
               "canBeMined": false
             },
             {
@@ -353,12 +258,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 212,
-                "green": 169,
-                "blue": 19,
-                "alpha": 127
-              },
+              "mapColour":  [212, 169, 19, 127],
               "canBeMined": false
             },
             {
@@ -369,12 +269,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 55,
-                "green": 53,
-                "blue": 11,
-                "alpha": 255
-              },
+              "mapColour":  [55, 53, 11, 255],
               "canBeMined": false
             },
             {
@@ -385,12 +280,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 66,
-                "green": 57,
-                "blue": 15,
-                "alpha": 255
-              },
+              "mapColour":  [66, 57, 15, 255],
               "canBeMined": false
             },
             {
@@ -401,12 +291,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 65,
-                "green": 52,
-                "blue": 28,
-                "alpha": 255
-              },
+              "mapColour":  [65, 52, 28, 255],
               "canBeMined": false
             },
             {
@@ -417,12 +302,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 59,
-                "green": 40,
-                "blue": 18,
-                "alpha": 255
-              },
+              "mapColour":  [59, 40, 18, 255],
               "canBeMined": false
             },
             {
@@ -433,12 +313,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 94,
-                "green": 66,
-                "blue": 37,
-                "alpha": 255
-              },
+              "mapColour":  [94, 66, 37, 255],
               "canBeMined": false
             },
             {
@@ -449,12 +324,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 141,
-                "green": 104,
-                "blue": 60,
-                "alpha": 255
-              },
+              "mapColour":  [141, 104, 60, 255],
               "canBeMined": false
             },
             {
@@ -465,12 +335,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 136,
-                "green": 96,
-                "blue": 59,
-                "alpha": 255
-              },
+              "mapColour":  [136, 96, 59, 255],
               "canBeMined": false
             },
             {
@@ -481,12 +346,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 133,
-                "green": 92,
-                "blue": 53,
-                "alpha": 255
-              },
+              "mapColour":  [133, 92, 53, 255],
               "canBeMined": false
             },
             {
@@ -497,12 +357,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 103,
-                "green": 72,
-                "blue": 43,
-                "alpha": 255
-              },
+              "mapColour":  [103, 72, 43, 255],
               "canBeMined": false
             },
             {
@@ -513,12 +368,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 91,
-                "green": 63,
-                "blue": 38,
-                "alpha": 255
-              },
+              "mapColour":  [91, 63, 38, 255],
               "canBeMined": false
             },
             {
@@ -529,12 +379,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 80,
-                "green": 55,
-                "blue": 31,
-                "alpha": 255
-              },
+              "mapColour":  [80, 55, 31, 255],
               "canBeMined": false
             },
             {
@@ -545,12 +390,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 80,
-                "green": 54,
-                "blue": 28,
-                "alpha": 255
-              },
+              "mapColour":  [80, 54, 28, 255],
               "canBeMined": false
             },
             {
@@ -561,12 +401,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 138,
-                "green": 103,
-                "blue": 58,
-                "alpha": 255
-              },
+              "mapColour":  [138, 103, 58, 255],
               "canBeMined": false
             },
             {
@@ -577,12 +412,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 128,
-                "green": 93,
-                "blue": 52,
-                "alpha": 255
-              },
+              "mapColour":  [128, 93, 52, 255],
               "canBeMined": false
             },
             {
@@ -593,12 +423,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 115,
-                "green": 83,
-                "blue": 47,
-                "alpha": 255
-              },
+              "mapColour":  [115, 83, 47, 255],
               "canBeMined": false
             },
             {
@@ -609,12 +434,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 103,
-                "green": 70,
-                "blue": 32,
-                "alpha": 255
-              },
+              "mapColour":  [103, 70, 32, 255],
               "canBeMined": false
             },
             {
@@ -625,12 +445,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 116,
-                "green": 81,
-                "blue": 39,
-                "alpha": 255
-              },
+              "mapColour":  [116, 81, 39, 255],
               "canBeMined": false
             },
             {
@@ -641,12 +456,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 116,
-                "green": 84,
-                "blue": 43,
-                "alpha": 255
-              },
+              "mapColour":  [116, 84, 43, 255],
               "canBeMined": false
             },
             {
@@ -657,12 +467,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 128,
-                "green": 93,
-                "blue": 52,
-                "alpha": 255
-              },
+              "mapColour":  [128, 93, 52, 255],
               "canBeMined": false
             },
             {
@@ -677,12 +482,7 @@ class PrototypesTest : BehaviorSpec({
                 "resource-layer",
                 "water-tile"
               ],
-              "mapColour": {
-                "red": 51,
-                "green": 83,
-                "blue": 95,
-                "alpha": 255
-              },
+              "mapColour":  [51, 83, 95, 255],
               "canBeMined": false
             },
             {
@@ -697,12 +497,7 @@ class PrototypesTest : BehaviorSpec({
                 "resource-layer",
                 "water-tile"
               ],
-              "mapColour": {
-                "red": 38,
-                "green": 64,
-                "blue": 73,
-                "alpha": 255
-              },
+              "mapColour":  [38, 64, 73, 255],
               "canBeMined": false
             },
             {
@@ -717,12 +512,7 @@ class PrototypesTest : BehaviorSpec({
                 "resource-layer",
                 "water-tile"
               ],
-              "mapColour": {
-                "red": 31,
-                "green": 48,
-                "blue": 18,
-                "alpha": 255
-              },
+              "mapColour":  [31, 48, 18, 255],
               "canBeMined": false
             },
             {
@@ -737,12 +527,7 @@ class PrototypesTest : BehaviorSpec({
                 "resource-layer",
                 "water-tile"
               ],
-              "mapColour": {
-                "red": 23,
-                "green": 37,
-                "blue": 16,
-                "alpha": 255
-              },
+              "mapColour":  [23, 37, 16, 255],
               "canBeMined": false
             },
             {
@@ -756,12 +541,7 @@ class PrototypesTest : BehaviorSpec({
                 "resource-layer",
                 "water-tile"
               ],
-              "mapColour": {
-                "red": 82,
-                "green": 98,
-                "blue": 92,
-                "alpha": 255
-              },
+              "mapColour":  [82, 98, 92, 255],
               "canBeMined": false
             },
             {
@@ -775,12 +555,7 @@ class PrototypesTest : BehaviorSpec({
                 "resource-layer",
                 "water-tile"
               ],
-              "mapColour": {
-                "red": 65,
-                "green": 89,
-                "blue": 90,
-                "alpha": 255
-              },
+              "mapColour":  [65, 89, 90, 255],
               "canBeMined": false
             },
             {
@@ -791,12 +566,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 48,
-                "green": 40,
-                "blue": 35,
-                "alpha": 255
-              },
+              "mapColour":  [48, 40, 35, 255],
               "canBeMined": false
             },
             {
@@ -811,12 +581,7 @@ class PrototypesTest : BehaviorSpec({
                 "resource-layer",
                 "water-tile"
               ],
-              "mapColour": {
-                "red": 0,
-                "green": 0,
-                "blue": 0,
-                "alpha": 255
-              },
+              "mapColour":  [0, 0, 0, 255],
               "canBeMined": false
             },
             {
@@ -826,12 +591,7 @@ class PrototypesTest : BehaviorSpec({
               "layer": 0,
               "collisionMasks": {
               },
-              "mapColour": {
-                "red": 0,
-                "green": 0,
-                "blue": 0,
-                "alpha": 255
-              },
+              "mapColour":  [0, 0, 0, 255],
               "canBeMined": false
             },
             {
@@ -849,12 +609,7 @@ class PrototypesTest : BehaviorSpec({
                 "resource-layer",
                 "water-tile"
               ],
-              "mapColour": {
-                "red": 0,
-                "green": 0,
-                "blue": 0,
-                "alpha": 255
-              },
+              "mapColour":  [0, 0, 0, 255],
               "canBeMined": false
             },
             {
@@ -865,12 +620,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 49,
-                "green": 49,
-                "blue": 49,
-                "alpha": 255
-              },
+              "mapColour":  [49, 49, 49, 255],
               "canBeMined": false
             },
             {
@@ -881,12 +631,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 0,
-                "green": 0,
-                "blue": 0,
-                "alpha": 255
-              },
+              "mapColour":  [0, 0, 0, 255],
               "canBeMined": false
             },
             {
@@ -897,12 +642,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 255,
-                "green": 255,
-                "blue": 255,
-                "alpha": 255
-              },
+              "mapColour":  [255, 255, 255, 255],
               "canBeMined": false
             },
             {
@@ -913,12 +653,7 @@ class PrototypesTest : BehaviorSpec({
               "collisionMasks": [
                 "ground-tile"
               ],
-              "mapColour": {
-                "red": 122,
-                "green": 122,
-                "blue": 122,
-                "alpha": 255
-              },
+              "mapColour":  [122, 122, 122, 255],
               "canBeMined": false
             }
           ]

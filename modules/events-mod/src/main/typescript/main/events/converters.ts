@@ -86,12 +86,12 @@ export namespace Converters {
   // }
 
   export function mapColour(color: ColorTable): Colour {
-    return {
-      red: color.r ?? 0,
-      green: color.g ?? 0,
-      blue: color.b ?? 0,
-      alpha: color.a ?? 0,
-    }
+    return [
+      color.r ?? 0,
+      color.g ?? 0,
+      color.b ?? 0,
+      color.a ?? 0,
+    ]
   }
 
 

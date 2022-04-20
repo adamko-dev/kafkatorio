@@ -30,18 +30,8 @@ class UpdatePacketsTest : FunSpec({
           "type": "dev.adamko.kafkatorio.schema2.PlayerUpdate",
           "key": {"index": 1},
           "afkTime": 0,
-          "chatColour": {
-            "red": 1,
-            "green": 0.4,
-            "blue": 0.6,
-            "alpha": 1
-          },
-          "colour": {
-            "red": 0.8,
-            "green": 0.5,
-            "blue": 0.2,
-            "alpha": 0.5
-          },
+          "chatColour": [1, 0.4, 0.6, 1],
+          "colour": [0.8, 0.5, 0.2, 0.5],
           "eventCounts": {
             "on_player_changed_position": 7,
             "on_player_joined_game": 1
@@ -54,7 +44,10 @@ class UpdatePacketsTest : FunSpec({
           "lastOnline": 0,
           "name": "fredthedeadhead",
           "onlineTime": 0,
-          "position": [-58, 13],
+          "position": [
+            -58, 
+            13
+          ],
           "tag": ""
         }
       }
