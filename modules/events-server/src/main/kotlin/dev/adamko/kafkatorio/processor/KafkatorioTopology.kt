@@ -40,6 +40,16 @@ internal class KafkatorioTopology(
     playerUpdates()
   }
 
+  private fun splitPackets() {
+    val builder = StreamsBuilder()
+    val packets = factorioServerPacketStream(builder)
+    splitFactorioServerPacketStream(packets)
+
+    val topology = builder.build()
+
+    launchTopology("splitPackets", topology)
+  }
+
   private fun groupTilesMapChunks() {
     val builder = StreamsBuilder()
     val topology = groupMapChunks(builder)
@@ -50,16 +60,6 @@ internal class KafkatorioTopology(
     val builder = StreamsBuilder()
     val topology = saveMapTiles(builder)
     launchTopology("saveTiles", topology)
-  }
-
-  private fun splitPackets() {
-    val builder = StreamsBuilder()
-    val packets = factorioServerPacketStream(builder)
-    splitFactorioServerPacketStream(packets)
-
-    val topology = builder.build()
-
-    launchTopology("splitPackets", topology)
   }
 
   private fun playerUpdates() {
