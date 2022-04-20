@@ -79,9 +79,7 @@ class ColourHexTest : BehaviorSpec({
         val colour: Colour = jsonMapperKafkatorio.decodeFromString(colourJson)
         val colourHex = colour.toHex()
         colourHex shouldBe ColourHex(r, g, b, a)
-
       }
-
     }
   }
 })

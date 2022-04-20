@@ -1,5 +1,18 @@
 package dev.adamko.kafkatorio.events.schema
 
+import dev.adamko.kafkatorio.schema.common.Colour
+import dev.adamko.kafkatorio.schema.common.EntityIdentifiersData
+import dev.adamko.kafkatorio.schema.common.ForceIndex
+import dev.adamko.kafkatorio.schema.common.MapEntityPosition
+import dev.adamko.kafkatorio.schema.common.PlayerIndex
+import dev.adamko.kafkatorio.schema.common.SurfaceIndex
+import dev.adamko.kafkatorio.schema.common.Tick
+import dev.adamko.kafkatorio.schema.common.UnitNumber
+import dev.adamko.kafkatorio.schema.jsonMapperKafkatorio
+import dev.adamko.kafkatorio.schema2.KafkatorioPacket2
+import dev.adamko.kafkatorio.schema2.PlayerUpdate
+import dev.adamko.kafkatorio.schema2.PlayerUpdateKey
+import dev.adamko.kafkatorio.schema2.SurfaceUpdate
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import kotlinx.serialization.decodeFromString
@@ -13,8 +26,9 @@ class UpdatePacketsTest : FunSpec({
       {
         "tick": 66,
         "modVersion": "0.3.2",
-        "packetType": "UPDATE",
-        "update": {
+        "data": {
+          "type": "dev.adamko.kafkatorio.schema2.PlayerUpdate",
+          "key": {"index": 1},
           "afkTime": 0,
           "chatColour": {
             "red": 1,
@@ -33,7 +47,6 @@ class UpdatePacketsTest : FunSpec({
             "on_player_joined_game": 1
           },
           "forceIndex": 1,
-          "index": 1,
           "isAdmin": true,
           "isConnected": true,
           "isShowOnMap": true,
@@ -41,23 +54,20 @@ class UpdatePacketsTest : FunSpec({
           "lastOnline": 0,
           "name": "fredthedeadhead",
           "onlineTime": 0,
-          "position": {
-            "y": 13,
-            "x": -58
-          },
-          "tag": "",
-          "updateType": "PLAYER"
+          "position": [-58, 13],
+          "tag": ""
         }
       }
     """.trimIndent()
 
     test("decode") {
-      val packet: FactorioEventUpdatePacket = jsonMapperKafkatorio.decodeFromString(json)
+      val packet: KafkatorioPacket2 = jsonMapperKafkatorio.decodeFromString(json)
 
-      packet shouldBe FactorioEventUpdatePacket(
+      packet shouldBe KafkatorioPacket2(
         modVersion = "0.3.2",
         tick = Tick(66u),
-        update = PlayerUpdate(
+        data = PlayerUpdate(
+          key = PlayerUpdateKey(PlayerIndex(1u)),
           afkTime = Tick(0u),
           bannedReason = null,
           characterUnitNumber = null,
@@ -67,7 +77,6 @@ class UpdatePacketsTest : FunSpec({
           disconnectReason = null,
           eventCounts = mapOf("on_player_changed_position" to 7u, "on_player_joined_game" to 1u),
           forceIndex = ForceIndex(1u),
-          index = PlayerIndex(1u),
           isAdmin = true,
           isConnected = true,
           isRemoved = null,
@@ -86,11 +95,11 @@ class UpdatePacketsTest : FunSpec({
     }
 
     test("encode") {
-      val v = FactorioEventUpdatePacket(
+      val v = KafkatorioPacket2(
         modVersion = "0.3.2",
         tick = Tick(66u),
-        update = PlayerUpdate(
-          index = PlayerIndex(1u),
+        data = PlayerUpdate(
+          key = PlayerUpdateKey(PlayerIndex(1u)),
           characterUnitNumber = null,
           chatColour = null,
           colour = null,
@@ -121,21 +130,22 @@ class UpdatePacketsTest : FunSpec({
         {
           "modVersion": "0.3.2",
           "tick": 66,
-          "update": {
-            "index": 1,
+          "data": {
+            "type": "dev.adamko.kafkatorio.schema2.PlayerUpdate",
+            "key": {
+              "index": 1
+            },
             "name": "fredthedeadhead",
             "afkTime": 0,
             "isShowOnMap": true,
             "isSpectator": false,
             "lastOnline": 0,
             "onlineTime": 0,
-            "position": {
-              "x": -58.0,
-              "y": 13.0
-            },
-            "updateType": "PLAYER"
-          },
-          "packetType": "UPDATE"
+            "position": [
+              -58.0,
+              13.0
+            ]
+          }
         }
       """.trimIndent()
     }
@@ -147,10 +157,11 @@ class UpdatePacketsTest : FunSpec({
       {
         "tick": 227934,
         "modVersion": "0.3.2",
-        "packetType": "UPDATE",
-        "update": {
-          "index": 1,
-          "updateType": "PLAYER",
+        "data": {
+           "type": "dev.adamko.kafkatorio.schema2.PlayerUpdate",
+           "key": {
+             "index": 1
+           },
           "lastOnline": 227932,
           "onlineTime": 227888,
           "afkTime": 324,
@@ -158,7 +169,7 @@ class UpdatePacketsTest : FunSpec({
           "diedCause": {
             "unitNumber": 66,
             "name": "small-biter",
-            "type": "unit"
+            "protoType": "unit"
           },
           "eventCounts": {
             "on_player_died": 2
@@ -168,12 +179,12 @@ class UpdatePacketsTest : FunSpec({
     """.trimIndent()
 
     test("decode") {
-      val packet: FactorioEventUpdatePacket = jsonMapperKafkatorio.decodeFromString(json)
+      val packet: KafkatorioPacket2 = jsonMapperKafkatorio.decodeFromString(json)
 
-      packet shouldBe FactorioEventUpdatePacket(
+      packet shouldBe KafkatorioPacket2(
         modVersion = "0.3.2",
         tick = Tick(227934u),
-        update = PlayerUpdate(
+        data = PlayerUpdate(
           afkTime = Tick(324u),
           bannedReason = null,
           characterUnitNumber = null,
@@ -182,12 +193,12 @@ class UpdatePacketsTest : FunSpec({
           diedCause = EntityIdentifiersData(
             unitNumber = UnitNumber(66u),
             name = "small-biter",
-            type = "unit",
+            protoType = "unit",
           ),
           disconnectReason = null,
           eventCounts = mapOf("on_player_died" to 2u),
           forceIndex = null,
-          index = PlayerIndex(1u),
+          key = PlayerUpdateKey(PlayerIndex(1u)),
           isAdmin = null,
           isConnected = true,
           isRemoved = null,
@@ -204,7 +215,38 @@ class UpdatePacketsTest : FunSpec({
         )
       )
     }
-
   }
 
+  context("surface update") {
+    //language=json
+    val json = """
+      {
+        "data": {
+          "type": "dev.adamko.kafkatorio.schema2.SurfaceUpdate",
+          "name": "nauvis",
+          "index": 1,
+          "daytime": 0.73
+        },
+        "modVersion": "0.3.2",
+        "tick": 176000
+      }
+    """.trimIndent()
+
+    val expected = KafkatorioPacket2(
+      tick = Tick(176000u),
+      modVersion = "0.3.2",
+      data = SurfaceUpdate(
+        name = "nauvis",
+        index = SurfaceIndex(1u),
+        daytime = 0.73,
+      )
+    )
+
+    println(jsonMapperKafkatorio.encodeToString(expected))
+
+    test("decode") {
+      val packet: KafkatorioPacket2 = jsonMapperKafkatorio.decodeFromString(json)
+      packet shouldBe expected
+    }
+  }
 })
