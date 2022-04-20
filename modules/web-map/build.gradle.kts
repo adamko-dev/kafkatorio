@@ -106,7 +106,7 @@ fun KotlinDependencyHandler.kvision(
 // https://youtrack.jetbrains.com/issue/KT-42420
 afterEvaluate {
   yarn {
-    resolution("mocha", "9.2.1")
+    resolution("mocha", "9.2.2")
     resolution("follow-redirects", "1.14.8")
     resolution("nanoid", "3.1.31")
     resolution("minimist", "1.2.6")
