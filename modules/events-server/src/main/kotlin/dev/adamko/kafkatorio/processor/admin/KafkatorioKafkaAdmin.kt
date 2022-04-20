@@ -16,7 +16,7 @@ object KafkatorioKafkaAdmin {
     Admin.create(
       mapOf(
         "bootstrap.servers" to "http://localhost:9092",
-        "client.id" to "warehouse.setup-admin",
+        "client.id" to "kafkatorio.setup-admin",
       )
     )
 
