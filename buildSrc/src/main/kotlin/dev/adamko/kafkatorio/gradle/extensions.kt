@@ -13,7 +13,9 @@ import org.gradle.api.specs.Spec
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.plugins.ide.idea.model.IdeaModule
 import org.gradle.process.ExecSpec
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
 
+import org.jetbrains.kotlin.gradle.targets.js.yarn.yarn
 
 operator fun <T> Spec<T>.not(): Spec<T> = Spec<T> { !this(it) }
 
@@ -86,3 +88,6 @@ fun Project.execCapture(spec: ExecSpec.() -> Unit): String {
     output
   }
 }
+
+/** https://youtrack.jetbrains.com/issue/KT-50848 */
+fun Project.yarn(configure: YarnRootExtension.() -> Unit) = with(yarn, configure)
