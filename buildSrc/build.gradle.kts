@@ -12,7 +12,7 @@ object Versions {
   const val jvmTarget = "11"
   const val kotlinTarget = "1.6"
 
-  const val kotlin = "1.6.20"
+  const val kotlin = "1.6.21"
 
   const val gradleNodePlugin = "3.2.1"
   const val gradleDockerComposePlugin = "0.15.1"
