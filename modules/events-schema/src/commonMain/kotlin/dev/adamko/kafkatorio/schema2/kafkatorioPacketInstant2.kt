@@ -2,7 +2,6 @@ package dev.adamko.kafkatorio.schema2
 
 import dev.adamko.kafkatorio.schema.common.PlayerIndex
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
-import dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype
 import dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype2
 import kotlinx.serialization.Serializable
 

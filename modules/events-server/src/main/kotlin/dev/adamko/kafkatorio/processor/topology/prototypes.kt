@@ -5,7 +5,6 @@ import dev.adamko.kafkatorio.schema.common.ColourHex
 import dev.adamko.kafkatorio.schema.common.MapTile
 import dev.adamko.kafkatorio.schema.common.toHex
 import dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype2
-import dev.adamko.kafkatorio.schema.prototypes.MapTilePrototype
 import dev.adamko.kafkatorio.schema2.PrototypesUpdate
 import dev.adamko.kotka.extensions.materializedAs
 import dev.adamko.kotka.extensions.streams.filter
@@ -21,7 +20,6 @@ import org.apache.kafka.streams.kstream.KTable
 @JvmInline
 @Serializable
 value class TileProtoHashCode private constructor(val code: Int) {
-  constructor(prototype: MapTilePrototype) : this(prototype.name.hashCode())
   constructor(tile: MapTile) : this(tile.proto.hashCode())
   constructor(tile: FactorioPrototype2.MapTile) : this(tile.name.hashCode())
 }
