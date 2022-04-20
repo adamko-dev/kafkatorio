@@ -1,6 +1,6 @@
 import PacketEmitter from "../PacketEmitter";
-import {KafkatorioPacketData2} from "../../generated/kafkatorio-schema/kafkatorio-schema";
-import Type = KafkatorioPacketData2.Type;
+import {KafkatorioPacketData} from "../../generated/kafkatorio-schema/kafkatorio-schema";
+import Type = KafkatorioPacketData.Type;
 
 // export function handlePlayerUpdate(tick: uint, eventType: string, playerIndex: uint) {
 //   let player: LuaPlayer = game.players[playerIndex]
@@ -36,7 +36,7 @@ export function handleSurfaceUpdate(
     eventType: string,
     surface: LuaSurface,
 ) {
-  const update: KafkatorioPacketData2.SurfaceUpdate = {
+  const update: KafkatorioPacketData.SurfaceUpdate = {
     type: Type.SurfaceUpdate,
 
     name: surface.name,

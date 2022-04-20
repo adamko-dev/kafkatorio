@@ -1,6 +1,6 @@
 package dev.adamko.kafkatorio.events.schema
 
-import dev.adamko.kafkatorio.schema2.KafkatorioPacket2
+import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
 import dev.adamko.kxstsgen.KxsTsConfig
 import dev.adamko.kxstsgen.KxsTsGenerator
 import dev.adamko.kxstsgen.core.TsDeclaration.TsTypeAlias
@@ -36,7 +36,7 @@ fun main(args: Array<String>) {
   )
 
   val definitions = gen2.generate(
-    KafkatorioPacket2.serializer(),
+    KafkatorioPacket.serializer(),
 //    KafkatorioKeyedPacketKey2.serializer(),
   )
 

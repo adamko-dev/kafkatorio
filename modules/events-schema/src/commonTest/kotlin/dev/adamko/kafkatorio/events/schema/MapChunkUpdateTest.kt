@@ -6,14 +6,12 @@ import dev.adamko.kafkatorio.schema.common.PrototypeName
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
 import dev.adamko.kafkatorio.schema.common.Tick
 import dev.adamko.kafkatorio.schema.jsonMapperKafkatorio
-import dev.adamko.kafkatorio.schema2.KafkatorioPacket2
-import dev.adamko.kafkatorio.schema2.MapChunkUpdate
-import dev.adamko.kafkatorio.schema2.MapChunkUpdateKey
+import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
+import dev.adamko.kafkatorio.schema.packets.MapChunkUpdate
+import dev.adamko.kafkatorio.schema.packets.MapChunkUpdateKey
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import kotlin.math.exp
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 
 class MapChunkUpdateTest : FunSpec({
 
@@ -22,7 +20,7 @@ class MapChunkUpdateTest : FunSpec({
     val json = """
 {
   "data": {
-    "type": "dev.adamko.kafkatorio.schema2.MapChunkUpdate",
+    "type": "dev.adamko.kafkatorio.schema.packets.MapChunkUpdate",
     "key": {
       "surfaceIndex": 1,
       "chunkPosition": [
@@ -57,7 +55,7 @@ class MapChunkUpdateTest : FunSpec({
 }
     """.trimIndent()
 
-    val expected = KafkatorioPacket2(
+    val expected = KafkatorioPacket(
       tick = Tick(36u),
       modVersion = "0.4.0",
       data = MapChunkUpdate(
@@ -86,7 +84,7 @@ class MapChunkUpdateTest : FunSpec({
     )
 
     test("decode") {
-      val packet: KafkatorioPacket2 = jsonMapperKafkatorio.decodeFromString(json)
+      val packet: KafkatorioPacket = jsonMapperKafkatorio.decodeFromString(json)
       packet shouldBe expected
     }
   }

@@ -1,14 +1,14 @@
-package dev.adamko.kafkatorio.schema2
+package dev.adamko.kafkatorio.schema.packets
 
 import dev.adamko.kafkatorio.schema.common.PlayerIndex
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
-import dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype2
+import dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype
 import kotlinx.serialization.Serializable
 
 
 /** No key, no caching. Must be sent instantly. */
 @Serializable
-sealed class KafkatorioInstantPacketData2 : KafkatorioPacketData2()
+sealed class KafkatorioInstantPacketData : KafkatorioPacketData()
 
 
 /*  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  *** */
@@ -20,7 +20,7 @@ data class ConfigurationUpdate(
   val allMods: List<ConfigurationUpdateModData>,
   val modStartupSettingsChange: Boolean,
   val migrationApplied: Boolean,
-) : KafkatorioInstantPacketData2() {
+) : KafkatorioInstantPacketData() {
 
   @Serializable
   data class ConfigurationUpdateGameData(
@@ -41,7 +41,7 @@ data class ConfigurationUpdate(
 data class ConsoleChatUpdate(
   val authorPlayerIndex: PlayerIndex?,
   val content: String,
-) : KafkatorioInstantPacketData2()
+) : KafkatorioInstantPacketData()
 
 
 @Serializable
@@ -49,13 +49,13 @@ data class ConsoleCommandUpdate(
   val authorPlayerIndex: PlayerIndex?,
   val command: String,
   val parameters: String,
-) : KafkatorioInstantPacketData2()
+) : KafkatorioInstantPacketData()
 
 
 @Serializable
 data class PrototypesUpdate(
-  val prototypes: List<FactorioPrototype2>,
-) : KafkatorioInstantPacketData2()
+  val prototypes: List<FactorioPrototype>,
+) : KafkatorioInstantPacketData()
 
 
 @Serializable
@@ -63,7 +63,7 @@ data class SurfaceUpdate(
   val index: SurfaceIndex,
   val daytime: Double,
   val name: String,
-) : KafkatorioInstantPacketData2()
+) : KafkatorioInstantPacketData()
 
 
 /*  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  *** */

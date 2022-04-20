@@ -2,10 +2,10 @@ import PacketEmitter from "../PacketEmitter";
 import {
   ConfigurationUpdateGameData,
   ConfigurationUpdateModData,
-  KafkatorioPacketData2
+  KafkatorioPacketData
 } from "../../generated/kafkatorio-schema/kafkatorio-schema";
-import Type = KafkatorioPacketData2.Type;
-import ConfigurationUpdate = KafkatorioPacketData2.ConfigurationUpdate;
+import Type = KafkatorioPacketData.Type;
+import ConfigurationUpdate = KafkatorioPacketData.ConfigurationUpdate;
 
 export function emitConfigurationUpdate(changeData: ConfigurationChangedData) {
 

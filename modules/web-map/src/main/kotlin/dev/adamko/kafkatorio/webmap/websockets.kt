@@ -1,14 +1,14 @@
 package dev.adamko.kafkatorio.webmap
 
-import dev.adamko.kafkatorio.schema2.ConfigurationUpdate
-import dev.adamko.kafkatorio.schema2.ConsoleChatUpdate
-import dev.adamko.kafkatorio.schema2.ConsoleCommandUpdate
-import dev.adamko.kafkatorio.schema2.EntityUpdate
-import dev.adamko.kafkatorio.schema2.KafkatorioPacket2
-import dev.adamko.kafkatorio.schema2.MapChunkUpdate
-import dev.adamko.kafkatorio.schema2.PlayerUpdate
-import dev.adamko.kafkatorio.schema2.PrototypesUpdate
-import dev.adamko.kafkatorio.schema2.SurfaceUpdate
+import dev.adamko.kafkatorio.schema.packets.ConfigurationUpdate
+import dev.adamko.kafkatorio.schema.packets.ConsoleChatUpdate
+import dev.adamko.kafkatorio.schema.packets.ConsoleCommandUpdate
+import dev.adamko.kafkatorio.schema.packets.EntityUpdate
+import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
+import dev.adamko.kafkatorio.schema.packets.MapChunkUpdate
+import dev.adamko.kafkatorio.schema.packets.PlayerUpdate
+import dev.adamko.kafkatorio.schema.packets.PrototypesUpdate
+import dev.adamko.kafkatorio.schema.packets.SurfaceUpdate
 import io.kvision.redux.ReduxStore
 import kotlinx.serialization.decodeFromString
 import org.w3c.dom.MessageEvent
@@ -36,7 +36,7 @@ class WebsocketService(
 
       println(data.replace('\n', ' '))
 
-      val packet: KafkatorioPacket2 = jsonMapper.decodeFromString(data)
+      val packet: KafkatorioPacket = jsonMapper.decodeFromString(data)
 
       when (val packetData = packet.data) {
 

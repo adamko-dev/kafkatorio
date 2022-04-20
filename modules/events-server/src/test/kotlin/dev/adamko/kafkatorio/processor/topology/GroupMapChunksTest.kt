@@ -12,11 +12,11 @@ import dev.adamko.kafkatorio.schema.common.MapTilePosition
 import dev.adamko.kafkatorio.schema.common.PrototypeName
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
 import dev.adamko.kafkatorio.schema.common.Tick
-import dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype2
-import dev.adamko.kafkatorio.schema2.KafkatorioPacket2
-import dev.adamko.kafkatorio.schema2.MapChunkUpdate
-import dev.adamko.kafkatorio.schema2.MapChunkUpdateKey
-import dev.adamko.kafkatorio.schema2.PrototypesUpdate
+import dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype
+import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
+import dev.adamko.kafkatorio.schema.packets.MapChunkUpdate
+import dev.adamko.kafkatorio.schema.packets.MapChunkUpdateKey
+import dev.adamko.kafkatorio.schema.packets.PrototypesUpdate
 import dev.adamko.kotka.kxs.serde
 import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
@@ -42,23 +42,23 @@ class GroupMapChunksTest : FunSpec({
 
     val testDriver = TopologyTestDriver(topology)
 
-    val prototypesTestInputTopic: TestInputTopic<FactorioServerId, KafkatorioPacket2> =
+    val prototypesTestInputTopic: TestInputTopic<FactorioServerId, KafkatorioPacket> =
       testDriver.createInputTopic(
         prototypesTopicName,
         jsonMapper.serde<FactorioServerId>().serializer(),
-        jsonMapper.serde<KafkatorioPacket2>().serializer(),
+        jsonMapper.serde<KafkatorioPacket>().serializer(),
       )
 
     val serverId = FactorioServerId("test-server-id")
 
     prototypesTestInputTopic.pipeInput(
       serverId,
-      KafkatorioPacket2(
+      KafkatorioPacket(
         modVersion = "1.2.3",
         tick = Tick(22u),
         PrototypesUpdate(
           listOf(
-            FactorioPrototype2.MapTile(
+            FactorioPrototype.MapTile(
               PrototypeName("fake-proto"),
               layer = 1u,
               mapColour = Colour(0.3f, 0.2f, 0.1f, 1.0f),
@@ -71,16 +71,16 @@ class GroupMapChunksTest : FunSpec({
       )
     )
 
-    val mapChunkUpdatesInputTopic: TestInputTopic<FactorioServerId, KafkatorioPacket2> =
+    val mapChunkUpdatesInputTopic: TestInputTopic<FactorioServerId, KafkatorioPacket> =
       testDriver.createInputTopic(
         mapChunkUpdatesTopicName,
         jsonMapper.serde<FactorioServerId>().serializer(),
-        jsonMapper.serde<KafkatorioPacket2>().serializer(),
+        jsonMapper.serde<KafkatorioPacket>().serializer(),
       )
 
     mapChunkUpdatesInputTopic.pipeInput(
       serverId,
-      KafkatorioPacket2(
+      KafkatorioPacket(
         modVersion = "1.2.3",
         tick = Tick(44u),
         MapChunkUpdate(

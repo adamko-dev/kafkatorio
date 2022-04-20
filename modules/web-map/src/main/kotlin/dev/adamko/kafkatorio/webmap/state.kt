@@ -6,7 +6,7 @@ import dev.adamko.kafkatorio.schema.common.PlayerIndex
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
 import dev.adamko.kafkatorio.schema.common.Tick
 import dev.adamko.kafkatorio.schema.common.toHexString
-import dev.adamko.kafkatorio.schema2.PlayerUpdate
+import dev.adamko.kafkatorio.schema.packets.PlayerUpdate
 import io.kvision.maps.Maps
 import io.kvision.maps.Maps.Companion.L
 import io.kvision.maps.externals.leaflet.geo.LatLng

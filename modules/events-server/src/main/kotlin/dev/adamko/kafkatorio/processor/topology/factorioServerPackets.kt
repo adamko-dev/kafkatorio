@@ -4,7 +4,7 @@ package dev.adamko.kafkatorio.processor.topology
 import dev.adamko.kafkatorio.processor.admin.TOPIC_SRC_SERVER_LOG
 import dev.adamko.kafkatorio.processor.admin.topicName
 import dev.adamko.kafkatorio.processor.serdes.jsonMapper
-import dev.adamko.kafkatorio.schema2.KafkatorioPacket2
+import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
 import dev.adamko.kotka.extensions.consumedAs
 import dev.adamko.kotka.extensions.producedAs
 import dev.adamko.kotka.extensions.streams.map
@@ -19,7 +19,7 @@ import org.apache.kafka.streams.processor.RecordContext
 
 fun factorioServerPacketStream(
   builder: StreamsBuilder = StreamsBuilder(),
-): KStream<FactorioServerId, KafkatorioPacket2> {
+): KStream<FactorioServerId, KafkatorioPacket> {
 
   return builder.stream(
     TOPIC_SRC_SERVER_LOG,
@@ -29,14 +29,14 @@ fun factorioServerPacketStream(
       Serdes.String(),
     )
   ).map("decode-packets") { serverId: String, value: String ->
-    val packet = jsonMapper.decodeFromString<KafkatorioPacket2>(value)
+    val packet = jsonMapper.decodeFromString<KafkatorioPacket>(value)
     FactorioServerId(serverId) to packet
   }
 }
 
 
 fun splitFactorioServerPacketStream(
-  factorioServerPacketStream: KStream<FactorioServerId, KafkatorioPacket2>
+  factorioServerPacketStream: KStream<FactorioServerId, KafkatorioPacket>
 ) {
   factorioServerPacketStream
     .to(
@@ -45,7 +45,7 @@ fun splitFactorioServerPacketStream(
         jsonMapper.serde(),
         jsonMapper.serde(),
       )
-    ) { _: FactorioServerId, value: KafkatorioPacket2, _: RecordContext ->
+    ) { _: FactorioServerId, value: KafkatorioPacket, _: RecordContext ->
 //        println("[$key] sending event:${value.eventType} to topic:${value.data.objectName()}")
       value.data.topicName
     }

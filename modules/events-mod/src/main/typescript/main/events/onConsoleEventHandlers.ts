@@ -1,11 +1,11 @@
 import PacketEmitter from "../PacketEmitter";
-import {KafkatorioPacketData2} from "../../generated/kafkatorio-schema/kafkatorio-schema";
-import Type = KafkatorioPacketData2.Type;
+import {KafkatorioPacketData} from "../../generated/kafkatorio-schema/kafkatorio-schema";
+import Type = KafkatorioPacketData.Type;
 
 script.on_event(
     defines.events.on_console_chat,
     (event: OnConsoleChatEvent) => {
-      const update: KafkatorioPacketData2.ConsoleChatUpdate = {
+      const update: KafkatorioPacketData.ConsoleChatUpdate = {
         type: Type.ConsoleChatUpdate,
 
         authorPlayerIndex: event.player_index ?? null,
@@ -18,7 +18,7 @@ script.on_event(
 script.on_event(
     defines.events.on_console_command,
     (event: OnConsoleCommandEvent) => {
-      const update: KafkatorioPacketData2.ConsoleCommandUpdate = {
+      const update: KafkatorioPacketData.ConsoleCommandUpdate = {
         type: Type.ConsoleCommandUpdate,
 
         authorPlayerIndex: event.player_index ?? null,

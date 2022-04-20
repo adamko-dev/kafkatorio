@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
-sealed class FactorioPrototype2 {
+sealed class FactorioPrototype {
 
   @Serializable
   data class MapTile(
@@ -19,5 +19,5 @@ sealed class FactorioPrototype2 {
     val order: String,
     /** Can the tile be mined for resources? */
     val canBeMined: Boolean,
-  ) : FactorioPrototype2()
+  ) : FactorioPrototype()
 }

@@ -9,10 +9,10 @@ import dev.adamko.kafkatorio.schema.common.SurfaceIndex
 import dev.adamko.kafkatorio.schema.common.Tick
 import dev.adamko.kafkatorio.schema.common.UnitNumber
 import dev.adamko.kafkatorio.schema.jsonMapperKafkatorio
-import dev.adamko.kafkatorio.schema2.KafkatorioPacket2
-import dev.adamko.kafkatorio.schema2.PlayerUpdate
-import dev.adamko.kafkatorio.schema2.PlayerUpdateKey
-import dev.adamko.kafkatorio.schema2.SurfaceUpdate
+import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
+import dev.adamko.kafkatorio.schema.packets.PlayerUpdate
+import dev.adamko.kafkatorio.schema.packets.PlayerUpdateKey
+import dev.adamko.kafkatorio.schema.packets.SurfaceUpdate
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import kotlinx.serialization.decodeFromString
@@ -27,7 +27,7 @@ class UpdatePacketsTest : FunSpec({
         "tick": 66,
         "modVersion": "0.3.2",
         "data": {
-          "type": "dev.adamko.kafkatorio.schema2.PlayerUpdate",
+          "type": "dev.adamko.kafkatorio.schema.packets.PlayerUpdate",
           "key": {"index": 1},
           "afkTime": 0,
           "chatColour": [1, 0.4, 0.6, 1],
@@ -54,9 +54,9 @@ class UpdatePacketsTest : FunSpec({
     """.trimIndent()
 
     test("decode") {
-      val packet: KafkatorioPacket2 = jsonMapperKafkatorio.decodeFromString(json)
+      val packet: KafkatorioPacket = jsonMapperKafkatorio.decodeFromString(json)
 
-      packet shouldBe KafkatorioPacket2(
+      packet shouldBe KafkatorioPacket(
         modVersion = "0.3.2",
         tick = Tick(66u),
         data = PlayerUpdate(
@@ -88,7 +88,7 @@ class UpdatePacketsTest : FunSpec({
     }
 
     test("encode") {
-      val v = KafkatorioPacket2(
+      val v = KafkatorioPacket(
         modVersion = "0.3.2",
         tick = Tick(66u),
         data = PlayerUpdate(
@@ -124,7 +124,7 @@ class UpdatePacketsTest : FunSpec({
           "modVersion": "0.3.2",
           "tick": 66,
           "data": {
-            "type": "dev.adamko.kafkatorio.schema2.PlayerUpdate",
+            "type": "dev.adamko.kafkatorio.schema.packets.PlayerUpdate",
             "key": {
               "index": 1
             },
@@ -151,7 +151,7 @@ class UpdatePacketsTest : FunSpec({
         "tick": 227934,
         "modVersion": "0.3.2",
         "data": {
-           "type": "dev.adamko.kafkatorio.schema2.PlayerUpdate",
+           "type": "dev.adamko.kafkatorio.schema.packets.PlayerUpdate",
            "key": {
              "index": 1
            },
@@ -172,9 +172,9 @@ class UpdatePacketsTest : FunSpec({
     """.trimIndent()
 
     test("decode") {
-      val packet: KafkatorioPacket2 = jsonMapperKafkatorio.decodeFromString(json)
+      val packet: KafkatorioPacket = jsonMapperKafkatorio.decodeFromString(json)
 
-      packet shouldBe KafkatorioPacket2(
+      packet shouldBe KafkatorioPacket(
         modVersion = "0.3.2",
         tick = Tick(227934u),
         data = PlayerUpdate(
@@ -215,7 +215,7 @@ class UpdatePacketsTest : FunSpec({
     val json = """
       {
         "data": {
-          "type": "dev.adamko.kafkatorio.schema2.SurfaceUpdate",
+          "type": "dev.adamko.kafkatorio.schema.packets.SurfaceUpdate",
           "name": "nauvis",
           "index": 1,
           "daytime": 0.73
@@ -225,7 +225,7 @@ class UpdatePacketsTest : FunSpec({
       }
     """.trimIndent()
 
-    val expected = KafkatorioPacket2(
+    val expected = KafkatorioPacket(
       tick = Tick(176000u),
       modVersion = "0.3.2",
       data = SurfaceUpdate(
@@ -238,7 +238,7 @@ class UpdatePacketsTest : FunSpec({
     println(jsonMapperKafkatorio.encodeToString(expected))
 
     test("decode") {
-      val packet: KafkatorioPacket2 = jsonMapperKafkatorio.decodeFromString(json)
+      val packet: KafkatorioPacket = jsonMapperKafkatorio.decodeFromString(json)
       packet shouldBe expected
     }
   }

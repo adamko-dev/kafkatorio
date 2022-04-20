@@ -4,8 +4,8 @@ import dev.adamko.kafkatorio.processor.serdes.kxsBinary
 import dev.adamko.kafkatorio.schema.common.ColourHex
 import dev.adamko.kafkatorio.schema.common.MapTile
 import dev.adamko.kafkatorio.schema.common.toHex
-import dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype2
-import dev.adamko.kafkatorio.schema2.PrototypesUpdate
+import dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype
+import dev.adamko.kafkatorio.schema.packets.PrototypesUpdate
 import dev.adamko.kotka.extensions.materializedAs
 import dev.adamko.kotka.extensions.streams.filter
 import dev.adamko.kotka.extensions.streams.mapValues
@@ -21,7 +21,7 @@ import org.apache.kafka.streams.kstream.KTable
 @Serializable
 value class TileProtoHashCode private constructor(val code: Int) {
   constructor(tile: MapTile) : this(tile.proto.hashCode())
-  constructor(tile: FactorioPrototype2.MapTile) : this(tile.name.hashCode())
+  constructor(tile: FactorioPrototype.MapTile) : this(tile.name.hashCode())
 }
 
 
@@ -38,7 +38,7 @@ fun tileProtoColourDictionary(
   return factorioServerPacketStream.mapValues("server-map-data.tile-prototypes.map-values") { _, protoPacket: PrototypesUpdate ->
     val map = protoPacket
       .prototypes
-      .filterIsInstance<FactorioPrototype2.MapTile>()
+      .filterIsInstance<FactorioPrototype.MapTile>()
       .associate { TileProtoHashCode(it) to it.mapColour.toHex() }
 
     TileColourDict(map)

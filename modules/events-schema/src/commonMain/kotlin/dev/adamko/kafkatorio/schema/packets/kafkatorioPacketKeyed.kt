@@ -1,4 +1,4 @@
-package dev.adamko.kafkatorio.schema2
+package dev.adamko.kafkatorio.schema.packets
 
 import dev.adamko.kafkatorio.schema.common.Colour
 import dev.adamko.kafkatorio.schema.common.EntityIdentifiers
@@ -17,7 +17,7 @@ import kotlinx.serialization.Serializable
 
 /** Has a key, so it can be debounced */
 @Serializable
-sealed class KafkatorioKeyedPacketData2 : KafkatorioPacketData2() {
+sealed class KafkatorioKeyedPacketData : KafkatorioPacketData() {
   /** Count how many events this packet is aggregating data from */
   abstract val key: KafkatorioKeyedPacketKey2
   abstract val eventCounts: Map<String, UInt>?
@@ -54,7 +54,7 @@ data class EntityUpdate(
   val localisedDescription: String? = null,
   val localisedName: String? = null,
   val prototype: PrototypeName? = null,
-) : KafkatorioKeyedPacketData2()
+) : KafkatorioKeyedPacketData()
 
 
 /*  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  *** */
@@ -79,7 +79,7 @@ data class MapChunkUpdate(
   /** updated tiles - might be partial and not all tiles in the chunk */
   val tileDictionary: MapTileDictionary? = null,
   val isDeleted: Boolean? = null,
-) : KafkatorioKeyedPacketData2()
+) : KafkatorioKeyedPacketData()
 
 
 /*  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  *** */
@@ -120,7 +120,7 @@ data class PlayerUpdate(
   val disconnectReason: String? = null,
   /** `true` when a player is removed (deleted) from the game */
   val isRemoved: Boolean? = null,
-) : KafkatorioKeyedPacketData2()
+) : KafkatorioKeyedPacketData()
 
 
 /*  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  *** */

@@ -2,15 +2,15 @@ import {isEventType} from "./eventTypeCheck";
 import {Converters} from "./converters";
 import EventUpdatesManager, {EventUpdates} from "../cache/EventDataCache";
 import {
-  KafkatorioPacketData2,
+  KafkatorioPacketData,
   MapChunkPosition,
   MapTileDictionary
 } from "../../generated/kafkatorio-schema/kafkatorio-schema";
 import CacheKey = EventUpdates.PacketKey;
-import Type = KafkatorioPacketData2.Type;
+import Type = KafkatorioPacketData.Type;
 
 
-type MapChunkUpdater = (data: KafkatorioPacketData2.MapChunkUpdate) => void
+type MapChunkUpdater = (data: KafkatorioPacketData.MapChunkUpdate) => void
 
 
 const mapProtoNameToKey: { [key: string]: uint } = {}
@@ -38,12 +38,12 @@ function mapTilesUpdateDebounce(
     return
   }
 
-  const key: KafkatorioPacketData2.MapChunkUpdate["key"] = {
+  const key: KafkatorioPacketData.MapChunkUpdate["key"] = {
     surfaceIndex: surface.index,
     chunkPosition: chunkPosition,
   }
 
-  EventUpdatesManager.debounce<KafkatorioPacketData2.MapChunkUpdate>(
+  EventUpdatesManager.debounce<KafkatorioPacketData.MapChunkUpdate>(
       key,
       Type.MapChunkUpdate,
       data => {
@@ -267,12 +267,12 @@ script.on_event(
       }
 
       for (const position of e.positions) {
-        const key: CacheKey<KafkatorioPacketData2.MapChunkUpdate> = {
+        const key: CacheKey<KafkatorioPacketData.MapChunkUpdate> = {
           surfaceIndex: surface.index,
           chunkPosition: [position.x, position.y],
         }
 
-        EventUpdatesManager.debounce<KafkatorioPacketData2.MapChunkUpdate>(
+        EventUpdatesManager.debounce<KafkatorioPacketData.MapChunkUpdate>(
             key,
             Type.MapChunkUpdate,
             data => data.isDeleted = true,

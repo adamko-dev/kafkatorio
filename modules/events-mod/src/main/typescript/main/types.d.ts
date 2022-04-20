@@ -1,4 +1,4 @@
-import {KafkatorioPacketData2} from "../generated/kafkatorio-schema/kafkatorio-schema";
+import {KafkatorioPacketData} from "../generated/kafkatorio-schema/kafkatorio-schema";
 
 export type EventName = keyof typeof defines.events
 
@@ -19,7 +19,7 @@ type NonNullableKeys<TYPE> = {
 }
 
 
-type KafkatorioKeyedPacketData = Extract<KafkatorioPacketData2, { key: object }>
+type KafkatorioKeyedPacketData = Extract<KafkatorioPacketData, { key: object }>
 
 type KafkatorioKeyedPacketTypes = KafkatorioKeyedPacketData["type"];
 

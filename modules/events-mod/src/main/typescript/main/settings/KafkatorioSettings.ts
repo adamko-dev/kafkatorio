@@ -1,24 +1,24 @@
 import {Data, DoubleSettingDefinition} from "typed-factorio/settings/types"
 import {KafkatorioKeyedPacketData, KafkatorioKeyedPacketTypes} from "../types";
-import {KafkatorioPacketData2} from "../../generated/kafkatorio-schema/kafkatorio-schema";
+import {KafkatorioPacketData} from "../../generated/kafkatorio-schema/kafkatorio-schema";
 
 export class KafkatorioSettingsConfig {
 
 
   private static eventCacheExpirationDefaultSeconds: Record<KafkatorioKeyedPacketTypes, double> = {
-    "dev.adamko.kafkatorio.schema2.PlayerUpdate": 0.5,
-    "dev.adamko.kafkatorio.schema2.MapChunkUpdate": 30,
-    "dev.adamko.kafkatorio.schema2.EntityUpdate": 5,
+    "dev.adamko.kafkatorio.schema.packets.PlayerUpdate": 0.5,
+    "dev.adamko.kafkatorio.schema.packets.MapChunkUpdate": 30,
+    "dev.adamko.kafkatorio.schema.packets.EntityUpdate": 5,
   }
 
 
   private eventCacheExpirationTicks: Record<KafkatorioKeyedPacketTypes, double> = {
-    "dev.adamko.kafkatorio.schema2.PlayerUpdate":
-        KafkatorioSettingsConfig.eventCacheExpirationDefaultSeconds[KafkatorioPacketData2.Type.PlayerUpdate],
-    "dev.adamko.kafkatorio.schema2.MapChunkUpdate":
-        KafkatorioSettingsConfig.eventCacheExpirationDefaultSeconds[KafkatorioPacketData2.Type.MapChunkUpdate],
-    "dev.adamko.kafkatorio.schema2.EntityUpdate":
-        KafkatorioSettingsConfig.eventCacheExpirationDefaultSeconds[KafkatorioPacketData2.Type.EntityUpdate],
+    "dev.adamko.kafkatorio.schema.packets.PlayerUpdate":
+        KafkatorioSettingsConfig.eventCacheExpirationDefaultSeconds[KafkatorioPacketData.Type.PlayerUpdate],
+    "dev.adamko.kafkatorio.schema.packets.MapChunkUpdate":
+        KafkatorioSettingsConfig.eventCacheExpirationDefaultSeconds[KafkatorioPacketData.Type.MapChunkUpdate],
+    "dev.adamko.kafkatorio.schema.packets.EntityUpdate":
+        KafkatorioSettingsConfig.eventCacheExpirationDefaultSeconds[KafkatorioPacketData.Type.EntityUpdate],
   }
 
   public getEventCacheExpirationTicks(packet: KafkatorioKeyedPacketData): uint {
@@ -26,9 +26,9 @@ export class KafkatorioSettingsConfig {
   }
 
   private static types: KafkatorioKeyedPacketTypes[] = [
-    KafkatorioPacketData2.Type.PlayerUpdate,
-    KafkatorioPacketData2.Type.MapChunkUpdate,
-    KafkatorioPacketData2.Type.EntityUpdate,
+    KafkatorioPacketData.Type.PlayerUpdate,
+    KafkatorioPacketData.Type.MapChunkUpdate,
+    KafkatorioPacketData.Type.EntityUpdate,
   ]
 
   public loadSettings(): void {

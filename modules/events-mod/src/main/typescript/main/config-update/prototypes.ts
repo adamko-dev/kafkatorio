@@ -1,11 +1,11 @@
 import {Converters} from "../events/converters";
 import PacketEmitter from "../PacketEmitter";
 import {
-  FactorioPrototype2,
-  KafkatorioPacketData2
+  FactorioPrototype,
+  KafkatorioPacketData
 } from "../../generated/kafkatorio-schema/kafkatorio-schema";
-import Type = KafkatorioPacketData2.Type;
-import PrototypesUpdate = KafkatorioPacketData2.PrototypesUpdate;
+import Type = KafkatorioPacketData.Type;
+import PrototypesUpdate = KafkatorioPacketData.PrototypesUpdate;
 
 
 export function emitPrototypes() {
@@ -18,20 +18,20 @@ export function emitPrototypes() {
   PacketEmitter.emitInstantPacket(data)
 }
 
-function prototypes(): FactorioPrototype2[] {
-  let prototypes: FactorioPrototype2[] = []
+function prototypes(): FactorioPrototype[] {
+  let prototypes: FactorioPrototype[] = []
 
   prototypes.push(...getMapTilePrototypes())
 
   return prototypes
 }
 
-function getMapTilePrototypes(): FactorioPrototype2.MapTile[] {
-  let tiles: FactorioPrototype2.MapTile[] = []
+function getMapTilePrototypes(): FactorioPrototype.MapTile[] {
+  let tiles: FactorioPrototype.MapTile[] = []
   for (let [, tile] of game.tile_prototypes) {
     tiles.push(
-        <FactorioPrototype2.MapTile>{
-          type: FactorioPrototype2.Type.MapTile,
+        <FactorioPrototype.MapTile>{
+          type: FactorioPrototype.Type.MapTile,
 
           name: tile.name,
           order: tile.order,

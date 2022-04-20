@@ -1,10 +1,10 @@
 import {Converters} from "./converters";
 import EventUpdatesManager from "../cache/EventDataCache";
-import {KafkatorioPacketData2} from "../../generated/kafkatorio-schema/kafkatorio-schema";
-import Type = KafkatorioPacketData2.Type;
+import {KafkatorioPacketData} from "../../generated/kafkatorio-schema/kafkatorio-schema";
+import Type = KafkatorioPacketData.Type;
 
 
-type PlayerUpdater = (player: LuaPlayer, data: KafkatorioPacketData2.PlayerUpdate) => void
+type PlayerUpdater = (player: LuaPlayer, data: KafkatorioPacketData.PlayerUpdate) => void
 
 function playerUpdateThrottle(
     playerIndex: uint,
@@ -12,7 +12,7 @@ function playerUpdateThrottle(
     mutate: PlayerUpdater,
 ) {
 
-  EventUpdatesManager.throttle<KafkatorioPacketData2.PlayerUpdate>(
+  EventUpdatesManager.throttle<KafkatorioPacketData.PlayerUpdate>(
       {index: playerIndex},
       Type.PlayerUpdate,
       data => {
@@ -39,7 +39,7 @@ function playerUpdateThrottle(
 //   )
 // }
 
-function playerOnlineInfo(player: LuaPlayer, data: KafkatorioPacketData2.PlayerUpdate) {
+function playerOnlineInfo(player: LuaPlayer, data: KafkatorioPacketData.PlayerUpdate) {
   data.lastOnline = player.last_online
   data.onlineTime = player.online_time
   data.afkTime = player.afk_time

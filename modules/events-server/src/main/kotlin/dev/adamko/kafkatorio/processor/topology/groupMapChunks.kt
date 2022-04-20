@@ -10,8 +10,8 @@ import dev.adamko.kafkatorio.schema.common.MapTilePosition
 import dev.adamko.kafkatorio.schema.common.MapTiles
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
 import dev.adamko.kafkatorio.schema.common.toMapChunkPosition
-import dev.adamko.kafkatorio.schema2.MapChunkUpdate
-import dev.adamko.kafkatorio.schema2.PrototypesUpdate
+import dev.adamko.kafkatorio.schema.packets.MapChunkUpdate
+import dev.adamko.kafkatorio.schema.packets.PrototypesUpdate
 import dev.adamko.kotka.extensions.groupedAs
 import dev.adamko.kotka.extensions.materializedWith
 import dev.adamko.kotka.extensions.producedAs
