@@ -68,11 +68,11 @@ kotlin {
 
         implementation(dependencies.platform(libs.kotlin.jsWrappers.bom))
 
-        implementation(npm("follow-redirects", "^1.14.8"))
-        implementation(npm("nanoid", "^3.1.31"))
-        implementation(npm("minimist", "^1.2.6"))
-        implementation(npm("async", "^2.6.4"))
-        implementation(npm("node-forge", "^1.3.0"))
+        implementation(dependencies.platform(npm("follow-redirects", "^1.14.8")))
+        implementation(dependencies.platform(npm("nanoid", "^3.1.31")))
+        implementation(dependencies.platform(npm("minimist", "^1.2.6")))
+        implementation(dependencies.platform(npm("async", "^2.6.4")))
+        implementation(dependencies.platform(npm("node-forge", "^1.3.0")))
       }
 
       val webDir = file("src/main/web")
