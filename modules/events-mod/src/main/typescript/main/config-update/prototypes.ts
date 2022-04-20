@@ -29,18 +29,16 @@ function prototypes(): FactorioPrototype[] {
 function getMapTilePrototypes(): FactorioPrototype.MapTile[] {
   let tiles: FactorioPrototype.MapTile[] = []
   for (let [, tile] of game.tile_prototypes) {
-    tiles.push(
-        <FactorioPrototype.MapTile>{
-          type: FactorioPrototype.Type.MapTile,
+    tiles.push({
+      type: FactorioPrototype.Type.MapTile,
 
-          name: tile.name,
-          order: tile.order,
-          layer: tile.layer,
-          collisionMasks: convertCollisionMaskToNames(tile.collision_mask),
-          mapColour: Converters.mapColour(tile.map_color),
-          canBeMined: tile.mineable_properties.minable,
-        }
-    )
+      name: tile.name,
+      order: tile.order,
+      layer: tile.layer,
+      collisionMasks: convertCollisionMaskToNames(tile.collision_mask),
+      mapColour: Converters.mapColour(tile.map_color),
+      canBeMined: tile.mineable_properties.minable,
+    })
   }
   return tiles
 }
