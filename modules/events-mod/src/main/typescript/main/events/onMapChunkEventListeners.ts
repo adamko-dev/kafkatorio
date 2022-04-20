@@ -3,26 +3,13 @@ import {Converters} from "./converters";
 import EventUpdatesManager, {EventUpdates} from "../cache/EventDataCache";
 import {
   KafkatorioPacketData,
-  MapChunkPosition,
-  MapTileDictionary
+  MapChunkPosition
 } from "../../generated/kafkatorio-schema/kafkatorio-schema";
 import CacheKey = EventUpdates.PacketKey;
 import Type = KafkatorioPacketData.Type;
 
 
 type MapChunkUpdater = (data: KafkatorioPacketData.MapChunkUpdate) => void
-
-
-const mapProtoNameToKey: { [key: string]: uint } = {}
-let protoIndex: uint = 0
-
-
-function getProtoKey(protoName: string): uint {
-  if (mapProtoNameToKey[protoName] == undefined) {
-    mapProtoNameToKey[protoName] = protoIndex++
-  }
-  return mapProtoNameToKey[protoName]
-}
 
 
 function mapTilesUpdateDebounce(
@@ -47,27 +34,31 @@ function mapTilesUpdateDebounce(
       key,
       Type.MapChunkUpdate,
       data => {
-        data.tileDictionary ??= <MapTileDictionary>{
+
+        // tile dictionary update
+        data.tileDictionary ??= {
           tilesXY: {},
           protos: {},
         }
 
+        let protosCount: uint = 0
         for (const tile of tiles) {
+          data.tileDictionary.protos[tile.name] ??= protosCount++
+          const protoKey = data.tileDictionary.protos[tile.name]
 
           const xString = `${tile.position.x}`
           const yString = `${tile.position.y}`
-          const protoKey = getProtoKey(tile.name)
-
-          data.tileDictionary.protos[tile.name] = protoIndex
 
           data.tileDictionary.tilesXY[xString] ??= {}
           data.tileDictionary.tilesXY[xString][yString] = protoKey
         }
 
+        // events count update
         data.eventCounts ??= {}
         data.eventCounts[eventName] ??= 0
         data.eventCounts[eventName]++
 
+        // apply mutator
         if (updater != undefined) {
           updater(data)
         }

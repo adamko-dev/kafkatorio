@@ -50,15 +50,17 @@ data class MapTileDictionary(
         val protoName = protosIndexToName[protoIndex]
         if (x != null && y != null && protoName != null) {
           add(MapTile(x, y, protoName))
+        } else if (protoName == null) {
+          println("warning: no prototype name found for index:$protoIndex. $protosIndexToName")
         }
       }
     }
   }
 
-  /** The collection-index of a prototype in [MapTileDictionary.protos] */
+  /** An arbitrary ID for a prototype in [MapTileDictionary.protos]. */
   @Serializable
   @JvmInline
-  value class PrototypeKey(val index: Int)
+  value class PrototypeKey(private val index: Int)
 
   companion object {
     fun MapTileDictionary?.isNullOrEmpty(): Boolean {
