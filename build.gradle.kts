@@ -58,11 +58,14 @@ val runKafkatorio by tasks.registering {
   )
 }
 
-
 val runEventsServer by tasks.registering {
   group = project.name
 
-  dependsOn(
-    ":modules:events-server:run",
-  )
+  dependsOn(":modules:events-server:run")
+}
+
+val runWebMap by tasks.registering {
+  group = project.name
+
+  dependsOn(":modules:web-map:browserDevelopmentRun")
 }

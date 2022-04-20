@@ -66,9 +66,9 @@ kotlin {
 
         implementation(libs.kotlinx.coroutines)
 
-        implementation(npm("follow-redirects", "^1.14.8"))
-        implementation(npm("log4js", "^6.4.0"))
-        implementation(npm("nanoid", "^3.1.31"))
+//        implementation(npm("follow-redirects", "^1.14.8"))
+//        implementation(npm("log4js", "^6.4.0"))
+//        implementation(npm("nanoid", "^3.1.31"))
       }
 
       val webDir = file("src/main/web")
@@ -81,7 +81,7 @@ kotlin {
 
         kvision("kvision-testutils")
 
-        implementation(npm("karma", "^6.3.16"))
+//        implementation(npm("karma", "^6.3.16"))
       }
     }
   }
