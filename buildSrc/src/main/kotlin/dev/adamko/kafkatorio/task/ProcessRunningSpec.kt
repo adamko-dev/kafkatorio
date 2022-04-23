@@ -27,9 +27,9 @@ class ProcessRunningSpec(
           }
 
           if (outputStream.toString().contains(process, ignoreCase)) {
-            "found $process in tasklist"
-          } else {
             null
+          } else {
+            "found $process in tasklist"
           }
         }
       }
