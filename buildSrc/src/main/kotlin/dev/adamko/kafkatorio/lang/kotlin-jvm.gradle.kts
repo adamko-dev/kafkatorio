@@ -8,12 +8,6 @@ plugins {
   kotlin("jvm")
 }
 
-kotlin {
-  jvmToolchain {
-    (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(Versions.jvmTarget))
-  }
-}
-
 dependencies {
 
   implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
@@ -40,20 +34,25 @@ tasks.withType<KotlinCompile>().configureEach {
     jvmTarget = Versions.jvmTarget
     apiVersion = Versions.kotlinLang
     languageVersion = Versions.kotlinLang
-  }
-
-  kotlinOptions.freeCompilerArgs += listOf(
+    freeCompilerArgs += listOf(
 //    "-Xcontext-receivers",
-    "-opt-in=kotlin.RequiresOptIn",
-    "-opt-in=kotlin.ExperimentalStdlibApi",
-    "-opt-in=kotlin.time.ExperimentalTime",
+      "-opt-in=kotlin.RequiresOptIn",
+      "-opt-in=kotlin.ExperimentalStdlibApi",
+      "-opt-in=kotlin.time.ExperimentalTime",
 //    "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
 //    "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
-  )
+    )
+  }
 }
 
 tasks.compileTestKotlin {
   kotlinOptions.freeCompilerArgs += "-opt-in=io.kotest.common.ExperimentalKotest"
+}
+
+kotlin {
+  jvmToolchain {
+    (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(Versions.jvmTarget))
+  }
 }
 
 tasks.withType<Test> {

@@ -1,28 +1,35 @@
 package dev.adamko.kafkatorio.task
 
 import com.github.gradle.node.npm.task.NpmTask
+import javax.inject.Inject
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SkipWhenEmpty
+import org.gradle.api.tasks.TaskAction
+import org.gradle.work.Incremental
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
+@CacheableTask
 abstract class TypescriptToLuaTask : NpmTask() {
 
   @get:InputDirectory
   @get:SkipWhenEmpty
   @get:PathSensitive(PathSensitivity.RELATIVE)
-  @Suppress("UnstableApiUsage")
   @get:NormalizeLineEndings
   abstract val sourceFiles: DirectoryProperty
 
   @get:OutputDirectory
   abstract val outputDirectory: DirectoryProperty
 
+  @get:Inject
+  abstract val fs: FileSystemOperations
 
   init {
     super.setGroup(BasePlugin.BUILD_GROUP)
@@ -31,6 +38,19 @@ abstract class TypescriptToLuaTask : NpmTask() {
     super.npmCommand.set(listOf("run", "build"))
     super.ignoreExitValue.set(false)
     super.args.set(parseSpaceSeparatedArgs("-- --outDir $temporaryDir"))
+  }
+
+  @TaskAction
+  fun tstl() {
+    fs.delete { delete(temporaryDir) }
+    temporaryDir.mkdirs()
+
+    super.exec()
+
+    fs.sync {
+      from(temporaryDir)
+      into(outputDirectory)
+    }
   }
 
 }

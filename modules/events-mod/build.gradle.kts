@@ -39,6 +39,7 @@ projectTokens += mapOf(
 
 val tsSrcDir: Directory = layout.projectDirectory.dir("src/main/typescript")
 
+
 node {
   nodeProjectDir.set(tsSrcDir)
 }
@@ -49,27 +50,19 @@ val typescriptEventsSchema: Configuration by configurations.creating {
   typescriptAttributes(objects)
 }
 
+
 dependencies {
   typescriptEventsSchema(projects.modules.eventsSchema)
 }
+
 
 val typescriptToLua by tasks.registering(TypescriptToLuaTask::class) {
   dependsOn(tasks.npmInstall, installEventsTsSchema, tasks.updatePackageJson)
 
   sourceFiles.set(tsSrcDir)
   outputDirectory.set(layout.buildDirectory.dir("typescriptToLua"))
-
-  doFirst("cleanTemporaryDir") {
-    delete(temporaryDir)
-    mkdir(temporaryDir)
-  }
-  doLast("syncTstlOutput") {
-    sync {
-      from(temporaryDir)
-      into(outputDirectory)
-    }
-  }
 }
+
 
 val installEventsTsSchema by tasks.registering(Sync::class) {
   description = "Fetch the latest shared data-model"
@@ -100,9 +93,12 @@ val installEventsTsSchema by tasks.registering(Sync::class) {
   into(outputDir)
 }
 
+
 tasks.distZip {
-  archiveFileName.set(distributionZipName)
+  archiveFileName.set(provider { distributionZipName })
+
 }
+
 
 distributions {
   main {
@@ -165,10 +161,12 @@ val factorioModProvider by configurations.registering {
   outgoing.artifact(tasks.distZip.flatMap { it.archiveFile })
 }
 
+
 tasks.updatePackageJson {
-  propertiesToCheck.put("name", "${rootProject.name}-${project.name}")
+  propertiesToCheck.put("name", providers.provider { "${rootProject.name}-${project.name}" })
   packageJsonFile.set(layout.projectDirectory.file("src/main/typescript/package.json"))
 }
+
 
 tasks.assemble { dependsOn(installEventsTsSchema, tasks.updatePackageJson) }
 

@@ -1,7 +1,7 @@
 import dev.adamko.kafkatorio.gradle.asConsumer
 import dev.adamko.kafkatorio.gradle.factorioModAttributes
-import dev.adamko.kafkatorio.gradle.isProcessRunning
 import dev.adamko.kafkatorio.gradle.not
+import dev.adamko.kafkatorio.task.ProcessRunningSpec
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
@@ -38,7 +38,7 @@ val deployModToClient by tasks.registering(Copy::class) {
 //</editor-fold>
 
 //<editor-fold desc="Factorio client lifecycle tasks">
-fun isFactorioRunning(): Spec<Task> = isProcessRunning("factorio.exe")
+fun isFactorioRunning(): Spec<Task> = ProcessRunningSpec("factorio.exe")
 
 val clientLaunch by tasks.registering(Exec::class) {
   description = "Run Factorio Steam game client"

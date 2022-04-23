@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.incremental.md5
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
@@ -9,35 +8,32 @@ description = "Send events from a Factorio server to a Kafka topic "
 
 
 val dockerSrcDir: Directory by extra
-fun Directory.filesChecksum() = asFileTree
-  .files
-  .map { it.readBytes() + it.absolutePath.toByteArray() }
-  .fold(byteArrayOf()) { acc, bytes -> acc + bytes }
-  .md5()
 
 tasks.dockerUp {
   dependsOn(":modules:infra-kafka-cluster:dockerUp")
 }
 
-val dockerBuildKafkaPipe by tasks.registering(Exec::class) {
-  group = "docker-compose"
 
-  logging.captureStandardOutput(LogLevel.LIFECYCLE)
 
+@Suppress("UnstableApiUsage") // normalizeLineEndings is incubating
+val dockerBuildKafkaPipe by tasks.registering(dev.adamko.kafkatorio.task.DockerComposeExec::class) {
   dependsOn(tasks.dockerEnv)
 
-  inputs.dir(dockerSrcDir)
-  inputs.property("dockerSrcDirChecksum") { dockerSrcDir.filesChecksum() }
+  dockerComposeDir.set(dockerSrcDir)
+  command.set("docker-compose build kafka-pipe")
 
-  outputs.upToDateWhen {
-    it.inputs.properties["dockerSrcDirChecksum"] as? Long? == dockerSrcDir.filesChecksum()
-  }
+
+//  inputs.property("dockerSrcDirChecksum") { dockerSrcDir.filesChecksum() }
+//
+//  outputs.upToDateWhen {
+//    it.inputs.properties["dockerSrcDirChecksum"] as? Long? == dockerSrcDir.filesChecksum()
+//  }
 
 //  val imageIdFile = file("$temporaryDir/docker-image-id.txt")
 //  outputs.file(imageIdFile)
 
-  workingDir = dockerSrcDir.asFile
-  commandLine = parseSpaceSeparatedArgs(""" docker-compose build kafka-pipe """)
+//  workingDir = dockerSrcDir.asFile
+//  commandLine = parseSpaceSeparatedArgs(""" docker-compose build kafka-pipe """)
 
 //  doLast {
 //    sync {
@@ -53,4 +49,5 @@ val dockerBuildKafkaPipe by tasks.registering(Exec::class) {
 //    }
 //}
 }
+
 tasks.assemble { dependsOn(dockerBuildKafkaPipe) }

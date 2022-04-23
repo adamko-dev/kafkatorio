@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   idea
   `kotlin-dsl`
-  kotlin("jvm") version "1.6.10"
+  kotlin("jvm") version "1.6.21"
   `project-report`
 }
 
@@ -15,7 +15,7 @@ object Versions {
   const val kotlin = "1.6.21"
 
   const val gradleNodePlugin = "3.2.1"
-  const val gradleDockerComposePlugin = "0.15.1"
+  const val gradleDockerComposePlugin = "0.15.2"
 
   const val kotlinXSerialization = "1.3.2"
   const val kvision = "5.8.2"
@@ -31,6 +31,7 @@ dependencies {
   implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:${Versions.kotlin}"))
   implementation("org.jetbrains.kotlin:kotlin-serialization")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
+  implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable")
   implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}")
 
   implementation(platform("org.jetbrains.kotlinx:kotlinx-serialization-bom:${Versions.kotlinXSerialization}"))
@@ -60,7 +61,14 @@ dependencies {
 }
 
 
-tasks.withType<KotlinCompile>().configureEach {
+//tasks.compileKotlin {
+//  kotlinOptions {
+//    // needed by IntelliJ? Even though below does the same?
+//    languageVersion = "1.6"
+//  }
+//}
+
+tasks.withType<KotlinCompile>().all {
 
   kotlinOptions {
     jvmTarget = Versions.jvmTarget

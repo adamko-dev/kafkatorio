@@ -1,6 +1,5 @@
 import dev.adamko.kafkatorio.gradle.asProvider
 import dev.adamko.kafkatorio.gradle.typescriptAttributes
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
 plugins {
@@ -111,11 +110,16 @@ kotlin {
 val generateTypescript by tasks.registering(JavaExec::class) {
   group = "kt2ts"
 
-  val jvmJar by tasks.getting(Jar::class)
-  val main by kotlin.jvm().compilations.getting
+  val jvmJar = tasks.named<Jar>(kotlin.jvm().artifactsTaskName)
+  dependsOn(jvmJar)
+
+  val mainCompilation = kotlin.jvm().compilations.named("main").map { it.runtimeDependencyFiles }
+//  dependsOn(mainCompilation)
+  inputs.files(mainCompilation)
+
   classpath(
     jvmJar,
-    main.runtimeDependencyFiles
+    mainCompilation
   )
 
 //  mainClass.set("dev.adamko.kafkatorio.events.schema.Kt2tsKt")
