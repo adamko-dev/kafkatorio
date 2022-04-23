@@ -12,6 +12,13 @@ services:
       target: "kafka-kraft"
       args:
         KAFKA_DL_URL: "https://dlcdn.apache.org/kafka/3.1.0/kafka_2.13-3.1.0.tgz"
+    volumes:
+      - "./kafka-server.properties:/kafka/server.properties"
+    environment:
+      JMX_PORT: "9991"
+#      KAFKA_JMX_OPTS: "9991"
+      KAFKA_JMX_OPTS: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka -Dcom.sun.management.jmxremote.rmi.port=9991"
+
     networks:
       - "kafka-nw"
       - "kafkatorio-nw"
@@ -48,6 +55,48 @@ services:
 #    ports:
 #      - "8083:8083"
 #
+
+  grafana:
+    image: "grafana/grafana:${GRAFANA_VERSION}"
+    container_name: "grafana"
+    ports:
+      - "3000:3000"
+    environment:
+      GF_PATHS_DATA : /var/lib/grafana
+      GF_SECURITY_ADMIN_PASSWORD : kafka
+    volumes:
+      - "./config/grafana/provisioning:/etc/grafana/provisioning"
+      - "./config/grafana/dashboards:/var/lib/grafana/dashboards"
+    depends_on:
+      - prometheus
+    networks:
+      - "kafka-nw"
+
+  prometheus:
+    image: "prom/prometheus:${PROMETHEUS_VERSION}"
+    container_name: "prometheus"
+    ports:
+      - "9090:9090"
+    volumes:
+      - "./config/prometheus.yml:/etc/prometheus/prometheus.yml"
+    command: "--config.file=/etc/prometheus/prometheus.yml"
+    networks:
+      - "kafka-nw"
+
+  jmx-kafka:
+    image: "sscaling/jmx-prometheus-exporter"
+    container_name: "jmx-kafka"
+    ports:
+      - "5556:5556"
+    environment:
+      CONFIG_YML : "/etc/jmx_exporter/config.yml"
+#      JVM_OPTS: "-XX:MaxRAMPercentage=70.0"
+    volumes:
+      - "./config/jmx_exporter_kafka_broker.yml:/etc/jmx_exporter/config.yml"
+    depends_on:
+      - kafka
+    networks:
+      - "kafka-nw"
 
 networks:
   kafka-nw:

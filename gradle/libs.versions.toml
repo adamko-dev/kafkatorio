@@ -29,6 +29,8 @@ kotest     = "5.2.3"
 ## infra ##
 factorio               = "1.1.57"
 confluent-kafkaConnect = "7.0.1"
+grafana                = "8.5.0"
+prometheus             = "v2.34.0"
 
 #########
 [plugins]

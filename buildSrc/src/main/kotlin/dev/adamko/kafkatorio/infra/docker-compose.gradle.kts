@@ -53,6 +53,7 @@ val dockerEnv by tasks.registering(WriteProperties::class) {
   logging.captureStandardOutput(LogLevel.LIFECYCLE)
 
   setOutputFile(dockerSrcDir.file(".env"))
+
   properties(
     "COMPOSE_PROJECT_NAME" to dockerComposeProjectName,
     "KAFKATORIO_VERSION" to project.version,
