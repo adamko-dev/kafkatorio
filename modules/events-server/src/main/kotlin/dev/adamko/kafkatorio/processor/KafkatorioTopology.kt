@@ -10,6 +10,7 @@ import java.time.Duration
 import java.util.Properties
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.io.path.Path
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -92,10 +93,17 @@ internal class KafkatorioTopology(
     })
 
     val description: TopologyDescription = topology.describe()
+
+    val descFile = Path("./build/$appId.txt").toFile().apply {
+      parentFile.mkdirs()
+      if (!exists()) createNewFile()
+      writeText(description.toString())
+    }
+
     println(
       """
         |----------------
-        |$appId
+        |$appId - ${descFile.canonicalPath}
         |$description
         |----------------
       """.trimMargin()
