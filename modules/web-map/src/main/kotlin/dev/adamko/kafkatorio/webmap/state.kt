@@ -155,7 +155,10 @@ class PlayerState(
       options.color = playerColour
       options.fillColor = playerColour
 
-      setTooltipContent("${playerDetails.name} [${playerDetails.latLng}]")
+      val lat = playerDetails.latLng.lat.toInt()
+      val lng = playerDetails.latLng.lng.toInt()
+
+      setTooltipContent("${playerDetails.name} [$lat, $lng]")
       setLatLng(playerDetails.latLng)
     }
 
