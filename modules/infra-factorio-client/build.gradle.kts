@@ -2,6 +2,7 @@ import dev.adamko.kafkatorio.gradle.asConsumer
 import dev.adamko.kafkatorio.gradle.factorioModAttributes
 import dev.adamko.kafkatorio.gradle.not
 import dev.adamko.kafkatorio.task.ProcessRunningSpec
+import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
@@ -38,13 +39,14 @@ val deployModToClient by tasks.registering(Copy::class) {
 //</editor-fold>
 
 //<editor-fold desc="Factorio client lifecycle tasks">
-fun isFactorioRunning(): Spec<Task> = ProcessRunningSpec("factorio.exe")
+fun ExecOperations.isFactorioRunning(): Spec<Task> = ProcessRunningSpec(this, "factorio.exe")
+
 
 val clientLaunch by tasks.registering(Exec::class) {
   description = "Run Factorio Steam game client"
   group = project.name
 
-  onlyIf(!isFactorioRunning())
+  onlyIf(!serviceOf<ExecOperations>().isFactorioRunning())
 
   dependsOn(deployModToClient)
   mustRunAfter(clientKill, ":modules:infra-factorio-server:processRun")
@@ -60,7 +62,9 @@ val clientLaunch by tasks.registering(Exec::class) {
 val clientKill by tasks.registering(Exec::class) {
   description = "Run Factorio Steam game client"
   group = project.name
-  onlyIf(isFactorioRunning())
+
+  onlyIf(serviceOf<ExecOperations>().isFactorioRunning())
+
   commandLine = parseSpaceSeparatedArgs(""" taskkill /im factorio.exe """)
   doFirst { logger.lifecycle("Killing factorio.exe") }
 }

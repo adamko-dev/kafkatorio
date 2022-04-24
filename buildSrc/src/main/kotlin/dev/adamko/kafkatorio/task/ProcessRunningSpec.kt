@@ -9,14 +9,10 @@ import org.gradle.process.ExecOperations
 
 /** Checks if a process is running. Windows only. */
 class ProcessRunningSpec(
+  private val executor: ExecOperations,
   private val process: String,
   private val ignoreCase: Boolean = true,
 ) : ExplainingSpec<Task> {
-
-  @Inject
-  fun executor(): ExecOperations {
-    throw UnsupportedOperationException()
-  }
 
   override fun isSatisfiedBy(element: Task?): Boolean = whyUnsatisfied(element) == null
 
@@ -27,7 +23,7 @@ class ProcessRunningSpec(
       else     -> {
         return ByteArrayOutputStream().use { outputStream ->
 
-          executor().exec {
+          executor.exec {
             commandLine("tasklist") // Windows only for now...
             standardOutput = outputStream
           }
