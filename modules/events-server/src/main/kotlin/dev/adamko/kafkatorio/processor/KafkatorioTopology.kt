@@ -4,7 +4,7 @@ import dev.adamko.kafkatorio.processor.config.ApplicationProperties
 import dev.adamko.kafkatorio.processor.topology.factorioServerPacketStream
 import dev.adamko.kafkatorio.processor.topology.groupMapChunks
 import dev.adamko.kafkatorio.processor.topology.playerUpdatesToWsServer
-import dev.adamko.kafkatorio.processor.topology.saveMapTiles
+import dev.adamko.kafkatorio.processor.topology.saveMapTiles2
 import dev.adamko.kafkatorio.processor.topology.splitFactorioServerPacketStream
 import java.time.Duration
 import java.util.Properties
@@ -59,7 +59,8 @@ internal class KafkatorioTopology(
 
   private fun saveTiles() {
     val builder = StreamsBuilder()
-    val topology = saveMapTiles(builder)
+//    val topology = saveMapTiles(builder)
+    val topology = saveMapTiles2(builder)
     launchTopology("saveTiles", topology)
   }
 

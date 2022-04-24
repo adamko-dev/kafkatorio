@@ -4,12 +4,17 @@ import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.ScaleMethod
 import com.sksamuel.scrimage.color.RGBColor
 import com.sksamuel.scrimage.nio.PngWriter
-import dev.adamko.kafkatorio.schema.common.*
 import dev.adamko.kafkatorio.processor.admin.TOPIC_GROUPED_MAP_CHUNKS_STATE
 import dev.adamko.kafkatorio.processor.serdes.kxsBinary
+import dev.adamko.kafkatorio.schema.common.ColourHex
+import dev.adamko.kafkatorio.schema.common.MapChunkPosition
+import dev.adamko.kafkatorio.schema.common.MapTilePosition
+import dev.adamko.kafkatorio.schema.common.SurfaceIndex
+import dev.adamko.kafkatorio.schema.common.toMapChunkPosition
 import dev.adamko.kotka.extensions.consumedAs
 import dev.adamko.kotka.extensions.streams.forEach
 import dev.adamko.kotka.kxs.serde
+import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.File
 import kotlin.coroutines.CoroutineContext
@@ -36,6 +41,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.runningFold
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
+import kotlinx.serialization.Serializable
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.Topology
 import org.apache.kafka.streams.kstream.KStream
@@ -51,11 +57,12 @@ private val serverMapChunkHandler = ServerMapChunkHandler()
 fun saveMapTiles(
   builder: StreamsBuilder,
 ): Topology {
+  val pid = "saveMapTiles"
 
   val groupedMapChunkTiles: KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
     builder.stream(
       TOPIC_GROUPED_MAP_CHUNKS_STATE,
-      consumedAs("consume.grouped-map-chunks", kxsBinary.serde(), kxsBinary.serde())
+      consumedAs("$pid.consume.grouped-map-chunks", kxsBinary.serde(), kxsBinary.serde())
     )
 
   groupedMapChunkTiles
@@ -71,24 +78,24 @@ fun saveMapTiles(
 
 
 @JvmInline
-private value class TilePngFilename(
+value class TilePngFilename(
   val value: String,
 ) {
-  constructor(cmd: Cmd.CreateImage) : this(buildString {
+  constructor(id: ServerMapChunkId) : this(buildString {
     append("src/main/resources/kafkatorio-web-map")
-    append("/s${cmd.surfaceIndex}")
-    append("/z${cmd.chunkSize.zoomLevel}")
-    append("/x${cmd.chunkPosition.x}")
-    append("/y${cmd.chunkPosition.y}")
+    append("/s${id.surfaceIndex}")
+    append("/z${id.chunkSize.zoomLevel}")
+    append("/x${id.chunkPosition.x}")
+    append("/y${id.chunkPosition.y}")
     append(".png")
   })
 }
 
 
-private val TRANSPARENT_AWT = ColourHex.TRANSPARENT.toRgbColor().awt()
+val TRANSPARENT_AWT: Color = ColourHex.TRANSPARENT.toRgbColor().awt()
 
 
-private fun ColourHex.toRgbColor(): RGBColor {
+fun ColourHex.toRgbColor(): RGBColor {
   return RGBColor(
     red.toInt(),
     green.toInt(),
@@ -210,15 +217,13 @@ private class ServerMapChunkHandler : CoroutineScope {
             .asFlow()
         }
         .map { createCmd ->
-          val filename = TilePngFilename(createCmd)
-
           val img = createMapTileImage(
             createCmd.chunkPosition,
             createCmd.tiles,
             createCmd.chunkSize,
           )
 
-          Cmd.SaveImage(filename, img)
+          Cmd.SaveImage(createCmd.tilePngFilename, img)
         }
 
     launch {
@@ -270,17 +275,31 @@ private class ServerMapChunkHandler : CoroutineScope {
 
 private sealed interface Cmd {
 
+  @Serializable
   data class ChunkSubdivide(
     val chunkId: ServerMapChunkId,
     val tiles: Map<MapTilePosition, ColourHex>,
   ) : Cmd
 
+  @Serializable
   data class CreateImage(
     val surfaceIndex: SurfaceIndex,
     val chunkSize: ChunkSize,
     val chunkPosition: MapChunkPosition,
     val tiles: Map<MapTilePosition, ColourHex>,
-  ) : Cmd
+  ) : Cmd {
+    val tilePngFilename: TilePngFilename by lazy {
+      TilePngFilename(buildString {
+        append("src/main/resources/kafkatorio-web-map")
+        append("/s${surfaceIndex}")
+        append("/z${chunkSize.zoomLevel}")
+        append("/x${chunkPosition.x}")
+        append("/y${chunkPosition.y}")
+        append(".png")
+      })
+    }
+  }
+
 
   data class SaveImage(
     val filename: TilePngFilename,
