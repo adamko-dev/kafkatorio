@@ -103,6 +103,26 @@ class GroupMapChunksTest : FunSpec({
           }.toSet()
       )
 
+      val top: Int = value.map.keys.minOf { it.y }
+      val bottom = value.map.keys.maxOf { it.y }
+      val left = value.map.keys.minOf { it.x }
+      val right = value.map.keys.maxOf { it.x }
+
+      val colours: MutableMap<ColourHex?, String> = mutableMapOf(null to " ")
+
+      val mapRepresentation = buildString {
+        (top..bottom).forEach { y ->
+          (left..right).forEach { x ->
+            val colour = value.map[MapTilePosition(x, y)]
+            val a = colours.getOrPut(colour) { "${colours.size}" }
+            append(a)
+          }
+          appendLine()
+        }
+      }
+      println(mapRepresentation)
+
+
 //        value shouldBeEqualToComparingFields ServerMapChunkTiles(
 //          chunkId = key,
 //          map = mapOf(
