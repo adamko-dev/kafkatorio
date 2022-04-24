@@ -104,7 +104,7 @@ kafka-streamsTestUtils = { group = "org.apache.kafka", name = "kafka-streams-tes
 # kafka helpers
 #kotka         = { group = "com.github.blueanvil", name = "kotka",         version =     "1.1.1" }
 
-kafka-kotkaStreams = { group = "com.github.adamko-dev.kotka-streams", name = "kotka-streams", version = "0.0.15" }
+kafka-kotkaStreams = { group = "com.github.adamko-dev.kotka-streams", name = "kotka-streams", version = "v22.04.24" }
 
 jsoup = { group = "org.jsoup", name = "jsoup", version = "1.14.3" }
 skrapeit = { group = "it.skrape", name = "skrapeit", version = "1.2.0" }
