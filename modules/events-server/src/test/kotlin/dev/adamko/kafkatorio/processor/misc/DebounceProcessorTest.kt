@@ -19,17 +19,17 @@ class DebounceProcessorTest : FunSpec({
   fun blah() {
 
 
-    val topology = Topology()
-
-    topology.addProcessor(
-      "blah",
-      debounceProcessor(
-        1.minutes,
-        "asdasda",
-        Serdes.String(),
-        Serdes.String()
-      )
-    )
+//    val topology = Topology()
+//
+//    topology.addProcessor(
+//      "blah",
+//      debounceProcessor(
+//        1.minutes,
+//        "asdasda",
+//        Serdes.String(),
+//        Serdes.String()
+//      )
+//    )
 
 
 //    val streamsBuilder = StreamsBuilder()
