@@ -5,6 +5,7 @@ import dev.adamko.kafkatorio.processor.serdes.jsonMapper
 import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
 import dev.adamko.kafkatorio.schema.packets.KafkatorioPacketData
 import dev.adamko.kotka.extensions.consumedAs
+import dev.adamko.kotka.extensions.streams.filter
 import dev.adamko.kotka.extensions.streams.mapValues
 import dev.adamko.kotka.kxs.serde
 import org.apache.kafka.streams.StreamsBuilder
@@ -16,12 +17,14 @@ inline fun <reified T : KafkatorioPacketData> StreamsBuilder.streamPacketData():
   val simpleName = T::class.simpleName!!
   val topicName = T::class.topicName
 
+  val taskName = "consume.${simpleName}"
+
   return stream<FactorioServerId, KafkatorioPacket>(
     topicName,
-    consumedAs("consume.${simpleName}", jsonMapper.serde(), jsonMapper.serde())
-  ).filter { key: FactorioServerId?, value: KafkatorioPacket? ->
+    consumedAs("$taskName.input", jsonMapper.serde(), jsonMapper.serde())
+  ).filter("$taskName.filter-is-instance") { key: FactorioServerId?, value: KafkatorioPacket? ->
     key != null && value?.data is T
-  }.mapValues("consume.map-values.${simpleName}") { _: FactorioServerId, packet: KafkatorioPacket ->
+  }.mapValues("$taskName.map-values") { _: FactorioServerId, packet: KafkatorioPacket ->
     packet.data as T
   }
 }

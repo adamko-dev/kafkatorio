@@ -4,9 +4,10 @@ import dev.adamko.kafkatorio.processor.serdes.kxsBinary
 import dev.adamko.kafkatorio.schema.common.ColourHex
 import dev.adamko.kafkatorio.schema.common.MapTile
 import dev.adamko.kafkatorio.schema.common.toHex
-import dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype
 import dev.adamko.kafkatorio.schema.packets.PrototypesUpdate
+import dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype
 import dev.adamko.kotka.extensions.materializedAs
+import dev.adamko.kotka.extensions.repartitionedAs
 import dev.adamko.kotka.extensions.streams.filter
 import dev.adamko.kotka.extensions.streams.mapValues
 import dev.adamko.kotka.extensions.streams.toTable
@@ -34,51 +35,35 @@ value class TileColourDict(val map: Map<TileProtoHashCode, ColourHex>)
 fun tileProtoColourDictionary(
   factorioServerPacketStream: KStream<FactorioServerId, PrototypesUpdate>
 ): KTable<FactorioServerId, TileColourDict> {
+  val pid = "tileProtoColourDictionary"
 
-  return factorioServerPacketStream.mapValues("server-map-data.tile-prototypes.map-values") { _, protoPacket: PrototypesUpdate ->
+  return factorioServerPacketStream.mapValues(
+    "$pid.map-values"
+  ) { _, protoPacket: PrototypesUpdate ->
     val map = protoPacket
       .prototypes
       .filterIsInstance<FactorioPrototype.MapTile>()
       .associate { TileProtoHashCode(it) to it.mapColour.toHex() }
 
     TileColourDict(map)
-  }.filter("server-map-data.tile-prototypes.filterMapTileProtos") { _, dict: TileColourDict ->
+  }.filter("$pid.filterMapTileProtos") { _, dict: TileColourDict ->
     dict.map.isNotEmpty()
   }.peek { serverId, dict: TileColourDict ->
-    println("server $serverId has TileColourDict[${dict.map.size}]: ${dict.map.entries.joinToString()}")
-  }.toTable(
-    "server-map-data.tile-prototypes",
+    println("$pid: server $serverId has TileColourDict[${dict.map.size}]: ${dict.map.entries.joinToString()}")
+  }.repartition(
+    repartitionedAs(
+      "$pid.pre-table-repartition",
+      kxsBinary.serde(),
+      kxsBinary.serde(),
+      // force, otherwise KTable-KTable FK join doesn't work
+      numberOfPartitions = 1,
+    )
+  ).toTable(
+    "$pid.create-table",
     materializedAs(
-      "server-map-data.tile-prototypes.store",
+      "$pid.output-store",
       kxsBinary.serde(),
       kxsBinary.serde(),
     )
   )
 }
-
-// get all the prototypes
-//  return factorioServerPacketStream
-//    .mapValues("server-map-data.tile-prototypes.mapValues") { _, packet: KafkatorioPacket ->
-//      val map = when (packet) {
-//        is FactorioPrototype -> packet
-//          .prototypes
-//          .filterIsInstance<MapTilePrototype>()
-//          .associate { TileProtoHashCode(it) to it.mapColour.toHex() }
-//        else                 -> mapOf()
-//      }
-//      TileColourDict(map)
-//    }.filter("server-map-data.tile-prototypes.filterMapTileProtos") { _, dict: TileColourDict ->
-//      dict.map.isNotEmpty()
-//    }.peek { serverId, dict: TileColourDict ->
-//      println("server $serverId has TileColourDict[${dict.map.size}]: ${dict.map.entries.joinToString()}")
-//    }
-//    .toTable(
-//      "server-map-data.tile-prototypes",
-//      materializedAs(
-//        "server-map-data.tile-prototypes.store",
-//        kxsBinary.serde(),
-//        kxsBinary.serde(),
-//      )
-//    )
-//
-//}
