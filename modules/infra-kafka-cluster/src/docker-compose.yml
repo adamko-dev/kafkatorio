@@ -56,47 +56,47 @@ services:
 #      - "8083:8083"
 #
 
-  grafana:
-    image: "grafana/grafana:${GRAFANA_VERSION}"
-    container_name: "grafana"
-    ports:
-      - "3000:3000"
-    environment:
-      GF_PATHS_DATA : /var/lib/grafana
-      GF_SECURITY_ADMIN_PASSWORD : kafka
-    volumes:
-      - "./config/grafana/provisioning:/etc/grafana/provisioning"
-      - "./config/grafana/dashboards:/var/lib/grafana/dashboards"
-    depends_on:
-      - prometheus
-    networks:
-      - "kafka-nw"
-
-  prometheus:
-    image: "prom/prometheus:${PROMETHEUS_VERSION}"
-    container_name: "prometheus"
-    ports:
-      - "9090:9090"
-    volumes:
-      - "./config/prometheus.yml:/etc/prometheus/prometheus.yml"
-    command: "--config.file=/etc/prometheus/prometheus.yml"
-    networks:
-      - "kafka-nw"
-
-  jmx-kafka:
-    image: "sscaling/jmx-prometheus-exporter"
-    container_name: "jmx-kafka"
-    ports:
-      - "5556:5556"
-    environment:
-      CONFIG_YML : "/etc/jmx_exporter/config.yml"
-#      JVM_OPTS: "-XX:MaxRAMPercentage=70.0"
-    volumes:
-      - "./config/jmx_exporter_kafka_broker.yml:/etc/jmx_exporter/config.yml"
-    depends_on:
-      - kafka
-    networks:
-      - "kafka-nw"
+#  grafana:
+#    image: "grafana/grafana:${GRAFANA_VERSION}"
+#    container_name: "grafana"
+#    ports:
+#      - "3000:3000"
+#    environment:
+#      GF_PATHS_DATA : /var/lib/grafana
+#      GF_SECURITY_ADMIN_PASSWORD : kafka
+#    volumes:
+#      - "./config/grafana/provisioning:/etc/grafana/provisioning"
+#      - "./config/grafana/dashboards:/var/lib/grafana/dashboards"
+#    depends_on:
+#      - prometheus
+#    networks:
+#      - "kafka-nw"
+#
+#  prometheus:
+#    image: "prom/prometheus:${PROMETHEUS_VERSION}"
+#    container_name: "prometheus"
+#    ports:
+#      - "9090:9090"
+#    volumes:
+#      - "./config/prometheus.yml:/etc/prometheus/prometheus.yml"
+#    command: "--config.file=/etc/prometheus/prometheus.yml"
+#    networks:
+#      - "kafka-nw"
+#
+#  jmx-kafka:
+#    image: "sscaling/jmx-prometheus-exporter"
+#    container_name: "jmx-kafka"
+#    ports:
+#      - "5556:5556"
+#    environment:
+#      CONFIG_YML : "/etc/jmx_exporter/config.yml"
+##      JVM_OPTS: "-XX:MaxRAMPercentage=70.0"
+#    volumes:
+#      - "./config/jmx_exporter_kafka_broker.yml:/etc/jmx_exporter/config.yml"
+#    depends_on:
+#      - kafka
+#    networks:
+#      - "kafka-nw"
 
 networks:
   kafka-nw:
