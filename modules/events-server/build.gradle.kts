@@ -94,3 +94,7 @@ idea {
     excludeDirs = excludeDirs + kafkaStateDir.asFile
   }
 }
+
+//tasks.withType<KotlinNpmInstallTask>().all {
+//  notCompatibleWithConfigurationCache("error: Projects must be configuring")
+//}

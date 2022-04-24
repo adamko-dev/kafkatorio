@@ -6,30 +6,31 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.CacheableTask
+import org.gradle.api.tasks.IgnoreEmptyDirectories
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.TaskAction
-import org.gradle.work.Incremental
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 @CacheableTask
-abstract class TypescriptToLuaTask : NpmTask() {
+abstract class TypescriptToLuaTask @Inject constructor(
+  private val fs: FileSystemOperations
+) : NpmTask() {
 
   @get:InputDirectory
   @get:SkipWhenEmpty
   @get:PathSensitive(PathSensitivity.RELATIVE)
   @get:NormalizeLineEndings
+  @get:IgnoreEmptyDirectories
   abstract val sourceFiles: DirectoryProperty
 
   @get:OutputDirectory
   abstract val outputDirectory: DirectoryProperty
-
-  @get:Inject
-  abstract val fs: FileSystemOperations
 
   init {
     super.setGroup(BasePlugin.BUILD_GROUP)
