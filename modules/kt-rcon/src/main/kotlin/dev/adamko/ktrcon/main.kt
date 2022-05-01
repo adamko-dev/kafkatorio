@@ -7,12 +7,12 @@ import kotlinx.coroutines.runBlocking
 fun main(): Unit = runBlocking {
   KtRconClient3(
     "localhost",
-    27715,
-    Password("coh9oongoojahX4")
+    27015,
+    Password("chofeengook8Shu")
   ).use { client ->
 
 //    client.send(PacketType.AUTH_REQUEST, "passwrd")
-    client.send(PacketType.AUTH_REQUEST, "coh9oongoojahX4")
+    client.send(PacketType.AUTH_REQUEST, "chofeengook8Shu")
     delay(10.seconds)
 
     client.send(PacketType.EXEC_COMMAND, "/help")
