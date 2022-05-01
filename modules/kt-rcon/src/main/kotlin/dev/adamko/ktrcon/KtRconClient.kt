@@ -1,14 +1,6 @@
 package dev.adamko.ktrcon
 
-import java.io.*
 import java.net.Socket
-import java.net.SocketException
-import java.nio.BufferUnderflowException
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.nio.channels.AsynchronousSocketChannel
-import kotlin.coroutines.coroutineContext
-import kotlin.coroutines.suspendCoroutine
 import kotlin.random.Random
 import kotlin.random.nextUInt
 import kotlinx.coroutines.CoroutineScope
@@ -17,15 +9,13 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.supervisorScope
-import kotlinx.coroutines.yield
 
 class KtRconClient(
-    private val host: String,
-    private val port: Int,
-    private val password: Password,
+  private val host: String,
+  private val port: Int,
+  private val password: Password,
 ) : AutoCloseable {
 
   private val rconClientScope = CoroutineScope(SupervisorJob())
@@ -46,22 +36,22 @@ class KtRconClient(
 
     runCatching {
       val reader = socket.getInputStream()
-          .bufferedReader()
-          .lineSequence()
-          .asFlow()
-          .onEach {
-            println("socket response: [$it]")
-          }
-          .launchIn(rconClientScope)
+        .bufferedReader()
+        .lineSequence()
+        .asFlow()
+        .onEach {
+          println("socket response: [$it]")
+        }
+        .launchIn(rconClientScope)
 
 //        while (socket.isConnected) {
 //          println("response: ${input.read().toByte().toInt().toChar()}")
 
-    println("is listener active? ${reader.isActive}")
+      println("is listener active? ${reader.isActive}")
 
-    reader.invokeOnCompletion {
-      println("cancelled input stream job")
-    }
+      reader.invokeOnCompletion {
+        println("cancelled input stream job")
+      }
 
     }
 //        }

@@ -1,6 +1,5 @@
 package dev.adamko.ktrcon
 
-import io.ktor.utils.io.bits.reverseByteOrder
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -28,9 +27,9 @@ import java.nio.ByteOrder
  * to be executed, or the server's response to a request.
  */
 data class Packet(
-    val id: UInt,
-    val type: PacketType,
-    val bodyRaw: String,
+  val id: UInt,
+  val type: PacketType,
+  val bodyRaw: String,
 ) {
   private val bodyTerminator: Byte = NULL_CHAR_BYTE
 
@@ -46,7 +45,7 @@ data class Packet(
     val packetTerminatorSize = 1 * Byte.SIZE_BYTES
     val total = idSize + typeSize + bodySize + bodyTerminatorSize + packetTerminatorSize
     println(
-        "packetSize: $total = $idSize + $typeSize + $bodySize + $bodyTerminatorSize + $packetTerminatorSize"
+      "packetSize: $total = $idSize + $typeSize + $bodySize + $bodyTerminatorSize + $packetTerminatorSize"
     )
 
     total
@@ -81,20 +80,20 @@ data class Packet(
   fun toByteBuffer2(): ByteBuffer {
 
     return ByteBuffer
-        .allocate(totalSize)
-        .order(ByteOrder.LITTLE_ENDIAN)
-        // size
-        .putInt(size)
-        // ID
-        .putInt(id.toInt())
-        // type
-        .putInt(type.value)
-        // body
-        .put(body)
-        // body terminator
-        .put(bodyTerminator)
-        // packet terminator
-        .put(RCON_PACKET_TERMINATOR)
+      .allocate(totalSize)
+      .order(ByteOrder.LITTLE_ENDIAN)
+      // size
+      .putInt(size)
+      // ID
+      .putInt(id.toInt())
+      // type
+      .putInt(type.value)
+      // body
+      .put(body)
+      // body terminator
+      .put(bodyTerminator)
+      // packet terminator
+      .put(RCON_PACKET_TERMINATOR)
 //        .asReadOnlyBuffer()
 
 

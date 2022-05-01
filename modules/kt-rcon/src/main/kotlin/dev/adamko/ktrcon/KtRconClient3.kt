@@ -1,47 +1,28 @@
 package dev.adamko.ktrcon
 
 import io.ktor.network.selector.ActorSelectorManager
+import io.ktor.network.sockets.InetSocketAddress
 import io.ktor.network.sockets.aSocket
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
-import io.ktor.util.decodeString
 import io.ktor.utils.io.ByteReadChannel
 import io.ktor.utils.io.ByteWriteChannel
 import io.ktor.utils.io.core.isNotEmpty
 import io.ktor.utils.io.core.readBytes
-import io.ktor.utils.io.readRemaining
-import io.ktor.utils.io.readUTF8Line
-import io.ktor.utils.io.writeIntLittleEndian
-import io.ktor.utils.io.writeStringUtf8
-import java.io.*
-import java.net.InetSocketAddress
-import java.net.Socket
-import java.net.SocketException
-import java.nio.BufferUnderflowException
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.nio.channels.AsynchronousSocketChannel
-import java.nio.channels.CompletionHandler
-import java.util.concurrent.TimeUnit
-import kotlin.coroutines.coroutineContext
-import kotlin.coroutines.suspendCoroutine
 import kotlin.random.Random
 import kotlin.random.nextUInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.yield
 
 class KtRconClient3(
-    private val host: String,
-    private val port: Int,
-    private val password: Password,
+  private val host: String,
+  private val port: Int,
+  private val password: Password,
 ) : AutoCloseable {
 
   private val rconClientJob = SupervisorJob()
@@ -54,8 +35,8 @@ class KtRconClient3(
     val socket = runBlocking {
       val selector = ActorSelectorManager(rconClientJob)
       aSocket(selector)
-          .tcp()
-          .connect(InetSocketAddress(host, port))
+        .tcp()
+        .connect(InetSocketAddress(host, port))
     }
     input = socket.openReadChannel()
     output = socket.openWriteChannel()
@@ -74,7 +55,7 @@ class KtRconClient3(
         while (packet.isNotEmpty) {
           val bytes = packet.readBytes()
           println(
-              "received ${bytes.size} bytes: ${bytes.joinToString { "$it" }} - ${bytes.decodeToString()}"
+            "received ${bytes.size} bytes: ${bytes.joinToString { "$it" }} - ${bytes.decodeToString()}"
           )
           yield()
         }

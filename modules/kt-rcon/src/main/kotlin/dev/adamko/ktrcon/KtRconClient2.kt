@@ -1,34 +1,20 @@
 package dev.adamko.ktrcon
 
-import java.io.*
 import java.net.InetSocketAddress
-import java.net.Socket
-import java.net.SocketException
-import java.nio.BufferUnderflowException
 import java.nio.ByteBuffer
-import java.nio.ByteOrder
 import java.nio.channels.AsynchronousSocketChannel
-import java.nio.channels.CompletionHandler
-import java.util.concurrent.TimeUnit
-import kotlin.coroutines.coroutineContext
-import kotlin.coroutines.suspendCoroutine
 import kotlin.random.Random
 import kotlin.random.nextUInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.supervisorScope
-import kotlinx.coroutines.yield
 
 class KtRconClient2(
-    private val host: String,
-    private val port: Int,
-    private val password: Password,
+  private val host: String,
+  private val port: Int,
+  private val password: Password,
 ) : AutoCloseable {
 
   private val rconClientScope = CoroutineScope(SupervisorJob())
