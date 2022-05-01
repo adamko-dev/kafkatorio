@@ -91,11 +91,9 @@ val installEventsTsSchema by tasks.registering(Sync::class) {
 }
 
 
+val zipNameProvider = provider { distributionZipName }
+
 tasks.distZip {
-  val zipName = distributionZipName
-  val zipNameProvider = provider { zipName }
-  val projectTokens = projectTokens
-  inputs.property("distributionZipName", distributionZipName)
   inputs.property("zipNameProvider", zipNameProvider)
   inputs.property("projectTokens", projectTokens)
 
