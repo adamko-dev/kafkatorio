@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
+import dev.adamko.kafkatorio.task.DockerComposeExec
 
 plugins {
   dev.adamko.kafkatorio.infra.`docker-compose`
@@ -14,9 +14,7 @@ tasks.dockerUp {
 }
 
 
-
-@Suppress("UnstableApiUsage") // normalizeLineEndings is incubating
-val dockerBuildKafkaPipe by tasks.registering(dev.adamko.kafkatorio.task.DockerComposeExec::class) {
+val dockerBuildKafkaPipe by tasks.registering(DockerComposeExec::class) {
   dependsOn(tasks.dockerEnv)
 
   dockerComposeDir.set(dockerSrcDir)

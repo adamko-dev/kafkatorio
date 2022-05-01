@@ -1,4 +1,5 @@
 import dev.adamko.kafkatorio.gradle.excludeGeneratedGradleDsl
+import java.time.LocalDate
 
 plugins {
   idea
@@ -12,14 +13,14 @@ version = "0.4.0"
 
 val licenseFile: RegularFile by extra(layout.projectDirectory.file("LICENSE"))
 
-val projectTokens: MutableMap<String, String> by extra(
-  mutableMapOf(
-    "project.version" to "$version",
-    "rootProject.name" to rootProject.name,
-    "date.year" to "${java.time.LocalDate.now().year}",
-    "author.email" to "adam@adamko.dev",
-  )
-)
+val projectTokens: MapProperty<String, String> by extra {
+  objects.mapProperty<String, String>().apply {
+    put("project.version", provider { "$version" })
+    put("rootProject.name", provider { rootProject.name })
+    put("date.year", provider { "${LocalDate.now().year}" })
+    put("author.email", "adam@adamko.dev")
+  }
+}
 
 idea {
   module {

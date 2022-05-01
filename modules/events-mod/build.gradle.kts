@@ -18,24 +18,21 @@ description =
 // Factorio required format is:
 // - filename: `mod-name_version.zip`
 // - zip contains one directory, `mod-name`
-val modName: String by extra("${rootProject.name}-events")
-val distributionZipName: String by extra("${modName}_${project.version}.zip")
+val modName: String by extra { "${rootProject.name}-events" }
+val distributionZipName: String by extra { "${modName}_${project.version}.zip" }
 
 // version of Factorio that the mod is compatible with (must only be "major.minor" - patch causes error)
-val modFactorioCompatibility: String by extra(
-  libs.versions.factorio
-    .map { SemVer.parse(it).run { "$major.$minor" } }
-    .get()
-)
+val modFactorioCompatibility: Provider<String> =
+  libs.versions.factorio.map { SemVer.parse(it).run { "$major.$minor" } }
 
 val licenseFile: RegularFile by rootProject.extra
-val projectTokens: MutableMap<String, String> by rootProject.extra
-projectTokens += mapOf(
-  "mod.name" to modName,
-  "mod.title" to "Kafkatorio Events",
-  "mod.description" to (project.description ?: ""),
-  "factorio.version" to modFactorioCompatibility,
-)
+val projectTokens: MapProperty<String, String> by rootProject.extra
+projectTokens.apply {
+  put("mod.name", modName)
+  put("mod.title", "Kafkatorio Events")
+  put("mod.description", provider { project.description }.orElse(""))
+  put("factorio.version", modFactorioCompatibility)
+}
 
 val tsSrcDir: Directory = layout.projectDirectory.dir("src/main/typescript")
 
@@ -95,8 +92,14 @@ val installEventsTsSchema by tasks.registering(Sync::class) {
 
 
 tasks.distZip {
-  archiveFileName.set(provider { distributionZipName })
+  val zipName = distributionZipName
+  val zipNameProvider = provider { zipName }
+  val projectTokens = projectTokens
+  inputs.property("distributionZipName", distributionZipName)
+  inputs.property("zipNameProvider", zipNameProvider)
+  inputs.property("projectTokens", projectTokens)
 
+  archiveFileName.set(zipNameProvider)
 }
 
 
@@ -112,7 +115,7 @@ distributions {
       from(licenseFile)
       from(typescriptToLua.map { it.outputDirectory })
       filesNotMatching("**/*.png") {
-        filter<ReplaceTokens>("tokens" to projectTokens)
+        filter<ReplaceTokens>("tokens" to projectTokens.get())
       }
       includeEmptyDirs = false
       exclude {
