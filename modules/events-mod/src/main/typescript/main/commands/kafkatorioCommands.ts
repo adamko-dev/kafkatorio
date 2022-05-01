@@ -42,6 +42,7 @@ commands.add_command(
             const chunkYMax = chunkPosition.y + radius
 
             // let i = 100
+            let chunkCount = 0
             for (const [, surface] of game.surfaces) {
               for (const chunk of surface.get_chunks()) {
                 if (
@@ -63,12 +64,13 @@ commands.add_command(
                       data,
                       50
                   )
-
+                  chunkCount++
                   // handleChunkGeneratedEvent(data, i)
                   // i = i + 10
                 }
               }
             }
+            player.print(`enqueued ${chunkCount} chunks`)
           }
         } else if (paramUppercase.startsWith("INIT_GLOBAL")) {
           initGlobal(paramUppercase.startsWith("INIT_GLOBAL FORCE"))
