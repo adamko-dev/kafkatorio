@@ -36,57 +36,26 @@ function mapTilesUpdateDebounce(
       data => {
 
         // tile dictionary update
-        data.tileDictionary ??= {
-          tilesXY: {},
-          protos: {},
+        if (data.tileDictionary == undefined) {
+          data.tileDictionary = {
+            tilesXY: {},
+            protos: {},
+          }
         }
-
-
-        // let maxX = 0
-        // let minX = 0
-        // let maxY = 0
-        // let minY = 0
-        // for (const tile of tiles) {
-        //   //@formatter:off
-        //   if (tile.position.x < minX) minX = tile.position.x
-        //   if (tile.position.x > maxX) maxX = tile.position.x
-        //   if (tile.position.y > minY) minY = tile.position.y
-        //   if (tile.position.y > maxY) maxY = tile.position.y
-        //   //@formatter:on
-        // }
-        //
-        // const noTileProto = 0
-        //
-        // const grid: int[][] = []
-        // for (let x = 0; x < maxX; x++) {
-        //   grid[x] = []
-        //   for (let y = 0; y < maxY; y++) {
-        //     grid[x][y] = noTileProto
-        //   }
-        // }
-        // data.tileDictionary.protos["no-tile"] = noTileProto
-        //
-        // let protosCount2: uint = 0
-        // for (const tile of tiles) {
-        //   const x = tile.position.x - minX
-        //   const y = tile.position.y - minY
-        //
-        //   data.tileDictionary.protos[tile.name] ??= protosCount2++
-        //   grid[x][y] = data.tileDictionary.protos[tile.name]
-        // }
-        //
-        // const grid2: string[] = grid.map(row => table.concat(row))
-
 
         let protosCount: uint = 0
         for (const tile of tiles) {
-          data.tileDictionary.protos[tile.name] ??= protosCount++
+          if (data.tileDictionary.protos[tile.name] == undefined) {
+            data.tileDictionary.protos[tile.name] = protosCount++
+          }
           const protoKey = data.tileDictionary.protos[tile.name]
 
           const xString = `${tile.position.x}`
           const yString = `${tile.position.y}`
 
-          data.tileDictionary.tilesXY[xString] ??= {}
+          if (data.tileDictionary.tilesXY[xString] == undefined) {
+            data.tileDictionary.tilesXY[xString] = {}
+          }
           data.tileDictionary.tilesXY[xString][yString] = protoKey
         }
 
@@ -222,15 +191,16 @@ function convertOldPosition(
 
 
 function handleBuiltTileEvent(event: OnPlayerBuiltTileEvent | OnRobotBuiltTileEvent) {
+  const eventName = Converters.eventNameString(event.name)
 
   const surface = getSurface(event.surface_index)
   if (surface == undefined) {
+    log(`[handleBuiltTileEvent] undefined surface ${eventName}`)
     return
   }
 
   const tiles: TileRead[] = convertOldPosition(event.tiles, event.tile)
   const groupedTiles = groupTiles(tiles)
-  const eventName = Converters.eventNameString(event.name)
 
   for (const [chunkPos, tiles] of groupedTiles) {
     mapTilesUpdateDebounce(
