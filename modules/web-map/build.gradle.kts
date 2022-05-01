@@ -1,4 +1,3 @@
-import dev.adamko.kafkatorio.gradle.yarn
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
@@ -66,15 +65,16 @@ kotlin {
         kvision("kvision-redux")
         kvision("kvision-state-flow")
 
-        implementation(libs.kotlinx.coroutines)
-
+        implementation(dependencies.platform(libs.kotlinx.coroutines.bom))
         implementation(dependencies.platform(libs.kotlin.jsWrappers.bom))
 
-//        implementation(dependencies.platform(npm("follow-redirects", "^1.14.8")))
-//        implementation(dependencies.platform(npm("nanoid", "^3.1.31")))
-//        implementation(dependencies.platform(npm("minimist", "^1.2.6")))
-//        implementation(dependencies.platform(npm("async", "^2.6.4")))
-//        implementation(dependencies.platform(npm("node-forge", "^1.3.0")))
+        implementation(libs.kotlinx.coroutines.core)
+
+        implementation(dependencies.platform(npm("follow-redirects", "^1.14.8")))
+        implementation(dependencies.platform(npm("nanoid", "^3.1.31")))
+        implementation(dependencies.platform(npm("minimist", "^1.2.6")))
+        implementation(dependencies.platform(npm("async", "^2.6.4")))
+        implementation(dependencies.platform(npm("node-forge", "^1.3.0")))
       }
 
       val webDir = file("src/main/web")
@@ -104,13 +104,13 @@ fun KotlinDependencyHandler.kvision(
 }
 
 // https://youtrack.jetbrains.com/issue/KT-42420
-afterEvaluate {
-  yarn {
-    resolution("mocha", "9.2.2")
-    resolution("follow-redirects", "1.14.8")
-    resolution("nanoid", "3.1.31")
-    resolution("minimist", "1.2.6")
-    resolution("async", "2.6.4")
-    resolution("node-forge", "1.3.0")
-  }
-}
+//afterEvaluate {
+//  yarn {
+//    resolution("mocha", "9.2.2")
+//    resolution("follow-redirects", "1.14.8")
+//    resolution("nanoid", "3.1.31")
+//    resolution("minimist", "1.2.6")
+//    resolution("async", "2.6.4")
+//    resolution("node-forge", "1.3.0")
+//  }
+//}

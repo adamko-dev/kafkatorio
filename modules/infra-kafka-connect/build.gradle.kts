@@ -23,6 +23,8 @@ fun DependencyHandlerScope.kafkaConnector(
 }
 
 dependencies {
+  implementation(platform(projects.modules.versionsPlatform))
+
   kotlin("reflect")
 
   kafkaConnector("camel-ahc-ws-kafka-connector")
@@ -30,12 +32,10 @@ dependencies {
 
   implementation("com.github.adamko-dev:json5-kotlin:2.0.3")
 
-  implementation(platform(libs.http4k.bom))
   implementation(libs.bundles.http4k)
 
-  implementation(platform(libs.kotlinx.serialization.bom))
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-core")
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
+  implementation(libs.kotlinx.serialization.core)
+  implementation(libs.kotlinx.serialization.json)
 }
 
 // disabled for now...

@@ -18,6 +18,7 @@ val projectId: String by project.extra
 val kafkaStateDir = layout.projectDirectory.dir("kafka-state")
 
 dependencies {
+  implementation(platform(projects.modules.versionsPlatform))
 
   implementation(libs.kafka.streams)
   testImplementation(libs.kafka.streamsTestUtils)
@@ -26,14 +27,12 @@ dependencies {
 
 //  implementation("com.ionspin.kotlin:bignum:0.3.3")
 
-  implementation(platform(libs.kotlinx.serialization.bom))
   implementation(libs.kotlinx.serialization.core)
   implementation(libs.kotlinx.serialization.json)
 //  implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf")
 
-  implementation(libs.kotlinx.coroutines)
+  implementation(libs.kotlinx.coroutines.core)
 
-  implementation(platform(libs.http4k.bom))
   implementation(libs.bundles.http4k)
   implementation(libs.http4k.format.kotlinx)
 
@@ -41,7 +40,6 @@ dependencies {
 
   implementation(libs.scrimage.core)
 
-  implementation(platform(libs.okio.bom))
   implementation(libs.okio.core)
 
   implementation(libs.kafka.kotkaStreams) {

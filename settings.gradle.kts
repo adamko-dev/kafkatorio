@@ -16,6 +16,8 @@ include(
   ":modules:web-map",
 
   ":modules:factorio-mod-portal-client",
+
+  ":modules:versions-platform",
 )
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

@@ -2,16 +2,10 @@ plugins {
   dev.adamko.kafkatorio.lang.`kotlin-jvm`
 }
 
-//group = "${rootProject.group}.server"
-//version = rootProject.version
-//
-
 dependencies {
+  implementation(platform(projects.modules.versionsPlatform))
 
-  implementation(enforcedPlatform(libs.kotlinx.serialization.bom))
+  implementation(libs.kotlinx.coroutines.core)
 
-  implementation(libs.kotlinx.coroutines)
-
-  implementation("io.ktor:ktor-network:1.6.4")
-
+  implementation("io.ktor:ktor-network")
 }

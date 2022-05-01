@@ -8,16 +8,15 @@ plugins {
 
 
 dependencies {
+  implementation(platform(projects.modules.versionsPlatform))
 
   implementation(projects.modules.eventsServer)
 
-  implementation(platform(libs.kotlinx.serialization.bom))
   implementation(libs.kotlinx.serialization.core)
   implementation(libs.kotlinx.serialization.json)
 
-  implementation(libs.kotlinx.coroutines)
+  implementation(libs.kotlinx.coroutines.core)
 
-  implementation(platform(libs.http4k.bom))
   implementation(libs.bundles.http4k)
   implementation(libs.http4k.format.kotlinx)
 
