@@ -108,7 +108,7 @@ fun ColourHex.toRgbColor(): RGBColor {
 private class ServerMapChunkHandler : CoroutineScope {
 
   override val coroutineContext: CoroutineContext =
-    Dispatchers.Default + SupervisorJob() + CoroutineName("ServerMapChunkHandler")
+    Dispatchers.Default + SupervisorJob(rootJob) + CoroutineName("ServerMapChunkHandler")
 
 
   /** The inbox for this handler. */

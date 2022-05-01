@@ -15,6 +15,7 @@ import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import org.apache.kafka.streams.KafkaStreams
@@ -30,7 +31,7 @@ internal class KafkatorioTopology(
 ) : CoroutineScope {
 
   override val coroutineContext: CoroutineContext =
-    Dispatchers.Default + SupervisorJob() + CoroutineName("KafkatorioTopology")
+    Dispatchers.Default + SupervisorJob(rootJob) + CoroutineName("KafkatorioTopology")
 
   fun start() {
     splitPackets()
@@ -76,7 +77,7 @@ internal class KafkatorioTopology(
   private fun launchTopology(
     id: String,
     topology: Topology,
-    config: Map<String, String> = mapOf()
+    config: Map<String, String> = mapOf(),
   ) {
 
     val props: Properties = appProps.kafkaConfig
@@ -112,10 +113,16 @@ internal class KafkatorioTopology(
 
     coroutineContext.job.invokeOnCompletion {
       println("closing $id KafkaStreams")
+      rootJob.cancelChildren()
+      rootJob.cancel()
       streams.close(Duration.ofSeconds(1))
     }
 
     launch { streams.start() }
+  }
+
+  companion object {
+    val rootJob = SupervisorJob()
   }
 
 }
