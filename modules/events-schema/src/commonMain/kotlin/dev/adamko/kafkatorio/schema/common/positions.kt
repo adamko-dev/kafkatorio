@@ -134,9 +134,27 @@ fun MapChunkPosition.leftTopTile(chunkSize: Int = MAP_CHUNK_SIZE): MapTilePositi
     y * chunkSize,
   )
 
+
+fun MapChunkPosition.rightBottomTile(chunkSize: Int = MAP_CHUNK_SIZE): MapTilePosition =
+  leftTopTile(chunkSize) + (chunkSize - 1)
+
+
+fun MapChunkPosition.iterateTiles(chunkSize: Int = MAP_CHUNK_SIZE): Iterator<MapTilePosition> {
+  val leftTop = leftTopTile(chunkSize)
+  val rightBottom = rightBottomTile(chunkSize)
+  return iterator {
+    (leftTop.x..rightBottom.x).forEach { x ->
+      (leftTop.y..rightBottom.y).forEach { y ->
+        yield(MapTilePosition(x, y))
+      }
+    }
+  }
+}
+
+
 //val MapChunkPosition.rightBottomTile: MapTilePosition
 //  get() = leftTopTile + (MAP_CHUNK_SIZE - 1)
-//
+
 //
 //val MapChunkPosition.boundingBox: MapBoundingBox
 //  get() = MapBoundingBox(leftTopTile, rightBottomTile)

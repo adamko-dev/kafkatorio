@@ -61,7 +61,7 @@ internal class KafkatorioTopology(
   private fun saveTiles() {
     val builder = StreamsBuilder()
 //    val topology = saveMapTiles(builder)
-    val topology = saveMapTiles2(builder)
+    val topology = saveMapTiles2(builder, appProps.webmapTileDir)
     launchTopology("saveTiles", topology)
   }
 

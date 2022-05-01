@@ -4,6 +4,7 @@ import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.ScaleMethod
 import com.sksamuel.scrimage.color.RGBColor
 import com.sksamuel.scrimage.nio.PngWriter
+import dev.adamko.kafkatorio.processor.KafkatorioTopology.Companion.rootJob
 import dev.adamko.kafkatorio.processor.admin.TOPIC_GROUPED_MAP_CHUNKS_STATE
 import dev.adamko.kafkatorio.processor.serdes.kxsBinary
 import dev.adamko.kafkatorio.schema.common.ColourHex
@@ -82,8 +83,7 @@ value class TilePngFilename(
   val value: String,
 ) {
   constructor(id: ServerMapChunkId) : this(buildString {
-    append("src/main/resources/kafkatorio-web-map")
-    append("/s${id.surfaceIndex}")
+    append("s${id.surfaceIndex}")
     append("/z${id.chunkSize.zoomLevel}")
     append("/x${id.chunkPosition.x}")
     append("/y${id.chunkPosition.y}")
@@ -198,7 +198,7 @@ private class ServerMapChunkHandler : CoroutineScope {
                 .tiles
                 .entries
                 .groupBy(
-                  { (tile, _) -> tile.toMapChunkPosition(chunkSize.tilesPerChunk) }
+                  { (tile, _) -> tile.toMapChunkPosition(chunkSize.lengthInTiles) }
                 ) { (tilePosition, colour) ->
                   tilePosition to colour
                 }
@@ -245,14 +245,14 @@ private class ServerMapChunkHandler : CoroutineScope {
   ): ImmutableImage {
 
     val chunkImage = ImmutableImage.filled(
-      chunkSize.tilesPerChunk,
-      chunkSize.tilesPerChunk,
+      chunkSize.lengthInTiles,
+      chunkSize.lengthInTiles,
       TRANSPARENT_AWT,
       BufferedImage.TYPE_INT_ARGB
     )
 
-    val chunkOriginX: Int = chunkPosition.x * chunkSize.tilesPerChunk
-    val chunkOriginY: Int = chunkPosition.y * chunkSize.tilesPerChunk
+    val chunkOriginX: Int = chunkPosition.x * chunkSize.lengthInTiles
+    val chunkOriginY: Int = chunkPosition.y * chunkSize.lengthInTiles
 
     chunkColours.forEach { (tilePosition, colour) ->
 

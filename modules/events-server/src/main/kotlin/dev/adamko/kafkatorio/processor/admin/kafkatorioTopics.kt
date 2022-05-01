@@ -17,11 +17,18 @@ private const val DOMAIN = "kafkatorio"
 const val TOPIC_SRC_SERVER_LOG = "$DOMAIN.src.server-log"
 
 const val TOPIC_GROUPED_MAP_CHUNKS_STATE = "$DOMAIN.state.map-chunks.grouped"
+const val TOPIC_GROUPED_MAP_CHUNKS_STATE_DEBOUNCED = "$TOPIC_GROUPED_MAP_CHUNKS_STATE.debounced"
+
+const val TOPIC_SUBDIVIDED_MAP_TILES = "$DOMAIN.map-tiles.subdivided"
+const val TOPIC_SUBDIVIDED_MAP_TILES_DEBOUNCED = "$TOPIC_SUBDIVIDED_MAP_TILES.debounced"
 
 
 fun allTopics(): Set<String> = buildSet {
   add(TOPIC_SRC_SERVER_LOG)
   add(TOPIC_GROUPED_MAP_CHUNKS_STATE)
+  add(TOPIC_GROUPED_MAP_CHUNKS_STATE_DEBOUNCED)
+  add(TOPIC_SUBDIVIDED_MAP_TILES)
+  add(TOPIC_SUBDIVIDED_MAP_TILES_DEBOUNCED)
 
   addAll(packetTopicNames.values)
 }

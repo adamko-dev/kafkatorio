@@ -1,6 +1,8 @@
 package dev.adamko.kafkatorio.processor.topology
 
 import dev.adamko.kafkatorio.processor.admin.TOPIC_GROUPED_MAP_CHUNKS_STATE
+import dev.adamko.kafkatorio.processor.admin.TOPIC_GROUPED_MAP_CHUNKS_STATE_DEBOUNCED
+import dev.adamko.kafkatorio.processor.misc.DebounceProcessor.Companion.addDebounceProcessor
 import dev.adamko.kafkatorio.processor.serdes.kxsBinary
 import dev.adamko.kafkatorio.schema.common.ColourHex
 import dev.adamko.kafkatorio.schema.common.MapChunkPosition
@@ -13,7 +15,7 @@ import dev.adamko.kafkatorio.schema.common.toMapChunkPosition
 import dev.adamko.kafkatorio.schema.packets.MapChunkUpdate
 import dev.adamko.kafkatorio.schema.packets.PrototypesUpdate
 import dev.adamko.kotka.extensions.groupedAs
-import dev.adamko.kotka.extensions.materializedWith
+import dev.adamko.kotka.extensions.materializedAs
 import dev.adamko.kotka.extensions.producedAs
 import dev.adamko.kotka.extensions.repartitionedAs
 import dev.adamko.kotka.extensions.streams.filter
@@ -27,6 +29,7 @@ import dev.adamko.kotka.extensions.tables.toStream
 import dev.adamko.kotka.kxs.serde
 import kotlin.collections.component1
 import kotlin.collections.component2
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.serialization.Serializable
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.Topology
@@ -82,12 +85,20 @@ fun groupMapChunks(builder: StreamsBuilder): Topology {
       TOPIC_GROUPED_MAP_CHUNKS_STATE,
       producedAs(
         "$pid.grouped-map-chunks",
-        kxsBinary.serde<ServerMapChunkId>(),
-        kxsBinary.serde<ServerMapChunkTiles<ColourHex>>()
+        kxsBinary.serde(),
+        kxsBinary.serde(),
       )
     )
 
   return builder.build()
+    .addDebounceProcessor<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>(
+      namePrefix = pid,
+      sourceTopic = TOPIC_GROUPED_MAP_CHUNKS_STATE,
+      sinkTopic = TOPIC_GROUPED_MAP_CHUNKS_STATE_DEBOUNCED,
+      inactivityDuration = 15.seconds,
+      keySerde = kxsBinary.serde(),
+      valueSerde = kxsBinary.serde(),
+    )
 }
 
 
@@ -122,7 +133,7 @@ private fun groupTilesIntoChunksWithColours(
           mapTiles
             .tiles
             .groupBy { tile ->
-              tile.position.toMapChunkPosition(standardChunkSize.tilesPerChunk)
+              tile.position.toMapChunkPosition(standardChunkSize.lengthInTiles)
             }
             .map { (chunkPos, tiles) ->
 
@@ -165,9 +176,8 @@ private fun groupTilesIntoChunksWithColours(
       )
       .reduce(
         "server-map-data.tiles.reduce",
-        materializedWith(
-//        materializedAs(
-//          "server-map-data.tiles.reduce.store",
+        materializedAs(
+          "server-map-data.tiles.reduce.store",
           kxsBinary.serde<ServerMapChunkId>(),
           kxsBinary.serde<ServerMapChunkTiles<TileProtoHashCode>>(),
         )
@@ -185,10 +195,10 @@ private fun groupTilesIntoChunksWithColours(
       .join(
         other = tileProtoColourDict,
         tableJoined = tableJoined("server-map-data.join-tiles-with-prototypes"),
-        materialized = materializedWith(
-//          "server-map-data.join-tiles-with-prototypes.store",
-          kxsBinary.serde<ServerMapChunkId>(),
-          kxsBinary.serde<ServerMapChunkTiles<ColourHex>>(),
+        materialized = materializedAs(
+          "server-map-data.join-tiles-with-prototypes.store",
+          kxsBinary.serde(),
+          kxsBinary.serde(),
         ),
         foreignKeyExtractor = { chunkTiles: ServerMapChunkTiles<TileProtoHashCode> ->
           chunkTiles.chunkId.serverId
