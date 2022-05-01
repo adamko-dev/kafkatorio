@@ -62,7 +62,7 @@ export namespace EventUpdates {
         resetLastUpdated: boolean,
         expirationDurationTicks?: uint,
     ) {
-      const entry: CacheEntry<PACKET> = this.getCacheEntry(key) ??
+      const entry: CacheEntry<PACKET> = this.getCacheEntry(key, type) ??
                                         Manager.createCacheEntry(key, type)
       mutate(entry.packet)
       if (resetLastUpdated) {
@@ -80,9 +80,10 @@ export namespace EventUpdates {
      */
     public setExpiration<PACKET extends KafkatorioKeyedPacketData>(
         key: PacketKey<PACKET>,
+        type: PacketType<PACKET>,
         expirationDurationTicks: uint,
     ) {
-      const entry = this.getCacheEntry(key)
+      const entry = this.getCacheEntry(key, type)
       if (entry != undefined) {
         entry.expirationDurationTicks = expirationDurationTicks
       }
@@ -102,22 +103,27 @@ export namespace EventUpdates {
           global.cache.delete(key)
         }
       }
-      if (countExpired + countTotal > 0) {
-        log(`cache expired items count: ${countExpired}, total: ${countTotal}`)
+
+      const hasExpiredItems = countExpired > 0
+      const hasAnyItem = countTotal > 0
+
+      if (hasExpiredItems || (game.tick % 30 == 0 && hasAnyItem)) {
+        log(`[extractExpired] expired items: ${countExpired}, total: ${countTotal}`)
       }
       return expiredData
     }
 
 
     private getCacheEntry<PACKET extends KafkatorioKeyedPacketData>(
-        key: PacketKey<PACKET>
+        key: EventUpdates.PacketKey<PACKET>,
+        type: EventUpdates.PacketType<PACKET>,
     ): CacheEntry<PACKET> | undefined {
       const hash = Manager.hashKey(key)
       if (!global.cache.has(hash)) {
         return undefined
       }
       const value: CacheEntry<any> = global.cache.get(hash)
-      if (this.isEntryInstanceOf(value, key)) {
+      if (this.isEntryInstanceOf(value, type)) {
         return value
       } else {
         // Type mismatch. This shouldn't happen...
@@ -134,7 +140,7 @@ export namespace EventUpdates {
         type: type,
         key: key,
       }
-      let entry: CacheEntry<PACKET> = new CacheEntry<PACKET>(data)
+      const entry: CacheEntry<PACKET> = new CacheEntry<PACKET>(data)
       const hash = Manager.hashKey(key)
       global.cache.set(hash, entry)
       return entry
@@ -156,17 +162,17 @@ export namespace EventUpdates {
 
     isEntryInstanceOf<PACKET extends KafkatorioKeyedPacketData>(
         entry: CacheEntry<any> | undefined,
-        key: PacketKey<PACKET>,
+        type: EventUpdates.PacketType<PACKET>,
     ): entry is CacheEntry<PACKET> {
-      return this.isDataInstanceOf(entry?.packet, key)
+      return this.isDataInstanceOf(entry?.packet, type)
     }
 
 
     isDataInstanceOf<PACKET extends KafkatorioKeyedPacketData>(
         packet: PACKET | undefined,
-        key: PacketKey<PACKET>,
+        type: EventUpdates.PacketType<PACKET>,
     ): packet is PACKET {
-      return packet != undefined && packet.key == key
+      return packet != undefined && packet.type == type
     }
 
     private static hashKey<PACKET extends KafkatorioKeyedPacketData>(
