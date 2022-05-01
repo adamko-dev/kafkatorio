@@ -12,8 +12,11 @@ services:
     networks:
       - "kafkatorio-nw"
     environment:
-      FACTORIO_SERVER_CONTAINER_NAME: "factorio-server"
       KAFKATORIO_VERSION: $KAFKATORIO_VERSION
+      # message IDs
+      INSTANCE_ID: "test-server"
+      # name of the docker container
+      FACTORIO_SERVER_CONTAINER_NAME: "factorio-server"
       KAFKA_HOST: "kafka:29092"
     volumes:
       # Windows (requires privileged/root)

@@ -12,16 +12,24 @@ endProcess() {
 }
 
 # some random ID, to use as a message key
-INSTANCE_ID=$(cat /proc/sys/kernel/random/uuid)
+#INSTANCE_ID="${INSTANCE_ID}"$(cat /proc/sys/kernel/random/uuid)
+KEY="${INSTANCE_ID:-none}"
 
 while :; do
   docker logs --tail 0 -f "$FACTORIO_SERVER_CONTAINER_NAME" |
     sed -n -e 's/^KafkatorioPacket: //p' |
-    kcat -P -T \
+    kcat -P \
       -b "$KAFKA_HOST" \
       -t kafkatorio.src.server-log \
-      -k "$INSTANCE_ID" \
+      -k "$KEY" \
       -H "KAFKA-PIPE-VERSION=$KAFKATORIO_VERSION"
+#      -T \
+
+# -P producer mode
+# -T echo to stdout
+# -t the topic name
+# -k the key of the message
+# -H add a header
 
   echo "Error - retrying in 10 seconds"
   sleep 10
