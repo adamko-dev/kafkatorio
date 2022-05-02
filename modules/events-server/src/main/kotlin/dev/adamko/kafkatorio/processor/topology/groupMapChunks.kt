@@ -107,7 +107,6 @@ private fun groupTilesIntoChunksWithColours(
   tileProtoColourDict: KTable<FactorioServerId, TileColourDict>,
 ): KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> {
 
-
   val mapTilesStream: KStream<FactorioServerId, MapTiles> =
     mapChunksStream.filter { _, value ->
       !value.tileDictionary.isNullOrEmpty()
@@ -117,10 +116,6 @@ private fun groupTilesIntoChunksWithColours(
     }.filter("map-chunk-update-packets.filter-out.no-tiles") { _, value ->
       value.tiles.isNotEmpty()
     }
-//      .peek { _, value ->
-//      println("[${System.currentTimeMillis()}] mapTilesStream: surface:${value.surfaceIndex}, tile count: ${value.tiles.size}")
-//    }
-
 
   val chunkedTilesTable: KTable<ServerMapChunkId, ServerMapChunkTiles<TileProtoHashCode>> =
     mapTilesStream

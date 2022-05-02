@@ -78,7 +78,7 @@ class SaveMapChunksTest : FunSpec({
       val now = LocalTime.now().format(DateTimeFormatter.ISO_TIME).filter { it.isLetterOrDigit() }
       Path("build/test/save-map-chunks-${now}")
     }
-    private val topology = saveMapTiles2(streamsBuilder, outputDir)
+    private val topology = saveMapTiles(streamsBuilder, outputDir)
     val testDriver: TopologyTestDriver = TopologyTestDriver(topology)
 
     val groupedMapChunksInputTopic: TestInputTopic<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =

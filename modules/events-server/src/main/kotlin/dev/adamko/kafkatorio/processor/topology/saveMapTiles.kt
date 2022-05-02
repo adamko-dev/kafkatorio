@@ -2,6 +2,7 @@ package dev.adamko.kafkatorio.processor.topology
 
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.ScaleMethod
+import com.sksamuel.scrimage.color.RGBColor
 import com.sksamuel.scrimage.nio.PngWriter
 import dev.adamko.kafkatorio.processor.admin.TOPIC_GROUPED_MAP_CHUNKS_STATE_DEBOUNCED
 import dev.adamko.kafkatorio.processor.admin.TOPIC_SUBDIVIDED_MAP_TILES
@@ -16,6 +17,7 @@ import dev.adamko.kotka.extensions.producedAs
 import dev.adamko.kotka.extensions.streams.flatMap
 import dev.adamko.kotka.extensions.streams.forEach
 import dev.adamko.kotka.kxs.serde
+import java.awt.Color
 import java.awt.image.BufferedImage
 import java.nio.file.Path
 import kotlin.io.path.fileSize
@@ -27,16 +29,18 @@ import org.apache.kafka.streams.Topology
 import org.apache.kafka.streams.kstream.KStream
 
 
+private const val pid = "saveMapTiles"
+
 private const val WEB_MAP_TILE_SIZE_PX = 256
+
 
 /**
  * @param[tileDirectory] [dev.adamko.kafkatorio.processor.config.ApplicationProperties.webmapTileDir]
  */
-fun saveMapTiles2(
+fun saveMapTiles(
   builder: StreamsBuilder,
   tileDirectory: Path,
 ): Topology {
-  val pid = "saveMapTiles"
 
   val groupedMapChunkTiles: KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
     builder.stream(
@@ -44,44 +48,16 @@ fun saveMapTiles2(
       consumedAs("$pid.consume.grouped-map-chunks", kxsBinary.serde(), kxsBinary.serde()),
     )
 
-  groupedMapChunkTiles.flatMap("$pid.subdivide-chunks") { initialKey, initialChunk ->
-
-    val (chunks, time) = measureTimedValue {
-      ChunkSize.entries.flatMap { chunkSize ->
-        initialChunk.map
-          .entries
-          .groupingBy { (tilePosition, _) ->
-            val chunkPosition = tilePosition.toMapChunkPosition(chunkSize.lengthInTiles)
-//            println("$tilePosition groupingBy $chunkPosition")
-            initialKey.copy(
-              chunkSize = chunkSize,
-              chunkPosition = chunkPosition,
-            )
-          }.fold(
-            initialValueSelector = { _, _ -> mutableMapOf<MapTilePosition, ColourHex>() }
-          ) { _, accumulator, (tilePosition, colour) ->
-//            println("fold $tilePosition $colour")
-            accumulator[tilePosition] = colour
-            accumulator
-          }
-          .map { (chunkId, tiles) ->
-//            println("map $chunkId ${tiles.size}")
-            chunkId to ServerMapChunkTiles(chunkId, tiles)
-          }
-      }
-
-    }
-    println("subdivided ${initialKey.chunkPosition} to ${chunks.size} chunks in $time")
-
-    chunks
-  }.to(
-    TOPIC_SUBDIVIDED_MAP_TILES,
-    producedAs(
-      "$pid.produce.grouped-map-chunks",
-      kxsBinary.serde(),
-      kxsBinary.serde(),
+  groupedMapChunkTiles
+    .flatMapSubdividedChunk()
+    .to(
+      TOPIC_SUBDIVIDED_MAP_TILES,
+      producedAs(
+        "$pid.produce.grouped-map-chunks",
+        kxsBinary.serde(),
+        kxsBinary.serde(),
+      )
     )
-  )
 
   val subdividedMapChunkTilesDebounced: KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
     builder.stream(
@@ -93,34 +69,7 @@ fun saveMapTiles2(
       ),
     )
 
-  subdividedMapChunkTilesDebounced
-    .forEach("$pid.save-tiles") { chunkId: ServerMapChunkId, tileColours: ServerMapChunkTiles<ColourHex> ->
-
-      val chunkImage = ImmutableImage.filled(
-        chunkId.chunkSize.lengthInTiles,
-        chunkId.chunkSize.lengthInTiles,
-        TRANSPARENT_AWT,
-        BufferedImage.TYPE_INT_ARGB
-      )
-
-      val chunkOriginX: Int = chunkId.chunkPosition.x * chunkId.chunkSize.lengthInTiles
-      val chunkOriginY: Int = chunkId.chunkPosition.y * chunkId.chunkSize.lengthInTiles
-
-      tileColours.map.forEach { (tilePosition, colour) ->
-        val rgbColour = colour.toRgbColor()
-
-        val pixelX = abs(abs(tilePosition.x) - abs(chunkOriginX))
-        val pixelY = abs(abs(tilePosition.y) - abs(chunkOriginY))
-
-        chunkImage.setColor(pixelX, pixelY, rgbColour)
-      }
-
-      val scaledImage =
-        chunkImage.scaleTo(WEB_MAP_TILE_SIZE_PX, WEB_MAP_TILE_SIZE_PX, ScaleMethod.FastScale)
-
-      val filename = TilePngFilename(chunkId)
-      saveTile(filename, tileDirectory, scaledImage)
-    }
+  subdividedMapChunkTilesDebounced.forEachChunkSaveImage(tileDirectory)
 
   return builder.build()
     .addDebounceProcessor<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>(
@@ -132,6 +81,71 @@ fun saveMapTiles2(
       valueSerde = kxsBinary.serde(),
     )
 }
+
+
+private fun KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>.flatMapSubdividedChunk() =
+  flatMap("$pid.subdivide-chunks") { initialKey, initialChunk ->
+
+    val (chunks, time) = measureTimedValue {
+      ChunkSize.entries.flatMap { chunkSize ->
+        initialChunk.map
+          .entries
+          .groupingBy { (tilePosition, _) ->
+            val chunkPosition = tilePosition.toMapChunkPosition(chunkSize.lengthInTiles)
+            initialKey.copy(
+              chunkSize = chunkSize,
+              chunkPosition = chunkPosition,
+            )
+          }.fold(
+            initialValueSelector = { _, _ -> mutableMapOf<MapTilePosition, ColourHex>() }
+          ) { _, accumulator, (tilePosition, colour) ->
+            accumulator[tilePosition] = colour
+            accumulator
+          }
+          .map { (chunkId, tiles) ->
+            chunkId to ServerMapChunkTiles(chunkId, tiles)
+          }
+      }
+    }
+
+    println("subdivided ${initialKey.chunkPosition} to ${chunks.size} chunks in $time")
+
+    chunks
+  }
+
+
+private fun KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>.forEachChunkSaveImage(
+  tileDirectory: Path,
+) = forEach(
+  "$pid.save-tiles"
+) { chunkId: ServerMapChunkId, tileColours: ServerMapChunkTiles<ColourHex> ->
+
+  val chunkImage = ImmutableImage.filled(
+    chunkId.chunkSize.lengthInTiles,
+    chunkId.chunkSize.lengthInTiles,
+    TRANSPARENT_AWT,
+    BufferedImage.TYPE_INT_ARGB
+  )
+
+  val chunkOriginX: Int = chunkId.chunkPosition.x * chunkId.chunkSize.lengthInTiles
+  val chunkOriginY: Int = chunkId.chunkPosition.y * chunkId.chunkSize.lengthInTiles
+
+  tileColours.map.forEach { (tilePosition, colour) ->
+    val rgbColour = colour.toRgbColor()
+
+    val pixelX = abs(abs(tilePosition.x) - abs(chunkOriginX))
+    val pixelY = abs(abs(tilePosition.y) - abs(chunkOriginY))
+
+    chunkImage.setColor(pixelX, pixelY, rgbColour)
+  }
+
+  val scaledImage =
+    chunkImage.scaleTo(WEB_MAP_TILE_SIZE_PX, WEB_MAP_TILE_SIZE_PX, ScaleMethod.FastScale)
+
+  val filename = TilePngFilename(chunkId)
+  saveTile(filename, tileDirectory, scaledImage)
+}
+
 
 @Synchronized
 fun saveTile(
@@ -155,4 +169,31 @@ fun saveTile(
     "$sizeAfter"
   }
   println("savedTile $sizeDescription: $savedTile")
+}
+
+
+@JvmInline
+value class TilePngFilename(
+  val value: String,
+) {
+  constructor(id: ServerMapChunkId) : this(buildString {
+    append("s${id.surfaceIndex}")
+    append("/z${id.chunkSize.zoomLevel}")
+    append("/x${id.chunkPosition.x}")
+    append("/y${id.chunkPosition.y}")
+    append(".png")
+  })
+}
+
+
+val TRANSPARENT_AWT: Color = ColourHex.TRANSPARENT.toRgbColor().awt()
+
+
+fun ColourHex.toRgbColor(): RGBColor {
+  return RGBColor(
+    red.toInt(),
+    green.toInt(),
+    blue.toInt(),
+    alpha.toInt(),
+  )
 }
