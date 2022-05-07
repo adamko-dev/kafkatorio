@@ -67,7 +67,7 @@ export namespace KafkatorioPacketData {
     type: KafkatorioPacketData.Type.EntityUpdate;
     key: EntityUpdateKey;
     events?: { [key: EventName]: Tick[] } | null;
-    chunkPosition?: MapChunkPosition | null;
+    chunkPosition?: MapEntityPosition | null;
     graphicsVariation?: UByte | null;
     health?: Float | null;
     isActive?: boolean | null;
@@ -136,9 +136,9 @@ export interface EntityUpdateKey {
   protoType: string;
 }
 
-export type MapChunkPosition = [
-  x: Int,
-  y: Int,
+export type MapEntityPosition = [
+  x: Double,
+  y: Double,
 ];
 
 export type UByte = uint8;
@@ -178,11 +178,6 @@ export type Colour = [
   alpha: Float,
 ];
 
-export type MapEntityPosition = [
-  x: Double,
-  y: Double,
-];
-
 export type Int = int;
 
 export interface ConfigurationUpdateModData {
@@ -192,21 +187,37 @@ export interface ConfigurationUpdateModData {
 }
 
 export type FactorioPrototype =
+  | FactorioPrototype.Entity
   | FactorioPrototype.MapTile;
 
 export namespace FactorioPrototype {
   export enum Type {
     MapTile = "kafkatorio.prototype.MapTile",
+    Entity = "kafkatorio.prototype.Entity",
   }
   
   export interface MapTile {
     type: FactorioPrototype.Type.MapTile;
     name: PrototypeName;
-    layer: UInt;
     mapColour: Colour;
+    layer: UInt;
     collisionMasks: List;
     order: string;
     canBeMined: boolean;
+  }
+  
+  export interface Entity {
+    type: FactorioPrototype.Type.Entity;
+    name: PrototypeName;
+    mapColour: Colour;
+    protoType: string;
+    objectName: string;
+    colour: Colour;
+    maxHealth: Float;
+    isBuilding: boolean;
+    isEntityWithOwner: boolean;
+    isMilitaryTarget: boolean;
+    miningProperties: MiningProperties;
   }
 }
 
@@ -214,6 +225,27 @@ export type EventName = string;
 
 export type Byte = int8;
 
+export type MapChunkPosition = [
+  x: Int,
+  y: Int,
+];
+
 export type List = any;
 
+export interface MiningProperties {
+  canBeMined: boolean;
+  products: MinedProduct[] | null;
+}
+
 export type PrototypeKey = Int;
+
+export interface MinedProduct {
+  type: Type;
+  name: PrototypeName;
+  amount: Double | null;
+}
+
+export enum Type {
+  item = "item",
+  fluid = "fluid",
+}

@@ -32,7 +32,7 @@ sealed interface FactorioPrototype {
     override val name: PrototypeName,
     override val mapColour: Colour,
 
-    val type: String,
+    val protoType: String,
     val objectName: String,
     val colour: Colour,
     val maxHealth: Float,
