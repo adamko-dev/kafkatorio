@@ -24,4 +24,29 @@ sealed interface FactorioPrototype {
     /** Can the tile be mined for resources? */
     val canBeMined: Boolean,
   ) : FactorioPrototype
+
+
+  @SerialName("kafkatorio.prototype.Entity")
+  @Serializable
+  data class Entity(
+    override val name: PrototypeName,
+    override val mapColour: Colour,
+
+    val type: String,
+    val objectName: String,
+    val colour: Colour,
+    val maxHealth: Float,
+    val isBuilding: Boolean,
+    val isEntityWithOwner: Boolean,
+    val isMilitaryTarget: Boolean,
+    val miningProperties: MiningProperties
+  ) : FactorioPrototype {
+
+    @Serializable
+    data class MiningProperties(
+      val canBeMined: Boolean,
+      val products: List<MinedProduct>?,
+    )
+
+  }
 }
