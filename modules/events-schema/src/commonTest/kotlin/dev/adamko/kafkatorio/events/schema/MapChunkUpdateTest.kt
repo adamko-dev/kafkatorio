@@ -1,10 +1,11 @@
 package dev.adamko.kafkatorio.events.schema
 
+import dev.adamko.kafkatorio.schema.common.EventName
 import dev.adamko.kafkatorio.schema.common.MapChunkPosition
 import dev.adamko.kafkatorio.schema.common.MapTileDictionary
 import dev.adamko.kafkatorio.schema.common.PrototypeName
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
-import dev.adamko.kafkatorio.schema.common.Tick
+import dev.adamko.kafkatorio.schema.common.tick
 import dev.adamko.kafkatorio.schema.jsonMapperKafkatorio
 import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
 import dev.adamko.kafkatorio.schema.packets.MapChunkUpdate
@@ -20,7 +21,7 @@ class MapChunkUpdateTest : FunSpec({
     val json = """
 {
   "data": {
-    "type": "dev.adamko.kafkatorio.schema.packets.MapChunkUpdate",
+    "type": "kafkatorio.packet.keyed.MapChunkUpdate",
     "key": {
       "surfaceIndex": 1,
       "chunkPosition": [
@@ -46,8 +47,8 @@ class MapChunkUpdateTest : FunSpec({
         "grass-3": 32
       }
     },
-    "eventCounts": {
-      "on_chunk_generated": 1
+    "events": {
+      "on_chunk_generated": [1]
     }
   },
   "modVersion": "0.4.0",
@@ -56,14 +57,16 @@ class MapChunkUpdateTest : FunSpec({
     """.trimIndent()
 
     val expected = KafkatorioPacket(
-      tick = Tick(36u),
+      tick = 36u.tick,
       modVersion = "0.4.0",
       data = MapChunkUpdate(
         key = MapChunkUpdateKey(
           MapChunkPosition(-6, -3),
           SurfaceIndex(1u),
         ),
-        eventCounts = mapOf("on_chunk_generated" to 1u),
+        events = mapOf(
+          EventName("on_chunk_generated") to listOf(1u.tick)
+        ),
         tileDictionary = MapTileDictionary(
           tilesXY = mapOf(
             "-192" to mapOf("-65" to MapTileDictionary.PrototypeKey(2)),

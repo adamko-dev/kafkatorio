@@ -2,13 +2,16 @@ package dev.adamko.kafkatorio.events.schema
 
 import dev.adamko.kafkatorio.schema.common.Colour
 import dev.adamko.kafkatorio.schema.common.EntityIdentifiersData
+import dev.adamko.kafkatorio.schema.common.EventName
 import dev.adamko.kafkatorio.schema.common.ForceIndex
 import dev.adamko.kafkatorio.schema.common.MapEntityPosition
 import dev.adamko.kafkatorio.schema.common.PlayerIndex
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
 import dev.adamko.kafkatorio.schema.common.Tick
 import dev.adamko.kafkatorio.schema.common.UnitNumber
+import dev.adamko.kafkatorio.schema.common.tick
 import dev.adamko.kafkatorio.schema.jsonMapperKafkatorio
+import dev.adamko.kafkatorio.schema.packets.KafkatorioKeyedPacketData
 import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
 import dev.adamko.kafkatorio.schema.packets.PlayerUpdate
 import dev.adamko.kafkatorio.schema.packets.PlayerUpdateKey
@@ -27,14 +30,14 @@ class UpdatePacketsTest : FunSpec({
         "tick": 66,
         "modVersion": "0.3.2",
         "data": {
-          "type": "dev.adamko.kafkatorio.schema.packets.PlayerUpdate",
+          "type": "kafkatorio.packet.keyed.PlayerUpdate",
           "key": {"index": 1},
           "afkTime": 0,
           "chatColour": [1, 0.4, 0.6, 1],
           "colour": [0.8, 0.5, 0.2, 0.5],
-          "eventCounts": {
-            "on_player_changed_position": 7,
-            "on_player_joined_game": 1
+          "events": {
+            "on_player_changed_position": [7, 99],
+            "on_player_joined_game": [14]
           },
           "forceIndex": 1,
           "isAdmin": true,
@@ -68,7 +71,10 @@ class UpdatePacketsTest : FunSpec({
           colour = Colour(red = 0.8f, green = 0.5f, blue = 0.2f, alpha = 0.5f),
           diedCause = null,
           disconnectReason = null,
-          eventCounts = mapOf("on_player_changed_position" to 7u, "on_player_joined_game" to 1u),
+          events = mapOf(
+            EventName("on_player_changed_position") to listOf(7u.tick, 99u.tick),
+            EventName("on_player_joined_game") to listOf(14u.tick),
+          ),
           forceIndex = ForceIndex(1u),
           isAdmin = true,
           isConnected = true,
@@ -124,7 +130,7 @@ class UpdatePacketsTest : FunSpec({
           "modVersion": "0.3.2",
           "tick": 66,
           "data": {
-            "type": "dev.adamko.kafkatorio.schema.packets.PlayerUpdate",
+            "type": "kafkatorio.packet.keyed.PlayerUpdate",
             "key": {
               "index": 1
             },
@@ -151,7 +157,7 @@ class UpdatePacketsTest : FunSpec({
         "tick": 227934,
         "modVersion": "0.3.2",
         "data": {
-           "type": "dev.adamko.kafkatorio.schema.packets.PlayerUpdate",
+           "type": "kafkatorio.packet.keyed.PlayerUpdate",
            "key": {
              "index": 1
            },
@@ -164,8 +170,8 @@ class UpdatePacketsTest : FunSpec({
             "name": "small-biter",
             "protoType": "unit"
           },
-          "eventCounts": {
-            "on_player_died": 2
+          "events": {
+            "on_player_died": [2]
           }
         }
       }
@@ -176,9 +182,9 @@ class UpdatePacketsTest : FunSpec({
 
       packet shouldBe KafkatorioPacket(
         modVersion = "0.3.2",
-        tick = Tick(227934u),
+        tick = 227934u.tick,
         data = PlayerUpdate(
-          afkTime = Tick(324u),
+          afkTime = 324u.tick,
           bannedReason = null,
           characterUnitNumber = null,
           chatColour = null,
@@ -189,7 +195,9 @@ class UpdatePacketsTest : FunSpec({
             protoType = "unit",
           ),
           disconnectReason = null,
-          eventCounts = mapOf("on_player_died" to 2u),
+          events = mapOf(
+            EventName("on_player_died") to listOf(2u.tick),
+          ),
           forceIndex = null,
           key = PlayerUpdateKey(PlayerIndex(1u)),
           isAdmin = null,
@@ -198,9 +206,9 @@ class UpdatePacketsTest : FunSpec({
           isShowOnMap = null,
           isSpectator = null,
           kickedReason = null,
-          lastOnline = Tick(227932u),
+          lastOnline = 227932u.tick,
           name = null,
-          onlineTime = Tick(227888u),
+          onlineTime = 227888u.tick,
           position = null,
           surfaceIndex = null,
           tag = null,
@@ -215,7 +223,7 @@ class UpdatePacketsTest : FunSpec({
     val json = """
       {
         "data": {
-          "type": "dev.adamko.kafkatorio.schema.packets.SurfaceUpdate",
+          "type": "kafkatorio.packet.instant.SurfaceUpdate",
           "name": "nauvis",
           "index": 1,
           "daytime": 0.73

@@ -24,3 +24,6 @@ type KafkatorioKeyedPacketData = Extract<KafkatorioPacketData, { key: object }>
 type KafkatorioKeyedPacketTypes = KafkatorioKeyedPacketData["type"];
 
 type KafkatorioKeyedPacketKeys = KafkatorioKeyedPacketData["key"];
+
+
+type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }

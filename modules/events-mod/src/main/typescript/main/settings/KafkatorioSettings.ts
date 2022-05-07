@@ -6,18 +6,18 @@ export class KafkatorioSettingsConfig {
 
 
   private static eventCacheExpirationDefaultSeconds: Record<KafkatorioKeyedPacketTypes, double> = {
-    "dev.adamko.kafkatorio.schema.packets.PlayerUpdate": 0.5,
-    "dev.adamko.kafkatorio.schema.packets.MapChunkUpdate": 30,
-    "dev.adamko.kafkatorio.schema.packets.EntityUpdate": 5,
+    "kafkatorio.packet.keyed.PlayerUpdate": 0.5,
+    "kafkatorio.packet.keyed.MapChunkUpdate": 30,
+    "kafkatorio.packet.keyed.EntityUpdate": 5,
   }
 
 
   private eventCacheExpirationTicks: Record<KafkatorioKeyedPacketTypes, double> = {
-    "dev.adamko.kafkatorio.schema.packets.PlayerUpdate":
+    "kafkatorio.packet.keyed.PlayerUpdate":
         KafkatorioSettingsConfig.eventCacheExpirationDefaultSeconds[KafkatorioPacketData.Type.PlayerUpdate],
-    "dev.adamko.kafkatorio.schema.packets.MapChunkUpdate":
+    "kafkatorio.packet.keyed.MapChunkUpdate":
         KafkatorioSettingsConfig.eventCacheExpirationDefaultSeconds[KafkatorioPacketData.Type.MapChunkUpdate],
-    "dev.adamko.kafkatorio.schema.packets.EntityUpdate":
+    "kafkatorio.packet.keyed.EntityUpdate":
         KafkatorioSettingsConfig.eventCacheExpirationDefaultSeconds[KafkatorioPacketData.Type.EntityUpdate],
   }
 

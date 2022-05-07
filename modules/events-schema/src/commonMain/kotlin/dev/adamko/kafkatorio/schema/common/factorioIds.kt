@@ -8,6 +8,8 @@ import kotlinx.serialization.Serializable
 @JvmInline
 value class Tick(val value: UInt)
 
+val UInt.tick
+  get() = Tick(this)
 
 /**
  * Unique ID associated with this surface
@@ -48,6 +50,13 @@ value class UnitNumber(private val id: UInt) {
 @JvmInline
 value class PrototypeName(private val id: String) {
   override fun toString(): String = id
+}
+
+
+@Serializable
+@JvmInline
+value class EventName(private val name: String) {
+  override fun toString(): String = name
 }
 
 

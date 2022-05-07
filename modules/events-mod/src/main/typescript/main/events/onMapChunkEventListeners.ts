@@ -12,11 +12,22 @@ import Type = KafkatorioPacketData.Type;
 type MapChunkUpdater = (data: KafkatorioPacketData.MapChunkUpdate) => void
 
 
+type MapTileUpdateEvent =
+    | OnChunkGeneratedEvent
+    | OnPlayerBuiltTileEvent
+    | OnPlayerMinedEntityEvent
+    | OnPlayerMinedTileEvent
+    | OnRobotBuiltTileEvent
+    | OnRobotMinedEntityEvent
+    | OnRobotMinedTileEvent
+    | ScriptRaisedSetTilesEvent
+
+
 function mapTilesUpdateDebounce(
     surface: LuaSurface | undefined,
     chunkPosition: MapChunkPosition,
     tiles: TileRead[],
-    eventName: string,
+    event: MapTileUpdateEvent,
     updater?: MapChunkUpdater,
     expirationDurationTicks?: uint,
 ) {
@@ -24,6 +35,8 @@ function mapTilesUpdateDebounce(
   if (surface == undefined) {
     return
   }
+
+  const eventName = Converters.eventNameString(event.name)
 
   const key: KafkatorioPacketData.MapChunkUpdate["key"] = {
     surfaceIndex: surface.index,
@@ -60,9 +73,9 @@ function mapTilesUpdateDebounce(
         }
 
         // events count update
-        data.eventCounts ??= {}
-        data.eventCounts[eventName] ??= 0
-        data.eventCounts[eventName]++
+        data.events ??= {}
+        data.events[eventName] ??= []
+        data.events[eventName].push(event.tick)
 
         // apply mutator
         if (updater != undefined) {
@@ -101,15 +114,15 @@ script.on_event(
 
 
 export function handleChunkGeneratedEvent(
-    e: OnChunkGeneratedEvent,
+    event: OnChunkGeneratedEvent,
     expirationDurationTicks?: uint,
 ) {
-  let tiles = getTiles(e.surface, e.area)
+  let tiles = getTiles(event.surface, event.area)
   mapTilesUpdateDebounce(
-      e.surface,
-      [e.position.x, e.position.y],
+      event.surface,
+      Converters.convertMapTablePosition(event.position),
       tiles,
-      Converters.eventNameString(e.name),
+      event,
       undefined,
       expirationDurationTicks,
   )
@@ -136,18 +149,18 @@ export function handleChunkGeneratedEvent(
 
 script.on_event(
     defines.events.script_raised_set_tiles,
-    (e: ScriptRaisedSetTilesEvent) => {
-      log(`script_raised_set_tiles ${e.tick}`)
+    (event: ScriptRaisedSetTilesEvent) => {
+      log(`script_raised_set_tiles ${event.tick}`)
 
-      const surface = getSurface(e.surface_index)
+      const surface = getSurface(event.surface_index)
       if (surface == undefined) {
         return
       }
 
-      const groupedTiles = groupTiles(e.tiles)
+      const groupedTiles = groupTiles(event.tiles)
 
       for (const [chunkPos, tiles] of groupedTiles) {
-        mapTilesUpdateDebounce(surface, chunkPos, tiles, Converters.eventNameString(e.name))
+        mapTilesUpdateDebounce(surface, chunkPos, tiles, event)
       }
     }
 )
@@ -165,41 +178,35 @@ function groupTiles(tiles: TileRead[]): Map<MapChunkPosition, TileRead[]> {
       mapChunkPositionToTiles.set(chunkPosition, [])
     }
     // https://github.com/TypeScriptToLua/TypeScriptToLua/issues/1256
-    // mapChunkPositionToTiles.get(chunkPosition)?.push(tile)
-    const tiles = mapChunkPositionToTiles.get(chunkPosition)
-    if (tiles != null) {
-      tiles.push(tile)
-    }
+    mapChunkPositionToTiles.get(chunkPosition)?.push(tile)
+    // const tiles = mapChunkPositionToTiles.get(chunkPosition)
+    // if (tiles != null) {
+    //   tiles.push(tile)
+    // }
   }
   return mapChunkPositionToTiles
 }
 
 
-function convertOldPosition(
-    oldTiles: OldTileAndPosition[],
-    placedTile: LuaTilePrototype,
-): TileRead[] {
-
-  return oldTiles.map((tile) => {
-        return {
-          position: {x: tile.position.x, y: tile.position.y},
-          name: placedTile.name,
-        }
-      }
-  )
-}
-
+script.on_event(defines.events.on_player_built_tile, (e: OnPlayerBuiltTileEvent) => {
+  log(`on_player_built_tile ${e.tick}`)
+  handleBuiltTileEvent(e)
+})
+script.on_event(defines.events.on_robot_built_tile, (e: OnRobotBuiltTileEvent) => {
+  log(`on_robot_built_tile ${e.tick}`)
+  handleBuiltTileEvent(e)
+})
 
 function handleBuiltTileEvent(event: OnPlayerBuiltTileEvent | OnRobotBuiltTileEvent) {
-  const eventName = Converters.eventNameString(event.name)
 
   const surface = getSurface(event.surface_index)
   if (surface == undefined) {
+    const eventName = Converters.eventNameString(event.name)
     log(`[handleBuiltTileEvent] undefined surface ${eventName}`)
     return
   }
 
-  const tiles: TileRead[] = convertOldPosition(event.tiles, event.tile)
+  const tiles: TileRead[] = Converters.convertPlacedTiles(event.tile, event.tiles)
   const groupedTiles = groupTiles(tiles)
 
   for (const [chunkPos, tiles] of groupedTiles) {
@@ -207,7 +214,7 @@ function handleBuiltTileEvent(event: OnPlayerBuiltTileEvent | OnRobotBuiltTileEv
         surface,
         chunkPos,
         tiles,
-        eventName,
+        event,
         (data => {
               if (isEventType(event, defines.events.on_player_built_tile)) {
                 data.player = event.player_index
@@ -231,27 +238,54 @@ function handleBuiltTileEvent(event: OnPlayerBuiltTileEvent | OnRobotBuiltTileEv
 }
 
 
-script.on_event(defines.events.on_player_built_tile, (e: OnPlayerBuiltTileEvent) => {
-  log(`on_player_built_tile ${e.tick}`)
-  handleBuiltTileEvent(e)
-})
-script.on_event(defines.events.on_robot_built_tile, (e: OnRobotBuiltTileEvent) => {
-  log(`on_robot_built_tile ${e.tick}`)
-  handleBuiltTileEvent(e)
+script.on_event(defines.events.on_player_mined_tile, (e: OnPlayerMinedTileEvent) => {
+  log(`on_player_mined_tile ${e.tick}`)
+  handleMinedTileEvent(e)
 })
 
+script.on_event(defines.events.on_robot_mined_tile, (e: OnRobotMinedTileEvent) => {
+  log(`on_robot_mined_tile ${e.tick}`)
+  handleMinedTileEvent(e)
+})
 
-// function handleMinedTileEvent(event: OnPlayerMinedTileEvent | OnRobotMinedTileEvent) {
-// }
-//
-// script.on_event(defines.events.on_player_mined_tile, (e: OnPlayerMinedTileEvent) => {
-//   log(`on_player_mined_tile ${e.tick}`)
-//   handleMinedTileEvent(e)
-// })
-// script.on_event(defines.events.on_robot_mined_tile, (e: OnRobotMinedTileEvent) => {
-//   log(`on_robot_mined_tile ${e.tick}`)
-//   handleMinedTileEvent(e)
-// })
+function handleMinedTileEvent(event: OnPlayerMinedTileEvent | OnRobotMinedTileEvent) {
+  const surface = getSurface(event.surface_index)
+  if (surface == undefined) {
+    const eventName = Converters.eventNameString(event.name)
+    log(`[handleMinedTileEvent] undefined surface ${eventName}`)
+    return
+  }
+
+  const tiles: TileRead[] = Converters.convertRemovedTiles(surface, event.tiles)
+  const groupedTiles = groupTiles(tiles)
+
+  for (const [chunkPos, tiles] of groupedTiles) {
+    mapTilesUpdateDebounce(
+        surface,
+        chunkPos,
+        tiles,
+        event,
+        (data => {
+              if (isEventType(event, defines.events.on_player_mined_tile)) {
+                data.player = event.player_index
+                return
+              }
+              if (isEventType(event, defines.events.on_robot_mined_tile)) {
+                data.robot = {
+                  unitNumber: event.robot?.unit_number ?? null,
+                  name: event.robot.name,
+                  protoType: event.robot.type,
+                }
+                return
+              }
+              // this line will not compile if the previous 'if' statements are not exhaustive
+              // noinspection UnnecessaryLocalVariableJS,JSUnusedLocalSymbols
+              const exhaustiveCheck: never = event
+            }
+        )
+    )
+  }
+}
 
 
 script.on_event(

@@ -2,10 +2,10 @@ package dev.adamko.kafkatorio.processor.topology
 
 import dev.adamko.kafkatorio.processor.serdes.kxsBinary
 import dev.adamko.kafkatorio.schema.common.ColourHex
+import dev.adamko.kafkatorio.schema.common.FactorioPrototype
 import dev.adamko.kafkatorio.schema.common.MapTile
 import dev.adamko.kafkatorio.schema.common.toHex
 import dev.adamko.kafkatorio.schema.packets.PrototypesUpdate
-import dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype
 import dev.adamko.kotka.extensions.materializedAs
 import dev.adamko.kotka.extensions.repartitionedAs
 import dev.adamko.kotka.extensions.streams.filter

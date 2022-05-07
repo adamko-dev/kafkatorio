@@ -31,25 +31,25 @@ import {handleSurfaceUpdate} from "./handlers";
 
 script.on_event(
     defines.events.on_tick,
-    (e: OnTickEvent) => {
-      if (e.tick % 1000 == 0) {
+    (event: OnTickEvent) => {
+      if (event.tick % 1000 == 0) {
         for (const [, surface] of game.surfaces) {
-          handleSurfaceUpdate(e, Converters.eventNameString(e.name), surface)
+          handleSurfaceUpdate(event, Converters.eventNameString(event.name), surface)
         }
       }
 
-      if (e.tick % 7 == 0) {
+      if (event.tick % 7 == 0) {
         const events: EventData[] = Queue.dequeueValues(1)
 
         if (events.length > 0) {
-          log(`[${e.tick}] dequed ${events.length} events, current size: ${Queue.size()}`)
+          log(`[${event.tick}] dequed ${events.length} events, current size: ${Queue.size()}`)
 
           let i = 100
           for (const event of events) {
             if (isEventType(event, defines.events.on_chunk_generated)) {
               let eName = Converters.eventNameString(event.name)
 
-              log(`[${e.tick}] dequed event ${eName}`)
+              log(`[${event.tick}] dequed event ${eName}`)
               handleChunkGeneratedEvent(event, i)
               i += 10
             }

@@ -181,54 +181,12 @@ export namespace EventUpdates {
       return game.encode_string(game.table_to_json(key))!!
     }
 
-
-    // function isKeyInstanceOf<TYPE extends FactorioEventUpdateType>(
-    //     key: CacheKey<any> | undefined,
-    //     updateType: TYPE,
-    // ): key is CacheKey<TYPE> {
-    //   return key != undefined && key.updateType == updateType
-    // }
-
   }
 
-
-  // export type KeyedPacketType = Exclude<KafkatorioPacketDataType,
-  //     "CONFIG" | "CONSOLE_CHAT" | "CONSOLE_COMMAND" | "PROTOTYPES" | "SURFACE">
-
-  // /** Map a {@link KeyedPacketType} to a {@link KafkatorioPacketData} DTO */
-  // type ConvertToUpdate<TYPE extends KafkatorioKeyedPacketData> =
-  //     TYPE extends "PLAYER" ? PlayerUpdate :
-  //     TYPE extends "MAP_CHUNK" ? MapChunkUpdate :
-  //     TYPE extends "ENTITY" ? EntityUpdate :
-  //     never
-
-
-  // /** Map a {@link KeyedPacketType} to a {@link KafkatorioKeyedPacketKey} */
-  // type ConvertToUpdateKey<TYPE extends KafkatorioKeyedPacketData> =
-  //     TYPE extends "PLAYER" ? PlayerUpdateKey :
-  //     TYPE extends "MAP_CHUNK" ? MapChunkUpdateKey :
-  //     TYPE extends "ENTITY" ? EntityUpdateKey :
-  //     never
-
-
-  // /** Make `updateType` specific */
   export type PacketKey<PACKET extends KafkatorioKeyedPacketData> = PACKET["key"]
   export type PacketType<PACKET extends KafkatorioKeyedPacketData> = PACKET["type"]
-  //
-  //
-  // /** Make `updateType` specific */
-  // export type CacheData<TYPE extends KafkatorioKeyedPacketData> =
-  //     CacheTyped<TYPE>
-  //     & Omit<ConvertToUpdate<TYPE>, "updateType">
-  //
-  //
-  // export type CacheTyped<TYPE extends KafkatorioKeyedPacketData> = {
-  //   readonly updateType: TYPE
-  // }
-
 
   export type CacheDataMutator<PACKET extends KafkatorioKeyedPacketData> = (packet: PACKET) => void
-
 
   class CacheEntry<PACKET extends KafkatorioKeyedPacketData> {
     lastUpdatedTick: uint = game.tick
@@ -245,8 +203,6 @@ export namespace EventUpdates {
       this.expirationDurationTicks = expirationDurationTicks
     }
   }
-
-
 }
 
 const EventUpdatesManager = new EventUpdates.Manager()

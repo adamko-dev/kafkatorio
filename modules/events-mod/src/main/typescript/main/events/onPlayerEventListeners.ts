@@ -6,11 +6,29 @@ import Type = KafkatorioPacketData.Type;
 
 type PlayerUpdater = (player: LuaPlayer, data: KafkatorioPacketData.PlayerUpdate) => void
 
+
+type PlayerUpdateEvent =
+    | OnPlayerJoinedGameEvent
+    | OnPlayerChangedPositionEvent
+    | OnPlayerChangedSurfaceEvent
+    | OnPlayerDiedEvent
+    | OnPlayerBannedEvent
+    | OnPlayerUnbannedEvent
+    | OnPlayerKickedEvent
+    | OnPrePlayerLeftGameEvent
+    | OnPlayerRemovedEvent
+
+
 function playerUpdateThrottle(
-    playerIndex: uint,
-    eventName: string,
+    event: PlayerUpdateEvent,
     mutate: PlayerUpdater,
 ) {
+  const playerIndex = event.player_index
+  if (playerIndex == undefined) {
+    return
+  }
+
+  const eventName = Converters.eventNameString(event.name)
 
   EventUpdatesManager.throttle<KafkatorioPacketData.PlayerUpdate>(
       {index: playerIndex},
@@ -21,10 +39,9 @@ function playerUpdateThrottle(
           mutate(player, data)
         }
 
-        if (data.eventCounts == undefined) {
-          data.eventCounts = {}
-        }
-        data.eventCounts[eventName] = ((data.eventCounts ?? {}) [eventName] ?? 0) + 1
+        data.events ??= {}
+        data.events[eventName] ??= []
+        data.events[eventName].push(event.tick)
       }
   )
 }
@@ -50,8 +67,7 @@ script.on_event(
     defines.events.on_player_joined_game,
     (e: OnPlayerJoinedGameEvent) => {
       playerUpdateThrottle(
-          e.player_index,
-          Converters.eventNameString(e.name),
+          e,
           (player, data) => {
             data.isAdmin = player.admin
             data.characterUnitNumber = player.character?.unit_number ?? null
@@ -69,12 +85,12 @@ script.on_event(
     }
 )
 
+
 script.on_event(
     defines.events.on_player_changed_position,
     (e: OnPlayerChangedPositionEvent) => {
       playerUpdateThrottle(
-          e.player_index,
-          Converters.eventNameString(e.name),
+          e,
           (player, data) => {
             data.position = [player.position.x, player.position.y]
           }
@@ -82,12 +98,12 @@ script.on_event(
     }
 )
 
+
 script.on_event(
     defines.events.on_player_changed_surface,
     (e: OnPlayerChangedSurfaceEvent) => {
       playerUpdateThrottle(
-          e.player_index,
-          Converters.eventNameString(e.name),
+          e,
           (player, data) => {
             data.position = [player.position.x, player.position.y]
             data.surfaceIndex = player.surface.index
@@ -96,12 +112,12 @@ script.on_event(
     }
 )
 
+
 script.on_event(
     defines.events.on_player_died,
     (e: OnPlayerDiedEvent) => {
       playerUpdateThrottle(
-          e.player_index,
-          Converters.eventNameString(e.name),
+          e,
           (player, data) => {
             data.ticksToRespawn = player.ticks_to_respawn ?? null
             playerOnlineInfo(player, data)
@@ -117,31 +133,28 @@ script.on_event(
     }
 )
 
+
 script.on_event(defines.events.on_player_banned, handleBannedEvent)
 script.on_event(defines.events.on_player_unbanned, handleBannedEvent)
 
-function handleBannedEvent(e: OnPlayerBannedEvent | OnPlayerUnbannedEvent) {
-
-  if (e.player_index != undefined) {
-    playerUpdateThrottle(
-        e.player_index,
-        Converters.eventNameString(e.name),
-        (player, data) => {
-          data.bannedReason = e.reason ?? null
-          playerOnlineInfo(player, data)
-        }
-    )
-  }
+function handleBannedEvent(event: OnPlayerBannedEvent | OnPlayerUnbannedEvent) {
+  playerUpdateThrottle(
+      event,
+      (player, data) => {
+        data.bannedReason = event.reason ?? null
+        playerOnlineInfo(player, data)
+      }
+  )
 }
+
 
 script.on_event(
     defines.events.on_player_kicked,
-    (e: OnPlayerKickedEvent) => {
+    (event: OnPlayerKickedEvent) => {
       playerUpdateThrottle(
-          e.player_index,
-          Converters.eventNameString(e.name),
+          event,
           (player, data) => {
-            data.kickedReason = e.reason ?? null
+            data.kickedReason = event.reason ?? null
             playerOnlineInfo(player, data)
           }
       )
@@ -156,12 +169,11 @@ for (const [name, disconnectId] of pairs(defines.disconnect_reason)) {
 
 script.on_event(
     defines.events.on_pre_player_left_game,
-    (e: OnPrePlayerLeftGameEvent) => {
+    (event: OnPrePlayerLeftGameEvent) => {
       playerUpdateThrottle(
-          e.player_index,
-          Converters.eventNameString(e.name),
+          event,
           (player, data) => {
-            data.disconnectReason = disconnectReasons.get(e.reason)
+            data.disconnectReason = disconnectReasons.get(event.reason)
             playerOnlineInfo(player, data)
           }
       )
@@ -170,10 +182,9 @@ script.on_event(
 
 script.on_event(
     defines.events.on_player_removed,
-    (e: OnPlayerRemovedEvent) => {
+    (event: OnPlayerRemovedEvent) => {
       playerUpdateThrottle(
-          e.player_index,
-          Converters.eventNameString(e.name),
+          event,
           (player, data) => {
             data.isRemoved = true
             playerOnlineInfo(player, data)

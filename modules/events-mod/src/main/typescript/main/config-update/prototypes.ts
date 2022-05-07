@@ -43,6 +43,24 @@ function getMapTilePrototypes(): FactorioPrototype.MapTile[] {
   return tiles
 }
 
+
+// function getEntityPrototypes(): FactorioPrototype.MapTile[] {
+//   let tiles: FactorioPrototype.MapTile[] = []
+//   for (let [, tile] of game.tile_prototypes) {
+//     tiles.push({
+//       type: FactorioPrototype.Type.MapTile,
+//
+//       name: tile.name,
+//       order: tile.order,
+//       layer: tile.layer,
+//       collisionMasks: convertCollisionMaskToNames(tile.collision_mask),
+//       mapColour: Converters.mapColour(tile.map_color),
+//       canBeMined: tile.mineable_properties.minable,
+//     })
+//   }
+//   return tiles
+// }
+
 function convertCollisionMaskToNames(cm: CollisionMask): string[] {
   let masks: string[] = []
   for (let [name] of pairs(cm)) {

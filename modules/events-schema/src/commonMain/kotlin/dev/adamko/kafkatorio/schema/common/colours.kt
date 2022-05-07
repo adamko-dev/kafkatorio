@@ -2,6 +2,7 @@ package dev.adamko.kafkatorio.schema.common
 
 import dev.adamko.kxstsgen.core.experiments.TupleSerializer
 import kotlin.math.roundToInt
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
@@ -11,6 +12,7 @@ import kotlinx.serialization.Serializable
  * All values here are optional. Colour channels default to `0`, the alpha channel defaults to `1`.
  */
 @Serializable(with = Colour.Serializer::class)
+@SerialName("kafkatorio.common.Colour")
 data class Colour(
   val red: Float = 0f,
   val green: Float = 0f,
@@ -40,6 +42,7 @@ data class Colour(
 
 /** Size-efficient version of [Colour] (`4*4` bytes vs `4*1` bytes) */
 @Serializable
+@SerialName("kafkatorio.common.ColourHex")
 data class ColourHex(
   val red: UByte = UByte.MIN_VALUE,
   val green: UByte = UByte.MIN_VALUE,

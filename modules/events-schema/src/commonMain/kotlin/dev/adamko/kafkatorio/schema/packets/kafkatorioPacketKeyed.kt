@@ -3,6 +3,7 @@ package dev.adamko.kafkatorio.schema.packets
 import dev.adamko.kafkatorio.schema.common.Colour
 import dev.adamko.kafkatorio.schema.common.EntityIdentifiers
 import dev.adamko.kafkatorio.schema.common.EntityIdentifiersData
+import dev.adamko.kafkatorio.schema.common.EventName
 import dev.adamko.kafkatorio.schema.common.ForceIndex
 import dev.adamko.kafkatorio.schema.common.MapChunkPosition
 import dev.adamko.kafkatorio.schema.common.MapEntityPosition
@@ -12,40 +13,46 @@ import dev.adamko.kafkatorio.schema.common.PrototypeName
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
 import dev.adamko.kafkatorio.schema.common.Tick
 import dev.adamko.kafkatorio.schema.common.UnitNumber
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 
 /** Has a key, so it can be debounced */
 @Serializable
+@SerialName("kafkatorio.packet.keyed.KafkatorioKeyedPacketData")
 sealed class KafkatorioKeyedPacketData : KafkatorioPacketData() {
-  /** Count how many events this packet is aggregating data from */
-  abstract val key: KafkatorioKeyedPacketKey2
-  abstract val eventCounts: Map<String, UInt>?
+  abstract val key: KafkatorioKeyedPacketKey
+  /** A list of all events that have been aggregated into this packet. */
+  abstract val events: Map<EventName, List<Tick>>?
 }
 
+
 @Serializable
-sealed class KafkatorioKeyedPacketKey2
+@SerialName("kafkatorio.packet.keyed.KafkatorioKeyedPacketKey")
+sealed class KafkatorioKeyedPacketKey
 
 
 /*  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  *** */
 
 
 @Serializable
+@SerialName("kafkatorio.packet.keyed.EntityUpdateKey")
 data class EntityUpdateKey(
   /** While normally optional, here a [unitNumber] is required for caching */
   override val unitNumber: UnitNumber,
   override val name: String,
   override val protoType: String,
-) : EntityIdentifiers, KafkatorioKeyedPacketKey2()
+) : EntityIdentifiers, KafkatorioKeyedPacketKey()
 
 
 @Serializable
+@SerialName("kafkatorio.packet.keyed.EntityUpdate")
 data class EntityUpdate(
   override val key: EntityUpdateKey,
 
-  override val eventCounts: Map<String, UInt>? = null,
+  override val events: Map<EventName, List<Tick>>? = null,
 
-  val chunkPosition: MapChunkPosition? = null,
+  val chunkPosition: MapEntityPosition? = null,
   val graphicsVariation: UByte? = null,
   val health: Float? = null,
   val isActive: Boolean? = null,
@@ -61,17 +68,19 @@ data class EntityUpdate(
 
 
 @Serializable
+@SerialName("kafkatorio.packet.keyed.MapChunkUpdateKey")
 data class MapChunkUpdateKey(
   val chunkPosition: MapChunkPosition,
   val surfaceIndex: SurfaceIndex,
-) : KafkatorioKeyedPacketKey2()
+) : KafkatorioKeyedPacketKey()
 
 
 @Serializable
+@SerialName("kafkatorio.packet.keyed.MapChunkUpdate")
 data class MapChunkUpdate(
   override val key: MapChunkUpdateKey,
 
-  override val eventCounts: Map<String, UInt>? = null,
+  override val events: Map<EventName, List<Tick>>? = null,
 
   val player: PlayerIndex? = null,
   val robot: EntityIdentifiersData? = null,
@@ -85,16 +94,18 @@ data class MapChunkUpdate(
 /*  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  *** */
 
 @Serializable
+@SerialName("kafkatorio.packet.keyed.PlayerUpdateKey")
 data class PlayerUpdateKey(
   val index: PlayerIndex,
-) : KafkatorioKeyedPacketKey2()
+) : KafkatorioKeyedPacketKey()
 
 
 @Serializable
+@SerialName("kafkatorio.packet.keyed.PlayerUpdate")
 data class PlayerUpdate(
   override val key: PlayerUpdateKey,
 
-  override val eventCounts: Map<String, UInt>? = null,
+  override val events: Map<EventName, List<Tick>>? = null,
 
   val characterUnitNumber: UnitNumber? = null,
   val chatColour: Colour? = null,

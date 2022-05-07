@@ -17,7 +17,7 @@ import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
 import dev.adamko.kafkatorio.schema.packets.MapChunkUpdate
 import dev.adamko.kafkatorio.schema.packets.MapChunkUpdateKey
 import dev.adamko.kafkatorio.schema.packets.PrototypesUpdate
-import dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype
+import dev.adamko.kafkatorio.schema.common.FactorioPrototype
 import dev.adamko.kotka.kxs.serde
 import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
@@ -289,7 +289,7 @@ class GroupMapChunksTest : FunSpec({
       	"modVersion": "0.4.0",
       	"tick": 36,
       	"data": {
-      		"type": "dev.adamko.kafkatorio.schema.packets.MapChunkUpdate",
+      		"type": "kafkatorio.packet.keyed.MapChunkUpdate",
       		"key": {
       			"chunkPosition": [
       				-7,
@@ -297,8 +297,8 @@ class GroupMapChunksTest : FunSpec({
       			],
       			"surfaceIndex": 1
       		},
-      		"eventCounts": {
-      			"on_chunk_generated": 1
+      		"events": {
+      			"on_chunk_generated": [1]
       		},
       		"tileDictionary": {
       			"tilesXY": {
@@ -1407,10 +1407,10 @@ class GroupMapChunksTest : FunSpec({
       	"modVersion": "0.4.0",
       	"tick": 4352,
       	"data": {
-      		"type": "dev.adamko.kafkatorio.schema.packets.PrototypesUpdate",
+      		"type": "kafkatorio.packet.instant.PrototypesUpdate",
       		"prototypes": [
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "stone-path",
       				"layer": 60,
       				"mapColour": [
@@ -1426,7 +1426,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": true
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "concrete",
       				"layer": 61,
       				"mapColour": [
@@ -1442,7 +1442,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": true
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "hazard-concrete-left",
       				"layer": 62,
       				"mapColour": [
@@ -1458,7 +1458,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": true
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "hazard-concrete-right",
       				"layer": 62,
       				"mapColour": [
@@ -1474,7 +1474,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": true
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "refined-concrete",
       				"layer": 64,
       				"mapColour": [
@@ -1490,7 +1490,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": true
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "refined-hazard-concrete-left",
       				"layer": 65,
       				"mapColour": [
@@ -1506,7 +1506,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": true
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "refined-hazard-concrete-right",
       				"layer": 65,
       				"mapColour": [
@@ -1522,7 +1522,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": true
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "landfill",
       				"layer": 57,
       				"mapColour": [
@@ -1538,7 +1538,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "acid-refined-concrete",
       				"layer": 97,
       				"mapColour": [
@@ -1554,7 +1554,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "black-refined-concrete",
       				"layer": 88,
       				"mapColour": [
@@ -1570,7 +1570,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "blue-refined-concrete",
       				"layer": 73,
       				"mapColour": [
@@ -1586,7 +1586,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "brown-refined-concrete",
       				"layer": 91,
       				"mapColour": [
@@ -1602,7 +1602,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "cyan-refined-concrete",
       				"layer": 94,
       				"mapColour": [
@@ -1618,7 +1618,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "green-refined-concrete",
       				"layer": 70,
       				"mapColour": [
@@ -1634,7 +1634,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "orange-refined-concrete",
       				"layer": 76,
       				"mapColour": [
@@ -1650,7 +1650,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "pink-refined-concrete",
       				"layer": 82,
       				"mapColour": [
@@ -1666,7 +1666,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "purple-refined-concrete",
       				"layer": 85,
       				"mapColour": [
@@ -1682,7 +1682,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "red-refined-concrete",
       				"layer": 67,
       				"mapColour": [
@@ -1698,7 +1698,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "yellow-refined-concrete",
       				"layer": 79,
       				"mapColour": [
@@ -1714,7 +1714,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "grass-1",
       				"layer": 26,
       				"mapColour": [
@@ -1730,7 +1730,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "grass-2",
       				"layer": 28,
       				"mapColour": [
@@ -1746,7 +1746,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "grass-3",
       				"layer": 29,
       				"mapColour": [
@@ -1762,7 +1762,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "grass-4",
       				"layer": 30,
       				"mapColour": [
@@ -1778,7 +1778,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "dry-dirt",
       				"layer": 18,
       				"mapColour": [
@@ -1794,7 +1794,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "dirt-1",
       				"layer": 19,
       				"mapColour": [
@@ -1810,7 +1810,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "dirt-2",
       				"layer": 20,
       				"mapColour": [
@@ -1826,7 +1826,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "dirt-3",
       				"layer": 21,
       				"mapColour": [
@@ -1842,7 +1842,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "dirt-4",
       				"layer": 22,
       				"mapColour": [
@@ -1858,7 +1858,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "dirt-5",
       				"layer": 23,
       				"mapColour": [
@@ -1874,7 +1874,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "dirt-6",
       				"layer": 24,
       				"mapColour": [
@@ -1890,7 +1890,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "dirt-7",
       				"layer": 25,
       				"mapColour": [
@@ -1906,7 +1906,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "sand-1",
       				"layer": 8,
       				"mapColour": [
@@ -1922,7 +1922,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "sand-2",
       				"layer": 9,
       				"mapColour": [
@@ -1938,7 +1938,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "sand-3",
       				"layer": 10,
       				"mapColour": [
@@ -1954,7 +1954,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "red-desert-0",
       				"layer": 31,
       				"mapColour": [
@@ -1970,7 +1970,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "red-desert-1",
       				"layer": 14,
       				"mapColour": [
@@ -1986,7 +1986,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "red-desert-2",
       				"layer": 15,
       				"mapColour": [
@@ -2002,7 +2002,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "red-desert-3",
       				"layer": 16,
       				"mapColour": [
@@ -2018,7 +2018,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "water",
       				"layer": 3,
       				"mapColour": [
@@ -2038,7 +2038,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "deepwater",
       				"layer": 3,
       				"mapColour": [
@@ -2058,7 +2058,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "water-green",
       				"layer": 3,
       				"mapColour": [
@@ -2078,7 +2078,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "deepwater-green",
       				"layer": 3,
       				"mapColour": [
@@ -2098,7 +2098,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "water-shallow",
       				"layer": 6,
       				"mapColour": [
@@ -2117,7 +2117,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "water-mud",
       				"layer": 7,
       				"mapColour": [
@@ -2136,7 +2136,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "nuclear-ground",
       				"layer": 33,
       				"mapColour": [
@@ -2152,7 +2152,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "water-wube",
       				"layer": 2,
       				"mapColour": [
@@ -2172,7 +2172,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "tile-unknown",
       				"layer": 0,
       				"mapColour": [
@@ -2186,7 +2186,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "out-of-map",
       				"layer": 0,
       				"mapColour": [
@@ -2209,7 +2209,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "lab-dark-1",
       				"layer": 70,
       				"mapColour": [
@@ -2225,7 +2225,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "lab-dark-2",
       				"layer": 70,
       				"mapColour": [
@@ -2241,7 +2241,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "lab-white",
       				"layer": 70,
       				"mapColour": [
@@ -2257,7 +2257,7 @@ class GroupMapChunksTest : FunSpec({
       				"canBeMined": false
       			},
       			{
-      				"type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+      				"type": "kafkatorio.prototype.MapTile",
       				"name": "tutorial-grid",
       				"layer": 55,
       				"mapColour": [

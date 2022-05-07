@@ -6,6 +6,7 @@ import KafkatorioSettings from "./main/settings/KafkatorioSettings";
 require("./main/events/registerHandlers")
 require("./main/events/onMapChunkEventListeners")
 require("./main/events/onPlayerEventListeners")
+require("./main/events/EntityEvents")
 require("./main/commands/kafkatorioCommands")
 require("./main/cache/cacheChecker")
 

@@ -35,7 +35,6 @@ class SaveMapChunksTest : FunSpec({
 
   test("save tile") {
 
-
     Scenario().use { scenario ->
 
       val chunkTilesArb = serverMapChunkTilesArb(scenario.serverId)
@@ -79,7 +78,7 @@ class SaveMapChunksTest : FunSpec({
       Path("build/test/save-map-chunks-${now}")
     }
     private val topology = saveMapTiles(streamsBuilder, outputDir)
-    val testDriver: TopologyTestDriver = TopologyTestDriver(topology)
+    private val testDriver: TopologyTestDriver = TopologyTestDriver(topology)
 
     val groupedMapChunksInputTopic: TestInputTopic<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
       testDriver.createInputTopic(
@@ -99,21 +98,14 @@ class SaveMapChunksTest : FunSpec({
 
   companion object {
 
-    fun mapTilePositionArb(
-      xArb: Arb<Int> = Arb.int(),
-      yArb: Arb<Int> = Arb.int(),
-    ): Arb<MapTilePosition> = arbitrary {
-      MapTilePosition(xArb.bind(), yArb.bind())
-    }
-
-    fun mapChunkPositionArb(
+    private fun mapChunkPositionArb(
       xArb: Arb<Int> = Arb.int(-10..10),
       yArb: Arb<Int> = Arb.int(-10..10),
     ): Arb<MapChunkPosition> = arbitrary {
       MapChunkPosition(xArb.bind(), yArb.bind())
     }
 
-    fun colourHexArb(
+    private fun colourHexArb(
       redArb: Arb<UByte> = Arb.uByte(),
       greenArb: Arb<UByte> = Arb.uByte(),
       blueArb: Arb<UByte> = Arb.uByte(),
@@ -123,18 +115,11 @@ class SaveMapChunksTest : FunSpec({
         redArb.bind(),
         greenArb.bind(),
         blueArb.bind(),
-//        alphaArb.bind(),
-        255u,
+        alphaArb.bind(),
       )
-//      ColourHex(
-//       255u,
-//        0u,
-//        0u,
-//        255u,
-//      )
     }
 
-    fun serverMapChunkIdArb(
+    private fun serverMapChunkIdArb(
       serverId: FactorioServerId,
       chunkPosition: Arb<MapChunkPosition> = mapChunkPositionArb(),
       surfaceIndex: SurfaceIndex = SurfaceIndex(1u),
@@ -148,7 +133,7 @@ class SaveMapChunksTest : FunSpec({
       )
     }
 
-    fun tilesInChunkArb(
+    private fun tilesInChunkArb(
       chunkId: ServerMapChunkId
     ): Arb<Map<MapTilePosition, ColourHex>> = arbitrary {
 

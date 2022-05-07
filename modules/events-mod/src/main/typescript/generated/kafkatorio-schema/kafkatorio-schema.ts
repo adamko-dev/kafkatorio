@@ -20,14 +20,14 @@ export type KafkatorioPacketData =
 
 export namespace KafkatorioPacketData {
   export enum Type {
-    ConfigurationUpdate = "dev.adamko.kafkatorio.schema.packets.ConfigurationUpdate",
-    ConsoleChatUpdate = "dev.adamko.kafkatorio.schema.packets.ConsoleChatUpdate",
-    ConsoleCommandUpdate = "dev.adamko.kafkatorio.schema.packets.ConsoleCommandUpdate",
-    PrototypesUpdate = "dev.adamko.kafkatorio.schema.packets.PrototypesUpdate",
-    SurfaceUpdate = "dev.adamko.kafkatorio.schema.packets.SurfaceUpdate",
-    EntityUpdate = "dev.adamko.kafkatorio.schema.packets.EntityUpdate",
-    MapChunkUpdate = "dev.adamko.kafkatorio.schema.packets.MapChunkUpdate",
-    PlayerUpdate = "dev.adamko.kafkatorio.schema.packets.PlayerUpdate",
+    ConfigurationUpdate = "kafkatorio.packet.instant.ConfigurationUpdate",
+    ConsoleChatUpdate = "kafkatorio.packet.instant.ConsoleChatUpdate",
+    ConsoleCommandUpdate = "kafkatorio.packet.instant.ConsoleCommandUpdate",
+    PrototypesUpdate = "kafkatorio.packet.instant.PrototypesUpdate",
+    SurfaceUpdate = "kafkatorio.packet.instant.SurfaceUpdate",
+    EntityUpdate = "kafkatorio.packet.keyed.EntityUpdate",
+    MapChunkUpdate = "kafkatorio.packet.keyed.MapChunkUpdate",
+    PlayerUpdate = "kafkatorio.packet.keyed.PlayerUpdate",
   }
   
   export interface ConfigurationUpdate {
@@ -66,7 +66,7 @@ export namespace KafkatorioPacketData {
   export interface EntityUpdate {
     type: KafkatorioPacketData.Type.EntityUpdate;
     key: EntityUpdateKey;
-    eventCounts?: { [key: string]: UInt } | null;
+    events?: { [key: EventName]: Tick[] } | null;
     chunkPosition?: MapChunkPosition | null;
     graphicsVariation?: UByte | null;
     health?: Float | null;
@@ -81,7 +81,7 @@ export namespace KafkatorioPacketData {
   export interface MapChunkUpdate {
     type: KafkatorioPacketData.Type.MapChunkUpdate;
     key: MapChunkUpdateKey;
-    eventCounts?: { [key: string]: UInt } | null;
+    events?: { [key: EventName]: Tick[] } | null;
     player?: PlayerIndex | null;
     robot?: EntityIdentifiersData | null;
     force?: ForceIndex | null;
@@ -92,7 +92,7 @@ export namespace KafkatorioPacketData {
   export interface PlayerUpdate {
     type: KafkatorioPacketData.Type.PlayerUpdate;
     key: PlayerUpdateKey;
-    eventCounts?: { [key: string]: UInt } | null;
+    events?: { [key: EventName]: Tick[] } | null;
     characterUnitNumber?: UnitNumber | null;
     chatColour?: Colour | null;
     colour?: Colour | null;
@@ -196,7 +196,7 @@ export type FactorioPrototype =
 
 export namespace FactorioPrototype {
   export enum Type {
-    MapTile = "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+    MapTile = "kafkatorio.prototype.MapTile",
   }
   
   export interface MapTile {
@@ -209,6 +209,8 @@ export namespace FactorioPrototype {
     canBeMined: boolean;
   }
 }
+
+export type EventName = string;
 
 export type Byte = int8;
 

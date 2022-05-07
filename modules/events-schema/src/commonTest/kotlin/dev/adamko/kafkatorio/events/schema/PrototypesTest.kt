@@ -1,9 +1,9 @@
 package dev.adamko.kafkatorio.events.schema
 
 import dev.adamko.kafkatorio.schema.common.Colour
+import dev.adamko.kafkatorio.schema.common.FactorioPrototype
 import dev.adamko.kafkatorio.schema.common.PrototypeName
 import dev.adamko.kafkatorio.schema.jsonMapperKafkatorio
-import dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype
 import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
 import dev.adamko.kafkatorio.schema.packets.PrototypesUpdate
 import io.kotest.core.spec.style.BehaviorSpec
@@ -20,10 +20,10 @@ class PrototypesTest : BehaviorSpec({
   "modVersion": "0.2.4",
   "tick": 534,
   "data": {
-    "type": "dev.adamko.kafkatorio.schema.packets.PrototypesUpdate",
+    "type": "kafkatorio.packet.instant.PrototypesUpdate",
     "prototypes": [
       {
-        "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+        "type": "kafkatorio.prototype.MapTile",
         "name": "tile-unknown",
         "order": "z-a",
         "layer": 0,
@@ -50,10 +50,10 @@ class PrototypesTest : BehaviorSpec({
         "modVersion": "0.3.2",
         "tick": 534,
         "data": {
-          "type": "dev.adamko.kafkatorio.schema.packets.PrototypesUpdate",
+          "type": "kafkatorio.packet.instant.PrototypesUpdate",
           "prototypes": [
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "stone-path",
               "order": "a[artificial]-a[tier-1]-a[stone-path]",
               "layer": 60,
@@ -64,7 +64,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": true
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "concrete",
               "order": "a[artificial]-b[tier-2]-a[concrete]",
               "layer": 61,
@@ -75,7 +75,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": true
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "hazard-concrete-left",
               "order": "a[artificial]-b[tier-2]-b[hazard-concrete-left]",
               "layer": 62,
@@ -86,7 +86,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": true
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "hazard-concrete-right",
               "order": "a[artificial]-b[tier-2]-c[hazard-concrete-right]",
               "layer": 62,
@@ -97,7 +97,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": true
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "refined-concrete",
               "order": "a[artificial]-c[tier-3]-a[refined-concrete]",
               "layer": 64,
@@ -108,7 +108,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": true
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "refined-hazard-concrete-left",
               "order": "a[artificial]-c[tier-3]-b[refined-hazard-concrete-left]",
               "layer": 65,
@@ -119,7 +119,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": true
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "refined-hazard-concrete-right",
               "order": "a[artificial]-c[tier-3]-c[refined-hazard-concrete-right]",
               "layer": 65,
@@ -130,7 +130,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": true
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "landfill",
               "order": "a[artificial]-d[utility]-a[landfill]",
               "layer": 57,
@@ -141,7 +141,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "acid-refined-concrete",
               "order": "a[artificial]-e[color-concrete]-acid",
               "layer": 97,
@@ -152,7 +152,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "black-refined-concrete",
               "order": "a[artificial]-e[color-concrete]-black",
               "layer": 88,
@@ -163,7 +163,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "blue-refined-concrete",
               "order": "a[artificial]-e[color-concrete]-blue",
               "layer": 73,
@@ -174,7 +174,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "brown-refined-concrete",
               "order": "a[artificial]-e[color-concrete]-brown",
               "layer": 91,
@@ -185,7 +185,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "cyan-refined-concrete",
               "order": "a[artificial]-e[color-concrete]-cyan",
               "layer": 94,
@@ -196,7 +196,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "green-refined-concrete",
               "order": "a[artificial]-e[color-concrete]-green",
               "layer": 70,
@@ -207,7 +207,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "orange-refined-concrete",
               "order": "a[artificial]-e[color-concrete]-orange",
               "layer": 76,
@@ -218,7 +218,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "pink-refined-concrete",
               "order": "a[artificial]-e[color-concrete]-pink",
               "layer": 82,
@@ -229,7 +229,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "purple-refined-concrete",
               "order": "a[artificial]-e[color-concrete]-purple",
               "layer": 85,
@@ -240,7 +240,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "red-refined-concrete",
               "order": "a[artificial]-e[color-concrete]-red",
               "layer": 67,
@@ -251,7 +251,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "yellow-refined-concrete",
               "order": "a[artificial]-e[color-concrete]-yellow",
               "layer": 79,
@@ -262,7 +262,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "grass-1",
               "order": "b[natural]-a[grass]-a[grass-1]",
               "layer": 26,
@@ -273,7 +273,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "grass-2",
               "order": "b[natural]-a[grass]-b[grass-2]",
               "layer": 28,
@@ -284,7 +284,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "grass-3",
               "order": "b[natural]-a[grass]-c[grass-3]",
               "layer": 29,
@@ -295,7 +295,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "grass-4",
               "order": "b[natural]-a[grass]-d[grass-4]",
               "layer": 30,
@@ -306,7 +306,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "dry-dirt",
               "order": "b[natural]-b[dirt]-a[dry-dirt]",
               "layer": 18,
@@ -317,7 +317,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "dirt-1",
               "order": "b[natural]-b[dirt]-b[dirt-1]",
               "layer": 19,
@@ -328,7 +328,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "dirt-2",
               "order": "b[natural]-b[dirt]-c[dirt-2]",
               "layer": 20,
@@ -339,7 +339,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "dirt-3",
               "order": "b[natural]-b[dirt]-d[dirt-3]",
               "layer": 21,
@@ -350,7 +350,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "dirt-4",
               "order": "b[natural]-b[dirt]-e[dirt-4]",
               "layer": 22,
@@ -361,7 +361,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "dirt-5",
               "order": "b[natural]-b[dirt]-f[dirt-5]",
               "layer": 23,
@@ -372,7 +372,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "dirt-6",
               "order": "b[natural]-b[dirt]-g[dirt-6]",
               "layer": 24,
@@ -383,7 +383,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "dirt-7",
               "order": "b[natural]-b[dirt]-h[dirt-7]",
               "layer": 25,
@@ -394,7 +394,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "sand-1",
               "order": "b[natural]-c[sand]-a[sand-1]",
               "layer": 8,
@@ -405,7 +405,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "sand-2",
               "order": "b[natural]-c[sand]-b[sand-2]",
               "layer": 9,
@@ -416,7 +416,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "sand-3",
               "order": "b[natural]-c[sand]-c[sand-3]",
               "layer": 10,
@@ -427,7 +427,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "red-desert-0",
               "order": "b[natural]-d[red-desert]-a[red-desert-0]",
               "layer": 31,
@@ -438,7 +438,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "red-desert-1",
               "order": "b[natural]-d[red-desert]-b[red-desert-1]",
               "layer": 14,
@@ -449,7 +449,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "red-desert-2",
               "order": "b[natural]-d[red-desert]-c[red-desert-2]",
               "layer": 15,
@@ -460,7 +460,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "red-desert-3",
               "order": "b[natural]-d[red-desert]-d[red-desert-3]",
               "layer": 16,
@@ -471,7 +471,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "water",
               "order": "c[water]-a[water]",
               "layer": 3,
@@ -486,7 +486,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "deepwater",
               "order": "c[water]-b[deep-water]",
               "layer": 3,
@@ -501,7 +501,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "water-green",
               "order": "c[water]-c[water-green]",
               "layer": 3,
@@ -516,7 +516,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "deepwater-green",
               "order": "c[water]-d[deepwater-green]",
               "layer": 3,
@@ -531,7 +531,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "water-shallow",
               "order": "c[water]-e[water-shallow]",
               "layer": 6,
@@ -545,7 +545,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "water-mud",
               "order": "c[water]-g[water-mud]",
               "layer": 7,
@@ -559,7 +559,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "nuclear-ground",
               "order": "d[destruction]-a[nuclear]-a[nuclear-ground]",
               "layer": 33,
@@ -570,7 +570,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "water-wube",
               "order": "x[wube]-a[water-wube]",
               "layer": 2,
@@ -585,7 +585,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "tile-unknown",
               "order": "z-a",
               "layer": 0,
@@ -595,7 +595,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "out-of-map",
               "order": "z[other]-a[out-of-map]",
               "layer": 0,
@@ -613,7 +613,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "lab-dark-1",
               "order": "z[other]-b[lab]-a[lab-dark-1]",
               "layer": 70,
@@ -624,7 +624,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "lab-dark-2",
               "order": "z[other]-b[lab]-b[lab-dark-2]",
               "layer": 70,
@@ -635,7 +635,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "lab-white",
               "order": "z[other]-b[lab]-c[lab-white]",
               "layer": 70,
@@ -646,7 +646,7 @@ class PrototypesTest : BehaviorSpec({
               "canBeMined": false
             },
             {
-              "type": "dev.adamko.kafkatorio.schema.prototypes.FactorioPrototype.MapTile",
+              "type": "kafkatorio.prototype.MapTile",
               "name": "tutorial-grid",
               "order": "z[other]-c[tutorial]-a[tutorial-grid]",
               "layer": 55,
