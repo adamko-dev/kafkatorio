@@ -56,19 +56,16 @@ function mapTilesUpdateDebounce(
           }
         }
 
-        let protosCount: uint = 0
+        let protosCount: uint = table_size(data.tileDictionary.protos)
         for (const tile of tiles) {
-          if (data.tileDictionary.protos[tile.name] == undefined) {
-            data.tileDictionary.protos[tile.name] = protosCount++
-          }
+          data.tileDictionary.protos[tile.name] ??= protosCount++
+
           const protoKey = data.tileDictionary.protos[tile.name]
 
           const xString = `${tile.position.x}`
           const yString = `${tile.position.y}`
 
-          if (data.tileDictionary.tilesXY[xString] == undefined) {
-            data.tileDictionary.tilesXY[xString] = {}
-          }
+          data.tileDictionary.tilesXY[xString] ??= {}
           data.tileDictionary.tilesXY[xString][yString] = protoKey
         }
 
