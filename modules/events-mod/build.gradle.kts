@@ -127,6 +127,15 @@ distributions {
   }
 }
 
+
+tasks.withType<Zip>().configureEach {
+  inputs.property("projectTokens", projectTokens)
+//  if (name.startsWith("dist")) {
+//    notCompatibleWithConfigurationCache("NPE on projectTokens")
+//  }
+}
+
+
 //val downloadFactorioApiDocs by tasks.registering {
 //  group = project.name
 //
