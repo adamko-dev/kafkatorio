@@ -12,6 +12,11 @@
       "lua-types/5.2",
       "typed-factorio/runtime"
     ],
+    "plugins": [
+      {
+        "name": "typescript-tstl-plugin"
+      }
+    ],
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "explainFiles": true,
