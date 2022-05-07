@@ -16,11 +16,14 @@ node {
   distBaseUrl.set(null as String?) // set by dependencyResolutionManagement
 }
 
+val projectVersion: Provider<String> = providers.provider { "${project.version}" }
+
 val updatePackageJson by tasks.registering(UpdatePackageJson::class) {
 //  group = NodePlugin.NODE_GROUP
 //  description = "Read the package.json file and update the version and name, based on the project."
 
-  propertiesToCheck.put("version", providers.provider { "${project.version}" })
+  inputs.property("projectVersion", projectVersion)
+  propertiesToCheck.put("version", projectVersion)
 
   // check to see if the properties are already up-to-date
 //  outputs.upToDateWhen(areJsonPropertiesUpToDate(packageJsonFile, propertiesToCheck))

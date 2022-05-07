@@ -6,6 +6,8 @@ plugins {
   base
   `project-report`
   `build-dashboard`
+
+  kotlin("multiplatform") apply false // try to stop error 'Projects must be configuring'
 }
 
 group = "dev.adamko.kafkatorio"
@@ -15,7 +17,7 @@ val licenseFile: RegularFile by extra(layout.projectDirectory.file("LICENSE"))
 
 val projectTokens: MapProperty<String, String> by extra {
   objects.mapProperty<String, String>().apply {
-    put("project.version", provider { "$version" })
+    put("project.version", provider { "${project.version}" })
     put("rootProject.name", provider { rootProject.name })
     put("date.year", provider { "${LocalDate.now().year}" })
     put("author.email", "adam@adamko.dev")

@@ -1,5 +1,6 @@
 import dev.adamko.kafkatorio.gradle.asConsumer
 import dev.adamko.kafkatorio.gradle.asProvider
+import dev.adamko.kafkatorio.gradle.dropDirectories
 import dev.adamko.kafkatorio.gradle.factorioModAttributes
 import dev.adamko.kafkatorio.gradle.typescriptAttributes
 import dev.adamko.kafkatorio.task.TypescriptToLuaTask
@@ -11,15 +12,15 @@ plugins {
   distribution
 }
 
-description =
-  "Sends in-game information to a server over the internet (requires Kafkatorio Kafka-Pipe)"
+description = "Sends in-game information to a server over the internet (requires additional setup)"
 
 
 // Factorio required format is:
 // - filename: `mod-name_version.zip`
 // - zip contains one directory, `mod-name`
+
 val modName: String by extra { "${rootProject.name}-events" }
-val distributionZipName: String by extra { "${modName}_${project.version}.zip" }
+val distributionZipName: String by extra { "${modName}_${rootProject.version}.zip" }
 
 // version of Factorio that the mod is compatible with (must only be "major.minor" - patch causes error)
 val modFactorioCompatibility: Provider<String> =
@@ -27,10 +28,11 @@ val modFactorioCompatibility: Provider<String> =
 
 val licenseFile: RegularFile by rootProject.extra
 val projectTokens: MapProperty<String, String> by rootProject.extra
+val modDescription: String by project.extra { project.description ?: "" }
 projectTokens.apply {
   put("mod.name", modName)
   put("mod.title", "Kafkatorio Events")
-  put("mod.description", provider { project.description }.orElse(""))
+  put("mod.description", modDescription)
   put("factorio.version", modFactorioCompatibility)
 }
 
@@ -40,6 +42,7 @@ val tsSrcDir: Directory = layout.projectDirectory.dir("src/main/typescript")
 node {
   nodeProjectDir.set(tsSrcDir)
 }
+
 
 val typescriptEventsSchema: Configuration by configurations.creating {
   description = "Fetch the TypeScript schema from the event-schema subproject"
@@ -82,9 +85,7 @@ val installEventsTsSchema by tasks.registering(Sync::class) {
       }
   ) {
     // drop the first directory inside the zip
-    eachFile {
-      relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray())
-    }
+    eachFile { relativePath = dropDirectories() }
     includeEmptyDirs = false
   }
   into(outputDir)
@@ -123,7 +124,6 @@ distributions {
         }
       }
     }
-
   }
 }
 
@@ -163,8 +163,11 @@ val factorioModProvider by configurations.registering {
 }
 
 
+val packageJsonName = providers.provider { "${rootProject.name}-${project.name}" }
+
 tasks.updatePackageJson {
-  propertiesToCheck.put("name", providers.provider { "${rootProject.name}-${project.name}" })
+  inputs.property("packageJsonName", packageJsonName)
+  propertiesToCheck.put("name", packageJsonName)
   packageJsonFile.set(layout.projectDirectory.file("src/main/typescript/package.json"))
 }
 

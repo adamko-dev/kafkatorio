@@ -3,7 +3,9 @@ package dev.adamko.kafkatorio.gradle
 import java.io.ByteArrayOutputStream
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
+import org.gradle.api.file.FileCopyDetails
 import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RelativePath
 import org.gradle.api.specs.NotSpec
 import org.gradle.api.specs.Spec
 import org.gradle.plugins.ide.idea.model.IdeaModule
@@ -14,8 +16,8 @@ import org.jetbrains.kotlin.incremental.md5
 
 
 operator fun <T> Spec<T>.not(): NotSpec<T> = NotSpec(this)
-//
-//
+
+
 //fun isProcessRunning(process: String, ignoreCase: Boolean = true): Spec<Task> =
 //  Spec<Task> {
 //    ByteArrayOutputStream().use { outputStream ->
@@ -59,6 +61,7 @@ fun Project.execCapture(spec: ExecSpec.() -> Unit): String {
   }
 }
 
+
 /** https://youtrack.jetbrains.com/issue/KT-50848 */
 fun Project.yarn(configure: YarnRootExtension.() -> Unit) = with(yarn, configure)
 
@@ -68,3 +71,8 @@ fun Directory.filesChecksum() = asFileTree
   .map { it.readBytes() + it.absolutePath.toByteArray() }
   .fold(byteArrayOf()) { acc, bytes -> acc + bytes }
   .md5()
+
+
+/** Drop the first [count] directories from the path */
+fun FileCopyDetails.dropDirectories(count: Int = 1): RelativePath =
+  RelativePath(true, *relativePath.segments.drop(count).toTypedArray())

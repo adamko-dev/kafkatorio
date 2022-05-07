@@ -19,7 +19,9 @@ import org.gradle.kotlin.dsl.support.useToRun
 import org.jetbrains.kotlin.util.suffixIfNot
 
 @CacheableTask
-abstract class UpdatePackageJson : DefaultTask() {
+abstract class UpdatePackageJson @Inject constructor(
+  private val providers: ProviderFactory
+) : DefaultTask() {
 
   @get:Input
   abstract val propertiesToCheck: MapProperty<String, String>
@@ -27,15 +29,10 @@ abstract class UpdatePackageJson : DefaultTask() {
   @get:OutputFile
   abstract val packageJsonFile: RegularFileProperty
 
-  @get:Inject
-  abstract val providers: ProviderFactory
-//
-//  @get:Inject
-//  abstract val fs: FileSystemOperations
-
   init {
     group = NodePlugin.NODE_GROUP
-    description = "Read the package.json file and update the version and name, based on the project."
+    description =
+      "Read the package.json file and update the version and name, based on the project."
 
     outputs.upToDateWhen(JsonPropertiesUpToDateSpec)
 
@@ -47,12 +44,13 @@ abstract class UpdatePackageJson : DefaultTask() {
 
   @TaskAction
   fun exec() {
-    val pj = packageJsonFile.asFile.get()
+    val packageJsonFile = packageJsonFile.asFile.get()
+    val propertiesToCheck = propertiesToCheck.get()
 
-    logger.info("updating package.json ${pj.canonicalPath}")
-    val packageJson = jsonMapper.parseToJsonElement(pj.readText()).jsonObject
+    logger.info("updating package.json ${packageJsonFile.canonicalPath}")
+    val packageJson = jsonMapper.parseToJsonElement(packageJsonFile.readText()).jsonObject
 
-    val newJsonProps = propertiesToCheck.get().mapValues { (_, newVal) -> JsonPrimitive(newVal) }
+    val newJsonProps = propertiesToCheck.mapValues { (_, newVal) -> JsonPrimitive(newVal) }
 
     val packageJsonUpdate = JsonObject(packageJson + newJsonProps)
     val packageJsonContentUpdated =
@@ -62,7 +60,7 @@ abstract class UpdatePackageJson : DefaultTask() {
 
     logger.debug(packageJsonContentUpdated)
 
-    packageJsonFile.get().asFile.writer().useToRun {
+    packageJsonFile.writer().useToRun {
       write(packageJsonContentUpdated)
     }
   }

@@ -1,5 +1,6 @@
 import dev.adamko.kafkatorio.gradle.asProvider
 import dev.adamko.kafkatorio.gradle.typescriptAttributes
+import dev.adamko.kafkatorio.task.GenerateTypescriptTask
 
 
 plugins {
@@ -106,56 +107,78 @@ kotlin {
   }
 }
 
+val jvmJar: TaskProvider<Jar> = tasks.named<Jar>(kotlin.jvm().artifactsTaskName)
+val mainCompilation: Provider<FileCollection> =
+  kotlin.jvm().compilations.named("main").map { it.runtimeDependencyFiles }
 
-val generateTypescript by tasks.registering(JavaExec::class) {
-  group = "kt2ts"
 
-  val jvmJar = tasks.named<Jar>(kotlin.jvm().artifactsTaskName)
+val generateTypescript by tasks.registering(GenerateTypescriptTask::class) {
   dependsOn(jvmJar)
-
-  val mainCompilation = kotlin.jvm().compilations.named("main").map { it.runtimeDependencyFiles }
-//  dependsOn(mainCompilation)
-  inputs.files(mainCompilation)
-
   classpath(
     jvmJar,
-    mainCompilation
+    mainCompilation,
   )
-
-//  mainClass.set("dev.adamko.kafkatorio.events.schema.Kt2tsKt")
+  output.set(layout.buildDirectory.dir("generated/typescript"))
   mainClass.set("dev.adamko.kafkatorio.events.schema.Kt2ts2Kt")
+  args(temporaryDir.canonicalPath)
+}
 
-  val tempOutputDirectory = file("$temporaryDir")
-  args(tempOutputDirectory)
+//val generateTypescript2 by tasks.registering(JavaExec::class) {
+//  group = "kt2ts"
+//
+//  dependsOn(jvmJar)
+//
+//  inputs.files(mainCompilation)
+//
+//  classpath(
+//    jvmJar,
+//    mainCompilation,
+//  )
+//  mainClass.set("dev.adamko.kafkatorio.events.schema.Kt2ts2Kt")
+//
+//  args(temporaryDir)
+//
+//  val buildOutput = layout.buildDirectory.dir("generated/typescript")
+//  outputs.dir(buildOutput)
+//
+//  doFirst {
+//    delete(temporaryDir)
+//    mkdir(temporaryDir)
+//  }
+//
+//  doLast {
+//    sync {
+//      from(temporaryDir)
+//      into(buildOutput)
+//      include("**/*.ts")
+//    }
+//  }
+//}
 
-  val buildOutput = layout.buildDirectory.dir("generated/typescript")
-  outputs.dir(buildOutput)
-
-  doFirst {
-    delete(temporaryDir)
-    mkdir(temporaryDir)
-  }
-
-  doLast {
-    sync {
-      from(temporaryDir)
-      into(buildOutput)
-      include("**/*.ts")
-    }
-  }
+val schemaTsDistributionName = providers.provider {
+  "${rootProject.name}-${project.name}"
 }
 
 val schemaTs by distributions.registering {
-  distributionBaseName.set("${rootProject.name}-${project.name}")
+  distributionBaseName.set(schemaTsDistributionName)
   contents {
     from(generateTypescript.map { it.outputs.files.asFileTree })
   }
 }
 
+val schemaTsZipTask = tasks.named<Zip>("${schemaTs.name}DistZip")
+
 val typescriptModelGenerated: Configuration by configurations.creating {
   asProvider()
   typescriptAttributes(objects)
 
-  val schemaTsZipTask = tasks.named<Zip>("${schemaTs.name}DistZip")
   outgoing.artifact(schemaTsZipTask.flatMap { it.archiveFile })
+}
+
+
+tasks.matching {
+  it.name == "jsGenerateExternalsIntegrated"
+}.configureEach {
+  @Suppress("UnstableApiUsage")
+  notCompatibleWithConfigurationCache("try to prevent 'Projects must be configuring' error")
 }
