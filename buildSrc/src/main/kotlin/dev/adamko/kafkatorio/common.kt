@@ -18,7 +18,8 @@ object Versions {
 
   const val node = "14.19.1"
 
-  const val kotlinWrappers = "0.0.1-pre.330-kotlin-1.6.20"
+  //  const val kotlinWrappers = "0.0.1-pre.330-kotlin-1.6.20"
+  const val kotlinWrappers = "1.0.0-pre.336"
   const val junit = "5.8.2"
   const val kotest = "5.2.3"
   const val mockk = "1.12.1"
