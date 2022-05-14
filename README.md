@@ -74,3 +74,7 @@ https://www.npmjs.com/package/wasm2lua?activeTab=readme
 
 * bebop
   https://rainway.com/blog/2020/12/09/bebop-an-efficient-schema-based-binary-serialization-format/
+
+* binser
+    * https://github.com/bakpakin/binser
+    * https://github.com/maxiy01/tstl-binser 
