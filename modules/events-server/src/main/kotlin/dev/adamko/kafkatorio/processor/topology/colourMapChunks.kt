@@ -72,22 +72,6 @@ fun colourMapChunks(builder: StreamsBuilder): Topology {
       .streamTo(to, TOPIC_GROUPED_MAP_CHUNKS_STATE)
   }
 
-//  val chunkTilesColouredTable064 =
-//    chunkTilesColouredTable032.groupByChunkPosition(ChunkSize.CHUNK_064)
-//  chunkTilesColouredTable064.streamTo(ChunkSize.CHUNK_064, TOPIC_GROUPED_MAP_CHUNKS_STATE)
-//
-//  val chunkTilesColouredTable128 =
-//    chunkTilesColouredTable064.groupByChunkPosition(ChunkSize.CHUNK_128)
-//  chunkTilesColouredTable128.streamTo(ChunkSize.CHUNK_128, TOPIC_GROUPED_MAP_CHUNKS_STATE)
-//
-//  val chunkTilesColouredTable256 =
-//    chunkTilesColouredTable128.groupByChunkPosition(ChunkSize.CHUNK_256)
-//  chunkTilesColouredTable256.streamTo(ChunkSize.CHUNK_256, TOPIC_GROUPED_MAP_CHUNKS_STATE)
-//
-//  val chunkTilesColouredTable512 =
-//    chunkTilesColouredTable256.groupByChunkPosition(ChunkSize.CHUNK_512)
-//  chunkTilesColouredTable512.streamTo(ChunkSize.CHUNK_512, TOPIC_GROUPED_MAP_CHUNKS_STATE)
-
   return builder.build()
 }
 
