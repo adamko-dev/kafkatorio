@@ -70,7 +70,7 @@ commands.add_command(
                 }
               }
             }
-            player.print(`enqueued ${chunkCount} chunks`)
+            player.print(`enqueued ${chunkCount} chunks from [x:${chunkXMin}, y:${chunkYMin}] to [x:${chunkXMax}, y:${chunkYMax}]`)
           }
         } else if (paramUppercase.startsWith("INIT_GLOBAL")) {
           initGlobal(paramUppercase.startsWith("INIT_GLOBAL FORCE"))
