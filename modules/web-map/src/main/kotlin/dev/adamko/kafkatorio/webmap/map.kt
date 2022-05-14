@@ -2,9 +2,12 @@ package dev.adamko.kafkatorio.webmap
 
 import io.kvision.maps.Maps
 import io.kvision.maps.Maps.Companion.L
+import io.kvision.maps.externals.leaflet.DoneCallback
 import io.kvision.maps.externals.leaflet.geo.CRS
 import io.kvision.maps.externals.leaflet.geo.LatLng
+import io.kvision.maps.externals.leaflet.layer.tile.TileLayer
 import io.kvision.utils.px
+import org.w3c.dom.HTMLElement
 
 //
 //val polyline = Maps.L.polyline(
@@ -19,6 +22,8 @@ import io.kvision.utils.px
 //  noClip = true
 //}
 
+private const val tileUrlTemplate = """http://localhost:9073/tiles/s1/z{z}/x{x}/y{y}.png"""
+
 fun createFactorioMap() = Maps {
   width = 800.px
   height = 800.px
@@ -27,8 +32,8 @@ fun createFactorioMap() = Maps {
   configureLeafletMap {
     setView(center = LatLng(0, 0), zoom = 0)
 
-    L.tileLayer(
-      """http://localhost:9073/tiles/s1/z{z}/x{x}/y{y}.png"""
+    val baseTileLayer: TileLayer<TileLayer.TileLayerOptions> = L.tileLayer(
+      tileUrlTemplate
     ) {
       attribution = "kafkatorio"
       tileSize = 256
@@ -43,8 +48,19 @@ fun createFactorioMap() = Maps {
       noWrap = true
       updateWhenIdle = false
       updateWhenZooming = true
-    }.addTo(this)
+    }
 
+    val currentTileOnLoad: (DoneCallback, HTMLElement) -> Unit =
+      baseTileLayer.asDynamic()._tileOnLoad as (DoneCallback, HTMLElement) -> Unit
+    baseTileLayer.asDynamic()._tileOnLoad = { done: DoneCallback, tile: HTMLElement ->
+      if (tile.hasAttribute("dynamic-reload")) {
+        tile.removeAttribute("dynamic-reload")
+      } else {
+        currentTileOnLoad(done, tile)
+      }
+    }
+
+    baseTileLayer.addTo(this)
 
     L.scale {
       metric = true
@@ -56,5 +72,6 @@ fun createFactorioMap() = Maps {
     options.zoomSnap = 0
     options.zoomDelta = 0.1
 
+//    options.fadeAnimation = false
   }
 }

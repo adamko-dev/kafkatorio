@@ -9,11 +9,16 @@ import io.kvision.CoreModule
 import io.kvision.FontAwesomeModule
 import io.kvision.html.div
 import io.kvision.maps.Maps
+import io.kvision.maps.externals.leaflet.layer.tile.GridLayer
 import io.kvision.module
 import io.kvision.panel.root
 import io.kvision.redux.ReduxStore
 import io.kvision.require
 import io.kvision.startApplication
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.js.timers.setInterval
+import org.w3c.dom.Image
+import org.w3c.dom.asList
 
 
 class App(
@@ -37,9 +42,46 @@ class App(
   override fun start(state: Map<String, Any>) {
     this.appState = state.toMutableMap()
 
-    root("kvapp") {
+    val root = root("kvapp") {
       div("Kafkatorio Web Map")
       add(kvMaps)
+    }
+
+    kvMaps.leafletMap {
+      invalidateSize(true)
+      eachLayer({
+        if (it is GridLayer<*>) {
+          it.redraw()
+        }
+      })
+//      this.asDynamic()._fadeAnimated = false
+    }
+
+    setInterval(1.seconds) {
+      val doc = root.getElement()?.ownerDocument
+      val window = doc!!.defaultView!!
+
+      doc
+        .querySelectorAll("img.leaflet-tile-loaded")
+        .asList()
+        .filterIsInstance<Image>()
+        .map { img ->
+          val imgSrc = img.src.substringBeforeLast('?')
+          println("fetching $imgSrc")
+
+          val newImg = Image()
+
+          newImg.onload = {
+
+            window.requestAnimationFrame {
+              println("image loaded ${newImg.src}")
+              img.setAttribute("dynamic-reload", "true")
+              img.src = newImg.src
+              Unit
+            }
+          }
+          newImg.src = imgSrc //+ "?t=${currentTimeMillis()}"
+        }
     }
   }
 
@@ -48,7 +90,6 @@ class App(
   }
 
 }
-
 
 fun main() {
   startApplication(
@@ -69,6 +110,6 @@ fun main() {
     BootstrapIconsModule,
     FontAwesomeModule,
     ChartModule,
-    CoreModule
+    CoreModule,
   )
 }
