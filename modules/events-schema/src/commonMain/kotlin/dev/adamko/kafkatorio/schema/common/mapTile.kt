@@ -7,12 +7,6 @@ import kotlinx.serialization.Serializable
 
 const val MAP_CHUNK_SIZE = 32
 
-@Serializable
-data class MapTiles(
-  val surfaceIndex: SurfaceIndex,
-  val tiles: List<MapTile>,
-)
-
 
 @Serializable
 data class MapTile(
