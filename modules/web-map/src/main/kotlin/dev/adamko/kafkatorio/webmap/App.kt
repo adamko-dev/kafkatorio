@@ -69,18 +69,19 @@ class App(
           val imgSrc = img.src.substringBeforeLast('?')
           println("fetching $imgSrc")
 
-          val newImg = Image()
+          var newImg : Image? = Image()
 
-          newImg.onload = {
+          newImg!!.onload = {
 
             window.requestAnimationFrame {
-              println("image loaded ${newImg.src}")
+              println("image loaded ${newImg!!.src}")
               img.setAttribute("dynamic-reload", "true")
-              img.src = newImg.src
+              img.src = newImg!!.src
+              newImg = null // try to encourage garbage collection
               Unit
             }
           }
-          newImg.src = imgSrc //+ "?t=${currentTimeMillis()}"
+          newImg!!.src = imgSrc //+ "?t=${currentTimeMillis()}"
         }
     }
   }
