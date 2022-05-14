@@ -44,14 +44,14 @@ script.on_event(
         if (events.length > 0) {
           log(`[${event.tick}] dequed ${events.length} events, current size: ${Queue.size()}`)
 
-          let i = 100
+          let i = 1
           for (const event of events) {
             if (isEventType(event, defines.events.on_chunk_generated)) {
               let eName = Converters.eventNameString(event.name)
 
-              log(`[${event.tick}] dequed event ${eName}`)
+              log(`[${event.tick}] dequed event ${eName}, delay ${i}`)
               handleChunkGeneratedEvent(event, i)
-              i += 10
+              i += 1
             }
           }
         }
