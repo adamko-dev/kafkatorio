@@ -102,3 +102,10 @@ idea {
     isDownloadJavadoc = true
   }
 }
+
+// projects must be configuring hack
+
+
+tasks.configureEach {
+  inputs.property("pRoJeCtS-mUsT-bE-cOnFiGuRiNg", System.currentTimeMillis())
+}

@@ -77,9 +77,13 @@ kotlin {
 
         implementation(project.dependencies.platform(libs.kotest.bom))
         implementation("io.kotest:kotest-framework-engine")
-        implementation("io.kotest:kotest-assertions-core")
-        implementation("io.kotest:kotest-property")
-        implementation("io.kotest:kotest-assertions-json")
+//        implementation("io.kotest:kotest-assertions-core")
+//        implementation("io.kotest:kotest-property")
+//        implementation("io.kotest:kotest-assertions-json")
+        implementation(libs.kotest.core)
+        implementation(libs.kotest.datatest)
+        implementation(libs.kotest.prop)
+        implementation(libs.kotest.json)
       }
     }
 
@@ -155,30 +159,35 @@ val generateTypescript by tasks.registering(GenerateTypescriptTask::class) {
 //  }
 //}
 
-val schemaTsDistributionName = providers.provider {
+val schemaTsDistributionName : Provider<String> = providers.provider {
   "${rootProject.name}-${project.name}"
 }
+
+val generateTypescriptOutputFiles: Provider<FileTree> = generateTypescript.map { it.outputs.files.asFileTree }
 
 val schemaTs by distributions.registering {
   distributionBaseName.set(schemaTsDistributionName)
   contents {
-    from(generateTypescript.map { it.outputs.files.asFileTree })
+    from(generateTypescriptOutputFiles)
   }
 }
 
-val schemaTsZipTask = tasks.named<Zip>("${schemaTs.name}DistZip")
+val schemaTsZipTask: TaskProvider<Zip> = tasks.named<Zip>("${schemaTs.name}DistZip")
+val schemaTsZipTaskArchiveFile: Provider<RegularFile> = schemaTsZipTask.flatMap { it.archiveFile }
 
 val typescriptModelGenerated: Configuration by configurations.creating {
   asProvider()
   typescriptAttributes(objects)
 
-  outgoing.artifact(schemaTsZipTask.flatMap { it.archiveFile })
+  outgoing.artifact(schemaTsZipTaskArchiveFile)
 }
 
 
-tasks.matching {
-  it.name == "jsGenerateExternalsIntegrated"
-}.configureEach {
-  @Suppress("UnstableApiUsage")
-  notCompatibleWithConfigurationCache("try to prevent 'Projects must be configuring' error")
-}
+//tasks.matching {
+//  it.name == "jsGenerateExternalsIntegrated"
+//}.configureEach {
+//  @Suppress("UnstableApiUsage")
+//  notCompatibleWithConfigurationCache("try to prevent 'Projects must be configuring' error")
+////  outputs.upToDateWhen { true }
+//  dependsOn(":kotlinNpmInstall")
+//}

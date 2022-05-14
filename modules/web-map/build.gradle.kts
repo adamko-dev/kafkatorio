@@ -3,13 +3,29 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 
 plugins {
-  dev.adamko.kafkatorio.lang.`kotlin-js`
+//  dev.adamko.kafkatorio.lang.`kotlin-js`
+  dev.adamko.kafkatorio.lang.`kotlin-multiplatform`
   kotlin("plugin.serialization")
   id("io.kvision")
 }
 
+
+project.ext.set("io.kvision.plugin.enableGradleTasks", false)
+project.ext.set("io.kvision.plugin.enableWorkerTasks", false)
+project.ext.set("io.kvision.plugin.enableWebpackVersions", false)
+project.ext.set("io.kvision.plugin.enableHiddenKotlinJsStore", false)
+project.ext.set("io.kvision.plugin.enableSecureResolutions", false)
+project.ext.set("io.kvision.plugin.enableBackendTasks", false)
+
+
+
 kotlin {
   js(IR) {
+    browser()
+    binaries.executable()
+  }
+
+  js("frontend", IR) {
 //    nodejs()
     browser {
       runTask {
@@ -22,7 +38,7 @@ kotlin {
             "/kv/*" to "http://localhost:8080",
             "/kvws/*" to mapOf("target" to "ws://localhost:8080", "ws" to true)
           ),
-          static = mutableListOf("$buildDir/processedResources/js/main")
+          static = mutableListOf("$buildDir/processedResources/frontend/main")
         )
       }
       webpackTask {
@@ -37,6 +53,10 @@ kotlin {
     binaries.executable()
   }
 
+  jvm("backend") {
+
+  }
+
   sourceSets {
 
     all {
@@ -46,7 +66,22 @@ kotlin {
       }
     }
 
-    main {
+    val commonMain by getting {
+      dependencies {
+        implementation(dependencies.platform(libs.kotlinx.coroutines.bom))
+        implementation(dependencies.platform(libs.kotlin.jsWrappers.bom))
+
+        implementation(libs.kotlinx.coroutines.core)
+
+        implementation(projects.modules.eventsSchema)
+
+        implementation(libs.kotlinx.html)
+      }
+    }
+
+    val jsMain by getting {
+      dependsOn(commonMain)
+
       dependencies {
 
         implementation(projects.modules.eventsSchema)
@@ -77,11 +112,20 @@ kotlin {
         implementation(dependencies.platform(npm("node-forge", "^1.3.0")))
       }
 
-      val webDir = file("src/main/web")
-      resources.srcDir(webDir)
+//      val webDir = file("src/main/web")
+      resources.srcDir("src/main/web")
+      resources.srcDir("src/main/resources")
+
+      kotlin.srcDir("src/main/kotlin")
     }
 
-    test {
+    val frontendMain by getting {
+      dependsOn(jsMain)
+//      resources.srcDir("src/main/web")
+//      resources.srcDir("src/main/resources")
+    }
+
+    val jsTest by getting {
       dependencies {
         implementation(kotlin("test-js"))
 
@@ -89,6 +133,8 @@ kotlin {
 
 //        implementation(npm("karma", "^6.3.16"))
       }
+
+      kotlin.srcDir("src/test/kotlin")
     }
   }
 }
@@ -114,3 +160,30 @@ fun KotlinDependencyHandler.kvision(
 //    resolution("node-forge", "1.3.0")
 //  }
 //}
+
+afterEvaluate {
+  rootProject.tasks.named("rootPackageJson").configure {
+    outputs.upToDateWhen { false }
+    inputs.property("cacheBuster", System.currentTimeMillis())
+  }
+  rootProject.tasks.named("kotlinYarnSetup").configure {
+    outputs.upToDateWhen { false }
+    inputs.property("cacheBuster", System.currentTimeMillis())
+  }
+  rootProject.tasks.named("kotlinNpmCachesSetup").configure {
+    outputs.upToDateWhen { false }
+    inputs.property("cacheBuster", System.currentTimeMillis())
+  }
+  rootProject.tasks.named("kotlinStoreYarnLock").configure {
+    outputs.upToDateWhen { false }
+    inputs.property("cacheBuster", System.currentTimeMillis())
+  }
+}
+
+tasks.configureEach {
+  inputs.property("pRoJeCtS-mUsT-bE-cOnFiGuRiNg", System.currentTimeMillis())
+}
+
+rootProject.tasks.configureEach {
+  inputs.property("pRoJeCtS-mUsT-bE-cOnFiGuRiNg", System.currentTimeMillis())
+}
