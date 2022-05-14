@@ -105,11 +105,11 @@ kotlin {
 
         implementation(libs.kotlinx.coroutines.core)
 
-        implementation(dependencies.platform(npm("follow-redirects", "^1.14.8")))
-        implementation(dependencies.platform(npm("nanoid", "^3.1.31")))
-        implementation(dependencies.platform(npm("minimist", "^1.2.6")))
-        implementation(dependencies.platform(npm("async", "^2.6.4")))
-        implementation(dependencies.platform(npm("node-forge", "^1.3.0")))
+//        implementation(dependencies.platform(npm("follow-redirects", "^1.14.8")))
+//        implementation(dependencies.platform(npm("nanoid", "^3.1.31")))
+//        implementation(dependencies.platform(npm("minimist", "^1.2.6")))
+//        implementation(dependencies.platform(npm("async", "^2.6.4")))
+//        implementation(dependencies.platform(npm("node-forge", "^1.3.0")))
       }
 
 //      val webDir = file("src/main/web")
@@ -160,30 +160,3 @@ fun KotlinDependencyHandler.kvision(
 //    resolution("node-forge", "1.3.0")
 //  }
 //}
-
-afterEvaluate {
-  rootProject.tasks.named("rootPackageJson").configure {
-    outputs.upToDateWhen { false }
-    inputs.property("cacheBuster", System.currentTimeMillis())
-  }
-  rootProject.tasks.named("kotlinYarnSetup").configure {
-    outputs.upToDateWhen { false }
-    inputs.property("cacheBuster", System.currentTimeMillis())
-  }
-  rootProject.tasks.named("kotlinNpmCachesSetup").configure {
-    outputs.upToDateWhen { false }
-    inputs.property("cacheBuster", System.currentTimeMillis())
-  }
-  rootProject.tasks.named("kotlinStoreYarnLock").configure {
-    outputs.upToDateWhen { false }
-    inputs.property("cacheBuster", System.currentTimeMillis())
-  }
-}
-
-tasks.configureEach {
-  inputs.property("pRoJeCtS-mUsT-bE-cOnFiGuRiNg", System.currentTimeMillis())
-}
-
-rootProject.tasks.configureEach {
-  inputs.property("pRoJeCtS-mUsT-bE-cOnFiGuRiNg", System.currentTimeMillis())
-}

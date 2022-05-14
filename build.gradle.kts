@@ -8,7 +8,7 @@ plugins {
   `build-dashboard`
 
 //  kotlin("multiplatform") apply false // try to stop error 'Projects must be configuring'
-  kotlin("js") apply false // try to stop error 'Projects must be configuring'
+//  kotlin("js") apply false // try to stop error 'Projects must be configuring'
 }
 
 group = "dev.adamko.kafkatorio"
@@ -73,30 +73,4 @@ val runWebMap by tasks.registering {
   group = project.name
 
   dependsOn(":modules:web-map:browserDevelopmentRun")
-}
-
-// projects must be configuring hack
-val hackLinePrefix = "// projects must be configuring hack "
-
-gradle.beforeSettings {
-
-  val buildGradleKts: File =
-//    project.buildFile
-   layout.projectDirectory.file("buildSrc/build.gradle.kts").asFile
-
-  val hackedLines = buildGradleKts.readText()
-    .lines()
-    .joinToString(System.lineSeparator()) {
-      println("hacking $it")
-      when {
-        it.startsWith(hackLinePrefix) -> "$hackLinePrefix ${System.currentTimeMillis()}"
-        else                          -> it
-      }
-    }
-
-  buildGradleKts.writeText(hackedLines)
-}
-
-tasks.configureEach {
-  inputs.property("pRoJeCtS-mUsT-bE-cOnFiGuRiNg", System.currentTimeMillis())
 }
