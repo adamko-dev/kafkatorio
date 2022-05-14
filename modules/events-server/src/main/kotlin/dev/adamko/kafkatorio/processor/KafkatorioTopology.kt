@@ -32,7 +32,7 @@ internal class KafkatorioTopology(
 ) : CoroutineScope {
 
   override val coroutineContext: CoroutineContext =
-    Dispatchers.Default + SupervisorJob(rootJob) + CoroutineName("KafkatorioTopology")
+    Dispatchers.Default + rootJob + CoroutineName("KafkatorioTopology")
 
   fun start() {
     splitPackets()

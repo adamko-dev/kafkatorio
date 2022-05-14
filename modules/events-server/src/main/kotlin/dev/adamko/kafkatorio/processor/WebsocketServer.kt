@@ -21,7 +21,7 @@ import org.http4k.websocket.WsStatus
 class WebsocketServer {
 
   // create a scope+job for the server
-  private val serverJob = SupervisorJob()
+  private val serverJob = KafkatorioTopology.rootJob
   private val serverScope = CoroutineScope(serverJob)
 
   private val clients: MutableSharedFlow<Websocket> = MutableSharedFlow(
