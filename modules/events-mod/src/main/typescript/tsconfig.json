@@ -19,7 +19,7 @@
     ],
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "explainFiles": true,
+    "explainFiles": false,
     "forceConsistentCasingInFileNames": true,
     "listEmittedFiles": true,
     "listFiles": true,
@@ -39,6 +39,7 @@
     "tstlVerbose": true,
     "noHeader": true,
     "noImplicitSelf": true,
+    "sourceMapTraceback": false,
     "luaLibImport": "require"
   }
 }

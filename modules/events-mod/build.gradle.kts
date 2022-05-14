@@ -69,6 +69,7 @@ val installEventsTsSchema by tasks.registering(Sync::class) {
   group = project.name
 
   dependsOn(typescriptEventsSchema)
+  dependsOn(fixLink)
 
   val outputDir = layout.projectDirectory.dir("src/main/typescript/generated/kafkatorio-schema")
   outputs.dir(outputDir)
@@ -134,6 +135,60 @@ tasks.withType<Zip>().configureEach {
 //    notCompatibleWithConfigurationCache("NPE on projectTokens")
 //  }
 }
+
+tasks.npmInstall {
+  nodeModulesOutputFilter {
+    exclude("**/typed-factorio/generated/classes.d.ts")
+  }
+}
+
+interface ServiceProvider {
+  @get:Inject
+  val fs: FileSystemOperations
+}
+
+val fixLink by tasks.registering {
+  dependsOn(tasks.npmInstall)
+
+
+  val badLink = """{@link https://lua-api.factorio.com/latest/Data-Lifecycle.html Data Lifecycle}"""
+  val goodLink = """https://lua-api.factorio.com/latest/Data-Lifecycle.html"""
+
+  val typedFactorioDir =
+    layout.projectDirectory.dir("src/main/typescript/node_modules/typed-factorio")
+  val classesDTS = typedFactorioDir.file("generated/classes.d.ts")
+
+  val services = project.objects.newInstance<ServiceProvider>()
+
+  inputs.file(classesDTS)
+  outputs.file(classesDTS)
+
+  inputs.property("badLink", badLink)
+  inputs.property("goodLink", goodLink)
+
+  doLast {
+    logger.lifecycle("fixing link ${classesDTS.asFile.canonicalPath}")
+
+    services.fs.sync {
+      from(classesDTS)
+      into(temporaryDir)
+      filter { line ->
+        when {
+          line.contains(badLink) -> line.replace(badLink, goodLink)
+          else                   -> line
+        }
+      }
+    }
+
+    services.fs.copy {
+      from(temporaryDir.resolve("classes.d.ts").canonicalPath)
+      into(classesDTS.asFile.parent)
+      duplicatesStrategy = DuplicatesStrategy.WARN
+    }
+  }
+}
+
+tasks.assemble { dependsOn(fixLink) }
 
 
 //val downloadFactorioApiDocs by tasks.registering {
