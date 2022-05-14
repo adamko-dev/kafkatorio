@@ -3,6 +3,8 @@ package dev.adamko.kafkatorio.schema.common
 import dev.adamko.kxstsgen.core.*
 import dev.adamko.kxstsgen.core.experiments.TupleSerializer
 import kotlin.math.floor
+import kotlin.math.pow
+import kotlin.math.roundToInt
 import kotlinx.serialization.Serializable
 
 /**
@@ -58,6 +60,33 @@ data class MapChunkPosition(
       )
     }
   }
+
+  private val bounds: MapChunkPositionBounds by lazy {
+    MapChunkPositionBounds(this, ChunkSize.CHUNK_032)
+  }
+
+  operator fun contains(tilePosition: MapTilePosition): Boolean {
+    return tilePosition in bounds
+  }
+}
+
+
+@Serializable
+data class MapChunkPositionBounds(
+  val leftTop: MapTilePosition,
+  val rightBottom: MapTilePosition,
+) : ClosedRange<MapTilePosition> {
+
+  constructor(chunkPosition: MapChunkPosition, chunkSize: ChunkSize) : this(
+    chunkPosition.leftTopTile(chunkSize),
+    chunkPosition.rightBottomTile(chunkSize),
+  )
+
+  override val start: MapTilePosition
+    get() = leftTop
+
+  override val endInclusive: MapTilePosition
+    get() = rightBottom
 }
 
 
@@ -71,7 +100,7 @@ data class MapChunkPosition(
 data class MapTilePosition(
   val x: Int,
   val y: Int,
-) {
+) : Comparable<MapTilePosition> {
   object Serializer : TupleSerializer<MapTilePosition>(
     "MapTilePosition",
     {
@@ -85,6 +114,12 @@ data class MapTilePosition(
       return MapTilePosition(x, y)
     }
   }
+
+  override operator fun compareTo(other: MapTilePosition): Int =
+    when {
+      other.x != x -> x.compareTo(other.x)
+      else         -> y.compareTo(other.y)
+    }
 }
 
 
@@ -100,21 +135,28 @@ operator fun MapTilePosition.div(divisor: Int) =
 operator fun MapTilePosition.plus(addend: Int) =
   MapTilePosition(x + addend, y + addend)
 
+operator fun MapTilePosition.plus(addend: MapTilePosition) =
+  MapTilePosition(x + addend.x, y + addend.y)
 
-fun MapTilePosition.toMapChunkPosition(chunkSize: Int = MAP_CHUNK_SIZE) =
+
+operator fun MapTilePosition.minus(subtrahend: MapTilePosition) =
+  MapTilePosition(x - subtrahend.x, y - subtrahend.y)
+
+
+fun MapTilePosition.toMapChunkPosition(chunkSize: ChunkSize) =
   MapChunkPosition(
-    floor(x.toDouble() / chunkSize.toDouble()).toInt(),
-    floor(y.toDouble() / chunkSize.toDouble()).toInt(),
+    floor(x.toDouble() / chunkSize.lengthInTiles.toDouble()).toInt(),
+    floor(y.toDouble() / chunkSize.lengthInTiles.toDouble()).toInt(),
   )
 
 
 fun MapEntityPosition.toMapTilePosition() =
   MapChunkPosition(floor(x).toInt(), floor(y).toInt())
 
-fun MapEntityPosition.toMapChunkPosition(chunkSize: Int = MAP_CHUNK_SIZE) =
+fun MapEntityPosition.toMapChunkPosition(chunkSize: ChunkSize) =
   MapChunkPosition(
-    floor(x / chunkSize.toDouble()).toInt(),
-    floor(y / chunkSize.toDouble()).toInt(),
+    floor(x / chunkSize.lengthInTiles.toDouble()).toInt(),
+    floor(y / chunkSize.lengthInTiles.toDouble()).toInt(),
   )
 
 
@@ -128,18 +170,17 @@ operator fun MapChunkPosition.minus(subtrahend: Int) =
   MapChunkPosition(x - subtrahend, y - subtrahend)
 
 
-fun MapChunkPosition.leftTopTile(chunkSize: Int = MAP_CHUNK_SIZE): MapTilePosition =
+fun MapChunkPosition.leftTopTile(chunkSize: ChunkSize): MapTilePosition =
   MapTilePosition(
-    x * chunkSize,
-    y * chunkSize,
+    x * chunkSize.lengthInTiles,
+    y * chunkSize.lengthInTiles,
   )
 
+fun MapChunkPosition.rightBottomTile(chunkSize: ChunkSize): MapTilePosition =
+  leftTopTile(chunkSize) + (chunkSize.lengthInTiles - 1)
 
-fun MapChunkPosition.rightBottomTile(chunkSize: Int = MAP_CHUNK_SIZE): MapTilePosition =
-  leftTopTile(chunkSize) + (chunkSize - 1)
 
-
-fun MapChunkPosition.iterateTiles(chunkSize: Int = MAP_CHUNK_SIZE): Iterator<MapTilePosition> {
+fun MapChunkPosition.iterateTiles(chunkSize: ChunkSize): Iterator<MapTilePosition> {
   val leftTop = leftTopTile(chunkSize)
   val rightBottom = rightBottomTile(chunkSize)
   return iterator {
@@ -158,3 +199,37 @@ fun MapChunkPosition.iterateTiles(chunkSize: Int = MAP_CHUNK_SIZE): Iterator<Map
 //
 //val MapChunkPosition.boundingBox: MapBoundingBox
 //  get() = MapBoundingBox(leftTopTile, rightBottomTile)
+
+
+@Serializable
+enum class ChunkSize(
+  val zoomLevel: Int,
+) : Comparable<ChunkSize> {
+  CHUNK_512(-1),
+  CHUNK_256(0),
+  CHUNK_128(1),
+  CHUNK_064(2),
+  CHUNK_032(3),
+  ;
+
+  /** 32, 64, 128, 256, or 512 */
+  val lengthInTiles: Int = 2f.pow(8 - zoomLevel).roundToInt()
+
+  init {
+    require(lengthInTiles > 0) { "tilesPerChunk $lengthInTiles must be positive" }
+    // 1000 & 0111 = 0000 =>  pow^2
+    // 1001 & 1000 = 1000 => !pow^2
+    require(lengthInTiles and (lengthInTiles - 1) == 0) {
+      "tilesPerChunk $lengthInTiles must be a power-of-two number"
+    }
+  }
+
+  companion object {
+    // cache values for better performance. KT-48872
+    val entries: Set<ChunkSize> = values().toSet()
+
+    val MAX: ChunkSize = entries.maxByOrNull { it.lengthInTiles }!!
+    val MIN: ChunkSize = entries.minByOrNull { it.lengthInTiles }!!
+    val STANDARD: ChunkSize = entries.first { it.zoomLevel == 0 }
+  }
+}

@@ -4,11 +4,13 @@ import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.ScaleMethod
 import com.sksamuel.scrimage.color.RGBColor
 import com.sksamuel.scrimage.nio.PngWriter
+import dev.adamko.kafkatorio.processor.admin.TOPIC_GROUPED_MAP_CHUNKS_STATE
 import dev.adamko.kafkatorio.processor.admin.TOPIC_GROUPED_MAP_CHUNKS_STATE_DEBOUNCED
 import dev.adamko.kafkatorio.processor.admin.TOPIC_SUBDIVIDED_MAP_TILES
 import dev.adamko.kafkatorio.processor.admin.TOPIC_SUBDIVIDED_MAP_TILES_DEBOUNCED
 import dev.adamko.kafkatorio.processor.misc.DebounceProcessor.Companion.addDebounceProcessor
 import dev.adamko.kafkatorio.processor.serdes.kxsBinary
+import dev.adamko.kafkatorio.schema.common.ChunkSize
 import dev.adamko.kafkatorio.schema.common.ColourHex
 import dev.adamko.kafkatorio.schema.common.MapTilePosition
 import dev.adamko.kafkatorio.schema.common.toMapChunkPosition
@@ -42,28 +44,28 @@ fun saveMapTiles(
   tileDirectory: Path,
 ): Topology {
 
-  val groupedMapChunkTiles: KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
-    builder.stream(
-      TOPIC_GROUPED_MAP_CHUNKS_STATE_DEBOUNCED,
-      consumedAs("$pid.consume.grouped-map-chunks", kxsBinary.serde(), kxsBinary.serde()),
-    )
-
-  groupedMapChunkTiles
-    .flatMapSubdividedChunk()
-    .to(
-      TOPIC_SUBDIVIDED_MAP_TILES,
-      producedAs(
-        "$pid.produce.grouped-map-chunks",
-        kxsBinary.serde(),
-        kxsBinary.serde(),
-      )
-    )
+//  val groupedMapChunkTiles: KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
+//    builder.stream(
+//      TOPIC_GROUPED_MAP_CHUNKS_STATE_DEBOUNCED,
+//      consumedAs("$pid.consume.grouped-map-chunks", kxsBinary.serde(), kxsBinary.serde()),
+//    )
+//
+//  groupedMapChunkTiles
+//    .flatMapSubdividedChunk()
+//    .to(
+//      TOPIC_SUBDIVIDED_MAP_TILES,
+//      producedAs(
+//        "$pid.produce.grouped-map-chunks",
+//        kxsBinary.serde(),
+//        kxsBinary.serde(),
+//      )
+//    )
 
   val subdividedMapChunkTilesDebounced: KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
     builder.stream(
-      TOPIC_SUBDIVIDED_MAP_TILES_DEBOUNCED,
+      TOPIC_GROUPED_MAP_CHUNKS_STATE_DEBOUNCED,
       consumedAs(
-        "$pid.consume.debounced-subdivided-chunks",
+        "$pid.consume.grouped-map-chunks",
         kxsBinary.serde(),
         kxsBinary.serde(),
       ),
@@ -74,8 +76,8 @@ fun saveMapTiles(
   return builder.build()
     .addDebounceProcessor<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>(
       namePrefix = pid,
-      sourceTopic = TOPIC_SUBDIVIDED_MAP_TILES,
-      sinkTopic = TOPIC_SUBDIVIDED_MAP_TILES_DEBOUNCED,
+      sourceTopic = TOPIC_GROUPED_MAP_CHUNKS_STATE,
+      sinkTopic = TOPIC_GROUPED_MAP_CHUNKS_STATE_DEBOUNCED,
       inactivityDuration = 15.seconds,
       keySerde = kxsBinary.serde(),
       valueSerde = kxsBinary.serde(),
@@ -83,35 +85,35 @@ fun saveMapTiles(
 }
 
 
-private fun KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>.flatMapSubdividedChunk() =
-  flatMap("$pid.subdivide-chunks") { initialKey, initialChunk ->
-
-    val (chunks, time) = measureTimedValue {
-      ChunkSize.entries.flatMap { chunkSize ->
-        initialChunk.map
-          .entries
-          .groupingBy { (tilePosition, _) ->
-            val chunkPosition = tilePosition.toMapChunkPosition(chunkSize.lengthInTiles)
-            initialKey.copy(
-              chunkSize = chunkSize,
-              chunkPosition = chunkPosition,
-            )
-          }.fold(
-            initialValueSelector = { _, _ -> mutableMapOf<MapTilePosition, ColourHex>() }
-          ) { _, accumulator, (tilePosition, colour) ->
-            accumulator[tilePosition] = colour
-            accumulator
-          }
-          .map { (chunkId, tiles) ->
-            chunkId to ServerMapChunkTiles(chunkId, tiles)
-          }
-      }
-    }
-
-    println("subdivided ${initialKey.chunkPosition} to ${chunks.size} chunks in $time")
-
-    chunks
-  }
+//private fun KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>.flatMapSubdividedChunk() =
+//  flatMap("$pid.subdivide-chunks") { initialKey, initialChunk ->
+//
+//    val (chunks, time) = measureTimedValue {
+//      ChunkSize.entries.flatMap { chunkSize ->
+//        initialChunk.map
+//          .entries
+//          .groupingBy { (tilePosition, _) ->
+//            val chunkPosition = tilePosition.toMapChunkPosition(chunkSize)
+//            initialKey.copy(
+//              chunkSize = chunkSize,
+//              chunkPosition = chunkPosition,
+//            )
+//          }.fold(
+//            initialValueSelector = { _, _ -> mutableMapOf<MapTilePosition, ColourHex>() }
+//          ) { _, accumulator, (tilePosition, colour) ->
+//            accumulator[tilePosition] = colour
+//            accumulator
+//          }
+//          .map { (chunkId, tiles) ->
+//            chunkId to ServerMapChunkTiles(chunkId, tiles)
+//          }
+//      }
+//    }
+//
+//    println("subdivided ${initialKey.chunkPosition} to ${chunks.size} chunks in $time")
+//
+//    chunks
+//  }
 
 
 private fun KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>.forEachChunkSaveImage(

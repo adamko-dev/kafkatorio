@@ -4,6 +4,7 @@ import dev.adamko.kafkatorio.processor.admin.TOPIC_GROUPED_MAP_CHUNKS_STATE
 import dev.adamko.kafkatorio.processor.admin.TOPIC_GROUPED_MAP_CHUNKS_STATE_DEBOUNCED
 import dev.adamko.kafkatorio.processor.misc.DebounceProcessor.Companion.addDebounceProcessor
 import dev.adamko.kafkatorio.processor.serdes.kxsBinary
+import dev.adamko.kafkatorio.schema.common.ChunkSize
 import dev.adamko.kafkatorio.schema.common.ColourHex
 import dev.adamko.kafkatorio.schema.common.MapChunkPosition
 import dev.adamko.kafkatorio.schema.common.MapTile
@@ -61,7 +62,7 @@ fun groupMapChunks(builder: StreamsBuilder): Topology {
   val protosStream: KStream<FactorioServerId, PrototypesUpdate> = builder.streamPacketData()
 
   val tileProtoColourDict: KTable<FactorioServerId, TileColourDict> =
-    tileProtoColourDictionary(protosStream)
+    protosStream.createTilePrototypeTable()
 
   val groupedMapChunkTiles: KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
     groupTilesIntoChunksWithColours(
@@ -128,7 +129,7 @@ private fun groupTilesIntoChunksWithColours(
           mapTiles
             .tiles
             .groupBy { tile ->
-              tile.position.toMapChunkPosition(standardChunkSize.lengthInTiles)
+              tile.position.toMapChunkPosition(standardChunkSize)
             }
             .map { (chunkPos, tiles) ->
 

@@ -1,6 +1,7 @@
 package dev.adamko.kafkatorio.processor.topology
 
 import dev.adamko.kafkatorio.processor.serdes.kxsBinary
+import dev.adamko.kafkatorio.schema.common.ChunkSize
 import dev.adamko.kafkatorio.schema.common.ColourHex
 import dev.adamko.kafkatorio.schema.common.MapChunkPosition
 import dev.adamko.kafkatorio.schema.common.MapTilePosition
@@ -142,11 +143,11 @@ class SaveMapChunksTest : FunSpec({
       println("chunk size: ${chunkId.chunkSize} ${chunkId.chunkSize.lengthInTiles}")
 
       val map = chunkId.chunkPosition
-        .iterateTiles(chunkId.chunkSize.lengthInTiles)
+        .iterateTiles(chunkId.chunkSize)
         .asSequence()
         .map { tilePos ->
           val colour =
-            tileColours.getOrPut(tilePos.toMapChunkPosition(ChunkSize.MIN.lengthInTiles)) {
+            tileColours.getOrPut(tilePos.toMapChunkPosition(ChunkSize.MIN)) {
               colourHexArb().sample(RandomSource.default()).value
             }
           tilePos to colour

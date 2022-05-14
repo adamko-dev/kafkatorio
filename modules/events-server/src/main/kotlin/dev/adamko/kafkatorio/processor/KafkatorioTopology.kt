@@ -1,6 +1,7 @@
 package dev.adamko.kafkatorio.processor
 
 import dev.adamko.kafkatorio.processor.config.ApplicationProperties
+import dev.adamko.kafkatorio.processor.topology.colourMapChunks
 import dev.adamko.kafkatorio.processor.topology.factorioServerPacketStream
 import dev.adamko.kafkatorio.processor.topology.groupMapChunks
 import dev.adamko.kafkatorio.processor.topology.playerUpdatesToWsServer
@@ -54,7 +55,7 @@ internal class KafkatorioTopology(
 
   private fun groupTilesMapChunks() {
     val builder = StreamsBuilder()
-    val topology = groupMapChunks(builder)
+    val topology = colourMapChunks(builder)
     launchTopology("groupTilesMapChunks", topology)
   }
 
