@@ -3,7 +3,6 @@ package dev.adamko.kafkatorio.processor
 import dev.adamko.kafkatorio.processor.config.ApplicationProperties
 import dev.adamko.kafkatorio.processor.topology.colourMapChunks
 import dev.adamko.kafkatorio.processor.topology.factorioServerPacketStream
-import dev.adamko.kafkatorio.processor.topology.groupMapChunks
 import dev.adamko.kafkatorio.processor.topology.playerUpdatesToWsServer
 import dev.adamko.kafkatorio.processor.topology.saveMapTiles
 import dev.adamko.kafkatorio.processor.topology.splitFactorioServerPacketStream

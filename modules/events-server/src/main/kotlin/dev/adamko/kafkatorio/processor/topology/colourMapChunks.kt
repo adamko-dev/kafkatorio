@@ -1,6 +1,8 @@
 package dev.adamko.kafkatorio.processor.topology
 
-import dev.adamko.kafkatorio.processor.admin.TOPIC_GROUPED_MAP_CHUNKS_STATE
+import dev.adamko.kafkatorio.processor.admin.TOPIC_MAP_CHUNK_COLOURED_032_STATE
+import dev.adamko.kafkatorio.processor.admin.TOPIC_MAP_CHUNK_COLOURED_STATE
+import dev.adamko.kafkatorio.processor.misc.DebounceProcessor.Companion.addDebounceProcessor
 import dev.adamko.kafkatorio.processor.serdes.kxsBinary
 import dev.adamko.kafkatorio.schema.common.ChunkSize
 import dev.adamko.kafkatorio.schema.common.ColourHex
@@ -24,6 +26,7 @@ import dev.adamko.kotka.extensions.tables.toStream
 import dev.adamko.kotka.kxs.serde
 import kotlin.collections.component1
 import kotlin.collections.component2
+import kotlin.time.Duration.Companion.seconds
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.Topology
 import org.apache.kafka.streams.kstream.KStream
@@ -48,16 +51,20 @@ fun colourMapChunks(builder: StreamsBuilder): Topology {
       .reduceServerMapChunkTilesToTable()
       .enrichWithColourData(protosTable)
 
-  chunkTilesColouredTable032.streamTo(ChunkSize.CHUNK_032, TOPIC_GROUPED_MAP_CHUNKS_STATE)
-
-  val groupedMapChunks = builder.stream(
-    TOPIC_GROUPED_MAP_CHUNKS_STATE,
-    consumedAs(
-      "$pid.consume.grouped-map-chunks",
-      kxsBinary.serde<ServerMapChunkId>(),
-      kxsBinary.serde<ServerMapChunkTiles<ColourHex>>(),
-    )
+  chunkTilesColouredTable032.streamMapChunkColouredTo(
+    ChunkSize.CHUNK_032,
+    TOPIC_MAP_CHUNK_COLOURED_032_STATE
   )
+
+  val chunkTilesColoured032Debounced: KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
+    builder.stream(
+      TOPIC_MAP_CHUNK_COLOURED_STATE,
+      consumedAs(
+        "$pid.consume.map-chunks-coloured",
+        kxsBinary.serde(),
+        kxsBinary.serde(),
+      ),
+    )
 
   mapOf(
     ChunkSize.CHUNK_032 to ChunkSize.CHUNK_064,
@@ -65,14 +72,22 @@ fun colourMapChunks(builder: StreamsBuilder): Topology {
     ChunkSize.CHUNK_128 to ChunkSize.CHUNK_256,
     ChunkSize.CHUNK_256 to ChunkSize.CHUNK_512,
   ).forEach { (from, to) ->
-    groupedMapChunks
+    chunkTilesColoured032Debounced
       .filter("$pid.combine-chunks.filter-$from-to-$to") { key, _ ->
-      key?.chunkSize == from
-    }.groupByChunkPosition(to)
-      .streamTo(to, TOPIC_GROUPED_MAP_CHUNKS_STATE)
+        key.chunkSize == from
+      }.groupByChunkPosition(to)
+      .streamMapChunkColouredTo(to, TOPIC_MAP_CHUNK_COLOURED_STATE)
   }
 
   return builder.build()
+    .addDebounceProcessor(
+      namePrefix = "groupTilesMapChunks",
+      sourceTopic = TOPIC_MAP_CHUNK_COLOURED_032_STATE,
+      sinkTopic = TOPIC_MAP_CHUNK_COLOURED_STATE,
+      inactivityDuration = 15.seconds,
+      keySerde = kxsBinary.serde<ServerMapChunkId>(),
+      valueSerde = kxsBinary.serde<ServerMapChunkTiles<ColourHex>>(),
+    )
 }
 
 
@@ -182,9 +197,9 @@ private fun KTable<ServerMapChunkId, ServerMapChunkTiles<TileProtoHashCode>>.enr
 }
 
 
-private fun KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>.streamTo(
+fun KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>.streamMapChunkColouredTo(
   chunkSize: ChunkSize,
-  outputTopic: String = TOPIC_GROUPED_MAP_CHUNKS_STATE,
+  outputTopic: String,
 ) {
   val pid = "$pid.output-chunk.${chunkSize.name}"
 
@@ -202,56 +217,12 @@ private fun KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>.streamTo(
       outputTopic,
       producedAs(
         "$pid.grouped-map-chunks",
-        kxsBinary.serde(),
-        kxsBinary.serde(),
+        kxsBinary.serde<ServerMapChunkId>(),
+        kxsBinary.serde<ServerMapChunkTiles<ColourHex>>(),
       )
     )
 }
 
-
-///**
-// * Group [MapChunkUpdate]s by the Chunk position.
-// *
-// * They should already be grouped, but do it again to make sure, and to filter out empty updates.
-// */
-//private fun KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>.groupByChunkPosition(
-//  chunkSize: ChunkSize = ChunkSize.CHUNK_032
-//): KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> {
-//
-//  val pid = "$pid.groupByChunkPosition.${chunkSize.name}"
-//
-//  return toStream("$pid.intake-stream")
-//    .map("$pid.change-chunk-size") { chunkId: ServerMapChunkId, chunkTiles: ServerMapChunkTiles<ColourHex>? ->
-//
-//      val newChunkPosition = chunkId.chunkPosition
-//        .leftTopTile(chunkId.chunkSize)
-//        .toMapChunkPosition(chunkSize)
-//
-//      val newId = chunkId.copy(
-//        chunkSize = chunkSize,
-//        chunkPosition = newChunkPosition,
-//      )
-//
-//      val newChunkTiles = chunkTiles?.map ?: emptyMap()
-//
-//      newId to ServerMapChunkTiles(chunkId = newId, map = newChunkTiles)
-//    }.groupByKey(
-//      groupedAs(
-//        "$pid.group-by-key",
-//        kxsBinary.serde<ServerMapChunkId>(),
-//        kxsBinary.serde<ServerMapChunkTiles<ColourHex>>(),
-//      )
-//    ).reduce(
-//      "$pid.reduce",
-//      materializedAs(
-//        "$pid.reduce.store",
-//        kxsBinary.serde<ServerMapChunkId>(),
-//        kxsBinary.serde<ServerMapChunkTiles<ColourHex>>(),
-//      )
-//    ) { chunkTiles, otherChunkTiles ->
-//      chunkTiles + otherChunkTiles
-//    }
-//}
 
 /**
  * Group [MapChunkUpdate]s by the Chunk position.
