@@ -69,7 +69,7 @@ class SaveMapChunksTest : FunSpec({
   class Scenario(
     streamsBuilder: StreamsBuilder = StreamsBuilder(),
 
-    groupedMapChunksInputTopicName: String = "kafkatorio.state.map-chunks.grouped.debounced",
+    groupedMapChunksInputTopicName: String = "kafkatorio.state.map-chunk.colour",
 
     val serverId: FactorioServerId = FactorioServerId("test-server-id"),
   ) : AutoCloseable {
@@ -169,7 +169,7 @@ class SaveMapChunksTest : FunSpec({
       return arbitrary {
         val chunkId = serverMapChunkId.bind()
 
-        val tileColoursArb = tilesInChunkArb(serverMapChunkId.bind())
+        val tileColoursArb = tilesInChunkArb(chunkId)
 
         ServerMapChunkTiles(
           chunkId = chunkId,
