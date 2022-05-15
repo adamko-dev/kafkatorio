@@ -91,8 +91,7 @@ internal class WebMapTileServer(
         val requestedETag = request.header("If-None-Match")
 
         var response = next(request)
-        val responseBytes = response.body.stream.readAllBytes()
-        response.body.stream.close()
+        val responseBytes = response.body.stream.use { it.readAllBytes() }
         val currentETag = responseBytes.md5()
 
         response = response.body(MemoryBody(responseBytes))
