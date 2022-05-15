@@ -19,7 +19,13 @@ description = "Sends in-game information to a server over the internet (requires
 // - filename: `mod-name_version.zip`
 // - zip contains one directory, `mod-name`
 
-val modName: String by extra { "${rootProject.name}-events" }
+
+//val modName: String by extra { "${rootProject.name}-events" }
+extra.set("modName", "kafkatorio-events")
+val modName = extra.get("modName") as String
+
+val modDescription: String by project.extra { project.description ?: "" }
+
 val distributionZipName: String by extra { "${modName}_${rootProject.version}.zip" }
 
 // version of Factorio that the mod is compatible with (must only be "major.minor" - patch causes error)
@@ -27,13 +33,17 @@ val modFactorioCompatibility: Provider<String> =
   libs.versions.factorio.map { SemVer.parse(it).run { "$major.$minor" } }
 
 val licenseFile: RegularFile by rootProject.extra
-val projectTokens: MapProperty<String, String> by rootProject.extra
-val modDescription: String by project.extra { project.description ?: "" }
-projectTokens.apply {
+
+@Suppress("UNCHECKED_CAST")
+val projectTokens: MapProperty<String, String> =
+  rootProject.extra.get("projectTokens") as? MapProperty<String, String>  ?: error("error getting projectTokens")
+//val projectTokens: MapProperty<String, String> by rootProject.extra
+
+val projectTokensX = projectTokens.apply {
   put("mod.name", modName)
   put("mod.title", "Kafkatorio Events")
   put("mod.description", modDescription)
-  put("factorio.version", modFactorioCompatibility)
+  put("factorio.version", modFactorioCompatibility.get())
 }
 
 val tsSrcDir: Directory = layout.projectDirectory.dir("src/main/typescript")
@@ -96,8 +106,10 @@ val installEventsTsSchema by tasks.registering(Sync::class) {
 val zipNameProvider = provider { distributionZipName }
 
 tasks.distZip {
+  val projectTokensXX = projectTokensX
+
   inputs.property("zipNameProvider", zipNameProvider)
-  inputs.property("projectTokens", projectTokens)
+  inputs.property("projectTokens", projectTokensXX)
 
   archiveFileName.set(zipNameProvider)
 }
@@ -130,7 +142,8 @@ distributions {
 
 
 tasks.withType<Zip>().configureEach {
-  inputs.property("projectTokens", projectTokens)
+  val projectTokensXX = projectTokensX
+  inputs.property("projectTokens", projectTokensXX)
 //  if (name.startsWith("dist")) {
 //    notCompatibleWithConfigurationCache("NPE on projectTokens")
 //  }
