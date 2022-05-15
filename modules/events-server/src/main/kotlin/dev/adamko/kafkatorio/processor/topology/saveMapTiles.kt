@@ -81,7 +81,7 @@ private fun KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>.forEachChu
 
 
 @Synchronized
-fun saveTile(
+private fun saveTile(
   filename: TilePngFilename,
   tileDirectory: Path,
   img: ImmutableImage,
@@ -106,7 +106,7 @@ fun saveTile(
 
 
 @JvmInline
-value class TilePngFilename(
+private value class TilePngFilename(
   val value: String,
 ) {
   constructor(id: ServerMapChunkId) : this(buildString {
