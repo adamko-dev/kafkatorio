@@ -28,6 +28,10 @@ is provided.
     * tick-rate - how often reports are generated
         * requires on some sort of in-mod cache of map<entity-id, event>
         * also divide by game-speed? to keep ratio the same
+* Move to a vector tile supported map. PNGs are slow. 
+  * Maplibre GL JS? https://maplibre.org/maplibre-gl-js-docs/example/
+  * Add VectorGrid? https://leaflet.github.io/Leaflet.VectorGrid/vectorgrid-api-docs.html
+    * https://leaflet.github.io/Leaflet.VectorGrid/vectorgrid-api-docs.html#styling-vectorgrids
 
 ### to investigate:
 
