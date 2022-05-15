@@ -67,18 +67,17 @@ class App(
         .filterIsInstance<Image>()
         .map { img ->
           val imgSrc = img.src.substringBeforeLast('?')
-          println("fetching $imgSrc")
+//          println("fetching $imgSrc")
 
-          var newImg : Image? = Image()
+          var newImg: Image? = Image()
 
           newImg!!.onload = {
 
             window.requestAnimationFrame {
-              println("image loaded ${newImg!!.src}")
+//              println("image loaded ${newImg!!.src}")
               img.setAttribute("dynamic-reload", "true")
               img.src = newImg!!.src
               newImg = null // try to encourage garbage collection
-              Unit
             }
           }
           newImg!!.src = imgSrc //+ "?t=${currentTimeMillis()}"
