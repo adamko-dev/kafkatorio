@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "dev.adamko.kafkatorio"
-version = "0.5.0"
+version = "0.5.1"
 
 val licenseFile: RegularFile by extra(layout.projectDirectory.file("LICENSE"))
 

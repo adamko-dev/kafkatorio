@@ -83,11 +83,6 @@ class FactorioModPortalPublishClient(
       }
     )
 
-//    val response = post(portalUploadEndpoint) {
-//      contentType(ContentType.MultiPart.FormData)
-//      setBody(Json.encodeToString(InitUploadRequest.serializer(), InitUploadRequest(modName)))
-////      setBody(InitUploadRequest(modName))
-//    }
     println(response)
     val initUploadResponse: InitUploadResponse =
       Json.decodeFromString(InitUploadResponse.serializer(), response.bodyAsText())
@@ -114,21 +109,17 @@ class FactorioModPortalPublishClient(
       )
     }
 
-
     val response = post(initUploadResponse.uploadUrl) {
       setBody(MultiPartFormDataContent(requestForm))
     }
-
-
-//    val response = submitFormWithBinaryData(initUploadResponse.uploadUrl, requestForm) {
-//      header(HttpHeaders.Authorization, "Bearer $portalApiKey")
-//    }
 
     val submitUploadResponse =
       Json.decodeFromString(SubmitUploadResponse.serializer(), response.bodyAsText())
 
     println(response)
     println(submitUploadResponse)
-    require(response.status.isSuccess() && submitUploadResponse is SubmitUploadResponse.Success) { "upload request failed" }
+    require(response.status.isSuccess() && submitUploadResponse is SubmitUploadResponse.Success) {
+      "upload request failed"
+    }
   }
 }
