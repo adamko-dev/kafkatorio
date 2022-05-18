@@ -32,7 +32,8 @@
     "traceResolution": true,
     "noImplicitReturns": true,
     "noImplicitOverride": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true
   },
   "tstl": {
     "luaTarget": "5.2",
