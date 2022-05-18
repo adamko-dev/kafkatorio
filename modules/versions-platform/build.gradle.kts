@@ -24,18 +24,12 @@ dependencies {
   constraints {
     api(libs.skrapeit)
     api(libs.kotlinx.serialization.yaml)
-
-
-
-
-
-
-
-
     api(libs.kafka.kotkaStreams)
     api(libs.kafka.streams)
     api(libs.okio.core)
     api(libs.scrimage.core)
     api(libs.kafka.streamsTestUtils)
+
+    api(libs.mockk)
   }
 }

@@ -15,7 +15,7 @@ include(
   ":modules:kt-rcon",
   ":modules:web-map",
 
-  ":modules:factorio-mod-portal-client",
+//  ":modules:factorio-mod-portal-client",
 
   ":modules:versions-platform",
 )

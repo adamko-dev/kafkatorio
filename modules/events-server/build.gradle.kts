@@ -15,7 +15,7 @@ description = """
 
 val projectId: String by project.extra
 
-val kafkaStateDir = layout.projectDirectory.dir("kafka-state")
+val kafkaStateDir: Directory = layout.projectDirectory.dir("kafka-state")
 
 dependencies {
   implementation(platform(projects.modules.versionsPlatform))
@@ -64,7 +64,7 @@ application {
 //  )
 }
 
-tasks.withType<KotlinCompile> {
+tasks.withType<KotlinCompile>().configureEach {
   kotlinOptions.freeCompilerArgs += listOf(
     "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
     "-opt-in=kotlinx.coroutines.FlowPreview",

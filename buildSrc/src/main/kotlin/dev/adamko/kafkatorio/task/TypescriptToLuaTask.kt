@@ -2,6 +2,7 @@ package dev.adamko.kafkatorio.task
 
 import com.github.gradle.node.npm.task.NpmTask
 import javax.inject.Inject
+import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.plugins.BasePlugin

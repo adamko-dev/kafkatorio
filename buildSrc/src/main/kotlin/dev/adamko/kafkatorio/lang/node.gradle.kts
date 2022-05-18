@@ -52,6 +52,6 @@ val updatePackageJson by tasks.registering(UpdatePackageJson::class) {
 
 tasks.assemble { dependsOn(updatePackageJson) }
 
-tasks.withType<NpmInstallTask> {
+tasks.withType<NpmInstallTask>().configureEach {
   dependsOn(updatePackageJson)
 }

@@ -22,7 +22,7 @@ object JsonPropertiesUpToDateSpec : ExplainingSpec<Task> {
 
       else                  -> {
 
-        val packageJsonContent = packageJsonFile.get().asFile.readText()
+        val packageJsonContent = packageJsonFile2.get().asFile.readText()
         val packageJson = jsonMapper.parseToJsonElement(packageJsonContent).jsonObject
 
         val outdatedProperties = propertiesToCheck.get().mapNotNull { (key, expectedVal) ->

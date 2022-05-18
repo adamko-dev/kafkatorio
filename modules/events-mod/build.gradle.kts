@@ -1,3 +1,4 @@
+import dev.adamko.kafkatorio.factoriomod.FactorioModPublishTask
 import dev.adamko.kafkatorio.gradle.asConsumer
 import dev.adamko.kafkatorio.gradle.asProvider
 import dev.adamko.kafkatorio.gradle.dropDirectories
@@ -50,7 +51,7 @@ val tsSrcDir: Directory = layout.projectDirectory.dir("src/main/typescript")
 
 
 node {
-  nodeProjectDir.set(tsSrcDir)
+  nodeProjectDir.set(layout.projectDirectory)
 }
 
 
@@ -112,6 +113,15 @@ tasks.distZip {
   inputs.property("projectTokens", projectTokensXX)
 
   archiveFileName.set(zipNameProvider)
+}
+
+
+val publishMod by tasks.registering(FactorioModPublishTask::class) {
+  distributionZip.set(tasks.distZip.flatMap { it.archiveFile })
+
+  val projectModName = project.extra.get("modName") as String
+  modName.set(projectModName)
+  modVersion.set(project.version.toString())
 }
 
 

@@ -36,7 +36,10 @@ kotlin {
           port = 3000,
           proxy = mutableMapOf(
             "/kv/*" to "http://localhost:8080",
-            "/kvws/*" to mapOf("target" to "ws://localhost:8080", "ws" to true)
+            "/kvws/*" to mapOf(
+              "target" to "ws://localhost:8080",
+              "ws" to true,
+            )
           ),
           static = mutableListOf("$buildDir/processedResources/frontend/main")
         )
@@ -160,3 +163,6 @@ fun KotlinDependencyHandler.kvision(
 //    resolution("node-forge", "1.3.0")
 //  }
 //}
+
+evaluationDependsOn(rootProject.path)
+evaluationDependsOn(projects.modules.eventsSchema.dependencyProject.path)

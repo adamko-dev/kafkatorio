@@ -4,7 +4,7 @@ plugins {
   idea
   `kotlin-dsl`
   kotlin("jvm") version "1.6.21"
-  `project-report`
+  kotlin("plugin.serialization") version "1.6.21"
 }
 
 val gradleJvmTarget = "11"
@@ -19,9 +19,12 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable")
   implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${libs.versions.kotlin.get()}")
 
-  implementation(platform("org.jetbrains.kotlinx:kotlinx-serialization-bom:${libs.versions.kotlinx.serialization.get()}"))
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-core")
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
+  implementation(platform(libs.kotlinx.coroutines.bom))
+  implementation(libs.kotlinx.coroutines.core)
+
+  implementation(platform(libs.kotlinx.serialization.bom))
+  implementation(libs.kotlinx.serialization.core)
+  implementation(libs.kotlinx.serialization.json)
 //  implementation("com.charleskorn.kaml:kaml:0.37.0")
 
   implementation("com.github.node-gradle:gradle-node-plugin:${libs.versions.gradleNodePlugin.get()}")
@@ -32,13 +35,29 @@ dependencies {
 
   implementation("net.swiftzer.semver:semver:${libs.versions.semver.get()}")
 
+  implementation(platform(libs.okio.bom))
+  implementation(libs.okio.core)
+
+  implementation(gradleKotlinDsl())
+
+  implementation(libs.kotlinx.cli)
+
+  implementation(platform(libs.ktor.bom))
+  implementation(libs.ktor.clientAuth)
+  implementation(libs.ktor.clientContentNegotiation)
+  implementation(libs.ktor.clientCore)
+  implementation(libs.ktor.clientEncoding)
+  implementation(libs.ktor.clientLogging)
+  implementation(libs.ktor.clientCIO)
+  implementation(libs.ktor.clientResources)
+  implementation(libs.ktor.serializationKotlinxJson)
+
   // https://github.com/avast/gradle-docker-compose-plugin
 //  implementation("com.avast.gradle:gradle-docker-compose-plugin:${Versions.gradleDockerComposePlugin}")
 
-  implementation(platform("org.http4k:http4k-bom:${libs.versions.http4k.get()}"))
-  implementation("org.http4k:http4k-core")
-  implementation("org.http4k:http4k-client-okhttp")
-
+//  implementation(platform("org.http4k:http4k-bom:${libs.versions.http4k.get()}"))
+//  implementation("org.http4k:http4k-core")
+//  implementation("org.http4k:http4k-client-okhttp")
 
   // https://github.com/gradle/gradle/issues/15383#issuecomment-779893192
   // https://youtrack.jetbrains.com/issue/IDEA-262280#focus=Comments-27-5397040.0-0
@@ -63,12 +82,22 @@ tasks.withType<KotlinCompile>().configureEach {
 
   kotlinOptions.freeCompilerArgs += listOf(
 //    "-Xcontext-receivers",
-    "-opt-in=kotlin.RequiresOptIn",
-    "-opt-in=kotlin.ExperimentalStdlibApi",
-    "-opt-in=kotlin.time.ExperimentalTime",
+    "-Xopt-in=kotlin.RequiresOptIn",
+    "-Xopt-in=kotlin.ExperimentalStdlibApi",
+    "-Xopt-in=kotlin.time.ExperimentalTime",
 //    "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-    "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
+    "-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi",
   )
+}
+
+
+afterEvaluate {
+  tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions {
+      apiVersion = gradleKotlinTarget
+      languageVersion = gradleKotlinTarget
+    }
+  }
 }
 
 kotlin {

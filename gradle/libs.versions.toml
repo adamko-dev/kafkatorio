@@ -27,6 +27,7 @@ kotlinJsWrappers      = "0.0.1-pre.334"
 kotlinx-html          = "0.7.5"
 kotlinx-nodejs        = "0.0.7"
 kotlinx-coroutines    = "1.6.1"
+kotlinx-cli           = "0.3.4"
 
 ktor    = "2.0.1"
 
@@ -77,8 +78,11 @@ kotlinx-coroutines-core        = { group = "org.jetbrains.kotlinx", name = "kotl
 
 kotlinx-html                   = { group = "org.jetbrains.kotlinx", name = "kotlinx-html",                  version.ref = "kotlinx-html"   }
 kotlinx-nodejs                 = { group = "org.jetbrains.kotlinx", name = "kotlinx-nodejs",                version.ref = "kotlinx-nodejs" }
+kotlinx-cli                    = { group = "org.jetbrains.kotlinx", name = "kotlinx-cli",                   version.ref = "kotlinx-cli"    }
 
 kotlin-jsWrappers-bom          = { group = "org.jetbrains.kotlin-wrappers", name = "kotlin-wrappers-bom",   version.ref = "kotlinJsWrappers" }
+
+
 
 ## http4k ##
 http4k-bom            = { group = "org.http4k",  name = "http4k-bom",                          version.ref = "http4k" }
@@ -88,16 +92,27 @@ http4k-client-okhttp  = { group = "org.http4k",  name = "http4k-client-okhttp"  
 http4k-client-ws      = { group = "org.http4k",  name = "http4k-client-websocket"                                     }
 http4k-server         = { group = "org.http4k",  name = "http4k-server-undertow"                                      }
 http4k-cloudnative    = { group = "org.http4k",  name = "http4k-cloudnative"                                          }
-http4k-format-json    = { group = "org.http4k",  name = "http4k-format-jackson"                                       }
-http4k-format-xml     = { group = "org.http4k",  name = "http4k-format-jackson-xml"                                   }
-http4k-format-yaml    = { group = "org.http4k",  name = "http4k-format-jackson-yaml"                                  }
+#http4k-format-jackson-json    = { group = "org.http4k",  name = "http4k-format-jackson"                                       }
+#http4k-format-jackson-xml     = { group = "org.http4k",  name = "http4k-format-jackson-xml"                                   }
+#http4k-format-jackson-yaml    = { group = "org.http4k",  name = "http4k-format-jackson-yaml"                                  }
 http4k-format-kotlinx = { group = "org.http4k",  name = "http4k-format-kotlinx-serialization"                         }
 http4k-graphql        = { group = "org.http4k",  name = "http4k-graphql"                                              }
 
 
 ## ktor ##
-ktor-bom = { group = "io.ktor",  name = "ktor-bom", version.ref = "ktor" }
+ktor-bom                      = { group = "io.ktor",  name = "ktor-bom", version.ref = "ktor"  }
 
+ktor-clientAuth               = { group = "io.ktor",  name = "ktor-client-auth"                }
+ktor-clientCIO                = { group = "io.ktor",  name = "ktor-client-cio"                 }
+ktor-clientContentNegotiation = { group = "io.ktor",  name = "ktor-client-content-negotiation" }
+ktor-clientCore               = { group = "io.ktor",  name = "ktor-client-core"                }
+ktor-clientEncoding           = { group = "io.ktor",  name = "ktor-client-encoding"            }
+ktor-clientLogging            = { group = "io.ktor",  name = "ktor-client-logging"             }
+ktor-clientResources          = { group = "io.ktor",  name = "ktor-client-resources"           }
+ktor-clientWebsockets         = { group = "io.ktor",  name = "ktor-client-websockets"          }
+ktor-serializationKotlinxJson = { group = "io.ktor",  name = "ktor-serialization-kotlinx-json" }
+
+ktor-test-clientMock          = { group = "io.ktor",  name = "ktor-client-mock"                }
 
 ### jackson ##
 #jackson-bom     = { group = " com.fasterxml.jackson.module",  name = ":jackson-module-kotlin", version = "2.13.+"     }
@@ -129,6 +144,7 @@ skrapeit = { group = "it.skrape", name = "skrapeit", version = "1.2.0" }
 
 scrimage-core = { group = "com.sksamuel.scrimage", name = "scrimage-core", version.ref = "scrimage" }
 
+semver = { group = "net.swiftzer.semver", name = "semver", version.ref = "semver" }
 
 ## okio ##
 okio-bom  = { group = "com.squareup.okio", name = "okio-bom", version.ref = "okio" }
@@ -194,9 +210,9 @@ http4k = [
     "http4k-client-ws",
     "http4k-server",
     "http4k-cloudnative",
-    "http4k-format-xml",
-    "http4k-format-json",
-    "http4k-format-yaml",
+#    "http4k-format-jackson-xml",
+#    "http4k-format-jackson-json",
+#    "http4k-format-jackson-yaml",
     "http4k-format-kotlinx",
 ]
 
