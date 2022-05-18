@@ -1,6 +1,5 @@
 import {Data, DoubleSettingDefinition} from "typed-factorio/settings/types"
 import {KafkatorioKeyedPacketData, KafkatorioKeyedPacketTypes} from "../types";
-import {KafkatorioPacketData} from "../../generated/kafkatorio-schema/kafkatorio-schema";
 
 export class KafkatorioSettingsConfig {
 
@@ -12,38 +11,42 @@ export class KafkatorioSettingsConfig {
   }
 
 
-  private eventCacheExpirationTicks: Record<KafkatorioKeyedPacketTypes, double> = {
-    "kafkatorio.packet.keyed.PlayerUpdate":
-        KafkatorioSettingsConfig.eventCacheExpirationDefaultSeconds[KafkatorioPacketData.Type.PlayerUpdate],
-    "kafkatorio.packet.keyed.MapChunkUpdate":
-        KafkatorioSettingsConfig.eventCacheExpirationDefaultSeconds[KafkatorioPacketData.Type.MapChunkUpdate],
-    "kafkatorio.packet.keyed.EntityUpdate":
-        KafkatorioSettingsConfig.eventCacheExpirationDefaultSeconds[KafkatorioPacketData.Type.EntityUpdate],
-  }
+  // private eventCacheExpirationTicks: Record<KafkatorioKeyedPacketTypes, double> = {
+  //   "kafkatorio.packet.keyed.PlayerUpdate":
+  //       KafkatorioSettingsConfig.eventCacheExpirationDefaultSeconds[KafkatorioPacketData.Type.PlayerUpdate],
+  // "kafkatorio.packet.keyed.MapChunkUpdate":
+  // KafkatorioSettingsConfig.eventCacheExpirationDefaultSeconds[KafkatorioPacketData.Type.MapChunkUpdate],
+  // "kafkatorio.packet.keyed.EntityUpdate":
+  // KafkatorioSettingsConfig.eventCacheExpirationDefaultSeconds[KafkatorioPacketData.Type.EntityUpdate],
+  // }
 
   public getEventCacheExpirationTicks(packet: KafkatorioKeyedPacketData): uint {
-    return this.eventCacheExpirationTicks[packet.type]
+    const settingName = KafkatorioSettingsConfig.cacheDurationSettingName(packet.type)
+    const seconds: double = settings.global[settingName].value as double
+    return seconds * 60 // convert ticks to seconds
   }
 
-  private static types: KafkatorioKeyedPacketTypes[] = [
-    KafkatorioPacketData.Type.PlayerUpdate,
-    KafkatorioPacketData.Type.MapChunkUpdate,
-    KafkatorioPacketData.Type.EntityUpdate,
-  ]
+  // private static types: KafkatorioKeyedPacketTypes[] = [
+  //   KafkatorioPacketData.Type.PlayerUpdate,
+  //   KafkatorioPacketData.Type.MapChunkUpdate,
+  //   KafkatorioPacketData.Type.EntityUpdate,
+  // ]
 
-  public loadSettings(): void {
-    for (const type of KafkatorioSettingsConfig.types) {
-      const seconds: double = settings.global[KafkatorioSettingsConfig.cacheDurationSettingName(type)].value as double
-      this.eventCacheExpirationTicks[type] = seconds * 60 // convert ticks to seconds
-    }
-  }
+  // public loadSettings(): void {
+  //   for (const type of KafkatorioSettingsConfig.types) {
+  //     const settingName = KafkatorioSettingsConfig.cacheDurationSettingName(type)
+  //     const seconds: double = settings.global[settingName].value as double
+  //     this.eventCacheExpirationTicks[type] = seconds * 60 // convert ticks to seconds
+  //   }
+  // }
 
 
   public initialiseSettings(data: Data): void {
-    const settings = KafkatorioSettingsConfig.types.map(
-        type => KafkatorioSettingsConfig.createDefaultCacheDuration(type)
-    )
-    data.extend(settings)
+    for (const [type,] of pairs(KafkatorioSettingsConfig.eventCacheExpirationDefaultSeconds)) {
+      data.extend(
+         [ KafkatorioSettingsConfig.createDefaultCacheDuration(type)]
+      )
+    }
   }
 
 
@@ -64,7 +67,7 @@ export class KafkatorioSettingsConfig {
 
 
   private static cacheDurationSettingName(type: KafkatorioKeyedPacketTypes): string {
-    return `kafkatorio_event-cache_default-expiration-duration-seconds_${type.replaceAll(".", "-")}`
+    return `kafkatorio:cache-expiration-seconds_${type.replaceAll(".", "-")}`
   }
 
 }
