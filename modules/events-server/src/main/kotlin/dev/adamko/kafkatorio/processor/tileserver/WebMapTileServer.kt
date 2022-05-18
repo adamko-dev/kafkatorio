@@ -18,7 +18,7 @@ import org.http4k.routing.routes
 import org.http4k.routing.static
 
 internal class WebMapTileServer(
-  private val appProps: ApplicationProperties = ApplicationProperties()
+  appProps: ApplicationProperties = ApplicationProperties()
 ) {
 
   private val tilesLoader = ResourceLoader.Directory(appProps.webmapTileDir.absolutePathString())
@@ -103,15 +103,16 @@ internal class WebMapTileServer(
               .header("Cache-Control", "no-cache")
           }
           requestedETag == currentETag -> {
-            println("[${request.etagKey}] currentETag == requested, returning 302 $requestedETag")
+//            println("[${request.etagKey}] currentETag == requested, returning 304 $requestedETag")
             Response(Status.NOT_MODIFIED)
               .header("Cache-Control", "no-cache")
           }
           else                         -> {
-            println("[${request.etagKey}] currentETag != requested, executing request and adding currentETag:$currentETag (requested:$requestedETag)")
+//            println("[${request.etagKey}] currentETag != requested, executing request and adding currentETag:$currentETag (requested:$requestedETag)")
             response
               .header("ETag", currentETag)
-              .header("Cache-Control", "public, max-age=1, stale-while-revalidate=60, stale-if-error=300")
+//              .header("Cache-Control", "no-store")
+              .header("Cache-Control", "no-cache")
           }
         }
       }
