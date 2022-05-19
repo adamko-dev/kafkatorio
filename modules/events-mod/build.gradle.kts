@@ -119,6 +119,8 @@ tasks.distZip {
 
 
 val publishMod by tasks.registering(FactorioModPublishTask::class) {
+  dependsOn(tasks.check)
+
   distributionZip.set(tasks.distZip.flatMap { it.archiveFile })
 
   val projectModName = project.extra.get("modName") as String
@@ -156,64 +158,7 @@ distributions {
 tasks.withType<Zip>().configureEach {
   val projectTokensXX = projectTokensX
   inputs.property("projectTokens", projectTokensXX)
-//  if (name.startsWith("dist")) {
-//    notCompatibleWithConfigurationCache("NPE on projectTokens")
-//  }
 }
-
-//tasks.npmInstall {
-//  nodeModulesOutputFilter {
-//    exclude("**/typed-factorio/generated/classes.d.ts")
-//  }
-//}
-
-//interface ServiceProvider {
-//  @get:Inject
-//  val fs: FileSystemOperations
-//}
-//
-//val fixLink by tasks.registering {
-//  dependsOn(tasks.npmInstall)
-//
-//
-//  val badLink = """{@link https://lua-api.factorio.com/latest/Data-Lifecycle.html Data Lifecycle}"""
-//  val goodLink = """https://lua-api.factorio.com/latest/Data-Lifecycle.html"""
-//
-//  val typedFactorioDir =
-//    layout.projectDirectory.dir("src/main/typescript/node_modules/typed-factorio")
-//  val classesDTS = typedFactorioDir.file("generated/classes.d.ts")
-//
-//  val services = project.objects.newInstance<ServiceProvider>()
-//
-//  inputs.file(classesDTS)
-//  outputs.file(classesDTS)
-//
-//  inputs.property("badLink", badLink)
-//  inputs.property("goodLink", goodLink)
-//
-//  doLast {
-//    logger.lifecycle("fixing link ${classesDTS.asFile.canonicalPath}")
-//
-//    services.fs.sync {
-//      from(classesDTS)
-//      into(temporaryDir)
-//      filter { line ->
-//        when {
-//          line.contains(badLink) -> line.replace(badLink, goodLink)
-//          else                   -> line
-//        }
-//      }
-//    }
-//
-//    services.fs.copy {
-//      from(temporaryDir.resolve("classes.d.ts").canonicalPath)
-//      into(classesDTS.asFile.parent)
-//      duplicatesStrategy = DuplicatesStrategy.WARN
-//    }
-//  }
-//}
-//
-//tasks.assemble { dependsOn(fixLink) }
 
 
 //val downloadFactorioApiDocs by tasks.registering {
@@ -259,7 +204,7 @@ tasks.updatePackageJson {
   inputs.property("packageJsonName", packageJsonName)
   propertiesToCheck.put("name", packageJsonName)
   val pjProvider = layout.projectDirectory.file(provider { "package.json" })
-  packageJsonFile2.set(pjProvider)
+  packageJsonFile.set(pjProvider)
 }
 
 
@@ -296,3 +241,20 @@ tasks.assemble { dependsOn(installEventsTsSchema, tasks.updatePackageJson) }
 //    }
 //  }
 //}
+
+idea {
+  module {
+    sourceDirs = sourceDirs + file("src/main/typescript")
+    resourceDirs = resourceDirs + file("src/main/resources")
+    testSourceDirs = testSourceDirs + file("src/test/typescript")
+    iml {
+      whenMerged {
+        require(this is org.gradle.plugins.ide.idea.model.Module)
+
+        sourceDirs = sourceDirs + file("src/main/typescript")
+        resourceDirs = resourceDirs + file("src/main/resources")
+        testSourceDirs = testSourceDirs + file("src/test/typescript")
+      }
+    }
+  }
+}

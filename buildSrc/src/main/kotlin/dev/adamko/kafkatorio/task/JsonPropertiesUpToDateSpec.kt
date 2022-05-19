@@ -1,8 +1,5 @@
 package dev.adamko.kafkatorio.task
 
-import dev.adamko.kafkatorio.jsonMapper
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.api.Task
 import org.gradle.api.internal.specs.ExplainingSpec
 
@@ -13,34 +10,29 @@ object JsonPropertiesUpToDateSpec : ExplainingSpec<Task> {
 
   // Returns a description explaining why the task is outdated,
   // or null if the task is up to date
-  override fun whyUnsatisfied(element: Task?): String? = with(element) {
-    when (this) {
-      null                  -> "task is null"
+  override fun whyUnsatisfied(task: Task?): String? {
+    require(task is UpdatePackageJson) { "$task is not a UpdatePackageJson task" }
 
-      !is UpdatePackageJson ->
-        "task ${this::class.simpleName} is not instance of ${UpdatePackageJson::class.simpleName}"
+    val current = task.currentPackageJson()
+    val updated = task.updatedPackageJson(current)
 
-      else                  -> {
+    return if (current != updated) {
+      (current.keys + updated.keys)
+        .asSequence()
+        .distinct()
+        .sorted()
+        .mapNotNull {
+          val currentVal = current[it]
+          val updatedVal = updated[it]
 
-        val packageJsonContent = packageJsonFile2.get().asFile.readText()
-        val packageJson = jsonMapper.parseToJsonElement(packageJsonContent).jsonObject
-
-        val outdatedProperties = propertiesToCheck.get().mapNotNull { (key, expectedVal) ->
-          val actualVal = packageJson[key]?.jsonPrimitive?.content
-          when {
-            expectedVal == actualVal -> null
-            else                     -> "'$key' (expected: $expectedVal, actual: $actualVal)"
+          if (currentVal == updatedVal) {
+            null
+          } else {
+            "'$it' - expected:$updatedVal, actual:$currentVal"
           }
-        }
-
-        when {
-          outdatedProperties.isEmpty() -> null
-          outdatedProperties.size == 1 ->
-            "package.json has outdated property: ${outdatedProperties.single()}"
-          else                         ->
-            "package.json has outdated properties: ${outdatedProperties.joinToString(", ")}"
-        }
-      }
+        }.joinToString(prefix = "package.json is not up to date. ")
+    } else {
+      null
     }
   }
 }

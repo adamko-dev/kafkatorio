@@ -82,11 +82,11 @@ tasks.withType<KotlinCompile>().configureEach {
 
   kotlinOptions.freeCompilerArgs += listOf(
 //    "-Xcontext-receivers",
-    "-Xopt-in=kotlin.RequiresOptIn",
-    "-Xopt-in=kotlin.ExperimentalStdlibApi",
-    "-Xopt-in=kotlin.time.ExperimentalTime",
+    "-opt-in=kotlin.RequiresOptIn",
+    "-opt-in=kotlin.ExperimentalStdlibApi",
+    "-opt-in=kotlin.time.ExperimentalTime",
 //    "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-    "-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi",
+    "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
   )
 }
 
