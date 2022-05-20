@@ -1,0 +1,23 @@
+# headers = kcat/kcat.h
+headers = \
+D:/Users/Adam/Projects/games/kafkatorio/modules/infra-docker-kafka-logger/src/nativeInterop/cinterop/kcat/kcat.h
+ #\
+#D:/Users/Adam/Projects/games/kafkatorio/modules/infra-docker-kafka-logger/src/nativeInterop/cinterop/kcat/config.h
+headerFilter = kcat/*
+
+package = external.kcat
+
+# compilerOpts.linux = -I/usr/include -I/usr/include/x86_64-linux-gnu
+# linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/curl/lib -lcurl
+# linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -lcurl
+
+excludeDependentModules = true
+
+libraryPaths = /opt/local/lib /usr/local/opt/curl/lib
+
+# compilerOpts = -D_MSC_VER=1930 -DWIN32_MEAN_AND_LEAN
+
+---
+
+
+int main (int argc, char* argv[]);

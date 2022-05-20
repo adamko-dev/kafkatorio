@@ -1,0 +1,19 @@
+# headers = kcat/kcat.h
+headers = \
+D:/Users/Adam/Projects/games/kafkatorio/modules/infra-docker-kafka-logger/src/nativeInterop/cinterop/librdkafka/src/rdkafka.h
+ #/
+#D:/Users/Adam/Projects/games/kafkatorio/modules/infra-docker-kafka-logger/src/nativeInterop/cinterop/kcat/config.h
+#headerFilter = rdkafka.h
+#headerFilter = librdkafka/src/**/*.h
+
+package = external.libkafka
+
+# compilerOpts.linux = -I/usr/include -I/usr/include/x86_64-linux-gnu
+# linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/curl/lib -lcurl
+# linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -lcurl
+
+excludeDependentModules = true
+
+libraryPaths = /opt/local/lib /usr/local/opt/curl/lib
+
+# compilerOpts = -D_MSC_VER=1930 -DWIN32_MEAN_AND_LEAN

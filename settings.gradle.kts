@@ -17,6 +17,8 @@ include(
 
 //  ":modules:factorio-mod-portal-client",
 
+  ":modules:infra-docker-kafka-logger",
+
   ":modules:versions-platform",
 )
 

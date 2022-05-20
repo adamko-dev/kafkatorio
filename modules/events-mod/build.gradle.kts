@@ -1,7 +1,7 @@
 import dev.adamko.kafkatorio.factoriomod.FactorioModPublishTask
 import dev.adamko.kafkatorio.gradle.asConsumer
 import dev.adamko.kafkatorio.gradle.asProvider
-import dev.adamko.kafkatorio.gradle.dropDirectories
+import dev.adamko.kafkatorio.gradle.dropDirectory
 import dev.adamko.kafkatorio.gradle.factorioModAttributes
 import dev.adamko.kafkatorio.gradle.typescriptAttributes
 import dev.adamko.kafkatorio.task.TypescriptToLuaTask
@@ -99,7 +99,7 @@ val installEventsTsSchema by tasks.registering(Sync::class) {
       }
   ) {
     // drop the first directory inside the zip
-    eachFile { relativePath = dropDirectories() }
+    eachFile { relativePath = dropDirectory() }
     includeEmptyDirs = false
   }
   into(outputDir)
