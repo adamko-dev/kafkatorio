@@ -38,7 +38,9 @@ sealed interface InitUploadResponse {
 sealed interface SubmitUploadResponse {
 
   @Serializable
-  object Success : SubmitUploadResponse
+  data class Success(
+    val success: Boolean
+  ) : SubmitUploadResponse
 
   object Serializer : JsonContentPolymorphicSerializer<SubmitUploadResponse>(
     SubmitUploadResponse::class
