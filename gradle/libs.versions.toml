@@ -28,6 +28,7 @@ kotlinx-html          = "0.7.5"
 kotlinx-nodejs        = "0.0.7"
 kotlinx-coroutines    = "1.6.1"
 kotlinx-cli           = "0.3.4"
+kotlinx-datetime      = "0.3.3"
 
 ktor    = "2.0.1"
 
@@ -79,9 +80,10 @@ kotlinx-coroutines-core        = { group = "org.jetbrains.kotlinx", name = "kotl
 kotlinx-html                   = { group = "org.jetbrains.kotlinx", name = "kotlinx-html",                  version.ref = "kotlinx-html"   }
 kotlinx-nodejs                 = { group = "org.jetbrains.kotlinx", name = "kotlinx-nodejs",                version.ref = "kotlinx-nodejs" }
 kotlinx-cli                    = { group = "org.jetbrains.kotlinx", name = "kotlinx-cli",                   version.ref = "kotlinx-cli"    }
+kotlinx-datetime               = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime",              version.ref = "kotlinx-datetime"    }
+
 
 kotlin-jsWrappers-bom          = { group = "org.jetbrains.kotlin-wrappers", name = "kotlin-wrappers-bom",   version.ref = "kotlinJsWrappers" }
-
 
 
 ## http4k ##
@@ -112,7 +114,34 @@ ktor-clientResources          = { group = "io.ktor",  name = "ktor-client-resour
 ktor-clientWebsockets         = { group = "io.ktor",  name = "ktor-client-websockets"          }
 ktor-serializationKotlinxJson = { group = "io.ktor",  name = "ktor-serialization-kotlinx-json" }
 
+
+ktor-serverCore               = { group = "io.ktor",  name = "ktor-server-core"                }
+ktor-serverNetty              = { group = "io.ktor",  name = "ktor-server-netty"               }
+ktor-serverContentNegotiaion  = { group = "io.ktor",  name = "ktor-server-content-negotiation" }
+ktor-serverCors               = { group = "io.ktor",  name = "ktor-server-cors"                }
+ktor-serverResources          = { group = "io.ktor",  name = "ktor-server-resources"           }
+ktor-serverAutoHeadResponse   = { group = "io.ktor",  name = "ktor-server-auto-head-response"  }
+ktor-serverStatusPages        = { group = "io.ktor",  name = "ktor-server-status-pages"        }
+ktor-serverAuth               = { group = "io.ktor",  name = "ktor-server-auth"                }
+ktor-serverAuthJwt            = { group = "io.ktor",  name = "ktor-server-auth-jwt"            }
+ktor-serverSessions           = { group = "io.ktor",  name = "ktor-server-sessions"            }
+ktor-serverDataConversion     = { group = "io.ktor",  name = "ktor-server-data-conversion"     }
+ktor-serverDefaultHeaders     = { group = "io.ktor",  name = "ktor-server-default-headers"     }
+ktor-serverCompression        = { group = "io.ktor",  name = "ktor-server-compression"         }
+ktor-serverCachingHeaders     = { group = "io.ktor",  name = "ktor-server-caching-headers"     }
+ktor-serverConditionalHeaders = { group = "io.ktor",  name = "ktor-server-conditional-headers" }
+ktor-serverForwardedHeader    = { group = "io.ktor",  name = "ktor-server-forwarded-header"    }
+ktor-serverHsts               = { group = "io.ktor",  name = "ktor-server-hsts"                }
+ktor-serverHttpRedirect       = { group = "io.ktor",  name = "ktor-server-http-redirect"       }
+ktor-serverPartialContent     = { group = "io.ktor",  name = "ktor-server-partial-content"     }
+ktor-serverWebsockets         = { group = "io.ktor",  name = "ktor-server-websockets"          }
+ktor-serverCallLogging        = { group = "io.ktor",  name = "ktor-server-call-logging"        }
+ktor-serverCallId             = { group = "io.ktor",  name = "ktor-server-call-id"             }
+
+ktor-network                  = { group = "io.ktor",  name = "ktor-network"                    }
+
 ktor-test-clientMock          = { group = "io.ktor",  name = "ktor-client-mock"                }
+ktor-test-serverHost          = { group = "io.ktor",  name = "ktor-server-test-host"           }
 
 ### jackson ##
 #jackson-bom     = { group = " com.fasterxml.jackson.module",  name = ":jackson-module-kotlin", version = "2.13.+"     }
@@ -138,6 +167,9 @@ kafka-streamsTestUtils = { group = "org.apache.kafka", name = "kafka-streams-tes
 #kotka         = { group = "com.github.blueanvil", name = "kotka",         version =     "1.1.1" }
 
 kafka-kotkaStreams = { group = "com.github.adamko-dev.kotka-streams", name = "kotka-streams", version = "v22.04.24" }
+
+
+rocksdb = { group = "io.maryk.rocksdb", name = "rocksdb-multiplatform", version = "7.0.3" }
 
 jsoup    = { group = "org.jsoup", name = "jsoup", version = "1.14.3" }
 skrapeit = { group = "it.skrape", name = "skrapeit", version = "1.2.0" }
