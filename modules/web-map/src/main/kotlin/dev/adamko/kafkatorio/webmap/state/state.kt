@@ -1,4 +1,4 @@
-package dev.adamko.kafkatorio.webmap
+package dev.adamko.kafkatorio.webmap.state
 
 import dev.adamko.kafkatorio.schema.common.Colour
 import dev.adamko.kafkatorio.schema.common.MapEntityPosition
@@ -7,6 +7,8 @@ import dev.adamko.kafkatorio.schema.common.SurfaceIndex
 import dev.adamko.kafkatorio.schema.common.Tick
 import dev.adamko.kafkatorio.schema.common.toHexString
 import dev.adamko.kafkatorio.schema.packets.PlayerUpdate
+import dev.adamko.kafkatorio.webmap.FactorioMap
+import dev.adamko.kafkatorio.webmap.latLng
 import io.kvision.maps.Maps.Companion.L
 import io.kvision.maps.externals.leaflet.geo.LatLng
 import io.kvision.maps.externals.leaflet.layer.LayerGroup

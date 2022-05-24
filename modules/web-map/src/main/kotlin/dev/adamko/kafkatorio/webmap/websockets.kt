@@ -9,8 +9,9 @@ import dev.adamko.kafkatorio.schema.packets.MapChunkUpdate
 import dev.adamko.kafkatorio.schema.packets.PlayerUpdate
 import dev.adamko.kafkatorio.schema.packets.PrototypesUpdate
 import dev.adamko.kafkatorio.schema.packets.SurfaceUpdate
+import dev.adamko.kafkatorio.webmap.state.FactorioGameState
+import dev.adamko.kafkatorio.webmap.state.FactorioUpdate
 import io.kvision.redux.ReduxStore
-import kotlinx.serialization.decodeFromString
 import org.w3c.dom.MessageEvent
 import org.w3c.dom.WebSocket
 
@@ -36,7 +37,7 @@ class WebsocketService(
 
       println(data.replace('\n', ' '))
 
-      val packet: KafkatorioPacket = jsonMapper.decodeFromString(data)
+      val packet = jsonMapper.decodeFromString(KafkatorioPacket.serializer(), data)
 
       when (val packetData = packet.data) {
 
