@@ -22,6 +22,7 @@ type PlayerUpdateEvent =
 function playerUpdateThrottle(
     event: PlayerUpdateEvent,
     mutate: PlayerUpdater,
+    expirationDurationTicks: uint | undefined = undefined,
 ) {
   const playerIndex = event.player_index
   if (playerIndex == undefined) {
@@ -42,9 +43,19 @@ function playerUpdateThrottle(
         data.events ??= {}
         data.events[eventName] ??= []
         data.events[eventName].push(event.tick)
-      }
+      },
+      expirationDurationTicks
   )
 }
+
+
+function playerUpdateImmediate(
+    event: PlayerUpdateEvent,
+    mutate: PlayerUpdater,
+) {
+  playerUpdateThrottle(event, mutate, 0)
+}
+
 
 // function playerUpdateDebounce(playerIndex: uint, mutate: PlayerUpdater) {
 //   EventUpdatesManager.debounce<"PLAYER">(
@@ -151,7 +162,7 @@ function handleBannedEvent(event: OnPlayerBannedEvent | OnPlayerUnbannedEvent) {
 script.on_event(
     defines.events.on_player_kicked,
     (event: OnPlayerKickedEvent) => {
-      playerUpdateThrottle(
+      playerUpdateImmediate(
           event,
           (player, data) => {
             data.kickedReason = event.reason ?? null
@@ -170,7 +181,7 @@ for (const [name, disconnectId] of pairs(defines.disconnect_reason)) {
 script.on_event(
     defines.events.on_pre_player_left_game,
     (event: OnPrePlayerLeftGameEvent) => {
-      playerUpdateThrottle(
+      playerUpdateImmediate(
           event,
           (player, data) => {
             data.disconnectReason = disconnectReasons.get(event.reason)
@@ -183,7 +194,7 @@ script.on_event(
 script.on_event(
     defines.events.on_player_removed,
     (event: OnPlayerRemovedEvent) => {
-      playerUpdateThrottle(
+      playerUpdateImmediate(
           event,
           (player, data) => {
             data.isRemoved = true
