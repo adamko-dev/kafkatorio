@@ -9,6 +9,7 @@ import io.kvision.CoreModule
 import io.kvision.FontAwesomeModule
 import io.kvision.html.div
 import io.kvision.maps.Maps
+import io.kvision.maps.Maps.Companion.L
 import io.kvision.maps.externals.leaflet.layer.tile.GridLayer
 import io.kvision.module
 import io.kvision.panel.root
@@ -23,7 +24,7 @@ import org.w3c.dom.asList
 
 class App(
   reduxStore: ReduxStore<FactorioGameState, FactorioUpdate>,
-  wsService: WebsocketService
+  wsService: WebsocketService,
 ) : Application() {
   private var appState: MutableMap<String, Any> = mutableMapOf()
 
@@ -37,7 +38,7 @@ class App(
   }
 
   private val kvMaps: Maps
-    get() = reduxStore.getState().kvMaps
+    get() = reduxStore.getState().map.kvMap
 
   override fun start(state: Map<String, Any>) {
     this.appState = state.toMutableMap()
@@ -54,6 +55,7 @@ class App(
           it.redraw()
         }
       })
+
 //      this.asDynamic()._fadeAnimated = false
     }
 
@@ -85,9 +87,7 @@ class App(
     }
   }
 
-  override fun dispose(): Map<String, Any> {
-    return appState
-  }
+  override fun dispose(): Map<String, Any> = appState
 
 }
 

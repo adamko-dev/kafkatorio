@@ -7,9 +7,9 @@ import dev.adamko.kafkatorio.schema.common.SurfaceIndex
 import dev.adamko.kafkatorio.schema.common.Tick
 import dev.adamko.kafkatorio.schema.common.toHexString
 import dev.adamko.kafkatorio.schema.packets.PlayerUpdate
-import io.kvision.maps.Maps
 import io.kvision.maps.Maps.Companion.L
 import io.kvision.maps.externals.leaflet.geo.LatLng
+import io.kvision.maps.externals.leaflet.layer.LayerGroup
 import io.kvision.maps.externals.leaflet.layer.overlay.Tooltip
 import io.kvision.maps.externals.leaflet.layer.vector.CircleMarker
 import io.kvision.redux.ReduxStore
@@ -22,16 +22,26 @@ fun createFactorioReduxStore(): ReduxStore<FactorioGameState, FactorioUpdate> =
   createReduxStore(
     ::factorioGameReducer,
     FactorioGameState(
-      kvMaps = createFactorioMap(),
-      players = emptyMap()
+      map = FactorioMap(),
+      players = emptyMap(),
     )
   )
 
 
 data class FactorioGameState(
-  val kvMaps: Maps,
+  val map: FactorioMap,
   val players: Map<PlayerIndex, PlayerState>,
-)
+) {
+
+  val playerIconsLayer: LayerGroup
+    get() = map.playerIconsLayer
+
+//  init {
+//    kvMaps.leafletMap {
+//      playerIconsLayer.addTo(this)
+//    }
+//  }
+}
 
 
 sealed class FactorioUpdate : RAction {
@@ -39,106 +49,92 @@ sealed class FactorioUpdate : RAction {
 }
 
 
-fun factorioGameReducer(state: FactorioGameState, update: FactorioUpdate): FactorioGameState =
+fun factorioGameReducer(gameState: FactorioGameState, update: FactorioUpdate): FactorioGameState =
   when (update) {
-    is FactorioUpdate.Player -> {
-
-      val playerState = state.players.getOrElse(update.data.key.index) {
-        PlayerState(update.data.key.index, update.tick)
-      }
-
-      playerState.update(update.tick, update.data)
-
-      state.kvMaps.leafletMap {
-
-        val playerMarker = playerState.mapMarker
-
-        if (playerMarker != null) {
-          when (playerState.playerDetails) {
-            is PlayerDetailsState.Known   -> if (!hasLayer(playerMarker)) addLayer(playerMarker)
-            is PlayerDetailsState.Unknown -> if (hasLayer(playerMarker)) removeLayer(playerMarker)
-          }
-        }
-      }
-
-      val updatedPlayersState = state.players + (playerState.index to playerState)
-      state.copy(players = updatedPlayersState)
-    }
+    is FactorioUpdate.Player -> handlePlayerUpdate(gameState, update)
   }
 
 
-class PlayerState(
+private fun handlePlayerUpdate(
+  gameState: FactorioGameState,
+  update: FactorioUpdate.Player,
+): FactorioGameState {
+
+  val previous = gameState.players[update.data.key.index]
+    ?: PlayerState(update.data.key.index, update.tick)
+
+  val updated = previous.update(update.tick, update.data)
+
+  if (previous.mapMarker != updated.mapMarker) {
+    if (previous.mapMarker != null) {
+      println("removing player icon ${previous.index}")
+      gameState.playerIconsLayer.removeLayer(previous.mapMarker)
+    }
+    if (updated.mapMarker != null) {
+      println("adding player icon ${updated.index}")
+      gameState.playerIconsLayer.addLayer(updated.mapMarker)
+    }
+  }
+
+  val updatedPlayersState = gameState.players + (previous.index to updated)
+  return gameState.copy(players = updatedPlayersState)
+}
+
+
+data class PlayerState(
   val index: PlayerIndex,
-  private var lastTick: Tick,
+  val lastTick: Tick,
+  val playerDetails: PlayerProperties = PlayerProperties.Partial(),
+  val mapMarker: CircleMarker? = null,
 ) {
-  var playerDetails: PlayerDetailsState = PlayerDetailsState.Unknown(index)
-    private set
 
-  var mapMarker: CircleMarker? = null
-    private set
-
-  fun update(tick: Tick, update: PlayerUpdate) {
+  fun update(tick: Tick, update: PlayerUpdate): PlayerState {
 
     if (lastTick.value > tick.value) {
       println("discarding old PlayerUpdate, ${lastTick.value} > ${tick.value}")
-      return
+      return this
     }
-    this.lastTick = tick
-    this.playerDetails = updatePlayerDetails(update)
 
-    updateMapPosition()
-
-    println("updated PlayerState index:${playerDetails.index}, name:${playerDetails.name}")
-  }
-
-  private fun updatePlayerDetails(update: PlayerUpdate): PlayerDetailsState {
-
-    val position = update.position ?: playerDetails.position
-    val surfaceIndex = update.surfaceIndex ?: playerDetails.surfaceIndex
-    val colour = update.colour ?: playerDetails.colour
-    val name = update.name ?: playerDetails.name
-
-    return when {
-      position != null
-          && surfaceIndex != null
-          && colour != null
-          && name != null ->
-        PlayerDetailsState.Known(
-          index = playerDetails.index,
-          position = position,
-          surfaceIndex = surfaceIndex,
-          colour = colour,
-          name = name,
-        )
-
-      else                ->
-        PlayerDetailsState.Unknown(
-          index = playerDetails.index,
-          position = position,
-          surfaceIndex = surfaceIndex,
-          colour = colour,
-          name = name,
-        )
-    }
+    val newState = this.copy(
+      lastTick = tick,
+      playerDetails = playerDetails.update(update),
+      mapMarker = updateMapMarker()
+    )
+    println("updated PlayerState index:${newState.index}, name:${newState.playerDetails.name}")
+    return newState
   }
 
 
-  private fun updateMapPosition() {
+  private fun updateMapMarker(): CircleMarker? {
+    return when (playerDetails) {
 
-    when (val details = playerDetails) {
-      is PlayerDetailsState.Unknown -> {
-        println("removing player ${details.index} map marker")
-        mapMarker?.remove()
+      is PlayerProperties.Partial  -> {
+        println("removing player $index map marker")
+        null
       }
-      is PlayerDetailsState.Known   -> updateMapMarker(details)
-    }
 
+      is PlayerProperties.Complete -> {
+
+        val mapMarker = mapMarker ?: createMapMarker(playerDetails)
+
+        mapMarker.apply {
+          options.color = playerDetails.hexColour
+          options.fillColor = playerDetails.hexColour
+
+          val lat = playerDetails.latLng.lat.toInt()
+          val lng = playerDetails.latLng.lng.toInt()
+
+          setTooltipContent("${playerDetails.name} [$lat, $lng]")
+          setLatLng(playerDetails.latLng)
+        }
+      }
+    }
   }
 
-  private fun updateMapMarker(playerDetails: PlayerDetailsState.Known) {
 
-    if (mapMarker == null) {
-      mapMarker = L.circleMarker(playerDetails.latLng) {
+  companion object {
+    private fun createMapMarker(playerDetails: PlayerProperties.Complete): CircleMarker =
+      L.circleMarker(playerDetails.latLng) {
         fillOpacity = 1f
         radius = 10
         className = "player-marker"
@@ -148,54 +144,78 @@ class PlayerState(
 //        interactive = false
         })
       }
-    }
-
-    mapMarker?.apply {
-      val playerColour = playerDetails.colour.toHexString(false)
-      options.color = playerColour
-      options.fillColor = playerColour
-
-      val lat = playerDetails.latLng.lat.toInt()
-      val lng = playerDetails.latLng.lng.toInt()
-
-      setTooltipContent("${playerDetails.name} [$lat, $lng]")
-      setLatLng(playerDetails.latLng)
-    }
-
   }
 }
 
 
-sealed interface PlayerDetailsState {
-
-  val index: PlayerIndex
+sealed interface PlayerProperties {
 
   val position: MapEntityPosition?
   val surfaceIndex: SurfaceIndex?
   val colour: Colour?
   val name: String?
   val latLng: LatLng?
+  val isConnected: Boolean
+  val isShowOnMap: Boolean
 
-  data class Unknown(
-    override val index: PlayerIndex,
 
+  data class Partial(
     override val position: MapEntityPosition? = null,
     override val surfaceIndex: SurfaceIndex? = null,
     override val colour: Colour? = null,
     override val name: String? = null,
-  ) : PlayerDetailsState {
+    override val isConnected: Boolean = false,
+    override val isShowOnMap: Boolean = false,
+  ) : PlayerProperties {
     override val latLng: LatLng? = null
   }
 
-  data class Known(
-    override val index: PlayerIndex,
 
+  data class Complete(
     override val position: MapEntityPosition,
     override val surfaceIndex: SurfaceIndex,
     override val colour: Colour,
     override val name: String,
-  ) : PlayerDetailsState {
+    override val isConnected: Boolean = false,
+    override val isShowOnMap: Boolean = false,
+  ) : PlayerProperties {
     override val latLng: LatLng = position.latLng()
+    val hexColour: String = colour.toHexString(false)
   }
 
+
+  fun update(update: PlayerUpdate): PlayerProperties {
+
+    val position = update.position ?: this.position
+    val surfaceIndex = update.surfaceIndex ?: this.surfaceIndex
+    val colour = update.colour ?: this.colour
+    val name = update.name ?: this.name
+    val isConnected = update.isConnected ?: false
+    val isShowOnMap = update.isShowOnMap ?: false
+
+    return when {
+      position != null
+          && surfaceIndex != null
+          && colour != null
+          && name != null ->
+        Complete(
+          position = position,
+          surfaceIndex = surfaceIndex,
+          colour = colour,
+          name = name,
+          isConnected = isConnected,
+          isShowOnMap = isShowOnMap,
+        )
+
+      else                ->
+        Partial(
+          position = position,
+          surfaceIndex = surfaceIndex,
+          colour = colour,
+          name = name,
+          isConnected = isConnected,
+          isShowOnMap = isShowOnMap,
+        )
+    }
+  }
 }
