@@ -1,30 +1,12 @@
 package dev.adamko.kafkatorio.processor.topology
 
 import com.sksamuel.scrimage.color.RGBColor
-import dev.adamko.kafkatorio.schema.common.ChunkSize
 import dev.adamko.kafkatorio.schema.common.ColourHex
-import dev.adamko.kafkatorio.schema.common.MapChunkPosition
 import dev.adamko.kafkatorio.schema.common.MapTile
 import dev.adamko.kafkatorio.schema.common.MapTilePosition
-import dev.adamko.kafkatorio.schema.common.SurfaceIndex
+import dev.adamko.kafkatorio.schema.common.ServerMapChunkId
 import java.awt.Color
 import kotlinx.serialization.Serializable
-
-
-@JvmInline
-@Serializable
-value class FactorioServerId(private val id: String) {
-  override fun toString() = id
-}
-
-
-@Serializable
-data class ServerMapChunkId(
-  val serverId: FactorioServerId,
-  val chunkPosition: MapChunkPosition,
-  val surfaceIndex: SurfaceIndex,
-  val chunkSize: ChunkSize,
-)
 
 
 @Serializable

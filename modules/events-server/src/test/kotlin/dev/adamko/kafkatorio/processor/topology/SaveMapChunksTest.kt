@@ -3,8 +3,10 @@ package dev.adamko.kafkatorio.processor.topology
 import dev.adamko.kafkatorio.processor.serdes.kxsBinary
 import dev.adamko.kafkatorio.schema.common.ChunkSize
 import dev.adamko.kafkatorio.schema.common.ColourHex
+import dev.adamko.kafkatorio.schema.common.FactorioServerId
 import dev.adamko.kafkatorio.schema.common.MapChunkPosition
 import dev.adamko.kafkatorio.schema.common.MapTilePosition
+import dev.adamko.kafkatorio.schema.common.ServerMapChunkId
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
 import dev.adamko.kafkatorio.schema.common.iterateTiles
 import dev.adamko.kafkatorio.schema.common.toMapChunkPosition

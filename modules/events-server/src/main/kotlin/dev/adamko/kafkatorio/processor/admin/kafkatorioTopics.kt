@@ -26,6 +26,9 @@ const val TOPIC_SUBDIVIDED_MAP_TILES = "$DOMAIN.map-tiles.subdivided"
 const val TOPIC_SUBDIVIDED_MAP_TILES_DEBOUNCED = "$TOPIC_SUBDIVIDED_MAP_TILES.debounced"
 
 
+/** Broadcast these events out, via websocket */
+const val TOPIC_BROADCAST_TO_WEBSOCKET = "$DOMAIN.broadcast.websocket"
+
 fun allTopics(): Set<String> = buildSet {
   add(TOPIC_SRC_SERVER_LOG)
 
@@ -37,6 +40,8 @@ fun allTopics(): Set<String> = buildSet {
 
   add(TOPIC_SUBDIVIDED_MAP_TILES)
   add(TOPIC_SUBDIVIDED_MAP_TILES_DEBOUNCED)
+
+  add(TOPIC_BROADCAST_TO_WEBSOCKET)
 
   addAll(packetTopicNames.values)
 }

@@ -6,6 +6,8 @@ import dev.adamko.kafkatorio.processor.misc.DebounceProcessor.Companion.addDebou
 import dev.adamko.kafkatorio.processor.serdes.kxsBinary
 import dev.adamko.kafkatorio.schema.common.ChunkSize
 import dev.adamko.kafkatorio.schema.common.ColourHex
+import dev.adamko.kafkatorio.schema.common.FactorioServerId
+import dev.adamko.kafkatorio.schema.common.ServerMapChunkId
 import dev.adamko.kafkatorio.schema.common.leftTopTile
 import dev.adamko.kafkatorio.schema.common.toMapChunkPosition
 import dev.adamko.kafkatorio.schema.packets.MapChunkUpdate

@@ -1,5 +1,6 @@
 package dev.adamko.kafkatorio.webmap
 
+import dev.adamko.kafkatorio.schema.common.TilePngFilename
 import io.kvision.maps.Maps
 import io.kvision.maps.Maps.Companion.L
 import io.kvision.maps.externals.leaflet.DoneCallback
@@ -12,7 +13,19 @@ import io.kvision.maps.externals.leaflet.layer.LayerGroup
 import io.kvision.maps.externals.leaflet.layer.tile.TileLayer
 import io.kvision.utils.obj
 import io.kvision.utils.px
+import kotlinx.coroutines.await
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import org.w3c.dom.Document
 import org.w3c.dom.HTMLElement
+import org.w3c.dom.Image
+import org.w3c.dom.Window
+import org.w3c.dom.asList
+import org.w3c.fetch.NO_CORS
+import org.w3c.fetch.RELOAD
+import org.w3c.fetch.RequestCache
+import org.w3c.fetch.RequestInit
+import org.w3c.fetch.RequestMode
 
 
 class FactorioMap(
@@ -64,6 +77,49 @@ class FactorioMap(
   }
 
 
+  suspend fun refreshUpdatedTilePng(
+    document: Document,
+    window: Window,
+    tilePngFilename: TilePngFilename,
+  ): Unit = coroutineScope {
+    launch {
+      document
+        .querySelectorAll("img.leaflet-tile-loaded")
+        .asList()
+        .filterIsInstance<Image>()
+        .filter { img ->
+          tilePngFilename.value in img.src
+        }
+        .forEach { img ->
+          val imgSrc = img.src //.substringBeforeLast('?')
+
+          window.fetch(
+            imgSrc,
+            RequestInit(
+              cache = RequestCache.RELOAD,
+              mode = RequestMode.NO_CORS,
+            )
+          ).then {
+            println("[refreshUpdatedTilePng] updating $imgSrc")
+            img.setAttribute(DYNAMIC_RELOAD_ATT, "true")
+            img.src = imgSrc
+          }.await()
+        }
+    }
+
+////          println("fetching $imgSrc")
+//        val newImg = Image()
+//        newImg.onload = {
+////          window.requestAnimationFrame {
+////              println("image loaded ${newImg!!.src}")
+//          img.setAttribute(DYNAMIC_RELOAD_ATT, "true")
+//          img.src = newImg.src
+//          Unit
+////          }
+//        }
+//        newImg.src = imgSrc //+ "?t=${currentTimeMillis()}"
+  }
+
   private fun buildFactorioTerrainLayer(): TileLayer<TileLayer.TileLayerOptions> {
 
     val baseTileLayer = L.tileLayer(
@@ -87,13 +143,17 @@ class FactorioMap(
     val currentTileOnLoad: (DoneCallback, HTMLElement) -> Unit =
       baseTileLayer.asDynamic()._tileOnLoad as (DoneCallback, HTMLElement) -> Unit
     baseTileLayer.asDynamic()._tileOnLoad = { done: DoneCallback, tile: HTMLElement ->
-      if (tile.hasAttribute("dynamic-reload")) {
-        tile.removeAttribute("dynamic-reload")
+      if (tile.hasAttribute(DYNAMIC_RELOAD_ATT)) {
+        tile.removeAttribute(DYNAMIC_RELOAD_ATT)
       } else {
         currentTileOnLoad(done, tile)
       }
     }
 
     return baseTileLayer
+  }
+
+  companion object {
+    const val DYNAMIC_RELOAD_ATT = "dynamic-reload"
   }
 }

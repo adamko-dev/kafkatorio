@@ -1,9 +1,9 @@
 package dev.adamko.kafkatorio.schema.common
 
+
 import dev.adamko.kafkatorio.schema.common.MapTileDictionary.PrototypeKey
 import kotlin.jvm.JvmInline
 import kotlinx.serialization.Serializable
-
 
 const val MAP_CHUNK_SIZE = 32
 
@@ -69,3 +69,27 @@ data class MapBoundingBox(
   val topLeft: MapTilePosition,
   val bottomRight: MapTilePosition,
 )
+
+
+@Serializable
+data class ServerMapChunkId(
+  val serverId: FactorioServerId,
+  val chunkPosition: MapChunkPosition,
+  val surfaceIndex: SurfaceIndex,
+  val chunkSize: ChunkSize,
+)
+
+
+@Serializable
+@JvmInline
+value class TilePngFilename(
+  val value: String,
+) {
+  constructor(id: ServerMapChunkId) : this(buildString {
+    append("s${id.surfaceIndex}")
+    append("/z${id.chunkSize.zoomLevel}")
+    append("/x${id.chunkPosition.x}")
+    append("/y${id.chunkPosition.y}")
+    append(".png")
+  })
+}

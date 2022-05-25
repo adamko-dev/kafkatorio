@@ -3,11 +3,19 @@ package dev.adamko.kafkatorio.processor.topology
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.ScaleMethod
 import com.sksamuel.scrimage.nio.PngWriter
+import dev.adamko.kafkatorio.processor.admin.TOPIC_BROADCAST_TO_WEBSOCKET
 import dev.adamko.kafkatorio.processor.admin.TOPIC_MAP_CHUNK_COLOURED_STATE
+import dev.adamko.kafkatorio.processor.serdes.jsonMapper
 import dev.adamko.kafkatorio.processor.serdes.kxsBinary
 import dev.adamko.kafkatorio.schema.common.ColourHex
+import dev.adamko.kafkatorio.schema.common.FactorioServerId
+import dev.adamko.kafkatorio.schema.common.ServerMapChunkId
+import dev.adamko.kafkatorio.schema.common.TilePngFilename
+import dev.adamko.kafkatorio.schema.packets.EventServerPacket
 import dev.adamko.kotka.extensions.consumedAs
-import dev.adamko.kotka.extensions.streams.forEach
+import dev.adamko.kotka.extensions.producedAs
+import dev.adamko.kotka.extensions.streams.map
+import dev.adamko.kotka.extensions.streams.mapValues
 import dev.adamko.kotka.kxs.serde
 import java.awt.image.BufferedImage
 import java.nio.file.Path
@@ -41,15 +49,18 @@ fun saveMapTiles(
       ),
     )
 
-  subdividedMapChunkTilesDebounced.forEachChunkSaveImage(tileDirectory)
+  val savedChunkFilenames: KStream<ServerMapChunkId, TilePngFilename> =
+    subdividedMapChunkTilesDebounced.saveChunkAsImage(tileDirectory)
+
+  savedChunkFilenames.broadcastSavedTileUpdates()
 
   return builder.build()
 }
 
 
-private fun KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>.forEachChunkSaveImage(
+private fun KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>.saveChunkAsImage(
   tileDirectory: Path,
-) = forEach(
+): KStream<ServerMapChunkId, TilePngFilename> = mapValues(
   "$pid.save-tiles"
 ) { chunkId: ServerMapChunkId, tileColours: ServerMapChunkTiles<ColourHex> ->
 
@@ -77,6 +88,7 @@ private fun KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>.forEachChu
 
   val filename = TilePngFilename(chunkId)
   saveTile(filename, tileDirectory, scaledImage)
+  filename
 }
 
 
@@ -105,15 +117,17 @@ private fun saveTile(
 }
 
 
-@JvmInline
-private value class TilePngFilename(
-  val value: String,
-) {
-  constructor(id: ServerMapChunkId) : this(buildString {
-    append("s${id.surfaceIndex}")
-    append("/z${id.chunkSize.zoomLevel}")
-    append("/x${id.chunkPosition.x}")
-    append("/y${id.chunkPosition.y}")
-    append(".png")
-  })
+private fun KStream<ServerMapChunkId, TilePngFilename>.broadcastSavedTileUpdates() {
+  map<ServerMapChunkId, TilePngFilename, FactorioServerId, EventServerPacket>(
+    "$pid.broadcast.filename-update.convert",
+  ) { id, filename ->
+    id.serverId to EventServerPacket.ChunkTileSaved(id, filename)
+  }.to(
+    TOPIC_BROADCAST_TO_WEBSOCKET,
+    producedAs(
+      "$pid.broadcast.filename-update.send",
+      jsonMapper.serde(FactorioServerId.serializer()),
+      jsonMapper.serde(EventServerPacket.serializer()),
+    )
+  )
 }

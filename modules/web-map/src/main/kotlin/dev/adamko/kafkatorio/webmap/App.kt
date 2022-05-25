@@ -1,5 +1,6 @@
 package dev.adamko.kafkatorio.webmap
 
+import dev.adamko.kafkatorio.schema.packets.EventServerPacket
 import dev.adamko.kafkatorio.webmap.state.FactorioGameState
 import dev.adamko.kafkatorio.webmap.state.FactorioUpdate
 import dev.adamko.kafkatorio.webmap.state.createFactorioReduxStore
@@ -12,23 +13,34 @@ import io.kvision.CoreModule
 import io.kvision.FontAwesomeModule
 import io.kvision.html.div
 import io.kvision.maps.Maps
-import io.kvision.maps.Maps.Companion.L
 import io.kvision.maps.externals.leaflet.layer.tile.GridLayer
 import io.kvision.module
 import io.kvision.panel.root
 import io.kvision.redux.ReduxStore
 import io.kvision.require
 import io.kvision.startApplication
-import kotlin.time.Duration.Companion.seconds
-import kotlinx.js.timers.setInterval
-import org.w3c.dom.Image
-import org.w3c.dom.asList
+import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+
+
+val rootJob = Job()
 
 
 class App(
   reduxStore: ReduxStore<FactorioGameState, FactorioUpdate>,
   wsService: WebsocketService,
-) : Application() {
+) : Application(), CoroutineScope {
+
+  override val coroutineContext: CoroutineContext =
+    CoroutineName("WebMapApp") + Job(rootJob)
+
   private var appState: MutableMap<String, Any> = mutableMapOf()
 
   var reduxStore: ReduxStore<FactorioGameState, FactorioUpdate> by appState
@@ -40,8 +52,12 @@ class App(
     require("./css/kafkatorio.css")
   }
 
+  private val gameState: FactorioGameState
+    get() = reduxStore.getState()
+
   private val kvMaps: Maps
-    get() = reduxStore.getState().map.kvMap
+    get() = gameState.map.kvMap
+
 
   override fun start(state: Map<String, Any>) {
     this.appState = state.toMutableMap()
@@ -62,35 +78,24 @@ class App(
 //      this.asDynamic()._fadeAnimated = false
     }
 
-    setInterval(1.seconds) {
-      val doc = root.getElement()?.ownerDocument
-      val window = doc!!.defaultView!!
+    val doc = root.getElement()?.ownerDocument
+    val window = doc!!.defaultView!!
 
-      doc
-        .querySelectorAll("img.leaflet-tile-loaded")
-        .asList()
-        .filterIsInstance<Image>()
-        .map { img ->
-          val imgSrc = img.src.substringBeforeLast('?')
-//          println("fetching $imgSrc")
+    wsService.packetsFlow
+      .filterIsInstance<EventServerPacket.ChunkTileSaved>()
+      .onEach {
+        println("[packetsFlow] triggering tile refresh ${it.filename.value}")
+        gameState.map.refreshUpdatedTilePng(doc, window, it.filename)
+      }.launchIn(this)
 
-          var newImg: Image? = Image()
-
-          newImg!!.onload = {
-
-            window.requestAnimationFrame {
-//              println("image loaded ${newImg!!.src}")
-              img.setAttribute("dynamic-reload", "true")
-              img.src = newImg!!.src
-              newImg = null // try to encourage garbage collection
-            }
-          }
-          newImg!!.src = imgSrc //+ "?t=${currentTimeMillis()}"
-        }
-    }
   }
 
-  override fun dispose(): Map<String, Any> = appState
+  override fun dispose(): Map<String, Any> {
+    rootJob.cancelChildren()
+    rootJob.cancel("app dispose")
+    rootJob.complete()
+    return appState
+  }
 
 }
 
@@ -104,7 +109,7 @@ fun main() {
       )
       App(
         reduxStore = reduxStore,
-        wsService = wsService
+        wsService = wsService,
       )
     },
     module.hot,

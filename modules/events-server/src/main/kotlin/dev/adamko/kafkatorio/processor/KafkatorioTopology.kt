@@ -3,7 +3,7 @@ package dev.adamko.kafkatorio.processor
 import dev.adamko.kafkatorio.processor.config.ApplicationProperties
 import dev.adamko.kafkatorio.processor.topology.colourMapChunks
 import dev.adamko.kafkatorio.processor.topology.factorioServerPacketStream
-import dev.adamko.kafkatorio.processor.topology.playerUpdatesToWsServer
+import dev.adamko.kafkatorio.processor.topology.broadcastToWebsocket
 import dev.adamko.kafkatorio.processor.topology.saveMapTiles
 import dev.adamko.kafkatorio.processor.topology.splitFactorioServerPacketStream
 import java.time.Duration
@@ -39,7 +39,7 @@ internal class KafkatorioTopology(
     groupTilesMapChunks()
     saveTiles()
 
-    playerUpdates()
+    websocketBroadcaster()
   }
 
   private fun splitPackets() {
@@ -64,13 +64,13 @@ internal class KafkatorioTopology(
     launchTopology("saveTiles", topology)
   }
 
-  private fun playerUpdates() {
+  private fun websocketBroadcaster() {
     val builder = StreamsBuilder()
-    playerUpdatesToWsServer(websocketServer, builder)
+    broadcastToWebsocket(websocketServer, builder)
 
     val topology = builder.build()
 
-    launchTopology("playerUpdates", topology)
+    launchTopology("websocketBroadcaster", topology)
   }
 
   private fun launchTopology(

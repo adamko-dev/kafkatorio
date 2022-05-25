@@ -75,3 +75,10 @@ data class EntityIdentifiersData(
   override val name: String,
   override val protoType: String,
 ) : EntityIdentifiers
+
+
+@JvmInline
+@Serializable
+value class FactorioServerId(private val id: String) {
+  override fun toString() = id
+}

@@ -100,19 +100,19 @@ internal class WebMapTileServer(
           currentETag == null          -> {
 //            println("[${request.etagKey}] currentETag is null (requested: $requestedETag), executing request")
             response
-              .header("Cache-Control", "no-cache")
+              .header("Cache-Control", "no-cache, max-age=0, must-revalidate")
           }
           requestedETag == currentETag -> {
 //            println("[${request.etagKey}] currentETag == requested, returning 304 $requestedETag")
             Response(Status.NOT_MODIFIED)
-              .header("Cache-Control", "no-cache")
+              .header("Cache-Control", "no-cache, max-age=0, must-revalidate")
           }
           else                         -> {
 //            println("[${request.etagKey}] currentETag != requested, executing request and adding currentETag:$currentETag (requested:$requestedETag)")
             response
               .header("ETag", currentETag)
 //              .header("Cache-Control", "no-store")
-              .header("Cache-Control", "no-cache")
+              .header("Cache-Control", "no-cache, max-age=0, must-revalidate")
           }
         }
       }

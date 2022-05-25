@@ -4,6 +4,7 @@ package dev.adamko.kafkatorio.processor.topology
 import dev.adamko.kafkatorio.processor.admin.TOPIC_SRC_SERVER_LOG
 import dev.adamko.kafkatorio.processor.admin.topicName
 import dev.adamko.kafkatorio.processor.serdes.jsonMapper
+import dev.adamko.kafkatorio.schema.common.FactorioServerId
 import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
 import dev.adamko.kotka.extensions.consumedAs
 import dev.adamko.kotka.extensions.producedAs
