@@ -10,8 +10,8 @@ kotlin     = "1.6.21"
 
 ## libs ##
 camel-kafkaConnectors = "0.11.0"
-http4k                = "4.25.12.0"
-kafka                 = "3.1.0"
+http4k                = "4.25.16.2"
+kafka                 = "3.2.0"
 kvision               = "5.10.0"
 log4j2                = "2.17.2"
 qosLogback            = "1.2.11"
@@ -21,17 +21,18 @@ scrimage              = "4.0.31"
 semver                = "1.2.0"
 
 kotlinx-serialization = "1.3.3"
-kxs-yaml              = "0.43.0"
+kxs-yaml              = "0.44.0"
 
-kotlinJsWrappers      = "0.0.1-pre.334"
+kotlinJsWrappers      = "1.0.0-pre.339"
 kotlinx-html          = "0.7.5"
 kotlinx-nodejs        = "0.0.7"
 kotlinx-coroutines    = "1.6.1"
 kotlinx-cli           = "0.3.4"
 kotlinx-datetime      = "0.3.3"
 
-ktor    = "2.0.1"
+ktor                  = "2.0.1"
 
+kotkaStreams          = "v22.05.25"
 
 ## test ##
 junit      = "5.8.2"
@@ -45,7 +46,7 @@ grafana                = "8.5.0"
 prometheus             = "v2.34.0"
 
 ## gradle plugins ##
-gradleNodePlugin = "3.2.1"
+gradleNodePlugin = "3.3.0"
 
 #########
 [plugins]
@@ -67,10 +68,12 @@ loggingCapabilities = { id = "dev.jacomet.logging-capabilities",            vers
 ## kotlin ##
 kotlin-bom = { group = "org.jetbrains.kotlin", name = "kotlin-bom", version.ref = "kotlin" }
 
-kotlinx-serialization-bom      = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-bom",     version.ref = "kotlinx-serialization" }
-kotlinx-serialization-core     = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core"     }
-kotlinx-serialization-json     = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json"     }
-kotlinx-serialization-protobuf = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-protobuf" }
+kotlinx-serialization-bom        = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-bom",       version.ref = "kotlinx-serialization" }
+kotlinx-serialization-core       = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core"       }
+kotlinx-serialization-json       = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json"       }
+kotlinx-serialization-protobuf   = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-protobuf"   }
+kotlinx-serialization-cbor       = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-cbor"       }
+kotlinx-serialization-properties = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-properties" }
 
 kotlinx-serialization-yaml     = { group = "com.charleskorn.kaml",  name = "kaml",                          version.ref = "kxs-yaml" }
 
@@ -166,7 +169,7 @@ kafka-streamsTestUtils = { group = "org.apache.kafka", name = "kafka-streams-tes
 # kafka helpers
 #kotka         = { group = "com.github.blueanvil", name = "kotka",         version =     "1.1.1" }
 
-kafka-kotkaStreams = { group = "com.github.adamko-dev.kotka-streams", name = "kotka-streams", version = "v22.04.24" }
+kafka-kotkaStreams = { group = "com.github.adamko-dev.kotka-streams", name = "kotka-streams", version.ref = "kotkaStreams" }
 
 
 rocksdb = { group = "io.maryk.rocksdb", name = "rocksdb-multiplatform", version = "7.0.3" }
