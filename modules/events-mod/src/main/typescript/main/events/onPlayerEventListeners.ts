@@ -162,6 +162,7 @@ function handleBannedEvent(event: OnPlayerBannedEvent | OnPlayerUnbannedEvent) {
 script.on_event(
     defines.events.on_player_kicked,
     (event: OnPlayerKickedEvent) => {
+      log(`on_player_kicked ${event.tick} ${event.name}`)
       playerUpdateImmediate(
           event,
           (player, data) => {
@@ -181,6 +182,7 @@ for (const [name, disconnectId] of pairs(defines.disconnect_reason)) {
 script.on_event(
     defines.events.on_pre_player_left_game,
     (event: OnPrePlayerLeftGameEvent) => {
+      log(`on_pre_player_left_game ${event.tick} ${event.name}`)
       playerUpdateImmediate(
           event,
           (player, data) => {
@@ -194,6 +196,7 @@ script.on_event(
 script.on_event(
     defines.events.on_player_removed,
     (event: OnPlayerRemovedEvent) => {
+      log(`on_player_removed ${event.tick} ${event.name}`)
       playerUpdateImmediate(
           event,
           (player, data) => {
