@@ -4,6 +4,7 @@ import java.net.Socket
 import kotlin.random.Random
 import kotlin.random.nextUInt
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.asFlow
@@ -11,6 +12,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.supervisorScope
+import kotlinx.coroutines.withContext
 
 class KtRconClient(
   private val host: String,
@@ -88,7 +90,7 @@ class KtRconClient(
 //      put(p.terminator)
 //    }
 
-    runCatching {
+    withContext(Dispatchers.IO) {
       socket.getOutputStream().use { os ->
         os.write(bb.array())
         os.flush()
