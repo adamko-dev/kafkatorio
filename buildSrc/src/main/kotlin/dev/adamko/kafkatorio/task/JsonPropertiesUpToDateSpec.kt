@@ -5,7 +5,15 @@ import org.gradle.api.internal.specs.ExplainingSpec
 
 object JsonPropertiesUpToDateSpec : ExplainingSpec<Task> {
 
-  override fun isSatisfiedBy(element: Task?): Boolean = whyUnsatisfied(element) == null
+  override fun isSatisfiedBy(element: Task?): Boolean {
+    val reason = whyUnsatisfied(element)
+
+    if (reason != null) {
+      println("JsonProperties not up to date:\n$reason")
+    }
+
+    return reason == null
+  }
 
 
   // Returns a description explaining why the task is outdated,
@@ -30,7 +38,7 @@ object JsonPropertiesUpToDateSpec : ExplainingSpec<Task> {
           } else {
             "'$it' - expected:$updatedVal, actual:$currentVal"
           }
-        }.joinToString(prefix = "package.json is not up to date. ")
+        }.joinToString(separator = "\n\t", prefix = "package.json is not up to date.\n\t")
     } else {
       null
     }

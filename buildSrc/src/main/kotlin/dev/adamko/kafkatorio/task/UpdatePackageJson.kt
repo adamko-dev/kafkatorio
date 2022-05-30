@@ -4,8 +4,8 @@ import com.github.gradle.node.NodePlugin
 import dev.adamko.kafkatorio.jsonMapper
 import javax.inject.Inject
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonObject
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
@@ -69,7 +69,7 @@ abstract class UpdatePackageJson @Inject constructor(
   ): JsonObject {
     val propertiesToCheck: Map<String, String> = propertiesToCheck.get()
     val newJsonProps = propertiesToCheck.mapValues { (_, newVal) ->
-      jsonMapper.parseToJsonElement(newVal)
+      JsonPrimitive(newVal)
     }
     return JsonObject(currentPackageJson + newJsonProps)
   }
