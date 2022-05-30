@@ -2,10 +2,12 @@ package dev.adamko.kafkatorio.gradle
 
 import java.io.ByteArrayOutputStream
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.file.Directory
 import org.gradle.api.file.FileCopyDetails
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RelativePath
+import org.gradle.api.provider.Provider
 import org.gradle.api.specs.NotSpec
 import org.gradle.api.specs.Spec
 import org.gradle.plugins.ide.idea.model.IdeaModule
@@ -81,3 +83,11 @@ fun FileCopyDetails.dropDirectories(count: Int): RelativePath =
 /** Drop the first directory from the path */
 fun FileCopyDetails.dropDirectory(): RelativePath =
   dropDirectories(1)
+
+
+/** https://github.com/gradle/gradle/issues/16543 */
+fun Project.taskProvider(taskName: String): Provider<Task> = providers.provider {
+  taskName
+}.flatMap {
+  tasks.named(it)
+}
