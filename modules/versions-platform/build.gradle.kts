@@ -23,7 +23,8 @@ dependencies {
 
   constraints {
     api(libs.skrapeit)
-    api(libs.kotlinx.serialization.yaml)
+    api(libs.kxs.charleskornKaml)
+    api(libs.kxs.mamoeYamlkt)
     api(libs.kafka.kotkaStreams)
     api(libs.kafka.streams)
     api(libs.okio.core)

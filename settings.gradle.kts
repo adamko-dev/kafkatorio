@@ -30,11 +30,10 @@ dependencyResolutionManagement {
   repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
 
 //  repositories {
-//    mavenLocal {
-//      content {
-//        includeGroup("io.kvision")
-//        includeGroup("dev.adamko.kotka")
-//      }
+//    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+////      content {
+////        includeGroup("dev.adamko.kxstsgen")
+////      }
 //    }
 //  }
 }

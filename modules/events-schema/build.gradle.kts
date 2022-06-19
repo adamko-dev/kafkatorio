@@ -63,10 +63,7 @@ kotlin {
         implementation(project.dependencies.platform(libs.kotlinx.serialization.bom))
         implementation(libs.kotlinx.serialization.core)
         implementation(libs.kotlinx.serialization.json)
-        api("dev.adamko.kxtsgen:kxs-ts-gen-core:dev-SNAPSHOT")
-//        implementation("com.github.adamko-dev:kotlinx-serialization-typescript-generator:dev-SNAPSHOT") {
-//          isChanging = true
-//        }
+        api("dev.adamko.kxstsgen:kxs-ts-gen-core:0.1.3")
       }
     }
 

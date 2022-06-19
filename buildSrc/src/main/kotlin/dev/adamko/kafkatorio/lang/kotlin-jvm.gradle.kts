@@ -7,7 +7,7 @@ plugins {
   kotlin("jvm")
 }
 
-val projectKotlinTarget = "1.6"
+val projectKotlinTarget = "1.7"
 val projectJvmTarget = "11"
 
 
@@ -54,10 +54,17 @@ tasks.compileTestKotlin {
 
 kotlin {
   jvmToolchain {
-    (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(projectJvmTarget))
+    languageVersion.set(JavaLanguageVersion.of(projectJvmTarget))
   }
 }
 
 tasks.withType<Test>().configureEach {
   useJUnitPlatform()
+}
+
+
+plugins.withType<ApplicationPlugin>().configureEach {
+  project.extensions.getByType<JavaApplication>().apply {
+    applicationDefaultJvmArgs += listOf("-Dkotlinx.coroutines.debug")
+  }
 }

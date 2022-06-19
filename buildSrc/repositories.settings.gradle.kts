@@ -12,6 +12,9 @@ dependencyResolutionManagement {
   repositories {
     myMavenLocal()
     mavenCentral()
+    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+      mavenContent { snapshotsOnly() }
+    }
     jitpack()
     gradlePluginPortal()
 
@@ -28,6 +31,8 @@ dependencyResolutionManagement {
       metadataSources { artifact() }
       content { includeModule("com.yarnpkg", "yarn") }
     }
+
+    maven("https://raw.githubusercontent.com/adamko-dev/kotka-streams/artifacts/m2")
   }
 
   pluginManagement {
@@ -47,7 +52,7 @@ fun RepositoryHandler.jitpack() {
 }
 
 
-fun RepositoryHandler.myMavenLocal(enabled: Boolean = true) {
+fun RepositoryHandler.myMavenLocal(enabled: Boolean = false) {
   if (enabled) {
     logger.lifecycle("Maven local is enabled")
     mavenLocal {

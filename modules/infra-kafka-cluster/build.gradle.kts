@@ -9,6 +9,9 @@ tasks.dockerEnv {
     "GRAFANA_VERSION" to libs.versions.grafana,
     "PROMETHEUS_VERSION" to libs.versions.prometheus,
     "KAFKA_VERSION" to libs.versions.kafka,
+    "KAFKA_DL_URL" to libs.versions.kafka.map { ver ->
+      "https://dlcdn.apache.org/kafka/$ver/kafka_2.13-$ver.tgz"
+    }
 
     // Limit JVM Heap Size
 //    "KAFKA_BROKER_HEAP_OPTS" to "-XX:MaxRAMPercentage=70.0",

@@ -46,6 +46,7 @@ dependencies {
     isChanging = true
   }
 
+  implementation(libs.bundles.hoplite)
 }
 
 //configurations.all {

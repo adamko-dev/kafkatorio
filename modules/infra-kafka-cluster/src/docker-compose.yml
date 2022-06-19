@@ -3,7 +3,7 @@ version: "3.9"
 services:
 
   kafka:
-    image: dev-adamko/kafka-kraft
+    image: dev-adamko/kafka-kraft:${KAFKA_VERSION}
     container_name: "kafka"
     restart: "unless-stopped"
     build:
@@ -11,18 +11,19 @@ services:
       context: "."
       target: "kafka-kraft"
       args:
-        KAFKA_DL_URL: "https://dlcdn.apache.org/kafka/3.1.0/kafka_2.13-3.1.0.tgz"
+        KAFKA_DL_URL: "https://dlcdn.apache.org/kafka/${KAFKA_VERSION}/kafka_2.13-${KAFKA_VERSION}.tgz"
     volumes:
       - "./kafka-server.properties:/kafka/server.properties"
     environment:
       JMX_PORT: "9991"
-#      KAFKA_JMX_OPTS: "9991"
+      #      KAFKA_JMX_OPTS: "9991"
       KAFKA_JMX_OPTS: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka -Dcom.sun.management.jmxremote.rmi.port=9991"
 
     networks:
       - "kafka-nw"
       - "kafkatorio-nw"
     ports:
+      # note: other Docker containers should use 29092
       - "9092:9092"
       - "9093:9093"
 
