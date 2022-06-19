@@ -65,9 +65,7 @@ data class MapChunkPosition(
     MapChunkPositionBounds(this, ChunkSize.CHUNK_032)
   }
 
-  operator fun contains(tilePosition: MapTilePosition): Boolean {
-    return tilePosition in bounds
-  }
+  operator fun contains(tilePosition: MapTilePosition): Boolean = tilePosition in bounds
 }
 
 
