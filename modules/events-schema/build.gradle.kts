@@ -14,7 +14,8 @@ plugins {
 kotlin {
 
   js(IR) {
-    binaries.executable()
+//    binaries.executable()
+    browser {}
     // browser{} causes this error:
     // Cannot load "webpack", it is not registered!
     // Perhaps you are missing some plugin?
@@ -31,7 +32,7 @@ kotlin {
     //     }
     //   }
     // }
-    nodejs()
+//    nodejs()
   }
   jvm {
     val main by compilations.getting {
@@ -156,11 +157,12 @@ val generateTypescript by tasks.registering(GenerateTypescriptTask::class) {
 //  }
 //}
 
-val schemaTsDistributionName : Provider<String> = providers.provider {
+val schemaTsDistributionName: Provider<String> = providers.provider {
   "${rootProject.name}-${project.name}"
 }
 
-val generateTypescriptOutputFiles: Provider<FileTree> = generateTypescript.map { it.outputs.files.asFileTree }
+val generateTypescriptOutputFiles: Provider<FileTree> =
+  generateTypescript.map { it.outputs.files.asFileTree }
 
 val schemaTs by distributions.registering {
   distributionBaseName.set(schemaTsDistributionName)
