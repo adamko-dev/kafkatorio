@@ -19,8 +19,6 @@ description = "Sends in-game information to a server over the internet (requires
 // Factorio required format is:
 // - filename: `mod-name_version.zip`
 // - zip contains one directory, `mod-name`
-
-
 //val modName: String by extra { "${rootProject.name}-events" }
 extra.set("modName", "kafkatorio-events")
 val modName = extra.get("modName") as String
@@ -161,34 +159,6 @@ tasks.withType<Zip>().configureEach {
 }
 
 
-//val downloadFactorioApiDocs by tasks.registering {
-//  group = project.name
-//
-//  val target = uri("https://lua-api.factorio.com/latest/runtime-api.json")
-//  val apiFilename = File(target.path).name
-//  val downloadedFile = file("$temporaryDir/$apiFilename")
-//
-//  val apiFile = layout.buildDirectory.file(apiFilename)
-//  outputs.file(apiFile)
-//
-//  doLast {
-//
-//    ant.invokeMethod(
-//      "get", mapOf(
-//        "src" to target,
-//        "dest" to downloadedFile,
-//        "verbose" to true,
-//      )
-//    )
-//
-//    val json = downloadedFile.readText()
-//    val prettyJson = JsonOutput.prettyPrint(json)
-//
-//    apiFile.get().asFile.writeText(prettyJson)
-//
-//    logger.lifecycle("Downloaded Factorio API json: $apiFile")
-//  }
-//}
 
 val factorioModProvider by configurations.registering {
   asProvider()
@@ -210,6 +180,24 @@ tasks.updatePackageJson {
 
 
 tasks.assemble { dependsOn(installEventsTsSchema, tasks.updatePackageJson) }
+
+
+idea {
+  module {
+    sourceDirs = sourceDirs + file("src/main/typescript")
+    resourceDirs = resourceDirs + file("src/main/resources")
+    testSourceDirs = testSourceDirs + file("src/test/typescript")
+    iml {
+      whenMerged {
+        require(this is org.gradle.plugins.ide.idea.model.Module)
+
+        sourceDirs = sourceDirs + file("src/main/typescript")
+        resourceDirs = resourceDirs + file("src/main/resources")
+        testSourceDirs = testSourceDirs + file("src/test/typescript")
+      }
+    }
+  }
+}
 
 
 // trying to get Gradle+idea to recognise the ts-src...
@@ -242,20 +230,31 @@ tasks.assemble { dependsOn(installEventsTsSchema, tasks.updatePackageJson) }
 //    }
 //  }
 //}
-
-idea {
-  module {
-    sourceDirs = sourceDirs + file("src/main/typescript")
-    resourceDirs = resourceDirs + file("src/main/resources")
-    testSourceDirs = testSourceDirs + file("src/test/typescript")
-    iml {
-      whenMerged {
-        require(this is org.gradle.plugins.ide.idea.model.Module)
-
-        sourceDirs = sourceDirs + file("src/main/typescript")
-        resourceDirs = resourceDirs + file("src/main/resources")
-        testSourceDirs = testSourceDirs + file("src/test/typescript")
-      }
-    }
-  }
-}
+//val downloadFactorioApiDocs by tasks.registering {
+//  group = project.name
+//
+//  val target = uri("https://lua-api.factorio.com/latest/runtime-api.json")
+//  val apiFilename = File(target.path).name
+//  val downloadedFile = file("$temporaryDir/$apiFilename")
+//
+//  val apiFile = layout.buildDirectory.file(apiFilename)
+//  outputs.file(apiFile)
+//
+//  doLast {
+//
+//    ant.invokeMethod(
+//      "get", mapOf(
+//        "src" to target,
+//        "dest" to downloadedFile,
+//        "verbose" to true,
+//      )
+//    )
+//
+//    val json = downloadedFile.readText()
+//    val prettyJson = JsonOutput.prettyPrint(json)
+//
+//    apiFile.get().asFile.writeText(prettyJson)
+//
+//    logger.lifecycle("Downloaded Factorio API json: $apiFile")
+//  }
+//}

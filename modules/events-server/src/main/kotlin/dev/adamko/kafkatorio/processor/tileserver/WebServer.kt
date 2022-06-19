@@ -6,7 +6,7 @@ import org.http4k.server.PolyHandler
 import org.http4k.server.Undertow
 import org.http4k.server.asServer
 
-internal suspend fun webServer(
+internal fun webServer(
   tileServer: WebMapTileServer,
   wsServer: WebsocketServer,
   appProps: ApplicationProperties,

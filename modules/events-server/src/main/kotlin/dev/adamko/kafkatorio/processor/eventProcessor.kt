@@ -50,9 +50,3 @@ suspend fun main() {
     }
   }
 }
-//  Runtime.getRuntime().addShutdownHook(Thread {
-//    webServer.stop()
-//  })
-//  launch {
-//  }
-//}

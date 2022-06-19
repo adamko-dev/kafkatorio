@@ -98,10 +98,7 @@ class WebsocketServer {
     val clientJob = SupervisorJob(serverScope.coroutineContext.job)
 
     serverScope.launch(CoroutineName("ws-client-$id") + clientJob) {
-//    return serverScope.launch(CoroutineName("ws-client-$id")) {
-//      supervisorScope {
       launch {
-
         suspendCancellableCoroutine<WsStatus> { cont ->
           println("[ws-client] entering suspendCancellableCoroutine")
 
@@ -138,11 +135,7 @@ class WebsocketServer {
         .onEach { msg ->
           println("[ws-client] sending message to $id")
           ws.send(WsMessage(msg))
-        }
-        .launchIn(this)
+        }.launchIn(this)
     }
-
-
-//      }
   }
 }

@@ -39,7 +39,7 @@ kotkaStreams          = "dev-SNAPSHOT"
 
 ## test ##
 junit      = "5.8.2"
-kotest     = "5.3.0"
+kotest     = "5.3.1"
 mockk      = "1.12.4"
 
 ## infra ##
