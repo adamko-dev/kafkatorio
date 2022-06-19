@@ -17,6 +17,7 @@ tasks.withType<WriteProperties>().configureEach {
   comment = " Do not edit manually. This file was created with task '$name'"
 }
 
+
 val hardReset by tasks.registering(Delete::class) {
   group = rootProject.name
   doFirst("hardResetConfirmation") {
@@ -27,4 +28,9 @@ val hardReset by tasks.registering(Delete::class) {
       throw GradleException("Aborting hard reset")
     }
   }
+}
+
+
+tasks.withType<AbstractArchiveTask>().configureEach {
+  exclude("**/.secret.*")
 }
