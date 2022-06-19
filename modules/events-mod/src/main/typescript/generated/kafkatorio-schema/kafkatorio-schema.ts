@@ -192,18 +192,8 @@ export type FactorioPrototype =
 
 export namespace FactorioPrototype {
   export enum Type {
-    MapTile = "kafkatorio.prototype.MapTile",
     Entity = "kafkatorio.prototype.Entity",
-  }
-  
-  export interface MapTile {
-    type: FactorioPrototype.Type.MapTile;
-    name: PrototypeName;
-    mapColour: Colour;
-    layer: UInt;
-    collisionMasks: List;
-    order: string;
-    canBeMined: boolean;
+    MapTile = "kafkatorio.prototype.MapTile",
   }
   
   export interface Entity {
@@ -219,6 +209,16 @@ export namespace FactorioPrototype {
     isMilitaryTarget: boolean;
     miningProperties: MiningProperties;
   }
+  
+  export interface MapTile {
+    type: FactorioPrototype.Type.MapTile;
+    name: PrototypeName;
+    mapColour: Colour;
+    layer: UInt;
+    collisionMasks: List;
+    order: string;
+    canBeMined: boolean;
+  }
 }
 
 export type EventName = string;
@@ -230,12 +230,12 @@ export type MapChunkPosition = [
   y: Int,
 ];
 
-export type List = any;
-
 export interface MiningProperties {
   canBeMined: boolean;
   products: MinedProduct[] | null;
 }
+
+export type List = any;
 
 export type PrototypeKey = Int;
 
