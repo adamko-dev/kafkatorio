@@ -6,6 +6,8 @@ import dev.adamko.kafkatorio.processor.admin.topicName
 import dev.adamko.kafkatorio.processor.serdes.jsonMapper
 import dev.adamko.kafkatorio.schema.common.FactorioServerId
 import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
+import dev.adamko.kotka.extensions.component1
+import dev.adamko.kotka.extensions.component2
 import dev.adamko.kotka.extensions.consumedAs
 import dev.adamko.kotka.extensions.producedAs
 import dev.adamko.kotka.extensions.streams.map
@@ -15,7 +17,6 @@ import kotlinx.serialization.decodeFromString
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.kstream.KStream
-import org.apache.kafka.streams.processor.RecordContext
 
 
 fun factorioServerPacketStream(
@@ -46,7 +47,7 @@ fun splitFactorioServerPacketStream(
         jsonMapper.serde(),
         jsonMapper.serde(),
       )
-    ) { _: FactorioServerId, value: KafkatorioPacket, _: RecordContext ->
+    ) { (_: FactorioServerId, value: KafkatorioPacket) ->
 //        println("[$key] sending event:${value.eventType} to topic:${value.data.objectName()}")
       value.data.topicName
     }

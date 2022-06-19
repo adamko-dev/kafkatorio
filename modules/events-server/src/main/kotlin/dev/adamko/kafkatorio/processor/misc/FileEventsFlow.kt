@@ -1,6 +1,5 @@
 package dev.adamko.kafkatorio.processor.misc
 
-import dev.adamko.kafkatorio.processor.KafkatorioTopology
 import java.io.File
 import java.nio.file.FileSystems
 import java.nio.file.Files
@@ -56,7 +55,6 @@ class FileEventsFlow private constructor(
 
   override val coroutineContext: CoroutineContext =
     CoroutineName("FileEventsFlow") +
-        KafkatorioTopology.rootJob +
         Dispatchers.Unconfined +
         CoroutineExceptionHandler { _, e ->
           println("handling exception in FileEventsFlow")

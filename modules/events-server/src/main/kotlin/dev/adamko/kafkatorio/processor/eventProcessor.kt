@@ -2,33 +2,57 @@ package dev.adamko.kafkatorio.processor
 
 
 import dev.adamko.kafkatorio.processor.admin.KafkatorioKafkaAdmin
+import dev.adamko.kafkatorio.processor.config.ApplicationProperties
 import dev.adamko.kafkatorio.processor.tileserver.WebMapTileServer
-import kotlinx.coroutines.runBlocking
-import org.http4k.server.PolyHandler
-import org.http4k.server.Undertow
-import org.http4k.server.asServer
+import dev.adamko.kafkatorio.processor.tileserver.WebsocketServer
+import dev.adamko.kafkatorio.processor.tileserver.webServer
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import org.http4k.server.Http4kServer
 
 
-fun main(): Unit = runBlocking {
+suspend fun main() {
 
-  KafkatorioKafkaAdmin.createKafkatorioTopics()
+  val appProps = ApplicationProperties.load()
+
+  val admin = KafkatorioKafkaAdmin(appProps)
+  admin.createKafkatorioTopics()
 
   val wsServer = WebsocketServer()
-  val tileServer = WebMapTileServer()
+  val tileServer = WebMapTileServer(appProps)
 
-  val topology = KafkatorioTopology(wsServer)
-  topology.start()
+  coroutineScope {
+    launch {
+      val topology = KafkatorioTopology(wsServer, appProps)
+      topology.start()
 
-  val webServer = PolyHandler(
-    tileServer.build(),
-    wsServer.build(),
-  ).asServer(Undertow(9073))
+      println("launched KafkatorioTopology")
 
-  Runtime.getRuntime().addShutdownHook(Thread {
-    webServer.stop()
-  })
-//  launch {
-  webServer.start().block()
-//  }
+      awaitCancellation()
+    }
 
+    launch {
+      val webServer: Http4kServer = webServer(tileServer, wsServer, appProps)
+
+      currentCoroutineContext().job.invokeOnCompletion {
+        println("webserver stopping. Cause: $it")
+        webServer.stop()
+      }
+
+      webServer.start()
+      println("launched webserver port:${webServer.port()}")
+
+      awaitCancellation()
+    }
+  }
 }
+//  Runtime.getRuntime().addShutdownHook(Thread {
+//    webServer.stop()
+//  })
+//  launch {
+//  }
+//}

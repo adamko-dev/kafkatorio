@@ -1,5 +1,6 @@
 package dev.adamko.kafkatorio.processor.admin
 
+import dev.adamko.kafkatorio.processor.config.ApplicationProperties
 import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
 import org.apache.kafka.clients.admin.Admin
@@ -8,17 +9,17 @@ import org.apache.kafka.clients.admin.NewTopic
 import org.apache.kafka.clients.admin.TopicListing
 
 
-object KafkatorioKafkaAdmin {
+class KafkatorioKafkaAdmin(
+  appProps: ApplicationProperties
+) {
 
   private val logger = KotlinLogging.logger {}
 
-  private val kafkaAdmin: Admin =
-    Admin.create(
-      mapOf(
-        "bootstrap.servers" to "http://localhost:9092",
-        "client.id" to "kafkatorio.setup-admin",
-      )
-    )
+  init {
+    println("Creating KafkatorioKafkaAdmin with config: ${appProps.kafkaAdminConfig}")
+  }
+
+  private val kafkaAdmin: Admin = Admin.create(appProps.kafkaAdminConfig)
 
   fun createKafkatorioTopics() {
 
