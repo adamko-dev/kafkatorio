@@ -21,7 +21,8 @@ sealed interface InitUploadResponse {
    */
   @Serializable
   data class Success(
-    @SerialName("upload_url") val uploadUrl: String,
+    @SerialName("upload_url")
+    val uploadUrl: String,
   ) : InitUploadResponse
 
   object Serializer :
@@ -68,10 +69,10 @@ data class Failure(
     private val reasons: Map<String?, String> = mapOf(
       //@formatter:off
       "InvalidApiKey"     to "Missing or invalid API key for the current endpoint",
-      "InvalidRequest"    to "Invalid request.",
+      "InvalidRequest"    to "Invalid request",
       "InternalError"     to "Internal error, please try again later.",
       "Forbidden"         to "Insufficient permission for current endpoint",
-      "Unknown"           to "Unknown error, please try again later.",
+      "Unknown"           to "Unknown error, please try again later",
       "InvalidModRelease" to "Invalid release data in info.json",
       "InvalidModUpload"  to "Invalid mod data in zipfile",
       "UnknownMod"        to "Mod does not exist in mod portal",

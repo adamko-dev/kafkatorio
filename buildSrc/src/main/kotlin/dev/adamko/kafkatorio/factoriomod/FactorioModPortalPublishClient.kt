@@ -27,7 +27,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import org.gradle.api.internal.tasks.userinput.UserInputHandler
 import org.gradle.kotlin.dsl.support.useToRun
-import org.jetbrains.kotlin.cli.common.toBooleanLenient
 
 
 class FactorioModPortalPublishClient(
@@ -91,7 +90,7 @@ class FactorioModPortalPublishClient(
     require(response.status.isSuccess()) { "init upload request failed" }
 
     return when (initUploadResponse) {
-      is Failure -> error(initUploadResponse)
+      is Failure                    -> error(initUploadResponse)
       is InitUploadResponse.Success -> initUploadResponse
     }
   }
@@ -121,5 +120,19 @@ class FactorioModPortalPublishClient(
     require(response.status.isSuccess() && submitUploadResponse is SubmitUploadResponse.Success) {
       "upload request failed"
     }
+  }
+
+  companion object {
+
+    /**
+     * @see org.jetbrains.kotlin.cli.common.toBooleanLenient
+     */
+    private fun String?.toBooleanLenient(): Boolean? = when (this?.lowercase()?.trim()) {
+      null                                     -> false
+      in listOf("yes", "true", "on", "y")      -> true
+      in listOf("", "no", "false", "off", "n") -> false
+      else                                     -> null
+    }
+
   }
 }
