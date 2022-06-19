@@ -22,10 +22,11 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import org.w3c.dom.MessageEvent
 import org.w3c.dom.WebSocket
+import org.w3c.dom.events.Event
 
 
 class WebsocketService(
-  wsUrl: String,
+  wsUrl: String = Props.websocketServerUrl,
   private val reduxStore: ReduxStore<FactorioGameState, FactorioUpdate>,
 ) : CoroutineScope {
 
@@ -33,6 +34,7 @@ class WebsocketService(
     CoroutineName("WebsocketService") + Job(rootJob)
 
   private val ws = WebSocket(wsUrl)
+//  private val ws = WebSocket("ws://localhost:12080/ws/foo")
 
   private val _packetsFlow = MutableSharedFlow<EventServerPacket>()
   val packetsFlow: SharedFlow<EventServerPacket>
@@ -40,6 +42,9 @@ class WebsocketService(
 
   init {
     ws.onmessage = ::handleMessageEvent
+    ws.onerror = ::handleError
+
+    println("[WebsocketService] init ${ws.url}, ${ws.protocol}")
   }
 
   private fun handleMessageEvent(msg: MessageEvent) {
@@ -52,35 +57,46 @@ class WebsocketService(
       && data.endsWith("}")
     ) {
 
-      println(data.replace('\n', ' '))
+      println("[WebsocketService.handleMessageEvent] ${data.replace('\n', ' ')}")
 
-      val packet = jsonMapper.decodeFromString(EventServerPacket.serializer(), data)
-
-      launch {
-        _packetsFlow.emit(packet)
+      val packet: EventServerPacket? = runCatching {
+        jsonMapper.decodeFromString(EventServerPacket.serializer(), data)
+      }.getOrElse {
+        null
       }
 
-      when (packet) {
-        is EventServerPacket.ChunkTileSaved -> {}
+      if (packet != null) {
 
-        is EventServerPacket.Kafkatorio     ->
-          when (val packetData = packet.packet.data) {
-            is PlayerUpdate   -> reduxStore.dispatch(
-              FactorioUpdate.Player(packet.packet.tick, packetData)
-            )
-            is ConfigurationUpdate,
-            is ConsoleChatUpdate,
-            is ConsoleCommandUpdate,
-            is PrototypesUpdate,
-            is SurfaceUpdate,
-            is EntityUpdate,
-            is MapChunkUpdate -> {
-              // to be continued...
+        launch { _packetsFlow.emit(packet) }
+
+        when (packet) {
+          is EventServerPacket.ChunkTileSaved -> {}
+
+          is EventServerPacket.Kafkatorio     ->
+            when (val packetData = packet.packet.data) {
+              is PlayerUpdate   -> reduxStore.dispatch(
+                FactorioUpdate.Player(packet.packet.tick, packetData)
+              )
+              is ConfigurationUpdate,
+              is ConsoleChatUpdate,
+              is ConsoleCommandUpdate,
+              is PrototypesUpdate,
+              is SurfaceUpdate,
+              is EntityUpdate,
+              is MapChunkUpdate -> {
+                // to be continued...
+              }
             }
-          }
+        }
+      } else {
+        println("[WebsocketService.handleMessageEvent] unknown json message ${msg.data}")
       }
     } else {
-      println(data)
+      println("[WebsocketService.handleMessageEvent] non-json message ${msg.data}")
     }
+  }
+
+  private fun handleError(error: Event) {
+    println("ws error: ${JSON.stringify(error)}")
   }
 }

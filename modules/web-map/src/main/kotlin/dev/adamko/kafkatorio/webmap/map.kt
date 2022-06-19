@@ -1,6 +1,8 @@
 package dev.adamko.kafkatorio.webmap
 
 import dev.adamko.kafkatorio.schema.common.TilePngFilename
+import dev.adamko.kafkatorio.webmap.externals.TileOnLoadFn
+import dev.adamko.kafkatorio.webmap.externals.tileOnLoad
 import io.kvision.maps.Maps
 import io.kvision.maps.Maps.Companion.L
 import io.kvision.maps.externals.leaflet.DoneCallback
@@ -11,15 +13,15 @@ import io.kvision.maps.externals.leaflet.geo.CRS
 import io.kvision.maps.externals.leaflet.geo.LatLng
 import io.kvision.maps.externals.leaflet.layer.LayerGroup
 import io.kvision.maps.externals.leaflet.layer.tile.TileLayer
-import io.kvision.utils.obj
 import io.kvision.utils.px
+import kotlinx.browser.document
+import kotlinx.browser.window
 import kotlinx.coroutines.await
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import org.w3c.dom.Document
+import kotlinx.js.jso
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.Image
-import org.w3c.dom.Window
 import org.w3c.dom.asList
 import org.w3c.fetch.NO_CORS
 import org.w3c.fetch.RELOAD
@@ -29,7 +31,7 @@ import org.w3c.fetch.RequestMode
 
 
 class FactorioMap(
-  private val tileUrlTemplate: String = """http://localhost:9073/tiles/s1/z{z}/x{x}/y{y}.png""",
+  private val tileUrlTemplate: String = """/tiles/s1/z{z}/x{x}/y{y}.png""",
 ) {
 
   val kvMap: Maps = Maps {
@@ -38,21 +40,24 @@ class FactorioMap(
     margin = 10.px
   }
 
-  val factorioTerrainLayer: TileLayer<*> = buildFactorioTerrainLayer()
+  private val factorioTerrainLayer: TileLayer<*> = buildFactorioTerrainLayer()
 
   val playerIconsLayer: LayerGroup = LayerGroup()
 
   init {
-    val baseLayers: Control.LayersObject = obj<Control.LayersObject> {}
-    baseLayers["Terrain"] = factorioTerrainLayer
 
-    val overlays: Control.LayersObject = obj<Control.LayersObject> {}
-    overlays["Players"] = playerIconsLayer
+    val baseLayers: Control.LayersObject = jso {
+      set("Terrain", factorioTerrainLayer)
+    }
+
+    val overlays: Control.LayersObject = jso {
+      set("Players", playerIconsLayer)
+    }
 
     val layersControl = Layers(
       baseLayers = baseLayers,
       overlays = overlays,
-      options = obj<Layers.LayersOptions> {
+      options = jso {
         sortLayers = true
       }
     )
@@ -78,21 +83,19 @@ class FactorioMap(
 
 
   suspend fun refreshUpdatedTilePng(
-    document: Document,
-    window: Window,
     tilePngFilename: TilePngFilename,
   ): Unit = coroutineScope {
-    launch {
-      document
-        .querySelectorAll("img.leaflet-tile-loaded")
-        .asList()
-        .filterIsInstance<Image>()
-        .filter { img ->
-          tilePngFilename.value in img.src
-        }
-        .forEach { img ->
-          val imgSrc = img.src //.substringBeforeLast('?')
+    document
+      .querySelectorAll("img.leaflet-tile-loaded")
+      .asList()
+      .filterIsInstance<Image>()
+      .filter { img ->
+        tilePngFilename.value in img.src
+      }
+      .forEach { img ->
+        val imgSrc = img.src
 
+        launch {
           window.fetch(
             imgSrc,
             RequestInit(
@@ -100,24 +103,14 @@ class FactorioMap(
               mode = RequestMode.NO_CORS,
             )
           ).then {
-            println("[refreshUpdatedTilePng] updating $imgSrc")
-            img.setAttribute(DYNAMIC_RELOAD_ATT, "true")
-            img.src = imgSrc
+            window.requestAnimationFrame {
+              println("[refreshUpdatedTilePng] updating $imgSrc")
+              img.setAttribute(DYNAMIC_RELOAD_ATT, "true")
+              img.src = imgSrc
+            }
           }.await()
         }
-    }
-
-////          println("fetching $imgSrc")
-//        val newImg = Image()
-//        newImg.onload = {
-////          window.requestAnimationFrame {
-////              println("image loaded ${newImg!!.src}")
-//          img.setAttribute(DYNAMIC_RELOAD_ATT, "true")
-//          img.src = newImg.src
-//          Unit
-////          }
-//        }
-//        newImg.src = imgSrc //+ "?t=${currentTimeMillis()}"
+      }
   }
 
   private fun buildFactorioTerrainLayer(): TileLayer<TileLayer.TileLayerOptions> {
@@ -132,7 +125,7 @@ class FactorioMap(
       minZoom = -2
       maxZoom = 6
 
-      maxNativeZoom = 3
+      maxNativeZoom = -1
       minNativeZoom = -1
 
       noWrap = true
@@ -140,13 +133,14 @@ class FactorioMap(
       updateWhenZooming = true
     }
 
-    val currentTileOnLoad: (DoneCallback, HTMLElement) -> Unit =
-      baseTileLayer.asDynamic()._tileOnLoad as (DoneCallback, HTMLElement) -> Unit
-    baseTileLayer.asDynamic()._tileOnLoad = { done: DoneCallback, tile: HTMLElement ->
-      if (tile.hasAttribute(DYNAMIC_RELOAD_ATT)) {
+    val currentTileOnLoad: TileOnLoadFn? = baseTileLayer.tileOnLoad
+
+    if (currentTileOnLoad != null) {
+      baseTileLayer.tileOnLoad = { done: DoneCallback, tile: HTMLElement ->
+        if (!tile.hasAttribute(DYNAMIC_RELOAD_ATT)) {
+          currentTileOnLoad(done, tile)
+        }
         tile.removeAttribute(DYNAMIC_RELOAD_ATT)
-      } else {
-        currentTileOnLoad(done, tile)
       }
     }
 

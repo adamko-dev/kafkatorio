@@ -1,10 +1,13 @@
+import dev.adamko.kafkatorio.gradle.taskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
 
 
 plugins {
-//  dev.adamko.kafkatorio.lang.`kotlin-js`
-  dev.adamko.kafkatorio.lang.`kotlin-multiplatform`
+  dev.adamko.kafkatorio.lang.`kotlin-js`
+//  dev.adamko.kafkatorio.lang.`kotlin-multiplatform`
   kotlin("plugin.serialization")
   id("io.kvision")
 }
@@ -19,13 +22,42 @@ project.ext.set("io.kvision.plugin.enableBackendTasks", false)
 
 
 
-kotlin {
-  js(IR) {
-    browser()
-    binaries.executable()
+rootProject.extensions.configure<NodeJsRootExtension> {
+  // https://github.com/rjaros/kvision/issues/410
+  versions.webpackCli.version = "4.10.0"
+  versions.webpackDevServer.version = "4.9.2"
+}
+
+rootProject.extensions.configure<YarnRootExtension> {
+  resolution("http-proxy-middleware", "^2.0.6")
+}
+
+//rootProject.afterEvaluate {
+//  extensions.configure<NodeJsRootExtension> {
+//    // https://github.com/rjaros/kvision/issues/410
+//    versions.webpackCli.version = "4.10.0"
+//  }
+//}
+
+afterEvaluate {
+  rootProject.extensions.configure<NodeJsRootExtension> {
+    // https://github.com/rjaros/kvision/issues/410
+    versions.webpackCli.version = "4.10.0"
+    versions.webpackDevServer.version = "4.9.2"
   }
 
-  js("frontend", IR) {
+  rootProject.extensions.configure<YarnRootExtension> {
+    resolution("http-proxy-middleware", "^2.0.6")
+  }
+}
+
+kotlin {
+  js(IR) {
+//    browser()
+//    binaries.executable()
+//  }
+//
+//  js("frontend", IR) {
 //    nodejs()
     browser {
       runTask {
@@ -35,13 +67,20 @@ kotlin {
           open = false,
           port = 3000,
           proxy = mutableMapOf(
-            "/kv/*" to "http://localhost:8080",
-            "/kvws/*" to mapOf(
-              "target" to "ws://localhost:8080",
+            "/tiles" to mapOf(
+              "target" to "http://localhost:12080",
+              "secure" to false,
+              "changeOrigin" to true,
+            ),
+            "/ws/foo" to mapOf(
+              "target" to "ws://localhost:12080",
+//              "secure" to false,
               "ws" to true,
-            )
+//              "changeOrigin" to true,
+            ),
           ),
-          static = mutableListOf("$buildDir/processedResources/frontend/main")
+//          static = mutableListOf("$buildDir/processedResources/frontend/main")
+          static = mutableListOf("$buildDir/processedResources/js/main")
         )
       }
       webpackTask {
@@ -54,11 +93,14 @@ kotlin {
       }
     }
     binaries.executable()
+//    compilations["main"].packageJson {
+//      this.devDependencies["webpack-dev-server"] = "4.9.1"
+//    }
   }
 
-  jvm("backend") {
-
-  }
+//  jvm("backend") {
+//
+//  }
 
   sourceSets {
 
@@ -69,7 +111,8 @@ kotlin {
       }
     }
 
-    val commonMain by getting {
+//    val commonMain by getting {
+    main {
       dependencies {
         implementation(dependencies.platform(libs.kotlinx.coroutines.bom))
         implementation(dependencies.platform(libs.kotlin.jsWrappers.bom))
@@ -79,13 +122,13 @@ kotlin {
         implementation(projects.modules.eventsSchema)
 
         implementation(libs.kotlinx.html)
-      }
-    }
+//      }
+//    }
 
-    val jsMain by getting {
-      dependsOn(commonMain)
-
-      dependencies {
+//    val jsMain by getting {
+//      dependsOn(commonMain)
+//
+//      dependencies {
 
         implementation(projects.modules.eventsSchema)
 
@@ -108,36 +151,52 @@ kotlin {
 
         implementation(libs.kotlinx.coroutines.core)
 
+        implementation(devNpm("http-proxy-middleware", "^2.0.6"))
+        implementation(dependencies.platform(devNpm("http-proxy-middleware", "^2.0.6")))
+
 //        implementation(dependencies.platform(npm("follow-redirects", "^1.14.8")))
 //        implementation(dependencies.platform(npm("nanoid", "^3.1.31")))
 //        implementation(dependencies.platform(npm("minimist", "^1.2.6")))
 //        implementation(dependencies.platform(npm("async", "^2.6.4")))
 //        implementation(dependencies.platform(npm("node-forge", "^1.3.0")))
+//        implementation(dependencies.platform(npm("socket.io", "^4.5.1")))
+//        implementation(dependencies.platform(devNpm("http-proxy-middleware", "^3.0.0-beta.0")))
+//        implementation(dependencies.platform(devNpm("webpack-dev-server", "4.9.1")))
       }
 
 //      val webDir = file("src/main/web")
       resources.srcDir("src/main/web")
-      resources.srcDir("src/main/resources")
-
-      kotlin.srcDir("src/main/kotlin")
-    }
-
-    val frontendMain by getting {
-      dependsOn(jsMain)
-//      resources.srcDir("src/main/web")
 //      resources.srcDir("src/main/resources")
+
+//      kotlin.srcDir("src/main/kotlin")
     }
 
-    val jsTest by getting {
+//    val frontendMain by getting {
+//      dependsOn(jsMain)
+////      resources.srcDir("src/main/web")
+////      resources.srcDir("src/main/resources")
+//    }
+//
+//    val jsTest by getting {
+//      dependencies {
+//        implementation(kotlin("test-js"))
+//
+//        kvision("kvision-testutils")
+//
+////        implementation(npm("karma", "^6.3.16"))
+//      }
+//
+//      kotlin.srcDir("src/test/kotlin")
+//    }
+
+    test {
       dependencies {
         implementation(kotlin("test-js"))
 
         kvision("kvision-testutils")
 
-//        implementation(npm("karma", "^6.3.16"))
+        //        implementation(npm("karma", "^6.3.16"))
       }
-
-      kotlin.srcDir("src/test/kotlin")
     }
   }
 }
@@ -152,17 +211,42 @@ fun KotlinDependencyHandler.kvision(
   implementation("io.kvision:$module:${version.get()}", configure)
 }
 
-// https://youtrack.jetbrains.com/issue/KT-42420
+////// https://youtrack.jetbrains.com/issue/KT-42420
 //afterEvaluate {
 //  yarn {
-//    resolution("mocha", "9.2.2")
-//    resolution("follow-redirects", "1.14.8")
-//    resolution("nanoid", "3.1.31")
-//    resolution("minimist", "1.2.6")
-//    resolution("async", "2.6.4")
-//    resolution("node-forge", "1.3.0")
+////    resolution("mocha", "9.2.2")
+////    resolution("follow-redirects", "1.14.8")
+////    resolution("nanoid", "3.1.31")
+////    resolution("minimist", "1.2.6")
+////    resolution("async", "2.6.4")
+////    resolution("node-forge", "1.3.0")
+////    resolution("socket.io", "^4.5.1")
+////    resolution("http-proxy-middleware", "^3.0.0-beta.0")
+//    resolution("webpack-dev-server", "4.9.1")
 //  }
 //}
 
-evaluationDependsOn(rootProject.path)
-evaluationDependsOn(projects.modules.eventsSchema.dependencyProject.path)
+
+//evaluationDependsOn(rootProject.path)
+//evaluationDependsOn(projects.modules.eventsSchema.dependencyProject.path)
+
+
+// stop warnings when building
+tasks.configureEach {
+  when (name) {
+    "productionExecutableCompileSync"          ->
+      dependsOn(taskProvider("compileProductionExecutableKotlinJs"))
+    "testTestDevelopmentExecutableCompileSync" ->
+      dependsOn(taskProvider("compileTestDevelopmentExecutableKotlinJs"))
+//    "jsTestTestDevelopmentExecutableCompileSync"       ->
+//      dependsOn(taskProvider("compileTestDevelopmentExecutableKotlinFrontend"))
+//    "jsProductionExecutableCompileSync"                ->
+//      dependsOn(taskProvider("compileProductionExecutableKotlinFrontend"))
+    "browserDevelopmentRun"                    ->
+      dependsOn(taskProvider("browserDevelopmentWebpack"))
+    "browserDevelopmentWebpack"                ->
+      dependsOn(taskProvider("assemble"))
+    "browserProductionWebpack"                 ->
+      dependsOn(taskProvider("developmentExecutableCompileSync"))
+  }
+}

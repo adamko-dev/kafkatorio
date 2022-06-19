@@ -38,8 +38,7 @@ class App(
   wsService: WebsocketService,
 ) : Application(), CoroutineScope {
 
-  override val coroutineContext: CoroutineContext =
-    CoroutineName("WebMapApp") + Job(rootJob)
+  override val coroutineContext: CoroutineContext = CoroutineName("WebMapApp")
 
   private var appState: MutableMap<String, Any> = mutableMapOf()
 
@@ -62,7 +61,7 @@ class App(
   override fun start(state: Map<String, Any>) {
     this.appState = state.toMutableMap()
 
-    val root = root("kvapp") {
+    root("kvapp") {
       div("Kafkatorio Web Map")
       add(kvMaps)
     }
@@ -74,18 +73,16 @@ class App(
           it.redraw()
         }
       })
-
-//      this.asDynamic()._fadeAnimated = false
     }
-
-    val doc = root.getElement()?.ownerDocument
-    val window = doc!!.defaultView!!
 
     wsService.packetsFlow
       .filterIsInstance<EventServerPacket.ChunkTileSaved>()
       .onEach {
         println("[packetsFlow] triggering tile refresh ${it.filename.value}")
-        gameState.map.refreshUpdatedTilePng(doc, window, it.filename)
+        gameState.map.refreshUpdatedTilePng(
+//          doc, window,
+          it.filename
+        )
       }.launchIn(this)
 
   }
@@ -104,8 +101,8 @@ fun main() {
     {
       val reduxStore = createFactorioReduxStore()
       val wsService = WebsocketService(
-        "ws://localhost:9073/ws",
-        reduxStore,
+//        "ws://localhost:9073/ws", // TODO load from config
+        reduxStore = reduxStore,
       )
       App(
         reduxStore = reduxStore,

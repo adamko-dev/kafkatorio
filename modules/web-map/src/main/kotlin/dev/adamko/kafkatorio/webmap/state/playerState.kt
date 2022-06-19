@@ -10,9 +10,8 @@ import dev.adamko.kafkatorio.schema.packets.PlayerUpdate
 import dev.adamko.kafkatorio.webmap.latLng
 import io.kvision.maps.Maps
 import io.kvision.maps.externals.leaflet.geo.LatLng
-import io.kvision.maps.externals.leaflet.layer.overlay.Tooltip
 import io.kvision.maps.externals.leaflet.layer.vector.CircleMarker
-import io.kvision.utils.obj
+import kotlinx.js.jso
 
 
 fun handlePlayerUpdate(
@@ -100,7 +99,7 @@ data class PlayerState(
         className = "player-marker"
 //        interactive = false
       }.also { circle ->
-        circle.bindTooltip("", obj<Tooltip.TooltipOptions> {
+        circle.bindTooltip("", jso {
 //        interactive = false
         })
       }
