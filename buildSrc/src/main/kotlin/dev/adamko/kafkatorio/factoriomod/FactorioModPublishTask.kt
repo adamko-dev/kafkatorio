@@ -44,6 +44,15 @@ abstract class FactorioModPublishTask @Inject constructor(
   val portalApiUrl: Property<String> = objects.property<String>()
     .convention("https://mods.factorio.com/api/v2/")
 
+  /**
+   * Base URL for linking to a mod page in the portal
+   *
+   * Example `https://mods.factorio.com/mod/my-mod-name`
+   */
+  @get:Input
+  val modPortalBaseURl: Property<String> = objects.property<String>()
+    .convention("https://mods.factorio.com/mod/")
+
   @get:Input
   val portalUploadEndpoint: Property<String> = objects.property<String>()
     .convention("mods/releases/init_upload")
@@ -65,12 +74,13 @@ abstract class FactorioModPublishTask @Inject constructor(
       .buildString()
 
     val client = FactorioModPortalPublishClient(
-      userInputHandler,
-      distributionZip.get().asFile,
-      modName.get(),
-      modVersion.get(),
-      portalApiKey.get(),
-      portalUploadEndpoint,
+      userInputHandler = userInputHandler,
+      distributionZip = distributionZip.get().asFile,
+      modName = modName.get(),
+      modVersion = modVersion.get(),
+      portalApiKey = portalApiKey.get(),
+      portalUploadEndpoint = portalUploadEndpoint,
+      modPortalBaseURl = modPortalBaseURl.get(),
     )
 
     client.uploadMod()

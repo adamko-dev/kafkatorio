@@ -36,6 +36,7 @@ class FactorioModPortalPublishClient(
   private val modVersion: String,
   private val portalApiKey: String,
   private val portalUploadEndpoint: String,
+  private val modPortalBaseURl: String,
 ) {
 
   private fun client() = HttpClient(CIO) {
@@ -61,11 +62,18 @@ class FactorioModPortalPublishClient(
     client().useToRun {
       val initUploadResponse = initUpload()
 
-      val confirmation = userInputHandler
-        .askQuestion("Are you sure you want to publish $modName:$modVersion?", "no")
-        .toBooleanLenient() ?: false
+      val enteredVersion = userInputHandler
+        .askQuestion(
+          """
+            |Are you sure you want to publish $modName:$modVersion?
+            |Enter the version number to confirm:
+          """.trimMargin(),
+          "",
+        )
 
-      if (confirmation) {
+      val confirmed = enteredVersion.trim() == modVersion.trim()
+
+      if (confirmed) {
         upload(initUploadResponse)
       } else {
         println("aborting upload")
@@ -120,6 +128,7 @@ class FactorioModPortalPublishClient(
     require(response.status.isSuccess() && submitUploadResponse is SubmitUploadResponse.Success) {
       "upload request failed"
     }
+    println("Mod uploaded successfully! ${modPortalBaseURl.removeSuffix("/")}/$modName")
   }
 
   companion object {
