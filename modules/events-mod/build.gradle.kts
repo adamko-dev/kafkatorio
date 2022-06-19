@@ -197,13 +197,14 @@ val factorioModProvider by configurations.registering {
 }
 
 
-val packageJsonName = providers.provider { "${rootProject.name}-${project.name}" }
+val packageJsonName: Provider<String> = providers.provider { "${rootProject.name}-${project.name}" }
+val pjProvider: RegularFileProperty =
+  objects.fileProperty().convention(layout.projectDirectory.file("package.json"))
 
 tasks.updatePackageJson {
 //  mustRunAfter(tasks.npmInstall)
   inputs.property("packageJsonName", packageJsonName)
   propertiesToCheck.put("name", packageJsonName)
-  val pjProvider = layout.projectDirectory.file(provider { "package.json" })
   packageJsonFile.set(pjProvider)
 }
 
