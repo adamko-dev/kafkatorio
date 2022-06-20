@@ -57,17 +57,3 @@ idea {
     excludeDirs.add(file("src/factorio-server"))
   }
 }
-
-
-tasks.hardReset  {
-
-  dependsOn(tasks.dockerRemove)
-
-  delete(
-    factorioServerDataDir.dir("saves"),
-    factorioServerDataDir.dir("temp"),
-    factorioServerDataDir.file("factorio-current.log"),
-    factorioServerDataDir.file("factorio-previous.log"),
-    factorioServerDataDir.file(".lock"),
-  )
-}

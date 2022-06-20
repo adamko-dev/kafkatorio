@@ -23,6 +23,7 @@ val dockerUp by tasks.registering(Exec::class) {
   commandLine = parseSpaceSeparatedArgs(""" docker-compose up -d """)
 }
 
+
 val dockerDown by tasks.registering(Exec::class) {
   group = dockerComposeTaskGroup
 
@@ -42,10 +43,12 @@ val dockerRemove by tasks.registering(Exec::class) {
   commandLine = parseSpaceSeparatedArgs(""" docker-compose rm --stop -v -f """)
 }
 
+
 afterEvaluate {
   tasks.named("processRun") { dependsOn(dockerUp, dockerEnv) }
   tasks.named("processKill") { dependsOn(dockerDown) }
 }
+
 
 val dockerEnv by tasks.registering(WriteProperties::class) {
   group = dockerComposeTaskGroup
@@ -59,5 +62,6 @@ val dockerEnv by tasks.registering(WriteProperties::class) {
     "KAFKATORIO_VERSION" to project.version,
   )
 }
+
 
 tasks.assemble { dependsOn(dockerEnv) }

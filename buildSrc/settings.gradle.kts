@@ -1,3 +1,5 @@
+rootProject.name = "buildSrc"
+
 apply(from = "./repositories.settings.gradle.kts")
 
 @Suppress("UnstableApiUsage") // Central declaration of repositories is an incubating feature

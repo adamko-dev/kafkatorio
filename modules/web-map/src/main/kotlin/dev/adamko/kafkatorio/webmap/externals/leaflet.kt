@@ -18,16 +18,27 @@ typealias TileOnLoadFn = (done: DoneCallback, tile: HTMLElement) -> Unit
 
 
 sealed interface PolylinePathPoints {
-  value class D1(val points: Array<LatLng>) : PolylinePathPoints
-  value class D2(val points: Array<Array<LatLng>>) : PolylinePathPoints
-  value class D3(val points: Array<Array<Array<LatLng>>>) : PolylinePathPoints
+  value class D1(val points: List<LatLng>) : PolylinePathPoints {
+    constructor(points: Array<LatLng>)
+        : this(points.toList())
+  }
+
+  value class D2(val points: List<List<LatLng>>) : PolylinePathPoints {
+    constructor(points: Array<Array<LatLng>>)
+        : this(points.map { x -> x.toList() }.toList())
+  }
+
+  value class D3(val points: List<List<List<LatLng>>>) : PolylinePathPoints {
+    constructor(points: Array<Array<Array<LatLng>>>)
+        : this(points.map { x -> x.map { y -> y.toList() } }.toList())
+  }
 }
 
 inline fun Polyline<*>.getLatLngs2(): PolylinePathPoints? {
   return when (val points = this.getLatLngs()) {
-    is Array<LatLng>               -> PolylinePathPoints.D1(points as Array<LatLng>)
-    is Array<Array<LatLng>>        -> PolylinePathPoints.D2(points as Array<Array<LatLng>>)
-    is Array<Array<Array<LatLng>>> -> PolylinePathPoints.D3(points as Array<Array<Array<LatLng>>>)
+    is Array<LatLng>               -> PolylinePathPoints.D1(points.unsafeCast<Array<LatLng>>())
+    is Array<Array<LatLng>>        -> PolylinePathPoints.D2(points.unsafeCast<Array<Array<LatLng>>>())
+    is Array<Array<Array<LatLng>>> -> PolylinePathPoints.D3(points.unsafeCast<Array<Array<Array<LatLng>>>>())
     else                           -> null
   }
 }

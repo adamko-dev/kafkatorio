@@ -12,9 +12,9 @@ dependencyResolutionManagement {
   repositories {
     myMavenLocal()
     mavenCentral()
-    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") {
-      mavenContent { snapshotsOnly() }
-    }
+//    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+//      mavenContent { snapshotsOnly() }
+//    }
     jitpack()
     gradlePluginPortal()
 
