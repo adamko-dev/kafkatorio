@@ -1,9 +1,10 @@
 package dev.adamko.kafkatorio
 
+import io.kvision.gradle.KVisionExtension
 import kotlinx.serialization.json.Json
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.findByType
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
 
 val jsonMapper = Json {
@@ -13,10 +14,7 @@ val jsonMapper = Json {
 
 
 object Versions {
-
   const val node = "14.19.1"
-
-  const val kotlinWrappers = "1.0.0-pre.336"
 }
 
 
@@ -38,7 +36,8 @@ fun Project.relocateKotlinJsStore() {
 //      project.rootDir.resolve("gradle/kotlin-js-store")
 //  }
 
-  // KVision tries to be clever too - see io.kvision.gradle.KVisionGradleSubplugin
-  rootProject.extra.set("io.kvision.plugin.enableHiddenKotlinJsStore", "false")
-
+  // KVision tries to be clever too
+  project.extensions.findByType<KVisionExtension>()?.apply {
+    enableHiddenKotlinJsStore.set(false)
+  }
 }

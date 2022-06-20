@@ -8,19 +8,14 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
 plugins {
   dev.adamko.kafkatorio.lang.`kotlin-js`
 //  dev.adamko.kafkatorio.lang.`kotlin-multiplatform`
-  kotlin("plugin.serialization")
   id("io.kvision")
+  kotlin("plugin.serialization")
 }
 
 
-project.ext.set("io.kvision.plugin.enableGradleTasks", false)
-project.ext.set("io.kvision.plugin.enableWorkerTasks", false)
-project.ext.set("io.kvision.plugin.enableWebpackVersions", false)
-project.ext.set("io.kvision.plugin.enableHiddenKotlinJsStore", false)
-project.ext.set("io.kvision.plugin.enableSecureResolutions", false)
-project.ext.set("io.kvision.plugin.enableBackendTasks", false)
-
-
+kvision {
+  enableHiddenKotlinJsStore.set(false)
+}
 
 rootProject.extensions.configure<NodeJsRootExtension> {
   // https://github.com/rjaros/kvision/issues/410
@@ -145,11 +140,6 @@ kotlin {
         kvision("kvision-maps")
         kvision("kvision-redux")
         kvision("kvision-state-flow")
-
-        implementation(dependencies.platform(libs.kotlinx.coroutines.bom))
-        implementation(dependencies.platform(libs.kotlin.jsWrappers.bom))
-
-        implementation(libs.kotlinx.coroutines.core)
 
         implementation(devNpm("http-proxy-middleware", "^2.0.6"))
         implementation(dependencies.platform(devNpm("http-proxy-middleware", "^2.0.6")))
