@@ -71,7 +71,7 @@ class FactorioModPortalPublishClient(
           "",
         )
 
-      val confirmed = enteredVersion.trim() == modVersion.trim()
+      val confirmed = enteredVersion.trim().equals(modVersion.trim(), ignoreCase = true)
 
       if (confirmed) {
         upload(initUploadResponse)
@@ -98,7 +98,7 @@ class FactorioModPortalPublishClient(
     require(response.status.isSuccess()) { "init upload request failed" }
 
     return when (initUploadResponse) {
-      is Failure                    -> error(initUploadResponse)
+      is Failure -> error(initUploadResponse)
       is InitUploadResponse.Success -> initUploadResponse
     }
   }
@@ -129,19 +129,5 @@ class FactorioModPortalPublishClient(
       "upload request failed"
     }
     println("Mod uploaded successfully! ${modPortalBaseURl.removeSuffix("/")}/$modName")
-  }
-
-  companion object {
-
-    /**
-     * @see org.jetbrains.kotlin.cli.common.toBooleanLenient
-     */
-    private fun String?.toBooleanLenient(): Boolean? = when (this?.lowercase()?.trim()) {
-      null                                     -> false
-      in listOf("yes", "true", "on", "y")      -> true
-      in listOf("", "no", "false", "off", "n") -> false
-      else                                     -> null
-    }
-
   }
 }
