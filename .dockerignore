@@ -1,0 +1,17 @@
+
+# exclude hidden dirs .git etc.
+.*
+
+# ignore any files that start with '.secret'
+#.secret.*
+
+### Gradle ###
+build/
+gradle
+src
+#.gradle
+
+# IntelliJ
+#.idea/
+#out/
+#*.iml

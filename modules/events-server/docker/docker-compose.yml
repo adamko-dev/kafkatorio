@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+
+  events-server:
+    image: kafkatorio/events-server:${KAFKATORIO_VERSION}
+    container_name: events-server
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+      args:
+        KAFKATORIO_VERSION: ${KAFKATORIO_VERSION}
+        DIST_DIR: "./build/distributions/"
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: "http://kafka:29092"
+      KAFKA_STREAMS_STATE_DIR: "http://kafka:29092"
+      SERVER_PORT: "12081"
+#    ports:
+#      - "12081:12081" # http and ws
+    networks:
+      - "kafka-nw"
+
+networks:
+  kafka-nw:
+    name: "kafka-nw"
+    external: true
+  kafkatorio-nw:
+    name: "kafkatorio-nw"
+    external: true

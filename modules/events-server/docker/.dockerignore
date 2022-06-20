@@ -1,0 +1,21 @@
+#
+## exclude hidden dirs .git etc.
+#.*
+#
+## ignore any files that start with '.secret'
+##.secret.*
+#
+#### Gradle ###
+#build/
+#!build/distributions
+#
+#src
+#
+#kafkatorio-tiles/
+#kafka-state/
+##.gradle
+#
+## IntelliJ
+##.idea/
+##out/
+##*.iml
