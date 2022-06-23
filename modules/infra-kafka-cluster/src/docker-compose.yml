@@ -33,8 +33,9 @@ services:
     restart: "unless-stopped"
     networks:
       - "kafka-nw"
-    ports:
-      - "8080:8080"
+      - "traefik-nw"
+    # ports:
+    #   - "8080:8080"
     environment:
       KAFKA_CLUSTERS_0_NAME: "${COMPOSE_PROJECT_NAME}"
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka:29092"
@@ -104,3 +105,6 @@ networks:
     name: "kafka-nw"
   kafkatorio-nw:
     name: "kafkatorio-nw"
+  traefik-nw:
+    name: "traefik-nw"
+    external: true
