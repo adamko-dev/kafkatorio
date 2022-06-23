@@ -12,8 +12,12 @@ services:
       - "12081:80"
     networks:
       - "kafkatorio-nw"
+      - "traefik-nw"
 
 networks:
   kafkatorio-nw:
     name: "kafkatorio-nw"
+    external: true
+  traefik-nw:
+    name: "traefik-nw"
     external: true
