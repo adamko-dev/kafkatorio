@@ -11,9 +11,19 @@ plugins {
 
 description = "Start the Factorio game client"
 
-val clientModsDirectory = file("""D:\Users\Adam\AppData\Roaming\Factorio\mods""")
+val clientModsDirectory: DirectoryProperty = objects.directoryProperty().apply {
+  val modDir = File("""D:\Users\Adam\AppData\Roaming\Factorio\mods""")
+  if (modDir.exists()) {
+    set(modDir)
+  }
+}
 val factorioGameId = "427520"
-val steamExe = """C:\Program Files (x86)\Steam\steam.exe"""
+val steamExe: RegularFileProperty = objects.fileProperty().apply {
+  val steam = File("""C:\Program Files (x86)\Steam\steam.exe""")
+  if (steam.exists()) {
+    set(steam)
+  }
+}
 
 val factorioMod: Configuration by configurations.creating {
   asConsumer()
@@ -28,6 +38,8 @@ dependencies {
 val deployModToClient by tasks.registering(Copy::class) {
   description = "Copy the mod to the Factorio client"
   group = project.name
+
+  onlyIf { clientModsDirectory.orNull?.asFile?.exists() == true }
 
   from(factorioMod)
   into(clientModsDirectory)
@@ -47,6 +59,8 @@ val clientLaunch by tasks.registering(Exec::class) {
   group = project.name
 
   onlyIf(!serviceOf<ExecOperations>().isFactorioRunning())
+  onlyIf { steamExe.orNull?.asFile?.exists() == true }
+  onlyIf { clientModsDirectory.orNull?.asFile?.exists() == true }
 
   dependsOn(deployModToClient)
   mustRunAfter(clientKill, ":modules:infra-factorio-server:processRun")
@@ -54,7 +68,7 @@ val clientLaunch by tasks.registering(Exec::class) {
   commandLine = parseSpaceSeparatedArgs(
 //    """explorer "steam://rungameid/$factorioGameId// --mp-connect localhost/" """ // not working
 //    """explorer "steam://run/$factorioGameId//--mp-connect localhost/" """ // works! But has annoying pop-up
-    """ $steamExe -applaunch $factorioGameId --mp-connect localhost --mod-directory $clientModsDirectory  """
+    """ ${steamExe.asFile.get().canonicalPath} -applaunch $factorioGameId --mp-connect localhost --mod-directory ${clientModsDirectory.asFile.get().canonicalPath}  """
   )
   doFirst { logger.lifecycle("Launching factorio.exe") }
 }
