@@ -68,7 +68,7 @@ val clientLaunch by tasks.registering(Exec::class) {
   commandLine = parseSpaceSeparatedArgs(
 //    """explorer "steam://rungameid/$factorioGameId// --mp-connect localhost/" """ // not working
 //    """explorer "steam://run/$factorioGameId//--mp-connect localhost/" """ // works! But has annoying pop-up
-    """ ${steamExe.asFile.get().canonicalPath} -applaunch $factorioGameId --mp-connect localhost --mod-directory ${clientModsDirectory.asFile.get().canonicalPath}  """
+    """ ${steamExe.asFile.orNull?.canonicalPath} -applaunch $factorioGameId --mp-connect localhost --mod-directory ${clientModsDirectory.asFile.orNull?.canonicalPath}  """
   )
   doFirst { logger.lifecycle("Launching factorio.exe") }
 }
