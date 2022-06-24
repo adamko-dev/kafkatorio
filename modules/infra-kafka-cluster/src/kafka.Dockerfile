@@ -36,13 +36,7 @@ RUN ./bin/kafka-storage.sh random-uuid > cluster_id \
  && echo "Generated a Kafka Cluster ID: $(cat cluster_id)"
 
 COPY ./kafka-server.properties ./server.properties
-COPY ./entrypoint.sh ./entrypoint.sh
-
-# Format storage directories
-RUN ./bin/kafka-storage.sh format \
-  --ignore-formatted \
-  --config ./server.properties \
-  --cluster-id "$(cat cluster_id)"
+COPY --chmod=755 ./entrypoint.sh ./entrypoint.sh
 
 # launch the broker in KRaft mode, which means that it runs without ZooKeeper
 ENTRYPOINT ["./entrypoint.sh"]

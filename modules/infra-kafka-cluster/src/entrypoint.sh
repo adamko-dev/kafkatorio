@@ -1,4 +1,5 @@
-./bin/kafka-storage.sh format \
+# Format storage directories
+RUN ./bin/kafka-storage.sh format \
   --ignore-formatted \
   --config ./server.properties \
   --cluster-id "$(cat cluster_id)"
