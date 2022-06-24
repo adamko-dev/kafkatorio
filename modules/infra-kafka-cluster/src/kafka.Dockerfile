@@ -35,13 +35,13 @@ EXPOSE 9092 9093
 RUN echo "$(./bin/kafka-storage.sh random-uuid)" > cluster_id \
  && echo "Generated a Kafka Cluster ID: $(cat cluster_id)"
 
+COPY ./kafka-server.properties ./server.properties
+
 # Format storage directories
 RUN ./bin/kafka-storage.sh format \
   --ignore-formatted \
-  --config ./config/kraft/server.properties \
+  --config ./server.properties \
   --cluster-id "$(cat cluster_id)"
-
-COPY ./kafka-server.properties ./server.properties
 
 # launch the broker in KRaft mode, which means that it runs without ZooKeeper
 ENTRYPOINT ["./bin/kafka-server-start.sh", "./server.properties"]
