@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Format storage directories
 RUN ./bin/kafka-storage.sh format \
   --ignore-formatted \
