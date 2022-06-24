@@ -39,7 +39,7 @@ COPY ./kafka-server.properties ./server.properties
 COPY --chmod=755 ./entrypoint.sh ./entrypoint.sh
 
 # launch the broker in KRaft mode, which means that it runs without ZooKeeper
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["/kafka/entrypoint.sh"]
 
 
 ### Kafka Connect ##
