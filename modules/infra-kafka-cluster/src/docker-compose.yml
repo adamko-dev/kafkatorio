@@ -34,6 +34,8 @@ services:
     networks:
       - "kafka-nw"
       - "traefik-nw"
+    labels:
+      - "traefik.enable=true"
     # ports:
     #   - "8080:8080"
     environment:

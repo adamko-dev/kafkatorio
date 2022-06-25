@@ -13,6 +13,8 @@ services:
     networks:
       - "kafkatorio-nw"
       - "traefik-nw"
+    labels:
+      - "traefik.enable=true"
 
 networks:
   kafkatorio-nw:
