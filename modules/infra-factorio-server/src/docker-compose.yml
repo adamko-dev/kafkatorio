@@ -10,6 +10,9 @@ services:
     restart: "no"
     networks:
       - "kafkatorio-nw"
+      - "traefik-nw"
+    labels:
+      - "traefik.enable=true"
     ports:
       - "34197:34197/udp" # factorio
       - "27015:27015/tcp" # rcon
@@ -34,4 +37,7 @@ services:
 networks:
   kafkatorio-nw:
     name: "kafkatorio-nw"
+    external: true
+  traefik-nw:
+    name: "traefik-nw"
     external: true

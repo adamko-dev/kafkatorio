@@ -20,7 +20,11 @@ services:
       KAFKA_HOST: "kafka:29092"
     volumes:
       # Windows (requires privileged/root)
-      - "//var/run/docker.sock:/var/run/docker.sock"
+#      - "//var/run/docker.sock:/var/run/docker.sock"
+      
+      # Rootless:
+      - "/run/user/1000/docker.sock:/var/run/docker.sock"
+
       # Unix?
       # - "/var/run/docker.sock:/var/run/docker.sock"
 

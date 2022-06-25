@@ -13,13 +13,17 @@ services:
         DIST_DIR: "./build/distributions/"
     environment:
       KAFKA_BOOTSTRAP_SERVERS: "http://kafka:29092"
-      KAFKA_STREAMS_STATE_DIR: "http://kafka:29092"
+      # KAFKA_STREAMS_STATE_DIR: "http://kafka:29092"
       SERVER_PORT: "12081"
-#    ports:
-#      - "12081:12081" # http and ws
+    ports:
+      - "12080:12081" # http and ws
     networks:
       - "kafka-nw"
+      - "kafkatorio-nw"
       - "traefik-nw"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.events-server-kafkatorio.loadbalancer.server.port=12081"
 
 networks:
   kafka-nw:
