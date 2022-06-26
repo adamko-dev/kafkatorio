@@ -46,20 +46,6 @@ services:
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: "http://connect:8083"
 #      - KAFKA_CLUSTERS_0_ZOOKEEPER=kafka:9093
 
-#  kafka-connect:
-#    image: dev-adamko/kafka-connect
-#    container_name: "kafka-connect"
-#    build:
-#      dockerfile: "kafka.Dockerfile"
-#      target: "kafka-connect"
-#      args:
-#        KAFKA_DL_URL: "https://dlcdn.apache.org/kafka/3.0.0/kafka_2.13-3.0.0.tgz"
-#    depends_on:
-#      - kafka-kraft
-#    ports:
-#      - "8083:8083"
-#
-
 #  grafana:
 #    image: "grafana/grafana:${GRAFANA_VERSION}"
 #    container_name: "grafana"
