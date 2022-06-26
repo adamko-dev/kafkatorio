@@ -14,16 +14,16 @@ services:
     environment:
       KAFKA_BOOTSTRAP_SERVERS: "http://kafka:29092"
       # KAFKA_STREAMS_STATE_DIR: "http://kafka:29092"
-      SERVER_PORT: "12081"
+      SERVER_PORT: "8080"
     ports:
-      - "12080:12081" # http and ws
+      - "12080:8080" # http and ws
     networks:
       - "kafka-nw"
       - "kafkatorio-nw"
       - "traefik-nw"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.services.events-server-kafkatorio.loadbalancer.server.port=12081"
+#      - "traefik.http.services.events-server-kafkatorio.loadbalancer.server.port=12081"
 
 networks:
   kafka-nw:
