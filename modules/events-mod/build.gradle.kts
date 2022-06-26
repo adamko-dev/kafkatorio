@@ -1,4 +1,4 @@
-import dev.adamko.kafkatorio.factoriomod.FactorioModPublishTask
+import dev.adamko.kafkatorio.factoriomod.portal.FactorioModPublishTask
 import dev.adamko.kafkatorio.gradle.asConsumer
 import dev.adamko.kafkatorio.gradle.asProvider
 import dev.adamko.kafkatorio.gradle.dropDirectory
@@ -43,7 +43,7 @@ val projectTokensX = projectTokens.apply {
   put("mod.name", modName)
   put("mod.title", "Kafkatorio Events")
   put("mod.description", modDescription)
-  put("factorio.version", modFactorioCompatibility.get())
+  put("factorio.version", modFactorioCompatibility)
 }
 
 val tsSrcDir: Directory = layout.projectDirectory.dir("src/main/typescript")
@@ -139,7 +139,8 @@ distributions {
       from(licenseFile)
       from(typescriptToLua.map { it.outputDirectory })
       filesNotMatching("**/*.png") {
-        filter<ReplaceTokens>("tokens" to projectTokens.get())
+        val tokens: MutableMap<String, String> = projectTokens.get()
+        filter<ReplaceTokens>("tokens" to tokens)
       }
       includeEmptyDirs = false
       exclude {

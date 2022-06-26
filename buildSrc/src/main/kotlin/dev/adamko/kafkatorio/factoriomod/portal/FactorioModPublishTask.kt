@@ -1,5 +1,6 @@
-package dev.adamko.kafkatorio.factoriomod
+package dev.adamko.kafkatorio.factoriomod.portal
 
+import dev.adamko.kafkatorio.factoriomod.FactorioMod
 import io.ktor.http.URLBuilder
 import io.ktor.http.takeFrom
 import javax.inject.Inject
@@ -59,7 +60,7 @@ abstract class FactorioModPublishTask @Inject constructor(
 
 
   init {
-    group = "factorio"
+    group = FactorioMod.TASK_GROUP
   }
 
 

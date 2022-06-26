@@ -25,14 +25,5 @@ apply(from = "./buildSrc/repositories.settings.gradle.kts")
 
 @Suppress("UnstableApiUsage") // Central declaration of repositories is an incubating feature
 dependencyResolutionManagement {
-
   repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
-
-//  repositories {
-//    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") {
-////      content {
-////        includeGroup("dev.adamko.kxstsgen")
-////      }
-//    }
-//  }
 }

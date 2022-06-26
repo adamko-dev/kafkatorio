@@ -12,16 +12,8 @@ val projectJvmTarget = "11"
 
 
 dependencies {
-
-//  implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
-
-//  testImplementation(platform("org.junit:junit-bom:${Versions.junit}"))
   testImplementation("org.junit.jupiter:junit-jupiter")
-//  testRuntimeOnly("org.junit.platform:junit-platform-launcher") {
-//    because("Only needed to run tests in a version of IntelliJ IDEA that bundles older versions")
-//  }
 
-//  testImplementation(platform("io.kotest:kotest-bom:${Versions.kotest}"))
   testImplementation("io.kotest:kotest-runner-junit5")
   testImplementation("io.kotest:kotest-assertions-core")
   testImplementation("io.kotest:kotest-property")

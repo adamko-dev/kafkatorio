@@ -1,6 +1,6 @@
 import dev.adamko.kafkatorio.gradle.asProvider
 import dev.adamko.kafkatorio.gradle.typescriptAttributes
-import dev.adamko.kafkatorio.task.GenerateTypescriptTask
+import dev.adamko.kafkatorio.task.GenerateTypeScriptTask
 
 
 plugins {
@@ -14,25 +14,8 @@ plugins {
 kotlin {
 
   js(IR) {
-//    binaries.executable()
     browser {}
-    // browser{} causes this error:
-    // Cannot load "webpack", it is not registered!
-    // Perhaps you are missing some plugin?
-    // Cannot load "sourcemap", it is not registered!
-    // Perhaps you are missing some plugin?
-    // Server start failed on port 9876: Error: No provider for "framework:mocha"! (Resolving: framework:mocha)
-    // browser {
-    //   runTask {
-    //     sourceMaps = true
-    //   }
-    //   testTask {
-    //     useKarma {
-    //       useChromeHeadless()
-    //     }
-    //   }
-    // }
-//    nodejs()
+    // this is a library - don't set binaries.executable()
   }
   jvm {
     val main by compilations.getting {
@@ -75,9 +58,6 @@ kotlin {
 
         implementation(project.dependencies.platform(libs.kotest.bom))
         implementation("io.kotest:kotest-framework-engine")
-//        implementation("io.kotest:kotest-assertions-core")
-//        implementation("io.kotest:kotest-property")
-//        implementation("io.kotest:kotest-assertions-json")
         implementation(libs.kotest.core)
         implementation(libs.kotest.datatest)
         implementation(libs.kotest.prop)
@@ -88,10 +68,7 @@ kotlin {
     val jvmMain by getting {
       dependencies {
         implementation("com.github.aSemy:ts-generator:v1.2.1")
-//        implementation("com.github.ntrrgc:ts-generator:1.1.2")
         implementation(kotlin("reflect"))
-
-//        implementation("com.github.adamko-dev:kotlinx-serialization-typescript-generator:0.0.5")
       }
     }
 
@@ -114,7 +91,7 @@ val mainCompilation: Provider<FileCollection> =
   kotlin.jvm().compilations.named("main").map { it.runtimeDependencyFiles }
 
 
-val generateTypescript by tasks.registering(GenerateTypescriptTask::class) {
+val generateTypeScript by tasks.registering(GenerateTypeScriptTask::class) {
   dependsOn(jvmJar)
   classpath(
     jvmJar,
@@ -125,68 +102,26 @@ val generateTypescript by tasks.registering(GenerateTypescriptTask::class) {
   args(temporaryDir.canonicalPath)
 }
 
-//val generateTypescript2 by tasks.registering(JavaExec::class) {
-//  group = "kt2ts"
-//
-//  dependsOn(jvmJar)
-//
-//  inputs.files(mainCompilation)
-//
-//  classpath(
-//    jvmJar,
-//    mainCompilation,
-//  )
-//  mainClass.set("dev.adamko.kafkatorio.events.schema.Kt2ts2Kt")
-//
-//  args(temporaryDir)
-//
-//  val buildOutput = layout.buildDirectory.dir("generated/typescript")
-//  outputs.dir(buildOutput)
-//
-//  doFirst {
-//    delete(temporaryDir)
-//    mkdir(temporaryDir)
-//  }
-//
-//  doLast {
-//    sync {
-//      from(temporaryDir)
-//      into(buildOutput)
-//      include("**/*.ts")
-//    }
-//  }
-//}
-
 val schemaTsDistributionName: Provider<String> = providers.provider {
   "${rootProject.name}-${project.name}"
 }
 
-val generateTypescriptOutputFiles: Provider<FileTree> =
-  generateTypescript.map { it.outputs.files.asFileTree }
+val generateTypeScriptOutputFiles: Provider<FileTree> =
+  generateTypeScript.map { it.outputs.files.asFileTree }
 
 val schemaTs by distributions.registering {
   distributionBaseName.set(schemaTsDistributionName)
   contents {
-    from(generateTypescriptOutputFiles)
+    from(generateTypeScriptOutputFiles)
   }
 }
 
 val schemaTsZipTask: TaskProvider<Zip> = tasks.named<Zip>("${schemaTs.name}DistZip")
 val schemaTsZipTaskArchiveFile: Provider<RegularFile> = schemaTsZipTask.flatMap { it.archiveFile }
 
-val typescriptModelGenerated: Configuration by configurations.creating {
+val typeScriptModelGenerated: Configuration by configurations.creating {
   asProvider()
   typescriptAttributes(objects)
 
   outgoing.artifact(schemaTsZipTaskArchiveFile)
 }
-
-
-//tasks.matching {
-//  it.name == "jsGenerateExternalsIntegrated"
-//}.configureEach {
-//  @Suppress("UnstableApiUsage")
-//  notCompatibleWithConfigurationCache("try to prevent 'Projects must be configuring' error")
-////  outputs.upToDateWhen { true }
-//  dependsOn(":kotlinNpmInstall")
-//}

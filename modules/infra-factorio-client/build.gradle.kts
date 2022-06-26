@@ -1,3 +1,4 @@
+import dev.adamko.kafkatorio.factoriomod.FactorioMod
 import dev.adamko.kafkatorio.gradle.asConsumer
 import dev.adamko.kafkatorio.gradle.factorioModAttributes
 import dev.adamko.kafkatorio.gradle.not
@@ -34,10 +35,11 @@ dependencies {
   factorioMod(projects.modules.eventsMod)
 }
 
+
 //<editor-fold desc="Mod deployment tasks">
 val deployModToClient by tasks.registering(Copy::class) {
   description = "Copy the mod to the Factorio client"
-  group = project.name
+  group = FactorioMod.TASK_GROUP
 
   onlyIf { clientModsDirectory.orNull?.asFile?.exists() == true }
 
@@ -50,13 +52,14 @@ val deployModToClient by tasks.registering(Copy::class) {
 }
 //</editor-fold>
 
+
 //<editor-fold desc="Factorio client lifecycle tasks">
 fun ExecOperations.isFactorioRunning(): Spec<Task> = ProcessRunningSpec(this, "factorio.exe")
 
 
 val clientLaunch by tasks.registering(Exec::class) {
-  description = "Run Factorio Steam game client"
-  group = project.name
+  description = "Run local Factorio Steam game client"
+  group = FactorioMod.TASK_GROUP
 
   onlyIf(!serviceOf<ExecOperations>().isFactorioRunning())
   onlyIf { steamExe.orNull?.asFile?.exists() == true }
@@ -74,8 +77,8 @@ val clientLaunch by tasks.registering(Exec::class) {
 }
 
 val clientKill by tasks.registering(Exec::class) {
-  description = "Run Factorio Steam game client"
-  group = project.name
+  description = "Stop the local Factorio Steam game client"
+  group = FactorioMod.TASK_GROUP
 
   onlyIf(serviceOf<ExecOperations>().isFactorioRunning())
 
@@ -84,7 +87,12 @@ val clientKill by tasks.registering(Exec::class) {
 }
 //</editor-fold>
 
-tasks.build { dependsOn(deployModToClient) }
+
+tasks.register(FactorioMod.PUBLISH_MOD_LOCAL_TASK_NAME) {
+  group = FactorioMod.TASK_GROUP
+  dependsOn(deployModToClient)
+}
+
 
 tasks.processRun {
   dependsOn(
