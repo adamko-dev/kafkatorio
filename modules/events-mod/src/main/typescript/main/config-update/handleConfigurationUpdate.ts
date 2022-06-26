@@ -38,7 +38,7 @@ function allMods(e: ConfigurationChangedData): ConfigurationUpdateModData[] {
 
   return modNames.map((modName) => {
 
-    let currentVer = script.active_mods[modName] ?? e.mod_changes[modName].new_version ?? null
+    let currentVer = script.active_mods[modName] ?? e.mod_changes[modName]?.new_version ?? null
     let previousVer = e.mod_changes[modName]?.old_version ?? null
 
     return {
