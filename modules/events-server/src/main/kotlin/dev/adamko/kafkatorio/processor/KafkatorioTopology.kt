@@ -105,8 +105,11 @@ internal class KafkatorioTopology(
         streams.setStateListener { newState: KafkaStreams.State, _ ->
           when (newState) {
             KafkaStreams.State.NOT_RUNNING,
-            KafkaStreams.State.ERROR -> cont.resume(newState)
-            else                     -> Unit // do nothing
+//            KafkaStreams.State.ERROR,
+                 -> if (cont.isActive) {
+              cont.resume(newState)
+            }
+            else -> Unit // do nothing
           }
         }
 
