@@ -23,7 +23,7 @@ dependencies {
 }
 
 
-val deployModToServer by tasks.registering(Copy::class) {
+val deployModToLocalServer by tasks.registering(Copy::class) {
   description = "Copy the mod to the Factorio Docker server"
   group = FactorioMod.TASK_GROUP
 
@@ -47,7 +47,7 @@ tasks.dockerDown {
 
 tasks.dockerUp {
   dependsOn(
-    deployModToServer,
+    deployModToLocalServer,
     ":modules:infra-kafka-cluster:processRun",
   )
 }
@@ -60,7 +60,7 @@ tasks.dockerEnv {
 
 tasks.register(FactorioMod.PUBLISH_MOD_LOCAL_TASK_NAME) {
   group = FactorioMod.TASK_GROUP
-  dependsOn(deployModToServer)
+  dependsOn(deployModToLocalServer)
 }
 
 

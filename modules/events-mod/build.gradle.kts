@@ -116,7 +116,7 @@ tasks.distZip {
 }
 
 
-val publishMod by tasks.registering(FactorioModPublishTask::class) {
+val publishModToPortal by tasks.registering(FactorioModPublishTask::class) {
   dependsOn(tasks.check)
 
   distributionZip.set(tasks.distZip.flatMap { it.archiveFile })

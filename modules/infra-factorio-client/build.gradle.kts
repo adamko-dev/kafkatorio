@@ -37,7 +37,7 @@ dependencies {
 
 
 //<editor-fold desc="Mod deployment tasks">
-val deployModToClient by tasks.registering(Copy::class) {
+val deployModToLocalClient by tasks.registering(Copy::class) {
   description = "Copy the mod to the Factorio client"
   group = FactorioMod.TASK_GROUP
 
@@ -65,7 +65,7 @@ val clientLaunch by tasks.registering(Exec::class) {
   onlyIf { steamExe.orNull?.asFile?.exists() == true }
   onlyIf { clientModsDirectory.orNull?.asFile?.exists() == true }
 
-  dependsOn(deployModToClient)
+  dependsOn(deployModToLocalClient)
   mustRunAfter(clientKill, ":modules:infra-factorio-server:processRun")
 
   commandLine = parseSpaceSeparatedArgs(
@@ -90,13 +90,13 @@ val clientKill by tasks.registering(Exec::class) {
 
 tasks.register(FactorioMod.PUBLISH_MOD_LOCAL_TASK_NAME) {
   group = FactorioMod.TASK_GROUP
-  dependsOn(deployModToClient)
+  dependsOn(deployModToLocalClient)
 }
 
 
 tasks.processRun {
   dependsOn(
-    deployModToClient,
+    deployModToLocalClient,
     clientLaunch,
   )
 }
