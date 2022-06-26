@@ -139,7 +139,7 @@ distributions {
       from(licenseFile)
       from(typescriptToLua.map { it.outputDirectory })
       filesNotMatching("**/*.png") {
-        val tokens: MutableMap<String, String> = projectTokens.get()
+        val tokens: MutableMap<String, String> = projectTokensX.get()
         filter<ReplaceTokens>("tokens" to tokens)
       }
       includeEmptyDirs = false
