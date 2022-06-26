@@ -1,7 +1,11 @@
 import {Converters} from "./converters";
 import EventUpdatesManager from "../cache/EventDataCache";
-import {KafkatorioPacketData} from "../../generated/kafkatorio-schema/kafkatorio-schema";
+import {
+  KafkatorioPacketData,
+  PlayerUpdateKey
+} from "../../generated/kafkatorio-schema/kafkatorio-schema";
 import Type = KafkatorioPacketData.Type;
+import packetEmitter from "../PacketEmitter";
 
 
 type PlayerUpdater = (player: LuaPlayer, data: KafkatorioPacketData.PlayerUpdate) => void
@@ -44,7 +48,7 @@ function playerUpdateThrottle(
         data.events[eventName] ??= []
         data.events[eventName].push(event.tick)
       },
-      expirationDurationTicks
+      expirationDurationTicks,
   )
 }
 
@@ -183,13 +187,26 @@ script.on_event(
     defines.events.on_pre_player_left_game,
     (event: OnPrePlayerLeftGameEvent) => {
       log(`on_pre_player_left_game ${event.tick} ${event.name}`)
-      playerUpdateImmediate(
-          event,
-          (player, data) => {
-            data.disconnectReason = disconnectReasons.get(event.reason)
-            playerOnlineInfo(player, data)
-          }
-      )
+
+      const playerUpdateKey: PlayerUpdateKey = {
+        index: event.player_index
+      }
+
+      const playerUpdate: KafkatorioPacketData.PlayerUpdate = {
+        type: KafkatorioPacketData.Type.PlayerUpdate,
+        key: playerUpdateKey,
+        disconnectReason: disconnectReasons.get(event.reason)
+      }
+
+      packetEmitter.emitKeyedPacket(playerUpdate)
+
+      // playerUpdateImmediate(
+      //     event,
+      //     (player, data) => {
+      //       data.disconnectReason = disconnectReasons.get(event.reason)
+      //       playerOnlineInfo(player, data)
+      //     }
+      // )
     }
 )
 
