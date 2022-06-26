@@ -10,7 +10,6 @@ include(
 
   ":modules:infra-kafka-cluster",
   ":modules:infra-kafka-pipe",
-  ":modules:infra-kafka-connect",
 
   ":modules:kt-rcon",
   ":modules:web-map",
