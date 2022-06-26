@@ -36,8 +36,8 @@ services:
       - "traefik-nw"
     labels:
       - "traefik.enable=true"
-    # ports:
-    #   - "8080:8080"
+    ports:
+      - "18090:8080"
     environment:
       KAFKA_CLUSTERS_0_NAME: "${COMPOSE_PROJECT_NAME}"
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka:29092"
