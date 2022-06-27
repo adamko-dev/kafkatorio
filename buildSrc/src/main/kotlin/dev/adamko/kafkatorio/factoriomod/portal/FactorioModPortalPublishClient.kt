@@ -1,4 +1,4 @@
-package dev.adamko.kafkatorio.factoriomod
+package dev.adamko.kafkatorio.factoriomod.portal
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
@@ -98,7 +98,7 @@ class FactorioModPortalPublishClient(
     require(response.status.isSuccess()) { "init upload request failed" }
 
     return when (initUploadResponse) {
-      is Failure -> error(initUploadResponse)
+      is Failure                    -> error(initUploadResponse)
       is InitUploadResponse.Success -> initUploadResponse
     }
   }

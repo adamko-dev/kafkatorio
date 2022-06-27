@@ -4,7 +4,7 @@ import EventUpdatesManager, {EventUpdates} from "../cache/EventDataCache";
 import {
   KafkatorioPacketData,
   MapChunkPosition
-} from "../../generated/kafkatorio-schema/kafkatorio-schema";
+} from "../../generated/kafkatorio-schema";
 import CacheKey = EventUpdates.PacketKey;
 import Type = KafkatorioPacketData.Type;
 

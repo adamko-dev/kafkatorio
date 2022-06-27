@@ -30,13 +30,16 @@ class DebounceProcessor<K, V>(
   private val storeName: String,
 ) : Processor<K, V, K, V> {
 
+
   private val checkInterval: DurationJvm = checkInterval.toJavaDuration()
 
   private lateinit var state: State<K, V>
 
+
   override fun init(context: ProcessorContext<K, V>) {
     state = Active(context)
   }
+
 
   override fun process(record: Record<K, V>) {
     (state as Active).apply {
@@ -49,21 +52,28 @@ class DebounceProcessor<K, V>(
     }
   }
 
+
   override fun close() {
     (state as? Active)?.schedule?.cancel()
     state = Closed()
   }
 
+
   private sealed interface State<K, V>
 
+
   private class Closed<K, V> : State<K, V>
+
 
   private inner class Active(
     val context: ProcessorContext<K, V>
   ) : State<K, V> {
     val store: TimestampedKeyValueStore<K, V> = context.getStateStore(storeName)
-    val schedule: Cancellable =
-      context.schedule(checkInterval, PunctuationType.WALL_CLOCK_TIME, ::checkRecords)
+    val schedule: Cancellable = context.schedule(
+      checkInterval,
+      PunctuationType.WALL_CLOCK_TIME,
+      ::checkRecords
+    )
 
     private fun checkRecords(now: Long) {
       store.useAll {

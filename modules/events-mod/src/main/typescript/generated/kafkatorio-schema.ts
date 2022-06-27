@@ -13,6 +13,7 @@ export type KafkatorioPacketData =
   | KafkatorioPacketData.ConsoleChatUpdate
   | KafkatorioPacketData.ConsoleCommandUpdate
   | KafkatorioPacketData.EntityUpdate
+  | KafkatorioPacketData.Error
   | KafkatorioPacketData.MapChunkUpdate
   | KafkatorioPacketData.PlayerUpdate
   | KafkatorioPacketData.PrototypesUpdate
@@ -28,6 +29,7 @@ export namespace KafkatorioPacketData {
     EntityUpdate = "kafkatorio.packet.keyed.EntityUpdate",
     MapChunkUpdate = "kafkatorio.packet.keyed.MapChunkUpdate",
     PlayerUpdate = "kafkatorio.packet.keyed.PlayerUpdate",
+    Error = "kafkatorio.packet.KafkatorioPacketData.Error",
   }
   
   export interface ConfigurationUpdate {
@@ -114,6 +116,12 @@ export namespace KafkatorioPacketData {
     kickedReason?: string | null;
     disconnectReason?: string | null;
     isRemoved?: boolean | null;
+  }
+  
+  export interface Error {
+    type: KafkatorioPacketData.Type.Error;
+    message?: string | null;
+    rawValue?: string | null;
   }
 }
 
@@ -240,12 +248,12 @@ export type List = any;
 export type PrototypeKey = Int;
 
 export interface MinedProduct {
-  type: Type;
+  type: MinedProductType;
   name: PrototypeName;
   amount: Double | null;
 }
 
-export enum Type {
+export enum MinedProductType {
   item = "item",
   fluid = "fluid",
 }

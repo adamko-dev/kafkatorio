@@ -1,5 +1,6 @@
 import KafkatorioSettings from "../settings/KafkatorioSettings";
 import {KafkatorioKeyedPacketData} from "../types";
+import packetEmitter from "../PacketEmitter";
 
 export namespace EventUpdates {
 
@@ -71,6 +72,10 @@ export namespace EventUpdates {
       if (expirationDurationTicks != undefined) {
         entry.expirationDurationTicks = expirationDurationTicks
       }
+
+      if (entry.expirationDurationTicks != undefined && entry.expirationDurationTicks <= 0) {
+        this.extractAndEmitExpiredPackets()
+      }
     }
 
 
@@ -90,8 +95,9 @@ export namespace EventUpdates {
     }
 
 
+    /** Removes all expired entries from the cache, and return them. */
     // use in/out v4.7.0 https://github.com/microsoft/TypeScript/pull/48240
-    public extractExpired(): Array<KafkatorioKeyedPacketData> {
+    private extractExpired(): Array<KafkatorioKeyedPacketData> {
       let countExpired = 0
       let countTotal = 0
       const expiredData: Array<KafkatorioKeyedPacketData> = []
@@ -111,6 +117,25 @@ export namespace EventUpdates {
         log(`[extractExpired] expired items: ${countExpired}, total: ${countTotal}`)
       }
       return expiredData
+    }
+
+
+    /**
+     * Removes and emits all expired packets.
+     *
+     * @return the number of emitted packets
+     */
+    public extractAndEmitExpiredPackets() {
+      const cachedEvents: Array<KafkatorioKeyedPacketData> = this.extractExpired()
+
+      if (cachedEvents.length > 0) {
+        log(`[EventDataCache] emitting ${cachedEvents.length} events on tick ${game.tick}`)
+        for (const event of cachedEvents) {
+          packetEmitter.emitKeyedPacket(event)
+        }
+      }
+
+      return cachedEvents.length
     }
 
 

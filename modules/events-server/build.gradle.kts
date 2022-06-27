@@ -1,11 +1,13 @@
 import dev.adamko.kafkatorio.task.KafkaConsumerGroupsTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+
 plugins {
   dev.adamko.kafkatorio.lang.`kotlin-jvm`
   kotlin("plugin.serialization")
   application
 }
+
 
 description = """
     Receive raw Factorio Events from Kafka and process them into targeted topics or data formats. 
@@ -16,6 +18,7 @@ description = """
 val projectId: String by project.extra
 
 val kafkaStateDir: Directory = layout.projectDirectory.dir("kafka-state")
+
 
 dependencies {
   implementation(platform(projects.modules.versionsPlatform))
@@ -42,6 +45,11 @@ dependencies {
 
   implementation(libs.okio.core)
 
+  implementation(libs.ktor.network)
+  implementation(libs.ktor.networkTls)
+
+  implementation(libs.simpleSyslogParser)
+
   implementation(libs.kafka.kotkaStreams) {
     isChanging = true
   }
@@ -49,9 +57,6 @@ dependencies {
   implementation(libs.bundles.hoplite)
 }
 
-//configurations.all {
-//  resolutionStrategy.cacheDynamicVersionsFor(1, TimeUnit.MINUTES)
-//}
 
 application {
   mainClass.set("dev.adamko.kafkatorio.processor.EventProcessorKt")
@@ -93,7 +98,3 @@ idea {
     excludeDirs = excludeDirs + kafkaStateDir.asFile
   }
 }
-
-//tasks.withType<KotlinNpmInstallTask>().all {
-//  notCompatibleWithConfigurationCache("error: Projects must be configuring")
-//}

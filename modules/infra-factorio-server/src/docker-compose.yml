@@ -4,8 +4,6 @@ services:
 
   factorio-server:
     image: factoriotools/factorio:${FACTORIO_VERSION}
-    #    logging:
-    #      driver: "json-file"
     container_name: "factorio-server"
     restart: "no"
     networks:
@@ -18,12 +16,11 @@ services:
       - "27015:27015/tcp" # rcon
     volumes:
       - "./factorio-server:/factorio"
-  #    logging:
-  #      driver: "mickyg/kafka-logdriver:latest"
-  #      options:
-  #        KAFKA_BROKER_ADDR: "kafka-kraft"
-  #        LOG_TOPIC: "dockerlogs-factorio-server"
-  #        LOG_TAG: "factorio-server"
+    logging:
+      driver: syslog
+      options:
+        syslog-address: "tcp://host.docker.internal:9002"
+        syslog-format: "rfc5424"
 
   #    environment:
   #      RCON_PORT: 27715

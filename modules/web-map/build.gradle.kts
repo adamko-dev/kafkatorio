@@ -1,4 +1,3 @@
-import dev.adamko.kafkatorio.gradle.taskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
@@ -16,6 +15,7 @@ plugins {
 kvision {
   enableHiddenKotlinJsStore.set(false)
 }
+
 
 rootProject.extensions.configure<NodeJsRootExtension> {
   // https://github.com/rjaros/kvision/issues/410
@@ -48,13 +48,9 @@ afterEvaluate {
 
 kotlin {
   js(IR) {
-//    browser()
-//    binaries.executable()
-//  }
-//
-//  js("frontend", IR) {
-//    nodejs()
     browser {
+      binaries.executable()
+
       runTask {
         outputFileName = "main.bundle.js"
         sourceMaps = false
@@ -87,15 +83,10 @@ kotlin {
         }
       }
     }
-    binaries.executable()
 //    compilations["main"].packageJson {
 //      this.devDependencies["webpack-dev-server"] = "4.9.1"
 //    }
   }
-
-//  jvm("backend") {
-//
-//  }
 
   sourceSets {
 
@@ -106,7 +97,6 @@ kotlin {
       }
     }
 
-//    val commonMain by getting {
     main {
       dependencies {
         implementation(dependencies.platform(libs.kotlinx.coroutines.bom))
@@ -117,13 +107,6 @@ kotlin {
         implementation(projects.modules.eventsSchema)
 
         implementation(libs.kotlinx.html)
-//      }
-//    }
-
-//    val jsMain by getting {
-//      dependsOn(commonMain)
-//
-//      dependencies {
 
         implementation(projects.modules.eventsSchema)
 
@@ -154,37 +137,15 @@ kotlin {
 //        implementation(dependencies.platform(devNpm("webpack-dev-server", "4.9.1")))
       }
 
-//      val webDir = file("src/main/web")
       resources.srcDir("src/main/web")
-//      resources.srcDir("src/main/resources")
-
-//      kotlin.srcDir("src/main/kotlin")
     }
 
-//    val frontendMain by getting {
-//      dependsOn(jsMain)
-////      resources.srcDir("src/main/web")
-////      resources.srcDir("src/main/resources")
-//    }
-//
-//    val jsTest by getting {
-//      dependencies {
-//        implementation(kotlin("test-js"))
-//
-//        kvision("kvision-testutils")
-//
-////        implementation(npm("karma", "^6.3.16"))
-//      }
-//
-//      kotlin.srcDir("src/test/kotlin")
-//    }
 
     test {
       dependencies {
         implementation(kotlin("test-js"))
 
         kvision("kvision-testutils")
-
         //        implementation(npm("karma", "^6.3.16"))
       }
     }
@@ -221,22 +182,22 @@ fun KotlinDependencyHandler.kvision(
 //evaluationDependsOn(projects.modules.eventsSchema.dependencyProject.path)
 
 
-// stop warnings when building
-tasks.configureEach {
-  when (name) {
-    "productionExecutableCompileSync"          ->
-      dependsOn(taskProvider("compileProductionExecutableKotlinJs"))
-    "testTestDevelopmentExecutableCompileSync" ->
-      dependsOn(taskProvider("compileTestDevelopmentExecutableKotlinJs"))
-//    "jsTestTestDevelopmentExecutableCompileSync"       ->
-//      dependsOn(taskProvider("compileTestDevelopmentExecutableKotlinFrontend"))
-//    "jsProductionExecutableCompileSync"                ->
-//      dependsOn(taskProvider("compileProductionExecutableKotlinFrontend"))
-    "browserDevelopmentRun"                    ->
-      dependsOn(taskProvider("browserDevelopmentWebpack"))
-    "browserDevelopmentWebpack"                ->
-      dependsOn(taskProvider("assemble"))
-    "browserProductionWebpack"                 ->
-      dependsOn(taskProvider("developmentExecutableCompileSync"))
-  }
-}
+//// stop warnings when building
+//tasks.configureEach {
+//  when (name) {
+//    "productionExecutableCompileSync"          ->
+//      dependsOn(taskProvider("compileProductionExecutableKotlinJs"))
+//    "testTestDevelopmentExecutableCompileSync" ->
+//      dependsOn(taskProvider("compileTestDevelopmentExecutableKotlinJs"))
+////    "jsTestTestDevelopmentExecutableCompileSync"       ->
+////      dependsOn(taskProvider("compileTestDevelopmentExecutableKotlinFrontend"))
+////    "jsProductionExecutableCompileSync"                ->
+////      dependsOn(taskProvider("compileProductionExecutableKotlinFrontend"))
+//    "browserDevelopmentRun"                    ->
+//      dependsOn(taskProvider("browserDevelopmentWebpack"))
+//    "browserDevelopmentWebpack"                ->
+//      dependsOn(taskProvider("assemble"))
+//    "browserProductionWebpack"                 ->
+//      dependsOn(taskProvider("developmentExecutableCompileSync"))
+//  }
+//}

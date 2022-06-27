@@ -1,4 +1,4 @@
-import {KafkatorioPacketData} from "../generated/kafkatorio-schema/kafkatorio-schema";
+import {KafkatorioPacketData} from "../generated/kafkatorio-schema";
 
 export type EventName = keyof typeof defines.events
 

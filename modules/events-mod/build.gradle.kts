@@ -1,4 +1,4 @@
-import dev.adamko.kafkatorio.factoriomod.FactorioModPublishTask
+import dev.adamko.kafkatorio.factoriomod.portal.FactorioModPublishTask
 import dev.adamko.kafkatorio.gradle.asConsumer
 import dev.adamko.kafkatorio.gradle.asProvider
 import dev.adamko.kafkatorio.gradle.dropDirectory
@@ -39,11 +39,11 @@ val projectTokens: MapProperty<String, String> =
     ?: error("error getting projectTokens")
 //val projectTokens: MapProperty<String, String> by rootProject.extra
 
-val projectTokensX = projectTokens.apply {
+val projectTokensX1 = projectTokens.apply {
   put("mod.name", modName)
   put("mod.title", "Kafkatorio Events")
   put("mod.description", modDescription)
-  put("factorio.version", modFactorioCompatibility.get())
+  put("factorio.version", modFactorioCompatibility)
 }
 
 val tsSrcDir: Directory = layout.projectDirectory.dir("src/main/typescript")
@@ -82,7 +82,7 @@ val installEventsTsSchema by tasks.registering(Sync::class) {
   dependsOn(typescriptEventsSchema)
 //  dependsOn(fixLink)
 
-  val outputDir = layout.projectDirectory.dir("src/main/typescript/generated/kafkatorio-schema")
+  val outputDir = layout.projectDirectory.dir("src/main/typescript/generated/")
   outputs.dir(outputDir)
 
   from(
@@ -107,16 +107,16 @@ val installEventsTsSchema by tasks.registering(Sync::class) {
 val zipNameProvider = provider { distributionZipName }
 
 tasks.distZip {
-  val projectTokensXX = projectTokensX
+  val projectTokensXX22 = projectTokensX1
 
   inputs.property("zipNameProvider", zipNameProvider)
-  inputs.property("projectTokens", projectTokensXX)
+  inputs.property("projectTokens", projectTokensXX22)
 
   archiveFileName.set(zipNameProvider)
 }
 
 
-val publishMod by tasks.registering(FactorioModPublishTask::class) {
+val publishModToPortal by tasks.registering(FactorioModPublishTask::class) {
   dependsOn(tasks.check)
 
   distributionZip.set(tasks.distZip.flatMap { it.archiveFile })
@@ -131,6 +131,7 @@ distributions {
   main {
 
     distributionBaseName.set(modName)
+    val tokens333: MutableMap<String, String> = projectTokensX1.get()
 
     contents {
       from(layout.projectDirectory.dir("src/main/resources/mod-data")) {
@@ -139,7 +140,7 @@ distributions {
       from(licenseFile)
       from(typescriptToLua.map { it.outputDirectory })
       filesNotMatching("**/*.png") {
-        filter<ReplaceTokens>("tokens" to projectTokens.get())
+        filter<ReplaceTokens>("tokens" to tokens333)
       }
       includeEmptyDirs = false
       exclude {
@@ -154,8 +155,8 @@ distributions {
 
 
 tasks.withType<Zip>().configureEach {
-  val projectTokensXX = projectTokensX
-  inputs.property("projectTokens", projectTokensXX)
+  val projectTokensXX444 = projectTokensX1
+  inputs.property("projectTokens", projectTokensXX444)
 }
 
 

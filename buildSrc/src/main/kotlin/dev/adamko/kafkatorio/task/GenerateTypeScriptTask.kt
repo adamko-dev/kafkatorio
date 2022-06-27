@@ -8,7 +8,7 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
 
-abstract class GenerateTypescriptTask @Inject constructor(
+abstract class GenerateTypeScriptTask @Inject constructor(
   private val fileOps: FileSystemOperations,
 ) : JavaExec() {
 

@@ -17,6 +17,7 @@ import dev.adamko.kotka.extensions.groupedAs
 import dev.adamko.kotka.extensions.materializedAs
 import dev.adamko.kotka.extensions.producedAs
 import dev.adamko.kotka.extensions.repartitionedAs
+import dev.adamko.kotka.extensions.stream
 import dev.adamko.kotka.extensions.streams.filter
 import dev.adamko.kotka.extensions.streams.map
 import dev.adamko.kotka.extensions.streams.mapValues
@@ -55,26 +56,30 @@ fun colourMapChunks(builder: StreamsBuilder): Topology {
 
   chunkTilesColouredTable032.streamMapChunkColouredTo(
     ChunkSize.CHUNK_032,
-    TOPIC_MAP_CHUNK_COLOURED_032_STATE
+    TOPIC_MAP_CHUNK_COLOURED_032_STATE,
   )
 
-  val chunkTilesColoured032Debounced: KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
+  val chunkTilesColoured: KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
     builder.stream(
-      TOPIC_MAP_CHUNK_COLOURED_STATE,
       consumedAs(
-        "$pid.consume.map-chunks-coloured",
-        kxsBinary.serde(),
-        kxsBinary.serde(),
+        "$pid.consume.map-chunks-debounced",
+        kxsBinary.serde(ServerMapChunkId.serializer()),
+        kxsBinary.serde(ServerMapChunkTiles.serializer(ColourHex.serializer())),
       ),
+      TOPIC_MAP_CHUNK_COLOURED_STATE,
     )
 
   mapOf(
-    ChunkSize.CHUNK_032 to ChunkSize.CHUNK_064,
-    ChunkSize.CHUNK_064 to ChunkSize.CHUNK_128,
-    ChunkSize.CHUNK_128 to ChunkSize.CHUNK_256,
+//    ChunkSize.CHUNK_032 to ChunkSize.CHUNK_064,
+//    ChunkSize.CHUNK_064 to ChunkSize.CHUNK_128,
+//    ChunkSize.CHUNK_128 to ChunkSize.CHUNK_256,
+//    ChunkSize.CHUNK_256 to ChunkSize.CHUNK_512,
+
+    ChunkSize.CHUNK_032 to ChunkSize.CHUNK_256,
     ChunkSize.CHUNK_256 to ChunkSize.CHUNK_512,
+
   ).forEach { (from, to) ->
-    chunkTilesColoured032Debounced
+    chunkTilesColoured
       .filter("$pid.combine-chunks.filter-$from-to-$to") { key, _ ->
         key.chunkSize == from
       }.groupByChunkPosition(to)
@@ -86,9 +91,9 @@ fun colourMapChunks(builder: StreamsBuilder): Topology {
       namePrefix = "groupTilesMapChunks",
       sourceTopic = TOPIC_MAP_CHUNK_COLOURED_032_STATE,
       sinkTopic = TOPIC_MAP_CHUNK_COLOURED_STATE,
-      inactivityDuration = 15.seconds,
-      keySerde = kxsBinary.serde<ServerMapChunkId>(),
-      valueSerde = kxsBinary.serde<ServerMapChunkTiles<ColourHex>>(),
+      inactivityDuration = 5.seconds,
+      keySerde = kxsBinary.serde(ServerMapChunkId.serializer()),
+      valueSerde = kxsBinary.serde(ServerMapChunkTiles.serializer(ColourHex.serializer())),
     )
 }
 
@@ -182,7 +187,7 @@ private fun KTable<ServerMapChunkId, ServerMapChunkTiles<TileProtoHashCode>>.enr
     val missingProtos = mutableSetOf<TileProtoHashCode>()
 
     val tileColours = tiles.map.mapValues { (_, code) ->
-      colourDict.map.getOrElse(code) {
+      colourDict.getOrElse(code) {
         missingProtos.add(code)
         ColourHex.TRANSPARENT
       }

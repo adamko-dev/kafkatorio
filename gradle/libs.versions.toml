@@ -35,6 +35,8 @@ ktor                  = "2.0.2"
 
 hoplite               = "2.1.5"
 
+simpleSyslogParser    = "0.0.6"
+
 kotkaStreams          = "dev-SNAPSHOT"
 
 ## test ##
@@ -156,9 +158,11 @@ ktor-serverCallLogging        = { group = "io.ktor",  name = "ktor-server-call-l
 ktor-serverCallId             = { group = "io.ktor",  name = "ktor-server-call-id"             }
 
 ktor-network                  = { group = "io.ktor",  name = "ktor-network"                    }
+ktor-networkTls               = { group = "io.ktor",  name = "ktor-network-tls"                }
 
 ktor-test-clientMock          = { group = "io.ktor",  name = "ktor-client-mock"                }
 ktor-test-serverHost          = { group = "io.ktor",  name = "ktor-server-test-host"           }
+
 
 ### jackson ##
 #jackson-bom     = { group = " com.fasterxml.jackson.module",  name = ":jackson-module-kotlin", version = "2.13.+"     }
@@ -204,6 +208,10 @@ okio-core = { group = "com.squareup.okio", name = "okio" }
 hoplite-core     = { group = "com.sksamuel.hoplite", name = "hoplite-core",     version.ref = "hoplite" }
 hoplite-datetime = { group = "com.sksamuel.hoplite", name = "hoplite-datetime", version.ref = "hoplite" }
 hoplite-yaml     = { group = "com.sksamuel.hoplite", name = "hoplite-yaml",     version.ref = "hoplite" }
+
+
+simpleSyslogParser = { group = "com.github.palindromicity", name = "simple-syslog", version.ref = "simpleSyslogParser" }
+
 
 #############
 ### test  ###

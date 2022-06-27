@@ -1,8 +1,9 @@
 import {
   KafkatorioPacket,
   KafkatorioPacketData
-} from "../generated/kafkatorio-schema/kafkatorio-schema";
+} from "../generated/kafkatorio-schema";
 import {KafkatorioKeyedPacketData} from "./types";
+
 
 export class KafkatorioPacketEmitter {
 

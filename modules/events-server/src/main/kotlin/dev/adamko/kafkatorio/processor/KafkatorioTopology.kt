@@ -1,6 +1,9 @@
 package dev.adamko.kafkatorio.processor
 
+import com.github.palindromicity.syslog.dsl.SyslogFieldKeys
+import dev.adamko.kafkatorio.processor.admin.TOPIC_SRC_SERVER_LOG
 import dev.adamko.kafkatorio.processor.config.ApplicationProperties
+import dev.adamko.kafkatorio.processor.tileserver.SyslogSocketServer
 import dev.adamko.kafkatorio.processor.tileserver.WebsocketServer
 import dev.adamko.kafkatorio.processor.topology.broadcastToWebsocket
 import dev.adamko.kafkatorio.processor.topology.colourMapChunks
@@ -17,10 +20,17 @@ import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerConfig
+import org.apache.kafka.clients.producer.ProducerRecord
+import org.apache.kafka.common.header.internals.RecordHeader
+import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.StreamsConfig
@@ -29,11 +39,13 @@ import org.apache.kafka.streams.TopologyDescription
 
 
 internal class KafkatorioTopology(
-  private val websocketServer: WebsocketServer,
   private val appProps: ApplicationProperties,
+  private val websocketServer: WebsocketServer,
+  private val syslogServer: SyslogSocketServer,
 ) {
 
   private val builderScope = CoroutineScope(CoroutineName("KafkaTopology"))
+
 
   suspend fun start() = builderScope.launch {
     splitPackets()
@@ -42,7 +54,10 @@ internal class KafkatorioTopology(
     saveTiles()
 
     websocketBroadcaster()
+
+    syslogProducer()
   }
+
 
   private suspend fun splitPackets() {
     val builder = StreamsBuilder()
@@ -54,17 +69,20 @@ internal class KafkatorioTopology(
     launchTopology("splitPackets", topology)
   }
 
+
   private suspend fun groupTilesMapChunks() {
     val builder = StreamsBuilder()
     val topology = colourMapChunks(builder)
     launchTopology("groupTilesMapChunks", topology)
   }
 
+
   private suspend fun saveTiles() {
     val builder = StreamsBuilder()
     val topology = saveMapTiles(builder, appProps.tileDir)
     launchTopology("saveTiles", topology)
   }
+
 
   private suspend fun websocketBroadcaster() {
     val builder = StreamsBuilder()
@@ -75,10 +93,64 @@ internal class KafkatorioTopology(
     launchTopology(
       "websocketBroadcaster", topology, mapOf(
         StreamsConfig.COMMIT_INTERVAL_MS_CONFIG to "${1.seconds.inWholeMilliseconds}",
-        StreamsConfig.producerPrefix(ProducerConfig.LINGER_MS_CONFIG) to "${10.milliseconds.inWholeMilliseconds}"
+        StreamsConfig.producerPrefix(ProducerConfig.LINGER_MS_CONFIG) to "${1.milliseconds.inWholeMilliseconds}"
       )
     )
   }
+
+
+  private fun syslogProducer(
+    id: String = "syslog-producer"
+  ) {
+    val props: Properties = appProps.kafkaStreamsConfig.toProperties()
+
+    val appId = props.compute(StreamsConfig.APPLICATION_ID_CONFIG) { _, v -> "$v.$id" } as String
+    props.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, appId)
+
+
+    val producer: KafkaProducer<String, String> = KafkaProducer(
+      props,
+      Serdes.String().serializer(),
+      Serdes.String().serializer(),
+    )
+
+    builderScope.coroutineContext.job.invokeOnCompletion {
+      producer.close()
+    }
+
+    syslogServer.messages
+      .filter { it.message?.startsWith("KafkatorioPacket:") == true }
+      .onEach { syslogMsg ->
+
+        val kafkatorioMessage = syslogMsg.message?.substringAfter("KafkatorioPacket:")
+
+        val record = ProducerRecord<String, String>(
+          TOPIC_SRC_SERVER_LOG,
+          "syslog-test",
+          kafkatorioMessage,
+        )
+
+        val headers = SyslogFieldKeys.values()
+          .filter { "HEADER_" in it.name }
+          .mapNotNull { headerKey ->
+            val headerValue = syslogMsg.src[headerKey.field]
+            when {
+              headerValue.isNullOrBlank() -> null
+              else                        -> RecordHeader(
+                headerKey.field,
+                headerValue.toByteArray()
+              )
+            }
+          }
+
+        headers.forEach { header ->
+          record.headers().add(header)
+        }
+
+        producer.send(record)
+      }.launchIn(builderScope)
+  }
+
 
   private suspend fun launchTopology(
     id: String,
@@ -105,7 +177,7 @@ internal class KafkatorioTopology(
         streams.setStateListener { newState: KafkaStreams.State, _ ->
           when (newState) {
             KafkaStreams.State.NOT_RUNNING,
-            KafkaStreams.State.ERROR -> cont.resume(newState)
+            KafkaStreams.State.ERROR -> if (cont.isActive) cont.resume(newState)
             else                     -> Unit // do nothing
           }
         }
@@ -123,6 +195,7 @@ internal class KafkatorioTopology(
       currentCoroutineContext().job.cancel("$appId: $streamsState")
     }
   }
+
 
   private fun printTopologyDescription(appId: String, topology: Topology) {
     val description: TopologyDescription = topology.describe()
@@ -142,6 +215,7 @@ internal class KafkatorioTopology(
       """.trimMargin()
     )
   }
+
 
   companion object {
     private fun Map<String, String>.toProperties(): Properties =

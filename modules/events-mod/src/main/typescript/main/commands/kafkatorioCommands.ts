@@ -1,7 +1,6 @@
-import {emitPrototypes} from "../config-update/prototypes";
 import {initGlobal} from "../global-init";
-import floor = math.floor;
 import {Queue} from "../queue/queue";
+import {emitPrototypes} from "../events/prototypeUpdates";
 
 
 commands.add_command(
@@ -32,8 +31,8 @@ commands.add_command(
             let player = game.players[e.player_index]
 
             const chunkPosition: ChunkPosition = {
-              x: floor(player.position.x / 32),
-              y: floor(player.position.y / 32),
+              x: math.floor(player.position.x / 32),
+              y: math.floor(player.position.y / 32),
             }
 
             const chunkXMin = chunkPosition.x - radius
@@ -56,7 +55,7 @@ commands.add_command(
                     position: {x: chunk.x, y: chunk.y},
                     area: chunk.area,
                     surface: surface,
-                    tick: e.tick
+                    tick: e.tick,
                   }
 
                   Queue.enqueue(

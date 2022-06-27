@@ -40,22 +40,3 @@ COPY --chmod=755 ./entrypoint.sh ./entrypoint.sh
 
 # launch the broker in KRaft mode, which means that it runs without ZooKeeper
 ENTRYPOINT ["/kafka/entrypoint.sh"]
-
-
-### Kafka Connect ##
-#FROM openjdk:11 as kafka-connect
-## https://github.com/confluentinc/cp-docker-images/blob/5.3.3-post/debian/kafka-connect-base/Dockerfile
-#
-#ENV COMPONENT=kafka-connect
-#
-#WORKDIR /kafka-connect
-#
-#COPY --from=Kafka-Download /kafka .
-#
-## Default kafka-connect rest.port
-#EXPOSE 8083
-#
-#VOLUME ["/etc/${COMPONENT}/jars", "/etc/${COMPONENT}/secrets"]
-#
-## launch the broker in KRaft mode, which means that it runs without ZooKeeper
-#ENTRYPOINT ["./bin/connect-standalone.sh", "./config/connect-standalone.properties"]

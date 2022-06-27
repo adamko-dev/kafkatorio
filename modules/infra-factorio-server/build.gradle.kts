@@ -1,3 +1,4 @@
+import dev.adamko.kafkatorio.factoriomod.FactorioMod
 import dev.adamko.kafkatorio.gradle.asConsumer
 import dev.adamko.kafkatorio.gradle.factorioModAttributes
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
@@ -6,21 +7,25 @@ plugins {
   dev.adamko.kafkatorio.infra.`docker-compose`
 }
 
+
 val dockerSrcDir: Directory by extra
 val factorioServerDataDir: Directory = dockerSrcDir.dir("factorio-server")
+
 
 val factorioMod: Configuration by configurations.creating {
   asConsumer()
   factorioModAttributes(objects)
 }
 
+
 dependencies {
   factorioMod(projects.modules.eventsMod)
 }
 
-val deployModToServer by tasks.registering(Copy::class) {
+
+val deployModToLocalServer by tasks.registering(Copy::class) {
   description = "Copy the mod to the Factorio Docker server"
-  group = project.name
+  group = FactorioMod.TASK_GROUP
 
   dependsOn(factorioMod)
 
@@ -34,22 +39,29 @@ val deployModToServer by tasks.registering(Copy::class) {
   }
 }
 
+
 tasks.dockerDown {
   commandLine = parseSpaceSeparatedArgs(""" docker-compose stop """)
 }
 
+
 tasks.dockerUp {
   dependsOn(
-    deployModToServer,
+    deployModToLocalServer,
     ":modules:infra-kafka-cluster:processRun",
   )
 }
+
 
 tasks.dockerEnv {
   properties("FACTORIO_VERSION" to libs.versions.factorio.get())
 }
 
-tasks.build { dependsOn(deployModToServer) }
+
+tasks.register(FactorioMod.PUBLISH_MOD_LOCAL_TASK_NAME) {
+  group = FactorioMod.TASK_GROUP
+  dependsOn(deployModToLocalServer)
+}
 
 
 idea {

@@ -125,7 +125,7 @@ class FactorioMap(
       minZoom = -2
       maxZoom = 6
 
-      maxNativeZoom = -1
+      maxNativeZoom = 0
       minNativeZoom = -1
 
       noWrap = true
