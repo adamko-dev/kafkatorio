@@ -45,6 +45,11 @@ dependencies {
 
   implementation(libs.okio.core)
 
+  implementation(libs.ktor.network)
+  implementation(libs.ktor.networkTls)
+
+  implementation(libs.simpleSyslogParser)
+
   implementation(libs.kafka.kotkaStreams) {
     isChanging = true
   }

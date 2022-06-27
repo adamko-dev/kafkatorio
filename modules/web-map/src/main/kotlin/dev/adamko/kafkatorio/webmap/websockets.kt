@@ -5,6 +5,7 @@ import dev.adamko.kafkatorio.schema.packets.ConsoleChatUpdate
 import dev.adamko.kafkatorio.schema.packets.ConsoleCommandUpdate
 import dev.adamko.kafkatorio.schema.packets.EntityUpdate
 import dev.adamko.kafkatorio.schema.packets.EventServerPacket
+import dev.adamko.kafkatorio.schema.packets.KafkatorioPacketData
 import dev.adamko.kafkatorio.schema.packets.MapChunkUpdate
 import dev.adamko.kafkatorio.schema.packets.PlayerUpdate
 import dev.adamko.kafkatorio.schema.packets.PrototypesUpdate
@@ -74,7 +75,7 @@ class WebsocketService(
 
           is EventServerPacket.Kafkatorio     ->
             when (val packetData = packet.packet.data) {
-              is PlayerUpdate   -> reduxStore.dispatch(
+              is PlayerUpdate               -> reduxStore.dispatch(
                 FactorioUpdate.Player(packet.packet.tick, packetData)
               )
               is ConfigurationUpdate,
@@ -83,7 +84,8 @@ class WebsocketService(
               is PrototypesUpdate,
               is SurfaceUpdate,
               is EntityUpdate,
-              is MapChunkUpdate -> {
+              is MapChunkUpdate,
+              is KafkatorioPacketData.Error -> {
                 // to be continued...
               }
             }

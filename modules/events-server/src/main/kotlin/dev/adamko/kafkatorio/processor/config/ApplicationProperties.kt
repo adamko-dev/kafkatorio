@@ -12,6 +12,9 @@ data class ApplicationProperties(
   val tileDir: Path,
   val kafkaAdminConfig: Map<String, String>,
   val kafkaStreamsConfig: Map<String, String>,
+
+  val socketServerHost: String,
+  val socketServerPort: Int,
 ) {
 
   companion object {

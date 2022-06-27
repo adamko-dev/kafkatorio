@@ -48,14 +48,15 @@ fun allTopics(): Set<String> = buildSet {
 
 val KafkatorioPacketData.topicName: String
   get() = when (this) {
-    is ConfigurationUpdate  -> packetTopicNames.getValue(ConfigurationUpdate::class)
-    is ConsoleChatUpdate    -> packetTopicNames.getValue(ConsoleChatUpdate::class)
-    is ConsoleCommandUpdate -> packetTopicNames.getValue(ConsoleCommandUpdate::class)
-    is PrototypesUpdate     -> packetTopicNames.getValue(PrototypesUpdate::class)
-    is SurfaceUpdate        -> packetTopicNames.getValue(SurfaceUpdate::class)
-    is EntityUpdate         -> packetTopicNames.getValue(EntityUpdate::class)
-    is MapChunkUpdate       -> packetTopicNames.getValue(MapChunkUpdate::class)
-    is PlayerUpdate         -> packetTopicNames.getValue(PlayerUpdate::class)
+    is ConfigurationUpdate        -> packetTopicNames.getValue(ConfigurationUpdate::class)
+    is ConsoleChatUpdate          -> packetTopicNames.getValue(ConsoleChatUpdate::class)
+    is ConsoleCommandUpdate       -> packetTopicNames.getValue(ConsoleCommandUpdate::class)
+    is PrototypesUpdate           -> packetTopicNames.getValue(PrototypesUpdate::class)
+    is SurfaceUpdate              -> packetTopicNames.getValue(SurfaceUpdate::class)
+    is EntityUpdate               -> packetTopicNames.getValue(EntityUpdate::class)
+    is MapChunkUpdate             -> packetTopicNames.getValue(MapChunkUpdate::class)
+    is PlayerUpdate               -> packetTopicNames.getValue(PlayerUpdate::class)
+    is KafkatorioPacketData.Error -> packetTopicNames.getValue(KafkatorioPacketData.Error::class)
   }
 
 
@@ -68,6 +69,7 @@ private val packetTopicNames: Map<KClass<out KafkatorioPacketData>, String> = ma
   EntityUpdate::class to "entity",
   MapChunkUpdate::class to "map-chunk",
   PlayerUpdate::class to "player",
+  KafkatorioPacketData.Error::class to "error",
 ).mapValues { (_, v) ->
   "$DOMAIN.packet.$v"
 }

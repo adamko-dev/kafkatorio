@@ -8,7 +8,7 @@ plugins {
   `build-dashboard`
 
 //  kotlin("multiplatform") apply false // try to stop error 'Projects must be configuring'
-  kotlin("js") apply false // try to stop error 'Projects must be configuring'
+//  kotlin("js") apply false // try to stop error 'Projects must be configuring'
 }
 
 group = "dev.adamko.kafkatorio"
