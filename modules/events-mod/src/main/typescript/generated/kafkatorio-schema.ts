@@ -248,12 +248,12 @@ export type List = any;
 export type PrototypeKey = Int;
 
 export interface MinedProduct {
-  type: Type;
+  type: MinedProductType;
   name: PrototypeName;
   amount: Double | null;
 }
 
-export enum Type {
+export enum MinedProductType {
   item = "item",
   fluid = "fluid",
 }

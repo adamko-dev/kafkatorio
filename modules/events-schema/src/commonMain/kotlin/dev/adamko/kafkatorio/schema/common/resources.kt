@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
+@SerialName("kafkatorio.resource.MinedProduct")
 data class MinedProduct(
   /** `item` or `fluid`. */
   val type: Type,
@@ -30,6 +31,7 @@ data class MinedProduct(
 ) {
 
   @Serializable
+  @SerialName("kafkatorio.resource.MinedProductType")
   enum class Type {
     @SerialName("item")
     ITEM,
