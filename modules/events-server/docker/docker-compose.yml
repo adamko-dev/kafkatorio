@@ -5,6 +5,7 @@ services:
   events-server:
     image: kafkatorio/events-server:${KAFKATORIO_VERSION}
     container_name: events-server
+    restart: unless-stopped
     build:
       context: ..
       dockerfile: ./docker/Dockerfile

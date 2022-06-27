@@ -5,6 +5,7 @@ services:
   kafkatorio-web-map:
     image: adamko-dev/kafkatorio-web-map
     container_name: kafkatorio-web-map
+    restart: unless-stopped
     build:
       context: ".."
       dockerfile: ./docker/Dockerfile
