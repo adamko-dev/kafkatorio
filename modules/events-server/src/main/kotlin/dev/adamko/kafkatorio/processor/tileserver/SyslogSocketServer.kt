@@ -36,7 +36,7 @@ class SyslogSocketServer(
     .tcp()
     .bind(
       appProps.socketServerHost,
-      appProps.socketServerPortTcp,
+      appProps.socketServerPort,
     )
 
 
