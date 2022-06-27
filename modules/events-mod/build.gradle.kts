@@ -39,7 +39,7 @@ val projectTokens: MapProperty<String, String> =
     ?: error("error getting projectTokens")
 //val projectTokens: MapProperty<String, String> by rootProject.extra
 
-val projectTokensX = projectTokens.apply {
+val projectTokensX1 = projectTokens.apply {
   put("mod.name", modName)
   put("mod.title", "Kafkatorio Events")
   put("mod.description", modDescription)
@@ -82,7 +82,7 @@ val installEventsTsSchema by tasks.registering(Sync::class) {
   dependsOn(typescriptEventsSchema)
 //  dependsOn(fixLink)
 
-  val outputDir = layout.projectDirectory.dir("src/main/typescript/generated/kafkatorio-schema")
+  val outputDir = layout.projectDirectory.dir("src/main/typescript/generated/")
   outputs.dir(outputDir)
 
   from(
@@ -107,10 +107,10 @@ val installEventsTsSchema by tasks.registering(Sync::class) {
 val zipNameProvider = provider { distributionZipName }
 
 tasks.distZip {
-  val projectTokensXX = projectTokensX
+  val projectTokensXX22 = projectTokensX1
 
   inputs.property("zipNameProvider", zipNameProvider)
-  inputs.property("projectTokens", projectTokensXX)
+  inputs.property("projectTokens", projectTokensXX22)
 
   archiveFileName.set(zipNameProvider)
 }
@@ -131,6 +131,7 @@ distributions {
   main {
 
     distributionBaseName.set(modName)
+    val tokens333: MutableMap<String, String> = projectTokensX1.get()
 
     contents {
       from(layout.projectDirectory.dir("src/main/resources/mod-data")) {
@@ -139,8 +140,7 @@ distributions {
       from(licenseFile)
       from(typescriptToLua.map { it.outputDirectory })
       filesNotMatching("**/*.png") {
-        val tokens: MutableMap<String, String> = projectTokensX.get()
-        filter<ReplaceTokens>("tokens" to tokens)
+        filter<ReplaceTokens>("tokens" to tokens333)
       }
       includeEmptyDirs = false
       exclude {
@@ -155,8 +155,8 @@ distributions {
 
 
 tasks.withType<Zip>().configureEach {
-  val projectTokensXX = projectTokensX
-  inputs.property("projectTokens", projectTokensXX)
+  val projectTokensXX444 = projectTokensX1
+  inputs.property("projectTokens", projectTokensXX444)
 }
 
 
