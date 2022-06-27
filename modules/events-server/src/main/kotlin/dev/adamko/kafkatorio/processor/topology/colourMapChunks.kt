@@ -187,7 +187,7 @@ private fun KTable<ServerMapChunkId, ServerMapChunkTiles<TileProtoHashCode>>.enr
     val missingProtos = mutableSetOf<TileProtoHashCode>()
 
     val tileColours = tiles.map.mapValues { (_, code) ->
-      colourDict.map.getOrElse(code) {
+      colourDict.getOrElse(code) {
         missingProtos.add(code)
         ColourHex.TRANSPARENT
       }

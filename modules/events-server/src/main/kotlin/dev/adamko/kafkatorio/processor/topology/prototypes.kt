@@ -29,7 +29,9 @@ value class TileProtoHashCode private constructor(val code: Int) {
 
 @JvmInline
 @Serializable
-value class TileColourDict(val map: Map<TileProtoHashCode, ColourHex>)
+value class TileColourDict(
+  private val map: Map<TileProtoHashCode, ColourHex>
+) : Map<TileProtoHashCode, ColourHex> by map
 
 
 /** Get the latest map-tile colours per server. */
@@ -48,9 +50,9 @@ fun KStream<FactorioServerId, PrototypesUpdate>.createTilePrototypeTable()
 
     TileColourDict(map)
   }.filter("$pid.filterMapTileProtos") { _, dict: TileColourDict ->
-    dict.map.isNotEmpty()
+    dict.isNotEmpty()
   }.peek { serverId, dict: TileColourDict ->
-    println("$pid: server $serverId has TileColourDict[${dict.map.size}]: ${dict.map.entries.joinToString()}")
+    println("$pid: server $serverId has TileColourDict[${dict.size}]: ${dict.entries.joinToString()}")
   }.repartition(
     repartitionedAs(
       "$pid.pre-table-repartition",
