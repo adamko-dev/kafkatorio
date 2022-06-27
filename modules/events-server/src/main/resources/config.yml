@@ -1,6 +1,6 @@
 # Factorio Events Processor config
 
-web-port: ${SERVER_PORT:-12080}
+web-port: ${SERVER_PORT:-8080}
 tile-dir: ${TILE_DIR:-./tile-dir}
 
 
