@@ -1,6 +1,7 @@
 import PacketEmitter from "../PacketEmitter";
-import {KafkatorioPacketData} from "../../generated/kafkatorio-schema/kafkatorio-schema";
+import {KafkatorioPacketData} from "../../generated/kafkatorio-schema";
 import Type = KafkatorioPacketData.Type;
+
 
 script.on_event(
     defines.events.on_console_chat,
@@ -14,6 +15,7 @@ script.on_event(
       PacketEmitter.emitInstantPacket(update)
     }
 )
+
 
 script.on_event(
     defines.events.on_console_command,

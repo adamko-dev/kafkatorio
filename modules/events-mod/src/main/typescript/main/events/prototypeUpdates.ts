@@ -1,30 +1,28 @@
-import {Converters} from "../events/converters";
 import PacketEmitter from "../PacketEmitter";
-import {
-  FactorioPrototype,
-  KafkatorioPacketData
-} from "../../generated/kafkatorio-schema/kafkatorio-schema";
-import Type = KafkatorioPacketData.Type;
+import {FactorioPrototype, KafkatorioPacketData} from "../../generated/kafkatorio-schema";
+import {Converters} from "./converters";
 import PrototypesUpdate = KafkatorioPacketData.PrototypesUpdate;
 
 
 export function emitPrototypes() {
 
   const data: PrototypesUpdate = {
-    prototypes: prototypes(),
-    type: Type.PrototypesUpdate,
+    prototypes: prototypeUpdates(),
+    type: KafkatorioPacketData.Type.PrototypesUpdate,
   }
 
   PacketEmitter.emitInstantPacket(data)
 }
 
-function prototypes(): FactorioPrototype[] {
+
+function prototypeUpdates(): FactorioPrototype[] {
   let prototypes: FactorioPrototype[] = []
 
   prototypes.push(...getMapTilePrototypes())
 
   return prototypes
 }
+
 
 function getMapTilePrototypes(): FactorioPrototype.MapTile[] {
   let tiles: FactorioPrototype.MapTile[] = []
@@ -35,7 +33,7 @@ function getMapTilePrototypes(): FactorioPrototype.MapTile[] {
       name: tile.name,
       order: tile.order,
       layer: tile.layer,
-      collisionMasks: convertCollisionMaskToNames(tile.collision_mask),
+      collisionMasks: Converters.convertCollisionMaskToNames(tile.collision_mask),
       mapColour: Converters.mapColour(tile.map_color),
       canBeMined: tile.mineable_properties.minable,
     })
@@ -60,11 +58,3 @@ function getMapTilePrototypes(): FactorioPrototype.MapTile[] {
 //   }
 //   return tiles
 // }
-
-function convertCollisionMaskToNames(cm: CollisionMask): string[] {
-  let masks: string[] = []
-  for (let [name] of pairs(cm)) {
-    masks.push(name)
-  }
-  return masks
-}

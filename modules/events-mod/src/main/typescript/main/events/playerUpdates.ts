@@ -3,7 +3,7 @@ import EventUpdatesManager from "../cache/EventDataCache";
 import {
   KafkatorioPacketData,
   PlayerUpdateKey
-} from "../../generated/kafkatorio-schema/kafkatorio-schema";
+} from "../../generated/kafkatorio-schema";
 import Type = KafkatorioPacketData.Type;
 import packetEmitter from "../PacketEmitter";
 

@@ -1,5 +1,5 @@
 import {EventName} from "../types";
-import {Colour, MapChunkPosition} from "../../generated/kafkatorio-schema/kafkatorio-schema";
+import {Colour, MapChunkPosition} from "../../generated/kafkatorio-schema";
 
 export namespace Converters {
 
@@ -55,6 +55,15 @@ export namespace Converters {
       position: MapPositionTable,
   ): MapChunkPosition {
     return [position.x, position.y]
+  }
+
+
+  export function convertCollisionMaskToNames(cm: CollisionMask): string[] {
+    let masks: string[] = []
+    for (let [name] of pairs(cm)) {
+      masks.push(name)
+    }
+    return masks
   }
 
 }

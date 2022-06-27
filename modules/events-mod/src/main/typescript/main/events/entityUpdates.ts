@@ -3,7 +3,7 @@ import EventDataCache from "../cache/EventDataCache";
 import {
   EntityUpdateKey,
   KafkatorioPacketData
-} from "../../generated/kafkatorio-schema/kafkatorio-schema";
+} from "../../generated/kafkatorio-schema";
 
 
 script.on_event(defines.events.on_built_entity, (e: OnBuiltEntityEvent) => {
