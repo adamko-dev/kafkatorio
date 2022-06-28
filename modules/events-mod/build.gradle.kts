@@ -71,7 +71,8 @@ val typescriptToLua by tasks.registering(TypescriptToLuaTask::class) {
   dependsOn(tasks.npmInstall, installEventsTsSchema, tasks.updatePackageJson)
 
   sourceFiles.set(tsSrcDir)
-  outputDirectory.set(layout.buildDirectory.dir("typescriptToLua"))
+//  outputDirectory.set(layout.buildDirectory.dir("typescriptToLua"))
+  outputDirectory.set(layout.projectDirectory.dir("src/main/lua"))
 }
 
 
@@ -80,7 +81,6 @@ val installEventsTsSchema by tasks.registering(Sync::class) {
   group = project.name
 
   dependsOn(typescriptEventsSchema)
-//  dependsOn(fixLink)
 
   val outputDir = layout.projectDirectory.dir("src/main/typescript/generated/")
   outputs.dir(outputDir)
@@ -140,6 +140,8 @@ distributions {
       from(licenseFile)
       from(typescriptToLua.map { it.outputDirectory })
       filesNotMatching("**/*.png") {
+        // maybe make a bug report for projectTokensX1 causing null$null$null error?
+        // val tokens333: MutableMap<String, String> = projectTokensX1.get()
         filter<ReplaceTokens>("tokens" to tokens333)
       }
       includeEmptyDirs = false
@@ -158,7 +160,6 @@ tasks.withType<Zip>().configureEach {
   val projectTokensXX444 = projectTokensX1
   inputs.property("projectTokens", projectTokensXX444)
 }
-
 
 
 val factorioModProvider by configurations.registering {
@@ -185,14 +186,34 @@ tasks.assemble { dependsOn(installEventsTsSchema, tasks.updatePackageJson) }
 
 idea {
   module {
-    sourceDirs = sourceDirs + file("src/main/typescript")
+    sourceDirs.plusAssign(
+      listOf(
+        file("src/main/typescript"),
+        file("src/main/lua"),
+      )
+    )
+//    sourceDirs = sourceDirs + file("src/main/lua")
     resourceDirs = resourceDirs + file("src/main/resources")
     testSourceDirs = testSourceDirs + file("src/test/typescript")
+
+    generatedSourceDirs = generatedSourceDirs + listOf(
+      file("src/main/lua")
+    )
     iml {
       whenMerged {
         require(this is org.gradle.plugins.ide.idea.model.Module)
 
-        sourceDirs = sourceDirs + file("src/main/typescript")
+        sourceDirs.plusAssign(
+          listOf(
+            file("src/main/typescript"),
+            file("src/main/lua"),
+          )
+        )
+
+        generatedSourceFolders.plusAssign(
+          org.gradle.plugins.ide.idea.model.Path(file("src/main/lua").toURI().toString())
+        )
+//        sourceDirs = sourceDirs + file("src/main/typescript")
         resourceDirs = resourceDirs + file("src/main/resources")
         testSourceDirs = testSourceDirs + file("src/test/typescript")
       }
