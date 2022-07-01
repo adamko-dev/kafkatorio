@@ -7,7 +7,7 @@ plugins {
   `project-report`
   `build-dashboard`
 
-//  kotlin("multiplatform") apply false // try to stop error 'Projects must be configuring'
+  kotlin("multiplatform") apply false // try to stop error 'Projects must be configuring'
 //  kotlin("js") apply false // try to stop error 'Projects must be configuring'
 }
 

@@ -79,7 +79,7 @@ internal class KafkatorioTopology(
 
   private suspend fun saveTiles() {
     val builder = StreamsBuilder()
-    val topology = saveMapTiles(builder, appProps.tileDir)
+    val topology = saveMapTiles(builder, appProps.serverDataDir)
     launchTopology("saveTiles", topology)
   }
 

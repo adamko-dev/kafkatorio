@@ -9,7 +9,11 @@ plugins {
 }
 
 
-description = "serves Kafkatorio content over the web"
+description = """
+    Receive raw Factorio Events from Kafka and process them into targeted topics or data formats. 
+    
+    Factorio events -> Mod -> Kafka -> ***Factorio Events Processor*** -> processed events
+  """.trimIndent()
 
 val projectId: String by project.extra
 
@@ -80,8 +84,7 @@ dependencies {
 
 
 application {
-//  mainClass.set("dev.adamko.kafkatorio.processor.EventProcessorKt")
-  mainClass.set("dev.adamko.kafkatorio.server.KafkatorioEventsServerKt")
+  mainClass.set("dev.adamko.kafkatorio.processor.EventProcessorKt")
 
 //  applicationDefaultJvmArgs += listOf(
 //    "-Dcom.sun.management.jmxremote.port=9186",

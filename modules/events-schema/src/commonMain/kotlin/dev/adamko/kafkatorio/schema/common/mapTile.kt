@@ -80,16 +80,33 @@ data class ServerMapChunkId(
 )
 
 
+/** `${serverDataDir}/servers/{serverId}/map/tiles/s{surfaceIndex}/z{zoomLevel}/x{chunkX}/y{chunkY}.png` */
 @Serializable
 @JvmInline
 value class TilePngFilename(
   val value: String,
 ) {
-  constructor(id: ServerMapChunkId) : this(buildString {
-    append("s${id.surfaceIndex}")
-    append("/z${id.chunkSize.zoomLevel}")
-    append("/x${id.chunkPosition.x}")
-    append("/y${id.chunkPosition.y}")
+  constructor(id: ServerMapChunkId) : this(
+    id.serverId,
+    id.surfaceIndex,
+    id.chunkSize.zoomLevel,
+    id.chunkPosition.x,
+    id.chunkPosition.y,
+  )
+
+  constructor(
+    serverId: FactorioServerId,
+    surfaceIndex: SurfaceIndex,
+    zoomLevel: Int,
+    chunkX: Int,
+    chunkY: Int,
+  ) : this(buildString {
+    append("servers/${serverId}")
+    append("/map/tiles")
+    append("/s${surfaceIndex}")
+    append("/z${zoomLevel}")
+    append("/x${chunkX}")
+    append("/y${chunkY}")
     append(".png")
   })
 }

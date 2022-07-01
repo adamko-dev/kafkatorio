@@ -9,7 +9,7 @@ import java.nio.file.Path
 // loaded by hoplite
 data class ApplicationProperties(
   val webPort: PortVal,
-  val tileDir: Path,
+  val serverDataDir: Path,
   val kafkaAdminConfig: Map<String, String>,
   val kafkaStreamsConfig: Map<String, String>,
 

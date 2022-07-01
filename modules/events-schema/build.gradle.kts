@@ -11,6 +11,9 @@ plugins {
 }
 
 
+description = "shared data structures and utilities"
+
+
 kotlin {
 
   js(IR) {

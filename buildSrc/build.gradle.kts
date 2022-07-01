@@ -43,14 +43,14 @@ dependencies {
   implementation(libs.kotlinx.cli)
 
   implementation(platform(libs.ktor.bom))
-  implementation(libs.ktor.clientAuth)
-  implementation(libs.ktor.clientContentNegotiation)
-  implementation(libs.ktor.clientCore)
-  implementation(libs.ktor.clientEncoding)
-  implementation(libs.ktor.clientLogging)
-  implementation(libs.ktor.clientCIO)
-  implementation(libs.ktor.clientResources)
-  implementation(libs.ktor.serializationKotlinxJson)
+  implementation(libs.ktorClient.auth)
+  implementation(libs.ktorClient.contentNegotiation)
+  implementation(libs.ktorClient.core)
+  implementation(libs.ktorClient.encoding)
+  implementation(libs.ktorClient.logging)
+  implementation(libs.ktorClient.cio)
+  implementation(libs.ktorClient.resources)
+  implementation(libs.ktorSerialization.kotlinxJson)
 
   // https://github.com/avast/gradle-docker-compose-plugin
 //  implementation("com.avast.gradle:gradle-docker-compose-plugin:${Versions.gradleDockerComposePlugin}")

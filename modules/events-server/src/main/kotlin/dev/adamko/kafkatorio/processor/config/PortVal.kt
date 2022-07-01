@@ -17,6 +17,7 @@ value class PortVal(val value: Int) {
 
   companion object {
     val DEFAULT = PortVal(8080)
-    val VALID_RANGE: IntRange = 1..65535
+    val VALID_RANGE: IntRange
+      get() = (1..65535) // get() is required to prevent init ordering causing NPE
   }
 }

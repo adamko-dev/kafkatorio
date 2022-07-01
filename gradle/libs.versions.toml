@@ -31,7 +31,7 @@ kotlinx-coroutines    = "1.6.1"
 kotlinx-cli           = "0.3.4"
 kotlinx-datetime      = "0.3.3"
 
-ktor                  = "2.0.2"
+ktor                  = "2.0.3"
 
 hoplite               = "2.1.5"
 
@@ -123,45 +123,50 @@ http4k-graphql        = { group = "org.http4k",  name = "http4k-graphql"        
 ## ktor ##
 ktor-bom                      = { group = "io.ktor",  name = "ktor-bom", version.ref = "ktor"  }
 
-ktor-clientAuth               = { group = "io.ktor",  name = "ktor-client-auth"                }
-ktor-clientCIO                = { group = "io.ktor",  name = "ktor-client-cio"                 }
-ktor-clientContentNegotiation = { group = "io.ktor",  name = "ktor-client-content-negotiation" }
-ktor-clientCore               = { group = "io.ktor",  name = "ktor-client-core"                }
-ktor-clientEncoding           = { group = "io.ktor",  name = "ktor-client-encoding"            }
-ktor-clientLogging            = { group = "io.ktor",  name = "ktor-client-logging"             }
-ktor-clientResources          = { group = "io.ktor",  name = "ktor-client-resources"           }
-ktor-clientWebsockets         = { group = "io.ktor",  name = "ktor-client-websockets"          }
-ktor-serializationKotlinxJson = { group = "io.ktor",  name = "ktor-serialization-kotlinx-json" }
+ktorSerialization-kotlinxJson = { group = "io.ktor",  name = "ktor-serialization-kotlinx-json" }
+
+ktorClient-core               = { group = "io.ktor",  name = "ktor-client-core"                }
+ktorClient-auth               = { group = "io.ktor",  name = "ktor-client-auth"                }
+ktorClient-cio                = { group = "io.ktor",  name = "ktor-client-cio"                 }
+ktorClient-contentNegotiation = { group = "io.ktor",  name = "ktor-client-content-negotiation" }
+ktorClient-encoding           = { group = "io.ktor",  name = "ktor-client-encoding"            }
+ktorClient-logging            = { group = "io.ktor",  name = "ktor-client-logging"             }
+ktorClient-resources          = { group = "io.ktor",  name = "ktor-client-resources"           }
+ktorClient-websockets         = { group = "io.ktor",  name = "ktor-client-websockets"          }
+
+ktorClient-testMock           = { group = "io.ktor",  name = "ktor-client-mock"                }
 
 
-ktor-serverCore               = { group = "io.ktor",  name = "ktor-server-core"                }
-ktor-serverNetty              = { group = "io.ktor",  name = "ktor-server-netty"               }
-ktor-serverContentNegotiaion  = { group = "io.ktor",  name = "ktor-server-content-negotiation" }
-ktor-serverCors               = { group = "io.ktor",  name = "ktor-server-cors"                }
-ktor-serverResources          = { group = "io.ktor",  name = "ktor-server-resources"           }
-ktor-serverAutoHeadResponse   = { group = "io.ktor",  name = "ktor-server-auto-head-response"  }
-ktor-serverStatusPages        = { group = "io.ktor",  name = "ktor-server-status-pages"        }
-ktor-serverAuth               = { group = "io.ktor",  name = "ktor-server-auth"                }
-ktor-serverAuthJwt            = { group = "io.ktor",  name = "ktor-server-auth-jwt"            }
-ktor-serverSessions           = { group = "io.ktor",  name = "ktor-server-sessions"            }
-ktor-serverDataConversion     = { group = "io.ktor",  name = "ktor-server-data-conversion"     }
-ktor-serverDefaultHeaders     = { group = "io.ktor",  name = "ktor-server-default-headers"     }
-ktor-serverCompression        = { group = "io.ktor",  name = "ktor-server-compression"         }
-ktor-serverCachingHeaders     = { group = "io.ktor",  name = "ktor-server-caching-headers"     }
-ktor-serverConditionalHeaders = { group = "io.ktor",  name = "ktor-server-conditional-headers" }
-ktor-serverForwardedHeader    = { group = "io.ktor",  name = "ktor-server-forwarded-header"    }
-ktor-serverHsts               = { group = "io.ktor",  name = "ktor-server-hsts"                }
-ktor-serverHttpRedirect       = { group = "io.ktor",  name = "ktor-server-http-redirect"       }
-ktor-serverPartialContent     = { group = "io.ktor",  name = "ktor-server-partial-content"     }
-ktor-serverWebsockets         = { group = "io.ktor",  name = "ktor-server-websockets"          }
-ktor-serverCallLogging        = { group = "io.ktor",  name = "ktor-server-call-logging"        }
-ktor-serverCallId             = { group = "io.ktor",  name = "ktor-server-call-id"             }
+ktorServer-core               = { group = "io.ktor",  name = "ktor-server-core"                }
+ktorServer-auth               = { group = "io.ktor",  name = "ktor-server-auth"                }
+ktorServer-authJwt            = { group = "io.ktor",  name = "ktor-server-auth-jwt"            }
+ktorServer-autoHeadResponse   = { group = "io.ktor",  name = "ktor-server-auto-head-response"  }
+ktorServer-cachingHeaders     = { group = "io.ktor",  name = "ktor-server-caching-headers"     }
+ktorServer-callId             = { group = "io.ktor",  name = "ktor-server-call-id"             }
+ktorServer-callLogging        = { group = "io.ktor",  name = "ktor-server-call-logging"        }
+ktorServer-compression        = { group = "io.ktor",  name = "ktor-server-compression"         }
+ktorServer-conditionalHeaders = { group = "io.ktor",  name = "ktor-server-conditional-headers" }
+ktorServer-contentNegotiaion  = { group = "io.ktor",  name = "ktor-server-content-negotiation" }
+ktorServer-cors               = { group = "io.ktor",  name = "ktor-server-cors"                }
+ktorServer-dataConversion     = { group = "io.ktor",  name = "ktor-server-data-conversion"     }
+ktorServer-defaultHeaders     = { group = "io.ktor",  name = "ktor-server-default-headers"     }
+ktorServer-forwardedHeader    = { group = "io.ktor",  name = "ktor-server-forwarded-header"    }
+ktorServer-hsts               = { group = "io.ktor",  name = "ktor-server-hsts"                }
+ktorServer-httpRedirect       = { group = "io.ktor",  name = "ktor-server-http-redirect"       }
+#ktorServer-netty              = { group = "io.ktor",  name = "ktor-server-netty"               }
+ktorServer-cio                = { group = "io.ktor",  name = "ktor-server-cio"                 }
+ktorServer-partialContent     = { group = "io.ktor",  name = "ktor-server-partial-content"     }
+ktorServer-resources          = { group = "io.ktor",  name = "ktor-server-resources"           }
+ktorServer-sessions           = { group = "io.ktor",  name = "ktor-server-sessions"            }
+ktorServer-statusPages        = { group = "io.ktor",  name = "ktor-server-status-pages"        }
+ktorServer-websockets         = { group = "io.ktor",  name = "ktor-server-websockets"          }
 
-ktor-network                  = { group = "io.ktor",  name = "ktor-network"                    }
-ktor-networkTls               = { group = "io.ktor",  name = "ktor-network-tls"                }
+ktorServer-testHost           = { group = "io.ktor",  name = "ktor-server-test-host"           }
 
-ktor-test-clientMock          = { group = "io.ktor",  name = "ktor-client-mock"                }
-ktor-test-serverHost          = { group = "io.ktor",  name = "ktor-server-test-host"           }
+
+ktorNetwork-core              = { group = "io.ktor",  name = "ktor-network"                    }
+ktorNetwork-tls               = { group = "io.ktor",  name = "ktor-network-tls"                }
+
 
 
 ### jackson ##

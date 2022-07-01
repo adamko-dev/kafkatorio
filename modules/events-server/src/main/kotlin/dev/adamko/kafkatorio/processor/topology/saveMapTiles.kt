@@ -32,11 +32,11 @@ private const val WEB_MAP_TILE_SIZE_PX = 256
 
 
 /**
- * @param[tileDirectory] [dev.adamko.kafkatorio.processor.config.ApplicationProperties.webmapTileDir]
+ * @param[serverDataDir] [dev.adamko.kafkatorio.processor.config.ApplicationProperties.serverDataDir]
  */
 fun saveMapTiles(
   builder: StreamsBuilder,
-  tileDirectory: Path,
+  serverDataDir: Path,
 ): Topology {
 
   val subdividedMapChunkTilesDebounced: KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
@@ -50,7 +50,7 @@ fun saveMapTiles(
     )
 
   val savedChunkFilenames: KStream<ServerMapChunkId, TilePngFilename> =
-    subdividedMapChunkTilesDebounced.saveChunkAsImage(tileDirectory)
+    subdividedMapChunkTilesDebounced.saveChunkAsImage(serverDataDir)
 
   savedChunkFilenames.broadcastSavedTileUpdates()
 
@@ -95,10 +95,10 @@ private fun KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>.saveChunkA
 @Synchronized
 private fun saveTile(
   filename: TilePngFilename,
-  tileDirectory: Path,
+  serverDataDir: Path,
   img: ImmutableImage,
 ) {
-  val chunkImageFile = tileDirectory.resolve(filename.value).toFile()
+  val chunkImageFile = serverDataDir.resolve(filename.value).toFile()
   if (chunkImageFile.parentFile.mkdirs()) {
     println("created new map tile parentFile directory ${chunkImageFile.absolutePath}")
   }

@@ -2,7 +2,6 @@ package dev.adamko.kafkatorio.processor.tileserver
 
 import dev.adamko.kafkatorio.processor.config.ApplicationProperties
 import java.security.MessageDigest
-import kotlin.io.path.absolutePathString
 import org.http4k.core.Filter
 import org.http4k.core.HttpHandler
 import org.http4k.core.MemoryBody
@@ -21,15 +20,18 @@ internal class WebMapTileServer(
   appProps: ApplicationProperties
 ) {
 
-  private val tilesLoader = ResourceLoader.Directory(appProps.tileDir.toFile().canonicalPath)
+  private val tilesLoader = ResourceLoader.Directory(appProps.serverDataDir.toFile().canonicalPath)
+
 
   private val filters = listOf(
     ETagChecker(),
   ).reduce(Filter::then)
 
+
   private val routes: RoutingHttpHandler = routes(
     "/tiles" bind GET to static(tilesLoader).withFilter(filters)
   )
+
 
   fun build(): HttpHandler {
     return routes
@@ -68,6 +70,7 @@ internal class WebMapTileServer(
       }
     }
   }
+
 
   companion object {
     private fun ByteArray.md5(): String? {
