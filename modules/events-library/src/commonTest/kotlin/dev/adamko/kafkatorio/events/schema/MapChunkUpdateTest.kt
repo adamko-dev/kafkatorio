@@ -1,12 +1,12 @@
 package dev.adamko.kafkatorio.events.schema
 
+import dev.adamko.kafkatorio.library.jsonMapperKafkatorio
 import dev.adamko.kafkatorio.schema.common.EventName
 import dev.adamko.kafkatorio.schema.common.MapChunkPosition
 import dev.adamko.kafkatorio.schema.common.MapTileDictionary
 import dev.adamko.kafkatorio.schema.common.PrototypeName
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
 import dev.adamko.kafkatorio.schema.common.tick
-import dev.adamko.kafkatorio.schema.jsonMapperKafkatorio
 import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
 import dev.adamko.kafkatorio.schema.packets.MapChunkUpdate
 import dev.adamko.kafkatorio.schema.packets.MapChunkUpdateKey

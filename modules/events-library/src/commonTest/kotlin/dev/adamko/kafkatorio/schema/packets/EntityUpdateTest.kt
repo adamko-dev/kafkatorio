@@ -1,6 +1,6 @@
 package dev.adamko.kafkatorio.schema.packets
 
-import dev.adamko.kafkatorio.schema.jsonMapperKafkatorio
+import dev.adamko.kafkatorio.library.jsonMapperKafkatorio
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.serialization.decodeFromString
