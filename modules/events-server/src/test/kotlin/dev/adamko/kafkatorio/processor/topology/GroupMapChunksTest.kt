@@ -1,8 +1,8 @@
 package dev.adamko.kafkatorio.processor.topology
 
-//import dev.adamko.kafkatorio.processor.admin.TOPIC_GROUPED_MAP_CHUNKS_STATE
-//import dev.adamko.kafkatorio.processor.serdes.jsonMapper
-//import dev.adamko.kafkatorio.processor.serdes.kxsBinary
+//import dev.adamko.kafkatorio.server.processor.TOPIC_GROUPED_MAP_CHUNKS_STATE
+//import dev.adamko.kafkatorio.processor.config.getJsonMapper
+//import dev.adamko.kafkatorio.library.getKxsBinary
 //import dev.adamko.kafkatorio.schema.common.Colour
 //import dev.adamko.kafkatorio.schema.common.ColourHex
 //import dev.adamko.kafkatorio.schema.common.MapChunkPosition

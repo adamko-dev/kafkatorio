@@ -31,7 +31,7 @@ import org.w3c.fetch.RequestMode
 
 
 class FactorioMap(
-  private val tileUrlTemplate: String = """/tiles/s1/z{z}/x{x}/y{y}.png""",
+  private val tileUrlTemplate: String = """/kafkatorio/data/servers/syslog-test/map/tiles/s1/z{z}/x{x}/y{y}.png""",
 ) {
 
   val kvMap: Maps = Maps {
@@ -89,9 +89,7 @@ class FactorioMap(
       .querySelectorAll("img.leaflet-tile-loaded")
       .asList()
       .filterIsInstance<Image>()
-      .filter { img ->
-        tilePngFilename.value in img.src
-      }
+      .filter { img -> tilePngFilename.value in img.src }
       .forEach { img ->
         val imgSrc = img.src
 

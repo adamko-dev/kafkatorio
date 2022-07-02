@@ -153,7 +153,7 @@ ktorServer-defaultHeaders     = { group = "io.ktor",  name = "ktor-server-defaul
 ktorServer-forwardedHeader    = { group = "io.ktor",  name = "ktor-server-forwarded-header"    }
 ktorServer-hsts               = { group = "io.ktor",  name = "ktor-server-hsts"                }
 ktorServer-httpRedirect       = { group = "io.ktor",  name = "ktor-server-http-redirect"       }
-#ktorServer-netty              = { group = "io.ktor",  name = "ktor-server-netty"               }
+ktorServer-netty              = { group = "io.ktor",  name = "ktor-server-netty"               }
 ktorServer-cio                = { group = "io.ktor",  name = "ktor-server-cio"                 }
 ktorServer-partialContent     = { group = "io.ktor",  name = "ktor-server-partial-content"     }
 ktorServer-resources          = { group = "io.ktor",  name = "ktor-server-resources"           }

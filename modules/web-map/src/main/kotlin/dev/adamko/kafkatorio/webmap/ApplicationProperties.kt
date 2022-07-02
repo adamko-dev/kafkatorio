@@ -8,5 +8,5 @@ object Props {
     get() = window.location.href
       .replace("http://", "ws://")
       .replace("https://", "wss://") +
-        "ws/foo"
+        "kafkatorio/ws"
 }

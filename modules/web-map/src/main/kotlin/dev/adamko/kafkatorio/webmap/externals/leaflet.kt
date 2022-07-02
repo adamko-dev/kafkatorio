@@ -14,6 +14,7 @@ inline var TileLayer<TileLayer.TileLayerOptions>.tileOnLoad: TileOnLoadFn?
   }
 
 
+/** @see [tileOnLoad] */
 typealias TileOnLoadFn = (done: DoneCallback, tile: HTMLElement) -> Unit
 
 

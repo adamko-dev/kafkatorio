@@ -63,7 +63,7 @@ val typescriptEventsSchema: Configuration by configurations.creating {
 
 
 dependencies {
-  typescriptEventsSchema(projects.modules.eventsSchema)
+  typescriptEventsSchema(projects.modules.eventsLibrary)
 }
 
 

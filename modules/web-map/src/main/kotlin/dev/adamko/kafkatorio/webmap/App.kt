@@ -77,12 +77,9 @@ class App(
 
     wsService.packetsFlow
       .filterIsInstance<EventServerPacket.ChunkTileSaved>()
-      .onEach {
-        println("[packetsFlow] triggering tile refresh ${it.filename.value}")
-        gameState.map.refreshUpdatedTilePng(
-//          doc, window,
-          it.filename
-        )
+      .onEach { tileSavedEvent ->
+        println("[packetsFlow] triggering tile refresh ${tileSavedEvent.filename.value}")
+        gameState.map.refreshUpdatedTilePng(tileSavedEvent.filename)
       }.launchIn(this)
 
   }

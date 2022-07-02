@@ -1,5 +1,6 @@
 import dev.adamko.kafkatorio.task.KafkaConsumerGroupsTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 
 plugins {
@@ -22,9 +23,7 @@ dependencies {
   implementation(libs.kafka.streams)
   testImplementation(libs.kafka.streamsTestUtils)
 
-  implementation(projects.modules.eventsSchema)
-
-//  implementation("com.ionspin.kotlin:bignum:0.3.3")
+  implementation(projects.modules.eventsLibrary)
 
   implementation(libs.kotlinx.serialization.core)
   implementation(libs.kotlinx.serialization.json)
@@ -32,16 +31,11 @@ dependencies {
 
   implementation(libs.kotlinx.coroutines.core)
 
-  implementation(libs.bundles.http4k)
-  implementation(libs.http4k.format.kotlinx)
-
-
   implementation(libs.bundles.logging)
 
   implementation(libs.scrimage.core)
 
   implementation(libs.okio.core)
-
 
   //<editor-fold desc="Ktor">
   implementation(libs.ktorSerialization.kotlinxJson)
@@ -81,15 +75,7 @@ dependencies {
 
 application {
 //  mainClass.set("dev.adamko.kafkatorio.processor.EventProcessorKt")
-  mainClass.set("dev.adamko.kafkatorio.server.KafkatorioEventsServerKt")
-
-//  applicationDefaultJvmArgs += listOf(
-//    "-Dcom.sun.management.jmxremote.port=9186",
-//    "-Dcom.sun.management.jmxremote.rmi.port=9186",
-//    "-Dcom.sun.management.jmxremote.ssl=false",
-//    "-Dcom.sun.management.jmxremote.local.only=false",
-//    "-Dcom.sun.management.jmxremote.authenticate=false",
-//  )
+  mainClass.set("dev.adamko.kafkatorio.server.EventsServerKt")
 }
 
 tasks.withType<KotlinCompile>().configureEach {
@@ -111,9 +97,6 @@ val kafkaConsumersDelete by tasks.registering(KafkaConsumerGroupsTask.DeleteAll:
   group = project.name
 }
 
-//tasks.run.configure {
-//  dependsOn(kafkatorioEventsServerKafkaForceReset)
-//}
 
 idea {
   module {

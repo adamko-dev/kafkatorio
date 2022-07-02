@@ -2,8 +2,7 @@ rootProject.name = "kafkatorio"
 
 include(
   ":modules:events-mod",
-  ":modules:events-schema",
-  ":modules:events-processor",
+  ":modules:events-library",
   ":modules:events-server",
 
   ":modules:infra-factorio-client",

@@ -17,23 +17,6 @@ kvision {
 }
 
 
-rootProject.extensions.configure<NodeJsRootExtension> {
-  // https://github.com/rjaros/kvision/issues/410
-  versions.webpackCli.version = "4.10.0"
-  versions.webpackDevServer.version = "4.9.2"
-}
-
-rootProject.extensions.configure<YarnRootExtension> {
-  resolution("http-proxy-middleware", "^2.0.6")
-}
-
-//rootProject.afterEvaluate {
-//  extensions.configure<NodeJsRootExtension> {
-//    // https://github.com/rjaros/kvision/issues/410
-//    versions.webpackCli.version = "4.10.0"
-//  }
-//}
-
 afterEvaluate {
   rootProject.extensions.configure<NodeJsRootExtension> {
     // https://github.com/rjaros/kvision/issues/410
@@ -58,12 +41,12 @@ kotlin {
           open = false,
           port = 3000,
           proxy = mutableMapOf(
-            "/tiles" to mapOf(
+            "/kafkatorio/data/servers" to mapOf(
               "target" to "http://localhost:12080",
               "secure" to false,
               "changeOrigin" to true,
             ),
-            "/ws/foo" to mapOf(
+            "/kafkatorio/ws" to mapOf(
               "target" to "ws://localhost:12080",
 //              "secure" to false,
               "ws" to true,
@@ -104,11 +87,9 @@ kotlin {
 
         implementation(libs.kotlinx.coroutines.core)
 
-        implementation(projects.modules.eventsSchema)
+        implementation(projects.modules.eventsLibrary)
 
         implementation(libs.kotlinx.html)
-
-        implementation(projects.modules.eventsSchema)
 
         implementation(libs.kotlinx.nodejs)
         implementation(libs.kotlinx.html)
@@ -174,30 +155,5 @@ fun KotlinDependencyHandler.kvision(
 ////    resolution("socket.io", "^4.5.1")
 ////    resolution("http-proxy-middleware", "^3.0.0-beta.0")
 //    resolution("webpack-dev-server", "4.9.1")
-//  }
-//}
-
-
-//evaluationDependsOn(rootProject.path)
-//evaluationDependsOn(projects.modules.eventsSchema.dependencyProject.path)
-
-
-//// stop warnings when building
-//tasks.configureEach {
-//  when (name) {
-//    "productionExecutableCompileSync"          ->
-//      dependsOn(taskProvider("compileProductionExecutableKotlinJs"))
-//    "testTestDevelopmentExecutableCompileSync" ->
-//      dependsOn(taskProvider("compileTestDevelopmentExecutableKotlinJs"))
-////    "jsTestTestDevelopmentExecutableCompileSync"       ->
-////      dependsOn(taskProvider("compileTestDevelopmentExecutableKotlinFrontend"))
-////    "jsProductionExecutableCompileSync"                ->
-////      dependsOn(taskProvider("compileProductionExecutableKotlinFrontend"))
-//    "browserDevelopmentRun"                    ->
-//      dependsOn(taskProvider("browserDevelopmentWebpack"))
-//    "browserDevelopmentWebpack"                ->
-//      dependsOn(taskProvider("assemble"))
-//    "browserProductionWebpack"                 ->
-//      dependsOn(taskProvider("developmentExecutableCompileSync"))
 //  }
 //}
