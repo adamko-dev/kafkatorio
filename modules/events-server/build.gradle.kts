@@ -1,6 +1,5 @@
 import dev.adamko.kafkatorio.task.KafkaConsumerGroupsTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 
 plugins {
@@ -74,9 +73,9 @@ dependencies {
 
 
 application {
-//  mainClass.set("dev.adamko.kafkatorio.processor.EventProcessorKt")
   mainClass.set("dev.adamko.kafkatorio.server.EventsServerKt")
 }
+
 
 tasks.withType<KotlinCompile>().configureEach {
   kotlinOptions.freeCompilerArgs += listOf(
@@ -93,6 +92,7 @@ val kafkaStateDirDelete by tasks.registering(Delete::class) {
   delete(kafkaStateDir)
 }
 
+
 val kafkaConsumersDelete by tasks.registering(KafkaConsumerGroupsTask.DeleteAll::class) {
   group = project.name
 }
@@ -100,6 +100,9 @@ val kafkaConsumersDelete by tasks.registering(KafkaConsumerGroupsTask.DeleteAll:
 
 idea {
   module {
-    excludeDirs = excludeDirs + kafkaStateDir.asFile
+    excludeDirs = excludeDirs + listOf(
+      kafkaStateDir.asFile,
+      file("server-data"),
+    )
   }
 }

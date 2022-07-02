@@ -7,6 +7,8 @@ import dev.adamko.kafkatorio.gradle.typescriptAttributes
 import dev.adamko.kafkatorio.task.TypescriptToLuaTask
 import net.swiftzer.semver.SemVer
 import org.apache.tools.ant.filters.ReplaceTokens
+import org.gradle.plugins.ide.idea.model.Module as IdeaImlModule
+import org.gradle.plugins.ide.idea.model.Path as IdeaImlPath
 
 plugins {
   dev.adamko.kafkatorio.lang.node
@@ -71,8 +73,8 @@ val typescriptToLua by tasks.registering(TypescriptToLuaTask::class) {
   dependsOn(tasks.npmInstall, installEventsTsSchema, tasks.updatePackageJson)
 
   sourceFiles.set(tsSrcDir)
-//  outputDirectory.set(layout.buildDirectory.dir("typescriptToLua"))
-  outputDirectory.set(layout.projectDirectory.dir("src/main/lua"))
+
+  outputDirectory.set(layout.projectDirectory.dir("src/generated/lua"))
 }
 
 
@@ -184,38 +186,45 @@ tasks.updatePackageJson {
 tasks.assemble { dependsOn(installEventsTsSchema, tasks.updatePackageJson) }
 
 
+val typescriptSrcDir: File = file("src/main/typescript")
+val luaSrcDir: File = file("src/generated/lua")
+val resourcesDir: File = file("src/main/resources")
+val typescriptTestSrcDir: File = file("src/test/typescript")
+val generatedSrcDir: File = file("src/generated")
+
+
 idea {
   module {
     sourceDirs.plusAssign(
       listOf(
-        file("src/main/typescript"),
-        file("src/main/lua"),
+        typescriptSrcDir,
+        luaSrcDir,
       )
     )
 //    sourceDirs = sourceDirs + file("src/main/lua")
-    resourceDirs = resourceDirs + file("src/main/resources")
-    testSourceDirs = testSourceDirs + file("src/test/typescript")
+    resourceDirs = resourceDirs + resourcesDir
+    testSourceDirs = testSourceDirs + typescriptTestSrcDir
 
-    generatedSourceDirs = generatedSourceDirs + listOf(
-      file("src/main/lua")
-    )
+    generatedSourceDirs = generatedSourceDirs + generatedSrcDir
+//    excludeDirs = excludeDirs + generatedSrcDir
+
     iml {
       whenMerged {
-        require(this is org.gradle.plugins.ide.idea.model.Module)
+        require(this is IdeaImlModule)
 
         sourceDirs.plusAssign(
           listOf(
-            file("src/main/typescript"),
-            file("src/main/lua"),
+            typescriptSrcDir,
+            luaSrcDir,
           )
         )
 
         generatedSourceFolders.plusAssign(
-          org.gradle.plugins.ide.idea.model.Path(file("src/main/lua").toURI().toString())
+          IdeaImlPath(luaSrcDir.toURI().toString())
         )
-//        sourceDirs = sourceDirs + file("src/main/typescript")
-        resourceDirs = resourceDirs + file("src/main/resources")
-        testSourceDirs = testSourceDirs + file("src/test/typescript")
+        resourceDirs = resourceDirs + resourcesDir
+        testSourceDirs = testSourceDirs + typescriptTestSrcDir
+//        excludeDirs = excludeDirs + generatedSrcDir
       }
     }
   }
