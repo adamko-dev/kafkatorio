@@ -236,9 +236,8 @@ script.on_event(
                 key,
                 Type.MapChunkUpdate,
                 function(data)
-                    local ____temp_19 = true
-                    data.isDeleted = ____temp_19
-                    return ____temp_19
+                    data.isDeleted = true
+                    return true
                 end,
                 0
             )

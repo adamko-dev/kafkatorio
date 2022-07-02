@@ -1280,9 +1280,8 @@ do
         return self:entries()
     end
     function Map.prototype.entries(self)
-        local ____temp_0 = self
-        local items = ____temp_0.items
-        local nextKey = ____temp_0.nextKey
+        local items = self.items
+        local nextKey = self.nextKey
         local key = self.firstKey
         return {
             [Symbol.iterator] = function(self)
@@ -1310,9 +1309,8 @@ do
         }
     end
     function Map.prototype.values(self)
-        local ____temp_1 = self
-        local items = ____temp_1.items
-        local nextKey = ____temp_1.nextKey
+        local items = self.items
+        local nextKey = self.nextKey
         local key = self.firstKey
         return {
             [Symbol.iterator] = function(self)

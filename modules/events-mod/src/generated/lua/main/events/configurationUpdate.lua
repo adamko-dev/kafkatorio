@@ -37,7 +37,7 @@ function allMods(e)
     ))}
     return __TS__ArrayMap(
         modNames,
-        function(modName)
+        function(____, modName)
             local ____script_active_mods_modName_2 = script.active_mods[modName]
             if ____script_active_mods_modName_2 == nil then
                 local ____e_mod_changes_modName_new_version_0 = e.mod_changes[modName]

@@ -118,13 +118,12 @@ do
         end
     end
     function Manager.prototype.isEntryInstanceOf(self, entry, ____type)
-        local ____self_2 = self
-        local ____self_isDataInstanceOf_3 = self.isDataInstanceOf
+        local ____self_isDataInstanceOf_2 = self.isDataInstanceOf
         local ____entry_packet_0 = entry
         if ____entry_packet_0 ~= nil then
             ____entry_packet_0 = ____entry_packet_0.packet
         end
-        return ____self_isDataInstanceOf_3(____self_2, ____entry_packet_0, ____type)
+        return ____self_isDataInstanceOf_2(self, ____entry_packet_0, ____type)
     end
     function Manager.prototype.isDataInstanceOf(self, packet, ____type)
         return packet ~= nil and packet.type == ____type
