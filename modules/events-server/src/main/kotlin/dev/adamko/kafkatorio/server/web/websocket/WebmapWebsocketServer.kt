@@ -1,12 +1,13 @@
 package dev.adamko.kafkatorio.server.web.websocket
 
+import io.ktor.websocket.CloseReason
 import io.ktor.websocket.DefaultWebSocketSession
 import io.ktor.websocket.Frame
 import io.ktor.websocket.send
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
-import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -63,7 +64,7 @@ class WebmapWebsocketServer {
       client.incoming.receiveAsFlow().collect(messagesFromClients)
     }
 
-//    client.launch {
+    client.launch {
       while (isActive) {
         runCatching {
           client.send("elapsed ${startTime.elapsedNow()}")
@@ -71,9 +72,14 @@ class WebmapWebsocketServer {
         delay(10.seconds)
         yield()
       }
-//    }
+    }
 
-//    awaitCancellation()
+    log("client ${client.name} is up and running...")
+    val closedReason: CloseReason? = client.closeReason.await()
+
+    log("client ${client.name} closed ${closedReason ?: "successfully"}")
+
+    coroutineContext.cancel()
   }
 
 
