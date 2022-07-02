@@ -35,11 +35,12 @@ kotlin {
 
     all {
       languageSettings.apply {
-        optIn("kotlin.RequiresOptIn")
         optIn("kotlin.ExperimentalStdlibApi")
-        optIn("kotlin.time.ExperimentalTime")
-        optIn("kotlinx.serialization.ExperimentalSerializationApi")
+        optIn("kotlin.RequiresOptIn")
         optIn("kotlin.js.ExperimentalJsExport")
+        optIn("kotlin.time.ExperimentalTime")
+        optIn("kotlinx.coroutines.FlowPreview")
+        optIn("kotlinx.serialization.ExperimentalSerializationApi")
       }
     }
 
@@ -76,7 +77,6 @@ kotlin {
 
     val jvmMain by getting {
       dependencies {
-        implementation("com.github.aSemy:ts-generator:v1.2.1")
         implementation(kotlin("reflect"))
       }
     }
@@ -95,6 +95,7 @@ kotlin {
   }
 }
 
+
 val jvmJar: TaskProvider<Jar> = tasks.named<Jar>(kotlin.jvm().artifactsTaskName)
 val mainCompilation: Provider<FileCollection> =
   kotlin.jvm().compilations.named("main").map { it.runtimeDependencyFiles }
@@ -111,12 +112,15 @@ val generateTypeScript by tasks.registering(GenerateTypeScriptTask::class) {
   args(temporaryDir.canonicalPath)
 }
 
+
 val schemaTsDistributionName: Provider<String> = providers.provider {
   "${rootProject.name}-${project.name}"
 }
 
+
 val generateTypeScriptOutputFiles: Provider<FileTree> =
   generateTypeScript.map { it.outputs.files.asFileTree }
+
 
 val schemaTs by distributions.registering {
   distributionBaseName.set(schemaTsDistributionName)
@@ -125,8 +129,10 @@ val schemaTs by distributions.registering {
   }
 }
 
+
 val schemaTsZipTask: TaskProvider<Zip> = tasks.named<Zip>("${schemaTs.name}DistZip")
 val schemaTsZipTaskArchiveFile: Provider<RegularFile> = schemaTsZipTask.flatMap { it.archiveFile }
+
 
 val typeScriptModelGenerated: Configuration by configurations.creating {
   asProvider()

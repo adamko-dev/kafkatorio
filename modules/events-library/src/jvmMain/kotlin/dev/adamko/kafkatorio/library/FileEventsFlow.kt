@@ -1,4 +1,4 @@
-package dev.adamko.kafkatorio.processor.misc
+package dev.adamko.kafkatorio.library
 
 import java.io.File
 import java.nio.file.FileSystems
