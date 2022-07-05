@@ -3,7 +3,7 @@ package dev.adamko.kafkatorio.events.schema
 import dev.adamko.kafkatorio.library.jsonMapperKafkatorio
 import dev.adamko.kafkatorio.schema.common.Colour
 import dev.adamko.kafkatorio.schema.common.FactorioPrototype
-import dev.adamko.kafkatorio.schema.common.PrototypeName
+import dev.adamko.kafkatorio.schema.common.PrototypeId
 import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
 import dev.adamko.kafkatorio.schema.packets.PrototypesUpdate
 import io.kotest.core.spec.style.BehaviorSpec
@@ -11,6 +11,7 @@ import io.kotest.inspectors.forOne
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlinx.serialization.decodeFromString
+
 
 class PrototypesTest : BehaviorSpec({
   Given("Prototypes Json") {
@@ -669,7 +670,7 @@ class PrototypesTest : BehaviorSpec({
         .prototypes
         .forOne {
           it.shouldBeInstanceOf<FactorioPrototype.MapTile>()
-          it.name shouldBe PrototypeName("tutorial-grid")
+          it.protoId shouldBe PrototypeId.MapTile("tutorial-grid")
           it.order shouldBe "z[other]-c[tutorial]-a[tutorial-grid]"
           it.layer shouldBe 55u
           it.collisionMasks shouldBe listOf("ground-tile")

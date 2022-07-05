@@ -6,8 +6,10 @@ import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 
 
+@DisableCachingByDefault(because = "caching makes regenerating more difficult")
 abstract class GenerateTypeScriptTask @Inject constructor(
   private val fileOps: FileSystemOperations,
 ) : JavaExec() {

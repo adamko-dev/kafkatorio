@@ -10,7 +10,8 @@
     "types": [
       "typescript-to-lua/language-extensions",
       "lua-types/5.2",
-      "typed-factorio/runtime"
+      "typed-factorio/runtime",
+      "typed-factorio/strict-index-types"
     ],
     "plugins": [
       {
@@ -32,8 +33,7 @@
     "traceResolution": true,
     "noImplicitReturns": true,
     "noImplicitOverride": true,
-    "noFallthroughCasesInSwitch": true,
-    "skipLibCheck": true
+    "noFallthroughCasesInSwitch": true
   },
   "tstl": {
     "luaTarget": "5.2",

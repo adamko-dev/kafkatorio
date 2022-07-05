@@ -10,9 +10,7 @@ import io.ktor.http.content.EntityTagVersion
 import io.ktor.http.content.versions
 import io.ktor.resources.Resource
 import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.application
 import io.ktor.server.application.call
-import io.ktor.server.application.log
 import io.ktor.server.http.content.LastModifiedVersion
 import io.ktor.server.resources.get
 import io.ktor.server.response.respond

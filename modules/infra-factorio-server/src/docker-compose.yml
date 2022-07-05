@@ -19,7 +19,7 @@ services:
     logging:
       driver: syslog
       options:
-        syslog-address: "tcp://host.docker.internal:12092"
+        syslog-address: "tcp://host.docker.internal:12034"
         syslog-format: "rfc5424"
 
   #    environment:

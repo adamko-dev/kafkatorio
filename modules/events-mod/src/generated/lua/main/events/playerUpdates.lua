@@ -115,7 +115,10 @@ script.on_event(
                 data.ticksToRespawn = player.ticks_to_respawn or nil
                 playerOnlineInfo(player, data)
                 if e.cause ~= nil then
-                    data.diedCause = {unitNumber = e.cause.unit_number or nil, name = e.cause.name, protoType = e.cause.type}
+                    data.diedCause = {
+                        unitNumber = e.cause.unit_number or nil,
+                        protoId = Converters.prototypeId(e.cause.type, e.cause.name)
+                    }
                 end
             end
         )

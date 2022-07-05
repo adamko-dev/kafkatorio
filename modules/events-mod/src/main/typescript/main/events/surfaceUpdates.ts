@@ -13,7 +13,7 @@ export function handleSurfaceUpdate(
 
     name: surface.name,
     index: surface.index,
-    daytime: surface.daytime
+    daytime: surface.daytime,
   }
 
   PacketEmitter.emitInstantPacket(update)

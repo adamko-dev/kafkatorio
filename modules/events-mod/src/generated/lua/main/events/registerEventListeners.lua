@@ -5,12 +5,12 @@ local ____eventTypeCheck = require("main.events.eventTypeCheck")
 local isEventType = ____eventTypeCheck.isEventType
 local ____converters = require("main.events.converters")
 local Converters = ____converters.Converters
-local ____mapChunkUpdates = require("main.events.mapChunkUpdates")
-local handleChunkGeneratedEvent = ____mapChunkUpdates.handleChunkGeneratedEvent
 local ____surfaceUpdates = require("main.events.surfaceUpdates")
 local handleSurfaceUpdate = ____surfaceUpdates.handleSurfaceUpdate
 local ____EventDataCache = require("main.cache.EventDataCache")
 local EventCacheService = ____EventDataCache.default
+local ____mapChunkUpdates = require("main.events.mapChunkUpdates")
+local MapChunkUpdate = ____mapChunkUpdates.default
 script.on_event(
     defines.events.on_tick,
     function(event)
@@ -38,7 +38,7 @@ script.on_event(
                     if isEventType(event, defines.events.on_chunk_generated) then
                         local eName = Converters.eventNameString(event.name)
                         log((((("[on_tick:" .. tostring(event.tick)) .. "] dequed event ") .. eName) .. ", delay ") .. tostring(i))
-                        handleChunkGeneratedEvent(event, i)
+                        MapChunkUpdate:handleChunkGeneratedEvent(event, i)
                         i = i + 1
                     end
                 end

@@ -1,9 +1,9 @@
 import {Queue} from "../queue/queue";
 import {isEventType} from "./eventTypeCheck";
 import {Converters} from "./converters";
-import {handleChunkGeneratedEvent} from "./mapChunkUpdates";
 import {handleSurfaceUpdate} from "./surfaceUpdates";
 import EventCacheService from "../cache/EventDataCache";
+import MapChunkUpdate from "./mapChunkUpdates";
 
 
 script.on_event(
@@ -35,7 +35,7 @@ script.on_event(
               let eName = Converters.eventNameString(event.name)
 
               log(`[on_tick:${event.tick}] dequed event ${eName}, delay ${i}`)
-              handleChunkGeneratedEvent(event, i)
+              MapChunkUpdate.handleChunkGeneratedEvent(event, i)
               i += 1
             }
           }

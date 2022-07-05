@@ -4,12 +4,13 @@ import dev.adamko.kafkatorio.schema.common.Colour
 import dev.adamko.kafkatorio.schema.common.EntityIdentifiers
 import dev.adamko.kafkatorio.schema.common.EntityIdentifiersData
 import dev.adamko.kafkatorio.schema.common.EventName
+import dev.adamko.kafkatorio.schema.common.FactorioEntityData
 import dev.adamko.kafkatorio.schema.common.ForceIndex
 import dev.adamko.kafkatorio.schema.common.MapChunkPosition
 import dev.adamko.kafkatorio.schema.common.MapEntityPosition
 import dev.adamko.kafkatorio.schema.common.MapTileDictionary
 import dev.adamko.kafkatorio.schema.common.PlayerIndex
-import dev.adamko.kafkatorio.schema.common.PrototypeName
+import dev.adamko.kafkatorio.schema.common.PrototypeId
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
 import dev.adamko.kafkatorio.schema.common.Tick
 import dev.adamko.kafkatorio.schema.common.UnitNumber
@@ -23,6 +24,8 @@ import kotlinx.serialization.Serializable
 sealed class KafkatorioKeyedPacketData : KafkatorioPacketData() {
   abstract val key: KafkatorioKeyedPacketKey
   /** A list of all events that have been aggregated into this packet. */
+  // Maybe change to be Map<EventName, Tick>, where Tick is the most recent event?
+  // A complete event timeline isn't necessary. The most recent tick of an event is good enough, and requires less space.
   abstract val events: Map<EventName, List<Tick>>?
 }
 
@@ -40,8 +43,7 @@ sealed class KafkatorioKeyedPacketKey
 data class EntityUpdateKey(
   /** While normally optional, here a [unitNumber] is required for caching */
   override val unitNumber: UnitNumber,
-  override val name: String,
-  override val protoType: String,
+  override val protoId: PrototypeId,
 ) : EntityIdentifiers, KafkatorioKeyedPacketKey()
 
 
@@ -60,7 +62,6 @@ data class EntityUpdate(
   val lastUser: UInt? = null,
   val localisedDescription: String? = null,
   val localisedName: String? = null,
-  val prototype: PrototypeName? = null,
 ) : KafkatorioKeyedPacketData()
 
 
@@ -68,17 +69,18 @@ data class EntityUpdate(
 
 
 @Serializable
-@SerialName("kafkatorio.packet.keyed.MapChunkUpdateKey")
-data class MapChunkUpdateKey(
+@SerialName("kafkatorio.packet.keyed.MapChunkTileUpdateKey")
+data class MapChunkTileUpdateKey(
+//  val index: PlayerIndex, // maybe add player/robot key, to allow metrics like 'player x mined y tiles'
   val chunkPosition: MapChunkPosition,
   val surfaceIndex: SurfaceIndex,
 ) : KafkatorioKeyedPacketKey()
 
 
 @Serializable
-@SerialName("kafkatorio.packet.keyed.MapChunkUpdate")
-data class MapChunkUpdate(
-  override val key: MapChunkUpdateKey,
+@SerialName("kafkatorio.packet.keyed.MapChunkTileUpdate")
+data class MapChunkTileUpdate(
+  override val key: MapChunkTileUpdateKey,
 
   override val events: Map<EventName, List<Tick>>? = null,
 
@@ -92,6 +94,7 @@ data class MapChunkUpdate(
 
 
 /*  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  *** */
+
 
 @Serializable
 @SerialName("kafkatorio.packet.keyed.PlayerUpdateKey")
@@ -131,6 +134,34 @@ data class PlayerUpdate(
   val disconnectReason: String? = null,
   /** `true` when a player is removed (deleted) from the game */
   val isRemoved: Boolean? = null,
+) : KafkatorioKeyedPacketData()
+
+
+/*  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  ***  *** */
+
+
+@Serializable
+@SerialName("kafkatorio.packet.keyed.MapChunkEntityUpdateKey")
+data class MapChunkEntityUpdateKey(
+  val protoId: PrototypeId,
+  val surfaceIndex: SurfaceIndex,
+  val chunkPosition: MapChunkPosition,
+) : KafkatorioKeyedPacketKey()
+
+
+/**
+ * @property[distinctEntities] Distinct entities. The key is arbitrary and is only used
+ * for de-duplicating updates. It should only contain data that can be obtained from
+ * [the value][FactorioEntityData].
+ */
+@Serializable
+@SerialName("kafkatorio.packet.keyed.MapChunkEntityUpdate")
+data class MapChunkEntityUpdate(
+  override val key: MapChunkEntityUpdateKey,
+
+  override val events: Map<EventName, List<Tick>>? = null,
+
+  val distinctEntities: Map<String, FactorioEntityData>? = null,
 ) : KafkatorioKeyedPacketData()
 
 

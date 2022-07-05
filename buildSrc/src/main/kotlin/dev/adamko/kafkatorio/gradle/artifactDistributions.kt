@@ -18,11 +18,13 @@ fun Configuration.asProvider() {
   isCanBeConsumed = true
 }
 
+
 fun Configuration.asConsumer() {
   isVisible = false
   isCanBeResolved = true
   isCanBeConsumed = false
 }
+
 
 fun Configuration.factorioModAttributes(objects: ObjectFactory): Configuration =
   attributes {
@@ -31,6 +33,7 @@ fun Configuration.factorioModAttributes(objects: ObjectFactory): Configuration =
     attribute(LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.CLASSES_AND_RESOURCES))
     attribute(BUNDLING_ATTRIBUTE, objects.named(Bundling.EMBEDDED))
   }
+
 
 fun Configuration.typescriptAttributes(objects: ObjectFactory): Configuration =
   attributes {

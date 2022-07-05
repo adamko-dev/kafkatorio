@@ -8,13 +8,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 @SerialName("kafkatorio.prototype.FactorioPrototype")
 sealed interface FactorioPrototype {
-  val name: PrototypeName
+  val protoId: PrototypeId
   val mapColour: Colour
+
 
   @SerialName("kafkatorio.prototype.MapTile")
   @Serializable
   data class MapTile(
-    override val name: PrototypeName,
+    override val protoId: PrototypeId,
     override val mapColour: Colour,
 
     val layer: UInt,
@@ -29,7 +30,7 @@ sealed interface FactorioPrototype {
   @SerialName("kafkatorio.prototype.Entity")
   @Serializable
   data class Entity(
-    override val name: PrototypeName,
+    override val protoId: PrototypeId,
     override val mapColour: Colour,
 
     val protoType: String,

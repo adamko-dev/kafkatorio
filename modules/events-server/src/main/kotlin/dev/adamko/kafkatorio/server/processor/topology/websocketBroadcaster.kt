@@ -1,13 +1,14 @@
-package dev.adamko.kafkatorio.server.web.websocket
+package dev.adamko.kafkatorio.server.processor.topology
 
 import dev.adamko.kafkatorio.library.jsonMapperKafkatorio
-import dev.adamko.kafkatorio.server.processor.TOPIC_BROADCAST_TO_WEBSOCKET
-import dev.adamko.kafkatorio.server.processor.topicName
 import dev.adamko.kafkatorio.schema.common.FactorioServerId
 import dev.adamko.kafkatorio.schema.packets.EventServerPacket
 import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
 import dev.adamko.kafkatorio.schema.packets.PlayerUpdate
 import dev.adamko.kafkatorio.schema.packets.SurfaceUpdate
+import dev.adamko.kafkatorio.server.processor.TOPIC_BROADCAST_TO_WEBSOCKET
+import dev.adamko.kafkatorio.server.processor.topicName
+import dev.adamko.kafkatorio.server.web.websocket.WebmapWebsocketServer
 import dev.adamko.kotka.extensions.consumedAs
 import dev.adamko.kotka.extensions.producedAs
 import dev.adamko.kotka.extensions.stream

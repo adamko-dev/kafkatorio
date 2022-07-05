@@ -5,7 +5,8 @@ import dev.adamko.kafkatorio.schema.packets.ConsoleChatUpdate
 import dev.adamko.kafkatorio.schema.packets.ConsoleCommandUpdate
 import dev.adamko.kafkatorio.schema.packets.EntityUpdate
 import dev.adamko.kafkatorio.schema.packets.KafkatorioPacketData
-import dev.adamko.kafkatorio.schema.packets.MapChunkUpdate
+import dev.adamko.kafkatorio.schema.packets.MapChunkEntityUpdate
+import dev.adamko.kafkatorio.schema.packets.MapChunkTileUpdate
 import dev.adamko.kafkatorio.schema.packets.PlayerUpdate
 import dev.adamko.kafkatorio.schema.packets.PrototypesUpdate
 import dev.adamko.kafkatorio.schema.packets.SurfaceUpdate
@@ -54,9 +55,10 @@ val KafkatorioPacketData.topicName: String
     is PrototypesUpdate           -> packetTopicNames.getValue(PrototypesUpdate::class)
     is SurfaceUpdate              -> packetTopicNames.getValue(SurfaceUpdate::class)
     is EntityUpdate               -> packetTopicNames.getValue(EntityUpdate::class)
-    is MapChunkUpdate             -> packetTopicNames.getValue(MapChunkUpdate::class)
+    is MapChunkTileUpdate         -> packetTopicNames.getValue(MapChunkTileUpdate::class)
     is PlayerUpdate               -> packetTopicNames.getValue(PlayerUpdate::class)
     is KafkatorioPacketData.Error -> packetTopicNames.getValue(KafkatorioPacketData.Error::class)
+    is MapChunkEntityUpdate       -> packetTopicNames.getValue(MapChunkEntityUpdate::class)
   }
 
 
@@ -67,12 +69,14 @@ private val packetTopicNames: Map<KClass<out KafkatorioPacketData>, String> = ma
   PrototypesUpdate::class to "prototypes",
   SurfaceUpdate::class to "surface",
   EntityUpdate::class to "entity",
-  MapChunkUpdate::class to "map-chunk",
+  MapChunkTileUpdate::class to "map-chunk-tile",
   PlayerUpdate::class to "player",
+  MapChunkEntityUpdate::class to "map-chunk-entity",
   KafkatorioPacketData.Error::class to "error",
 ).mapValues { (_, v) ->
   "$DOMAIN.packet.$v"
 }
+
 
 val KClass<out KafkatorioPacketData>.topicName: String
   get() = packetTopicNames.getValue(this)

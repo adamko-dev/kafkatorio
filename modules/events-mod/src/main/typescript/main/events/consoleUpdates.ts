@@ -23,7 +23,7 @@ script.on_event(
       const update: KafkatorioPacketData.ConsoleCommandUpdate = {
         type: Type.ConsoleCommandUpdate,
 
-        authorPlayerIndex: event.player_index ?? null,
+        authorPlayerIndex: event.player_index  ?? null,
         command: event.command,
         parameters: event.parameters,
       }

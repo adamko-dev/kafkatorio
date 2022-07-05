@@ -26,11 +26,11 @@ function prototypeUpdates(): FactorioPrototype[] {
 
 function getMapTilePrototypes(): FactorioPrototype.MapTile[] {
   let tiles: FactorioPrototype.MapTile[] = []
-  for (let [, tile] of game.tile_prototypes) {
+  for (const [, tile] of game.tile_prototypes) {
     tiles.push({
       type: FactorioPrototype.Type.MapTile,
 
-      name: tile.name,
+      protoId: Converters.prototypeId("tile", tile.name),
       order: tile.order,
       layer: tile.layer,
       collisionMasks: Converters.convertCollisionMaskToNames(tile.collision_mask),
@@ -44,7 +44,7 @@ function getMapTilePrototypes(): FactorioPrototype.MapTile[] {
 
 // function getEntityPrototypes(): FactorioPrototype.MapTile[] {
 //   let tiles: FactorioPrototype.MapTile[] = []
-//   for (let [, tile] of game.tile_prototypes) {
+//   for (const [, tile] of game.tile_prototypes) {
 //     tiles.push({
 //       type: FactorioPrototype.Type.MapTile,
 //

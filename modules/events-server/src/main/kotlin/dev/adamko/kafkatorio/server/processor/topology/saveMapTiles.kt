@@ -3,15 +3,15 @@ package dev.adamko.kafkatorio.server.processor.topology
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.ScaleMethod
 import com.sksamuel.scrimage.nio.PngWriter
-import dev.adamko.kafkatorio.server.processor.TOPIC_BROADCAST_TO_WEBSOCKET
-import dev.adamko.kafkatorio.server.processor.TOPIC_MAP_CHUNK_COLOURED_STATE
-import dev.adamko.kafkatorio.server.config.jsonMapper
 import dev.adamko.kafkatorio.library.kxsBinary
 import dev.adamko.kafkatorio.schema.common.ColourHex
 import dev.adamko.kafkatorio.schema.common.FactorioServerId
 import dev.adamko.kafkatorio.schema.common.ServerMapChunkId
 import dev.adamko.kafkatorio.schema.common.TilePngFilename
 import dev.adamko.kafkatorio.schema.packets.EventServerPacket
+import dev.adamko.kafkatorio.server.config.jsonMapper
+import dev.adamko.kafkatorio.server.processor.TOPIC_BROADCAST_TO_WEBSOCKET
+import dev.adamko.kafkatorio.server.processor.TOPIC_MAP_CHUNK_COLOURED_STATE
 import dev.adamko.kotka.extensions.consumedAs
 import dev.adamko.kotka.extensions.producedAs
 import dev.adamko.kotka.extensions.streams.map
@@ -32,7 +32,7 @@ private const val WEB_MAP_TILE_SIZE_PX = 256
 
 
 /**
- * @param[serverDataDir] [dev.adamko.kafkatorio.processor.config.ApplicationProperties.serverDataDir]
+ * @param[serverDataDir] [dev.adamko.kafkatorio.server.config.ApplicationProperties.serverDataDir]
  */
 fun saveMapTiles(
   builder: StreamsBuilder,

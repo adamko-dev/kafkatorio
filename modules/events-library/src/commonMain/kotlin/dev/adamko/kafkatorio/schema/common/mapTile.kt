@@ -12,16 +12,16 @@ const val MAP_CHUNK_SIZE = 32
 data class MapTile(
   val x: Int,
   val y: Int,
-  val proto: PrototypeName,
+  val protoId: PrototypeId,
 )
 
 
 /**
  * 2D map of x/y tile positions and prototype-name, optimised for JSON size.
  *
- * [protos] is a one-to-one map between a [PrototypeName] and [PrototypeKey].
+ * [protos] is a one-to-one map between a prototype[PrototypeId] and [PrototypeKey].
  *
- * [PrototypeKey] is an arbitrary integer value, which maps to one [PrototypeName] only for a
+ * [PrototypeKey] is an arbitrary integer value, which maps to one [PrototypeId] only for a
  * specific instance of [MapTileDictionary].
  *
  * Each X/Y coordinate in [tilesXY] maps to a [PrototypeKey].
@@ -30,9 +30,10 @@ data class MapTile(
 data class MapTileDictionary(
   /** Map an X,Y coordinate a prototype name */
   val tilesXY: Map<String, Map<String, PrototypeKey>>,
-  val protos: Map<PrototypeName, PrototypeKey>,
+  val protos: Map<PrototypeId, PrototypeKey>,
 ) {
-  private val protosIndexToName: Map<PrototypeKey, PrototypeName> by lazy {
+
+  private val protosIndexToId: Map<PrototypeKey, PrototypeId> by lazy {
     protos.entries.associate { (name, key) -> key to name }
   }
 
@@ -41,11 +42,11 @@ data class MapTileDictionary(
       row.forEach { (yString, protoIndex) ->
         val x = xString.toIntOrNull()
         val y = yString.toIntOrNull()
-        val protoName = protosIndexToName[protoIndex]
+        val protoName = protosIndexToId[protoIndex]
         if (x != null && y != null && protoName != null) {
           add(MapTile(x, y, protoName))
         } else if (protoName == null) {
-          println("warning: no prototype name found for index:$protoIndex. $protosIndexToName")
+          println("warning: no prototype name found for index:$protoIndex. $protosIndexToId")
         }
       }
     }

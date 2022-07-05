@@ -22,8 +22,8 @@ import org.apache.kafka.streams.kstream.KTable
 @JvmInline
 @Serializable
 value class TileProtoHashCode private constructor(val code: Int) {
-  constructor(tile: MapTile) : this(tile.proto.hashCode())
-  constructor(tile: FactorioPrototype.MapTile) : this(tile.name.hashCode())
+  constructor(tile: MapTile) : this(tile.protoId.hashCode())
+  constructor(tile: FactorioPrototype.MapTile) : this(tile.protoId.hashCode())
 }
 
 

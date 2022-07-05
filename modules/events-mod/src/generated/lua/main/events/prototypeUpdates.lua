@@ -22,7 +22,7 @@ function getMapTilePrototypes()
     for ____, tile in pairs(game.tile_prototypes) do
         tiles[#tiles + 1] = {
             type = FactorioPrototype.Type.MapTile,
-            name = tile.name,
+            protoId = Converters.prototypeId("tile", tile.name),
             order = tile.order,
             layer = tile.layer,
             collisionMasks = Converters.convertCollisionMaskToNames(tile.collision_mask),

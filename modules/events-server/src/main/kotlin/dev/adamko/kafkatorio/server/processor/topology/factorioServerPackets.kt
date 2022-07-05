@@ -1,12 +1,12 @@
 package dev.adamko.kafkatorio.server.processor.topology
 
-import dev.adamko.kafkatorio.server.processor.TOPIC_SRC_SERVER_LOG
-import dev.adamko.kafkatorio.server.processor.topicName
-import dev.adamko.kafkatorio.server.config.jsonMapper
 import dev.adamko.kafkatorio.schema.common.FactorioServerId
 import dev.adamko.kafkatorio.schema.common.Tick
 import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
 import dev.adamko.kafkatorio.schema.packets.KafkatorioPacketData
+import dev.adamko.kafkatorio.server.config.jsonMapper
+import dev.adamko.kafkatorio.server.processor.TOPIC_SRC_SERVER_LOG
+import dev.adamko.kafkatorio.server.processor.topicName
 import dev.adamko.kotka.extensions.component1
 import dev.adamko.kotka.extensions.component2
 import dev.adamko.kotka.extensions.consumedAs
@@ -35,7 +35,7 @@ fun factorioServerPacketStream(
     val packet = runCatching {
       jsonMapper.decodeFromString<KafkatorioPacket>(value)
     }.getOrElse { e ->
-     KafkatorioPacket(
+      KafkatorioPacket(
         modVersion = "unknown",
         tick = Tick(0u),
         data = KafkatorioPacketData.Error(

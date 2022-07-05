@@ -1,7 +1,7 @@
 package dev.adamko.kafkatorio.server.processor.admin
 
-import dev.adamko.kafkatorio.server.processor.allTopics
 import dev.adamko.kafkatorio.server.config.ApplicationProperties
+import dev.adamko.kafkatorio.server.processor.allTopics
 import java.util.concurrent.TimeUnit
 import mu.KotlinLogging
 import org.apache.kafka.clients.admin.Admin

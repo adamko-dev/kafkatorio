@@ -1,6 +1,6 @@
 import {KafkatorioPacketData} from "../generated/kafkatorio-schema";
 
-export type EventName = keyof typeof defines.events
+export type DefinedEventName = keyof typeof defines.events
 
 
 /** Get all keys of `TYPE` that are not nullable. */

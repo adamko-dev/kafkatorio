@@ -1,7 +1,7 @@
 import {initGlobal} from "./main/global-init";
 import {emitPrototypes} from "./main/events/prototypeUpdates";
 
-require("./main/events/registerHandlers")
+require("./main/events/registerEventListeners")
 require("./main/events/mapChunkUpdates")
 require("./main/events/playerUpdates")
 require("./main/events/entityUpdates")

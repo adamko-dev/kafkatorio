@@ -5,6 +5,7 @@ import kotlin.math.roundToInt
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+
 /**
  * Red, green, blue and alpha values, all in range `[0, 1]` or all in range `[0, 255]` if any
  * value is > 1.

@@ -1,11 +1,8 @@
 import {Converters} from "./converters";
 import EventUpdatesManager from "../cache/EventDataCache";
-import {
-  KafkatorioPacketData,
-  PlayerUpdateKey
-} from "../../generated/kafkatorio-schema";
-import Type = KafkatorioPacketData.Type;
+import {ForceIndex, KafkatorioPacketData, PlayerUpdateKey} from "../../generated/kafkatorio-schema";
 import packetEmitter from "../PacketEmitter";
+import Type = KafkatorioPacketData.Type;
 
 
 type PlayerUpdater = (player: LuaPlayer, data: KafkatorioPacketData.PlayerUpdate) => void
@@ -36,7 +33,7 @@ function playerUpdateThrottle(
   const eventName = Converters.eventNameString(event.name)
 
   EventUpdatesManager.throttle<KafkatorioPacketData.PlayerUpdate>(
-      {index: playerIndex},
+      {index: playerIndex },
       Type.PlayerUpdate,
       data => {
         const player = game.players[playerIndex]
@@ -88,7 +85,7 @@ script.on_event(
             data.characterUnitNumber = player.character?.unit_number ?? null
             data.chatColour = Converters.mapColour(player.chat_color)
             data.colour = Converters.mapColour(player.color)
-            data.forceIndex = player.force.index
+            data.forceIndex = player.force.index as ForceIndex
             data.name = player.name
             data.isShowOnMap = player.show_on_map
             data.isSpectator = player.spectator
@@ -139,8 +136,7 @@ script.on_event(
             if (e.cause != undefined) {
               data.diedCause = {
                 unitNumber: e.cause.unit_number ?? null,
-                name: e.cause.name,
-                protoType: e.cause.type
+                protoId: Converters.prototypeId(e.cause.type, e.cause.name),
               }
             }
           }
@@ -189,7 +185,7 @@ script.on_event(
       log(`on_pre_player_left_game ${event.tick} ${event.name}`)
 
       const playerUpdateKey: PlayerUpdateKey = {
-        index: event.player_index
+        index: event.player_index ,
       }
 
       const playerUpdate: KafkatorioPacketData.PlayerUpdate = {

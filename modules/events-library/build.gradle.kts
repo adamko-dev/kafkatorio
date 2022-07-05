@@ -1,6 +1,9 @@
 import dev.adamko.kafkatorio.gradle.asProvider
 import dev.adamko.kafkatorio.gradle.typescriptAttributes
 import dev.adamko.kafkatorio.task.GenerateTypeScriptTask
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
 plugins {
@@ -36,6 +39,7 @@ kotlin {
     all {
       languageSettings.apply {
         optIn("kotlin.ExperimentalStdlibApi")
+        optIn("kotlin.ExperimentalUnsignedTypes")
         optIn("kotlin.RequiresOptIn")
         optIn("kotlin.js.ExperimentalJsExport")
         optIn("kotlin.time.ExperimentalTime")
@@ -51,7 +55,7 @@ kotlin {
         implementation(project.dependencies.platform(libs.kotlinx.serialization.bom))
         implementation(libs.kotlinx.serialization.core)
         implementation(libs.kotlinx.serialization.json)
-        api("dev.adamko.kxstsgen:kxs-ts-gen-core:0.1.3")
+        api(libs.kxs.kxsTsGen)
 
         implementation(dependencies.platform(libs.okio.bom))
         implementation(libs.okio.core)
@@ -96,16 +100,34 @@ kotlin {
 }
 
 
+val kotlinJvmMainCompilation: NamedDomainObjectProvider<KotlinJvmCompilation> =
+  kotlin.jvm().compilations.named(KotlinCompilation.MAIN_COMPILATION_NAME)
+
+
 val jvmJar: TaskProvider<Jar> = tasks.named<Jar>(kotlin.jvm().artifactsTaskName)
-val mainCompilation: Provider<FileCollection> =
-  kotlin.jvm().compilations.named("main").map { it.runtimeDependencyFiles }
+
+val kotlinMainRuntimeDependencies: Provider<FileCollection> =
+  kotlinJvmMainCompilation.map { it.runtimeDependencyFiles }
+
+val kotlinMainCompileDependencies: Provider<FileCollection> =
+  kotlinJvmMainCompilation.map { it.compileDependencyFiles }
+
+val kotlinMainCompileTask: Provider<KotlinCompile> =
+  kotlinJvmMainCompilation.map { it.compileKotlinTask }
 
 
 val generateTypeScript by tasks.registering(GenerateTypeScriptTask::class) {
   dependsOn(jvmJar)
+//  dependsOn(kotlinMainCompileTask)
+
+//  inputs.files(jvmJar.map { it.outputs.files })
+//  inputs.files(kotlinMainCompileTask.map { it.javaSources })
+
   classpath(
     jvmJar,
-    mainCompilation,
+    kotlinMainRuntimeDependencies,
+//    kotlinMainCompileTask.map { it.libraries }
+//    kotlinMainDependencies,
   )
   output.set(layout.buildDirectory.dir("generated/typescript"))
   mainClass.set("dev.adamko.kafkatorio.events.schema.Kt2ts2Kt")
@@ -122,16 +144,26 @@ val generateTypeScriptOutputFiles: Provider<FileTree> =
   generateTypeScript.map { it.outputs.files.asFileTree }
 
 
-val schemaTs by distributions.registering {
-  distributionBaseName.set(schemaTsDistributionName)
-  contents {
-    from(generateTypeScriptOutputFiles)
-  }
+//val schemaTs by distributions.registering {
+//  distributionBaseName.set(schemaTsDistributionName)
+//  contents {
+//    from(generateTypeScriptOutputFiles)
+//  }
+//}
+
+
+//val schemaTsZipTask: TaskProvider<Zip> = tasks.named<Zip>("${schemaTs.name}DistZip")
+//val schemaTsZipTaskArchiveFile: Provider<RegularFile> = schemaTsZipTask.flatMap { it.archiveFile }
+
+
+val schemaTsZip by tasks.registering(Zip::class) {
+  group = "kt2ts"
+
+  archiveBaseName.set("schema-ts")
+  from(generateTypeScriptOutputFiles)
+  destinationDirectory.set(layout.buildDirectory.dir("distributions/kt2ts"))
 }
-
-
-val schemaTsZipTask: TaskProvider<Zip> = tasks.named<Zip>("${schemaTs.name}DistZip")
-val schemaTsZipTaskArchiveFile: Provider<RegularFile> = schemaTsZipTask.flatMap { it.archiveFile }
+val schemaTsZipTaskArchiveFile: Provider<RegularFile> = schemaTsZip.flatMap { it.archiveFile }
 
 
 val typeScriptModelGenerated: Configuration by configurations.creating {
@@ -139,4 +171,5 @@ val typeScriptModelGenerated: Configuration by configurations.creating {
   typescriptAttributes(objects)
 
   outgoing.artifact(schemaTsZipTaskArchiveFile)
+//  outgoing.artifact(schemaTsZipTaskArchiveFile)
 }

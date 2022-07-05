@@ -14,7 +14,8 @@ export type KafkatorioPacketData =
   | KafkatorioPacketData.ConsoleCommandUpdate
   | KafkatorioPacketData.EntityUpdate
   | KafkatorioPacketData.Error
-  | KafkatorioPacketData.MapChunkUpdate
+  | KafkatorioPacketData.MapChunkEntityUpdate
+  | KafkatorioPacketData.MapChunkTileUpdate
   | KafkatorioPacketData.PlayerUpdate
   | KafkatorioPacketData.PrototypesUpdate
   | KafkatorioPacketData.SurfaceUpdate;
@@ -27,7 +28,8 @@ export namespace KafkatorioPacketData {
     PrototypesUpdate = "kafkatorio.packet.instant.PrototypesUpdate",
     SurfaceUpdate = "kafkatorio.packet.instant.SurfaceUpdate",
     EntityUpdate = "kafkatorio.packet.keyed.EntityUpdate",
-    MapChunkUpdate = "kafkatorio.packet.keyed.MapChunkUpdate",
+    MapChunkEntityUpdate = "kafkatorio.packet.keyed.MapChunkEntityUpdate",
+    MapChunkTileUpdate = "kafkatorio.packet.keyed.MapChunkTileUpdate",
     PlayerUpdate = "kafkatorio.packet.keyed.PlayerUpdate",
     Error = "kafkatorio.packet.KafkatorioPacketData.Error",
   }
@@ -77,12 +79,18 @@ export namespace KafkatorioPacketData {
     lastUser?: UInt | null;
     localisedDescription?: string | null;
     localisedName?: string | null;
-    prototype?: PrototypeName | null;
   }
   
-  export interface MapChunkUpdate {
-    type: KafkatorioPacketData.Type.MapChunkUpdate;
-    key: MapChunkUpdateKey;
+  export interface MapChunkEntityUpdate {
+    type: KafkatorioPacketData.Type.MapChunkEntityUpdate;
+    key: MapChunkEntityUpdateKey;
+    events?: { [key: EventName]: Tick[] } | null;
+    distinctEntities?: { [key: string]: FactorioEntityData } | null;
+  }
+  
+  export interface MapChunkTileUpdate {
+    type: KafkatorioPacketData.Type.MapChunkTileUpdate;
+    key: MapChunkTileUpdateKey;
     events?: { [key: EventName]: Tick[] } | null;
     player?: PlayerIndex | null;
     robot?: EntityIdentifiersData | null;
@@ -132,16 +140,11 @@ export interface ConfigurationUpdateGameData {
   newVersion?: string | null;
 }
 
-export type PlayerIndex = UInt;
-
-export type SurfaceIndex = UInt;
-
 export type Double = double;
 
 export interface EntityUpdateKey {
   unitNumber: UnitNumber;
-  name: string;
-  protoType: string;
+  protoId: PrototypeId;
 }
 
 export type MapEntityPosition = [
@@ -153,31 +156,32 @@ export type UByte = uint8;
 
 export type Float = float;
 
-export type PrototypeName = string;
+export interface MapChunkEntityUpdateKey {
+  protoId: PrototypeId;
+  surfaceIndex: SurfaceIndex;
+  chunkPosition: MapChunkPosition;
+}
 
-export interface MapChunkUpdateKey {
+export interface MapChunkTileUpdateKey {
   chunkPosition: MapChunkPosition;
   surfaceIndex: SurfaceIndex;
 }
 
 export interface EntityIdentifiersData {
   unitNumber?: UnitNumber | null;
-  name: string;
-  protoType: string;
+  protoId: PrototypeId;
 }
 
-export type ForceIndex = UInt;
+export type ForceIndex = UInt & { __ForceIndex__: void };
 
 export interface MapTileDictionary {
   tilesXY: { [key: string]: { [key: string]: PrototypeKey } };
-  protos: { [key: PrototypeName]: PrototypeKey };
+  protos: { [key: PrototypeId]: PrototypeKey };
 }
 
 export interface PlayerUpdateKey {
   index: PlayerIndex;
 }
-
-export type UnitNumber = UInt;
 
 export type Colour = [
   red: Float,
@@ -206,7 +210,7 @@ export namespace FactorioPrototype {
   
   export interface Entity {
     type: FactorioPrototype.Type.Entity;
-    name: PrototypeName;
+    protoId: PrototypeId;
     mapColour: Colour;
     protoType: string;
     objectName: string;
@@ -220,7 +224,7 @@ export namespace FactorioPrototype {
   
   export interface MapTile {
     type: FactorioPrototype.Type.MapTile;
-    name: PrototypeName;
+    protoId: PrototypeId;
     mapColour: Colour;
     layer: UInt;
     collisionMasks: List;
@@ -229,7 +233,9 @@ export namespace FactorioPrototype {
   }
 }
 
-export type EventName = string;
+export type PrototypeId = string & { __PrototypeId__: void };
+
+export type EventName = string & { __EventName__: void };
 
 export type Byte = int8;
 
@@ -238,22 +244,114 @@ export type MapChunkPosition = [
   y: Int,
 ];
 
+export type FactorioEntityData =
+  | FactorioEntityData.Resource
+  | FactorioEntityData.Standard;
+
+export namespace FactorioEntityData {
+  export enum Type {
+    Resource = "kafkatorio.entity.FactorioEntityData.Resource",
+    Standard = "kafkatorio.entity.FactorioEntityData.Standard",
+  }
+  
+  export interface Resource {
+    type: FactorioEntityData.Type.Resource;
+    protoId: PrototypeId;
+    status?: EntityStatus | null;
+    position: MapEntityPosition;
+    amount: UInt;
+    initialAmount?: UInt | null;
+  }
+  
+  export interface Standard {
+    type: FactorioEntityData.Type.Standard;
+    protoId: PrototypeId;
+    status?: EntityStatus | null;
+    position: MapEntityPosition;
+    graphicsVariation?: UByte | null;
+    health?: Float | null;
+    isActive?: boolean | null;
+    isRotatable?: boolean | null;
+    lastUser?: UInt | null;
+    localisedDescription?: string | null;
+    localisedName?: string | null;
+  }
+}
+
 export interface MiningProperties {
   canBeMined: boolean;
   products: MinedProduct[] | null;
 }
 
-export type List = any;
+export type List = any & { __List__: void };
 
-export type PrototypeKey = Int;
-
-export interface MinedProduct {
-  type: MinedProductType;
-  name: PrototypeName;
-  amount: Double | null;
+export enum EntityStatus {
+  CANT_DIVIDE_SEGMENTS = "CANT_DIVIDE_SEGMENTS",
+  CHARGING = "CHARGING",
+  CLOSED_BY_CIRCUIT_NETWORK = "CLOSED_BY_CIRCUIT_NETWORK",
+  DISABLED = "DISABLED",
+  DISABLED_BY_CONTROL_BEHAVIOR = "DISABLED_BY_CONTROL_BEHAVIOR",
+  DISABLED_BY_SCRIPT = "DISABLED_BY_SCRIPT",
+  DISCHARGING = "DISCHARGING",
+  FLUID_INGREDIENT_SHORTAGE = "FLUID_INGREDIENT_SHORTAGE",
+  FULLY_CHARGED = "FULLY_CHARGED",
+  FULL_OUTPUT = "FULL_OUTPUT",
+  ITEM_INGREDIENT_SHORTAGE = "ITEM_INGREDIENT_SHORTAGE",
+  LAUNCHING_ROCKET = "LAUNCHING_ROCKET",
+  LOW_INPUT_FLUID = "LOW_INPUT_FLUID",
+  LOW_POWER = "LOW_POWER",
+  LOW_TEMPERATURE = "LOW_TEMPERATURE",
+  MARKED_FOR_DECONSTRUCTION = "MARKED_FOR_DECONSTRUCTION",
+  MISSING_REQUIRED_FLUID = "MISSING_REQUIRED_FLUID",
+  MISSING_SCIENCE_PACKS = "MISSING_SCIENCE_PACKS",
+  NETWORKS_CONNECTED = "NETWORKS_CONNECTED",
+  NETWORKS_DISCONNECTED = "NETWORKS_DISCONNECTED",
+  NORMAL = "NORMAL",
+  NOT_CONNECTED_TO_RAIL = "NOT_CONNECTED_TO_RAIL",
+  NOT_PLUGGED_IN_ELECTRIC_NETWORK = "NOT_PLUGGED_IN_ELECTRIC_NETWORK",
+  NO_AMMO = "NO_AMMO",
+  NO_FUEL = "NO_FUEL",
+  NO_INGREDIENTS = "NO_INGREDIENTS",
+  NO_INPUT_FLUID = "NO_INPUT_FLUID",
+  NO_MINABLE_RESOURCES = "NO_MINABLE_RESOURCES",
+  NO_MODULES_TO_TRANSMIT = "NO_MODULES_TO_TRANSMIT",
+  NO_POWER = "NO_POWER",
+  NO_RECIPE = "NO_RECIPE",
+  NO_RESEARCH_IN_PROGRESS = "NO_RESEARCH_IN_PROGRESS",
+  OPENED_BY_CIRCUIT_NETWORK = "OPENED_BY_CIRCUIT_NETWORK",
+  OUT_OF_LOGISTIC_NETWORK = "OUT_OF_LOGISTIC_NETWORK",
+  PREPARING_ROCKET_FOR_LAUNCH = "PREPARING_ROCKET_FOR_LAUNCH",
+  RECHARGING_AFTER_POWER_OUTAGE = "RECHARGING_AFTER_POWER_OUTAGE",
+  TURNED_OFF_DURING_DAYTIME = "TURNED_OFF_DURING_DAYTIME",
+  WAITING_FOR_SOURCE_ITEMS = "WAITING_FOR_SOURCE_ITEMS",
+  WAITING_FOR_SPACE_IN_DESTINATION = "WAITING_FOR_SPACE_IN_DESTINATION",
+  WAITING_FOR_TARGET_TO_BE_BUILT = "WAITING_FOR_TARGET_TO_BE_BUILT",
+  WAITING_FOR_TRAIN = "WAITING_FOR_TRAIN",
+  WAITING_TO_LAUNCH_ROCKET = "WAITING_TO_LAUNCH_ROCKET",
+  WORKING = "WORKING",
 }
 
-export enum MinedProductType {
-  item = "item",
-  fluid = "fluid",
+export type PrototypeKey = Int & { __PrototypeKey__: void };
+
+export type MinedProduct =
+  | MinedProduct.MinedProductFluid
+  | MinedProduct.MinedProductItem;
+
+export namespace MinedProduct {
+  export enum Type {
+    MinedProductFluid = "kafkatorio.resource.MinedProduct.MinedProductFluid",
+    MinedProductItem = "kafkatorio.resource.MinedProduct.MinedProductItem",
+  }
+  
+  export interface MinedProductFluid {
+    type: MinedProduct.Type.MinedProductFluid;
+    amount?: Double | null;
+    resultProtoId: PrototypeId;
+  }
+  
+  export interface MinedProductItem {
+    type: MinedProduct.Type.MinedProductItem;
+    amount?: Double | null;
+    resultProtoId: PrototypeId;
+  }
 }

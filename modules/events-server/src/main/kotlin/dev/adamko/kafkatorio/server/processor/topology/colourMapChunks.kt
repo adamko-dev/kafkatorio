@@ -1,8 +1,5 @@
 package dev.adamko.kafkatorio.server.processor.topology
 
-import dev.adamko.kafkatorio.server.processor.TOPIC_MAP_CHUNK_COLOURED_032_STATE
-import dev.adamko.kafkatorio.server.processor.TOPIC_MAP_CHUNK_COLOURED_STATE
-import dev.adamko.kafkatorio.server.processor.DebounceProcessor.Companion.addDebounceProcessor
 import dev.adamko.kafkatorio.library.kxsBinary
 import dev.adamko.kafkatorio.schema.common.ChunkSize
 import dev.adamko.kafkatorio.schema.common.ColourHex
@@ -10,8 +7,11 @@ import dev.adamko.kafkatorio.schema.common.FactorioServerId
 import dev.adamko.kafkatorio.schema.common.ServerMapChunkId
 import dev.adamko.kafkatorio.schema.common.leftTopTile
 import dev.adamko.kafkatorio.schema.common.toMapChunkPosition
-import dev.adamko.kafkatorio.schema.packets.MapChunkUpdate
+import dev.adamko.kafkatorio.schema.packets.MapChunkTileUpdate
 import dev.adamko.kafkatorio.schema.packets.PrototypesUpdate
+import dev.adamko.kafkatorio.server.processor.DebounceProcessor.Companion.addDebounceProcessor
+import dev.adamko.kafkatorio.server.processor.TOPIC_MAP_CHUNK_COLOURED_032_STATE
+import dev.adamko.kafkatorio.server.processor.TOPIC_MAP_CHUNK_COLOURED_STATE
 import dev.adamko.kotka.extensions.consumedAs
 import dev.adamko.kotka.extensions.groupedAs
 import dev.adamko.kotka.extensions.materializedAs
@@ -39,10 +39,10 @@ import org.apache.kafka.streams.kstream.KTable
 private const val pid: String = "colourMapChunks"
 
 
-/** Add colour to each [MapChunkUpdate] */
+/** Add colour to each [MapChunkTileUpdate] */
 fun colourMapChunks(builder: StreamsBuilder): Topology {
 
-  val mapChunksStream: KStream<FactorioServerId, MapChunkUpdate> = builder.streamPacketData()
+  val mapChunksStream: KStream<FactorioServerId, MapChunkTileUpdate> = builder.streamPacketData()
   val protosStream: KStream<FactorioServerId, PrototypesUpdate> = builder.streamPacketData()
 
   val protosTable: KTable<FactorioServerId, TileColourDict> =
@@ -78,7 +78,7 @@ fun colourMapChunks(builder: StreamsBuilder): Topology {
     ChunkSize.CHUNK_032 to ChunkSize.CHUNK_256,
     ChunkSize.CHUNK_256 to ChunkSize.CHUNK_512,
 
-  ).forEach { (from, to) ->
+    ).forEach { (from, to) ->
     chunkTilesColoured
       .filter("$pid.combine-chunks.filter-$from-to-$to") { key, _ ->
         key.chunkSize == from
@@ -98,12 +98,12 @@ fun colourMapChunks(builder: StreamsBuilder): Topology {
 }
 
 
-private fun KStream<FactorioServerId, MapChunkUpdate>.convertToServerMapChunkTiles()
+private fun KStream<FactorioServerId, MapChunkTileUpdate>.convertToServerMapChunkTiles()
     : KStream<ServerMapChunkId, ServerMapChunkTiles<TileProtoHashCode>> {
 
   val pid = "$pid.convertToMapTiles"
 
-  return map("$pid.map") { serverId: FactorioServerId, update: MapChunkUpdate ->
+  return map("$pid.map") { serverId: FactorioServerId, update: MapChunkTileUpdate ->
 
     val mapTileList = update.tileDictionary?.toMapTileList() ?: emptyList()
 
@@ -112,7 +112,7 @@ private fun KStream<FactorioServerId, MapChunkUpdate>.convertToServerMapChunkTil
     }
 
     if (invalidMapTilesList.isNotEmpty()) {
-      println("WARNING [reduceMapTilesToTable] MapChunkUpdate contained out-of-bounds tiles $invalidMapTilesList")
+      println("WARNING [reduceMapTilesToTable] MapChunkTileUpdate contained out-of-bounds tiles $invalidMapTilesList")
     }
 
     val validMapTilesToProtoHashCode =
@@ -232,7 +232,7 @@ fun KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>.streamMapChunkColou
 
 
 /**
- * Group [MapChunkUpdate]s by the Chunk position.
+ * Group [MapChunkTileUpdate]s by the Chunk position.
  *
  * They should already be grouped, but do it again to make sure, and to filter out empty updates.
  */

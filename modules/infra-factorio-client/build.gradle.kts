@@ -41,7 +41,9 @@ val deployModToLocalClient by tasks.registering(Copy::class) {
   description = "Copy the mod to the Factorio client"
   group = FactorioMod.TASK_GROUP
 
-  onlyIf { clientModsDirectory.orNull?.asFile?.exists() == true }
+  val clientModsDirectory123 = clientModsDirectory
+
+  onlyIf { clientModsDirectory123.orNull?.asFile?.exists() == true }
 
   from(factorioMod)
   into(clientModsDirectory)
@@ -61,9 +63,12 @@ val clientLaunch by tasks.registering(Exec::class) {
   description = "Run local Factorio Steam game client"
   group = FactorioMod.TASK_GROUP
 
+  val steamExe123 = steamExe
+  val clientModsDirectory444 = clientModsDirectory
+
   onlyIf(!serviceOf<ExecOperations>().isFactorioRunning())
-  onlyIf { steamExe.orNull?.asFile?.exists() == true }
-  onlyIf { clientModsDirectory.orNull?.asFile?.exists() == true }
+  onlyIf { steamExe123.orNull?.asFile?.exists() == true }
+  onlyIf { clientModsDirectory444.orNull?.asFile?.exists() == true }
 
   dependsOn(deployModToLocalClient)
   mustRunAfter(clientKill, ":modules:infra-factorio-server:processRun")

@@ -6,16 +6,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("kafkatorio.resource.MinedProduct")
-data class MinedProduct(
-  /** `item` or `fluid`. */
-  val type: Type,
+sealed interface MinedProduct {
 
-  /** Prototype name of the result. */
-  @SerialName("name")
-  val resultPrototype: PrototypeName,
-
-//Amount of the item or fluid to give. If not specified, amount_min, amount_max and probability must all be specified.
-  val amount: Double?,
+  val resultProtoId: PrototypeId
+  //Amount of the item or fluid to give. If not specified, amount_min, amount_max and probability must all be specified.
+  val amount: Double?
 
 //Minimal amount of the item or fluid to give. Has no effect when amount is specified.
 //amount_min : Uint or double?,
@@ -26,17 +21,24 @@ data class MinedProduct(
 //A value in range [0, 1]. Item or fluid is only given with this probability; otherwise no product is produced.
 //probability : Double?,
 
-//How much of this product is a catalyst.
+  //How much of this product is a catalyst.
 //catalyst_amount : Uint or double?,
-) {
+
 
   @Serializable
-  @SerialName("kafkatorio.resource.MinedProductType")
-  enum class Type {
-    @SerialName("item")
-    ITEM,
-    @SerialName("fluid")
-    FLUID,
-  }
+  @SerialName("kafkatorio.resource.MinedProduct.MinedProductFluid")
+  data class Fluid(
+    override val amount: Double? = null,
+    override val resultProtoId: PrototypeId,
+  ) : MinedProduct
+
+
+  @Serializable
+  @SerialName("kafkatorio.resource.MinedProduct.MinedProductItem")
+  data class Item(
+    override val amount: Double? = null,
+    override val resultProtoId: PrototypeId,
+  ) : MinedProduct
+
 
 }

@@ -59,12 +59,14 @@ class SyslogSocketServer(
       launch {
         val channel = socket.openReadChannel()
         try {
-          while (socket.socketContext.isActive) {
+          while (socket.socketContext.isActive && !channel.isClosedForRead) {
             val line = runCatching {
               channel.readUTF8Line()
             }.fold(
               onSuccess = { line ->
-                log("received '$line' from $socket")
+                if (line != null) {
+                  log("received '$line' from ${socket.description()}")
+                }
                 line
               },
               onFailure = { e ->

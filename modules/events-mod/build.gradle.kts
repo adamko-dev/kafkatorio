@@ -101,7 +101,7 @@ val installEventsTsSchema by tasks.registering(Sync::class) {
       }
   ) {
     // drop the first directory inside the zip
-    eachFile { relativePath = dropDirectory() }
+//    eachFile { relativePath = dropDirectory() }
     includeEmptyDirs = false
   }
   into(outputDir)

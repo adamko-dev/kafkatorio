@@ -6,7 +6,8 @@ export class KafkatorioSettingsConfig {
 
   private static eventCacheExpirationDefaultSeconds: Record<KafkatorioKeyedPacketTypes, double> = {
     "kafkatorio.packet.keyed.PlayerUpdate": 0.5,
-    "kafkatorio.packet.keyed.MapChunkUpdate": 30,
+    "kafkatorio.packet.keyed.MapChunkTileUpdate": 30,
+    "kafkatorio.packet.keyed.MapChunkEntityUpdate": 30,
     "kafkatorio.packet.keyed.EntityUpdate": 5,
   }
 
@@ -21,7 +22,7 @@ export class KafkatorioSettingsConfig {
   public initialiseSettings(data: Data): void {
     for (const [type,] of pairs(KafkatorioSettingsConfig.eventCacheExpirationDefaultSeconds)) {
       data.extend(
-         [ KafkatorioSettingsConfig.createDefaultCacheDuration(type)]
+          [KafkatorioSettingsConfig.createDefaultCacheDuration(type)]
       )
     }
   }

@@ -7,6 +7,7 @@ import dev.adamko.kafkatorio.schema.common.EventName
 import dev.adamko.kafkatorio.schema.common.ForceIndex
 import dev.adamko.kafkatorio.schema.common.MapEntityPosition
 import dev.adamko.kafkatorio.schema.common.PlayerIndex
+import dev.adamko.kafkatorio.schema.common.PrototypeId
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
 import dev.adamko.kafkatorio.schema.common.Tick
 import dev.adamko.kafkatorio.schema.common.UnitNumber
@@ -190,8 +191,7 @@ class UpdatePacketsTest : FunSpec({
           colour = null,
           diedCause = EntityIdentifiersData(
             unitNumber = UnitNumber(66u),
-            name = "small-biter",
-            protoType = "unit",
+            protoId = PrototypeId("unit/small-biter"),
           ),
           disconnectReason = null,
           events = mapOf(

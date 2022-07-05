@@ -4,12 +4,12 @@ import dev.adamko.kafkatorio.library.jsonMapperKafkatorio
 import dev.adamko.kafkatorio.schema.common.EventName
 import dev.adamko.kafkatorio.schema.common.MapChunkPosition
 import dev.adamko.kafkatorio.schema.common.MapTileDictionary
-import dev.adamko.kafkatorio.schema.common.PrototypeName
+import dev.adamko.kafkatorio.schema.common.PrototypeId
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
 import dev.adamko.kafkatorio.schema.common.tick
 import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
-import dev.adamko.kafkatorio.schema.packets.MapChunkUpdate
-import dev.adamko.kafkatorio.schema.packets.MapChunkUpdateKey
+import dev.adamko.kafkatorio.schema.packets.MapChunkTileUpdate
+import dev.adamko.kafkatorio.schema.packets.MapChunkTileUpdateKey
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import kotlinx.serialization.decodeFromString
@@ -59,8 +59,8 @@ class MapChunkUpdateTest : FunSpec({
     val expected = KafkatorioPacket(
       tick = 36u.tick,
       modVersion = "0.4.0",
-      data = MapChunkUpdate(
-        key = MapChunkUpdateKey(
+      data = MapChunkTileUpdate(
+        key = MapChunkTileUpdateKey(
           MapChunkPosition(-6, -3),
           SurfaceIndex(1u),
         ),
@@ -78,9 +78,9 @@ class MapChunkUpdateTest : FunSpec({
             ),
           ),
           protos = mapOf(
-            PrototypeName("water") to MapTileDictionary.PrototypeKey(1),
-            PrototypeName("grass-4") to MapTileDictionary.PrototypeKey(2),
-            PrototypeName("grass-3") to MapTileDictionary.PrototypeKey(32),
+            PrototypeId("tile", "water") to MapTileDictionary.PrototypeKey(1),
+            PrototypeId("tile", "grass-4") to MapTileDictionary.PrototypeKey(2),
+            PrototypeId("tile", "grass-3") to MapTileDictionary.PrototypeKey(32),
           )
         )
       )

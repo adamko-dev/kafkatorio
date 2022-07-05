@@ -101,7 +101,7 @@ export namespace EventUpdates {
       let countExpired = 0
       let countTotal = 0
       const expiredData: Array<KafkatorioKeyedPacketData> = []
-      for (let [key, entry] of global.cache) {
+      for (const [key, entry] of global.cache) {
         countTotal++
         if (this.isExpired(entry)) {
           countExpired++

@@ -16,20 +16,22 @@ kvision               = "5.11.0"
 log4j2                = "2.17.2"
 qosLogback            = "1.2.11"
 slf4j                 = "1.7.36"
-okio                  = "3.1.0"
+okio                  = "3.2.0"
 scrimage              = "4.0.31"
 semver                = "1.2.0"
 
 kotlinx-serialization = "1.3.3"
 kxs-charleskornKaml   = "0.44.0"
 kxs-mamoeYamlkt       = "0.12.0"
+kxs-kxsTsGen          = "0.2.1"
 
-kotlinJsWrappers      = "1.0.0-pre.346"
+kotlinJsWrappers      = "1.0.0-pre.349" # https://search.maven.org/artifact/org.jetbrains.kotlin-wrappers/kotlin-wrappers-bom
+
+kotlinx-cli           = "0.3.4"
+kotlinx-coroutines    = "1.6.3"
+kotlinx-datetime      = "0.3.3"
 kotlinx-html          = "0.7.5"
 kotlinx-nodejs        = "0.0.7"
-kotlinx-coroutines    = "1.6.1"
-kotlinx-cli           = "0.3.4"
-kotlinx-datetime      = "0.3.3"
 
 ktor                  = "2.0.3"
 
@@ -39,19 +41,23 @@ simpleSyslogParser    = "0.0.6"
 
 kotkaStreams          = "dev-SNAPSHOT"
 
+
 ## test ##
 junit      = "5.8.2"
 kotest     = "5.3.1"
 mockk      = "1.12.4"
 
+
 ## infra ##
-factorio               = "1.1.59"
+factorio               = "1.1.61"
 confluent-kafkaConnect = "7.0.1"
 grafana                = "8.5.0"
 prometheus             = "v2.34.0"
 
+
 ## gradle plugins ##
 gradleNodePlugin = "3.3.0" # https://github.com/node-gradle/gradle-node-plugin/releases
+
 
 #########
 [plugins]
@@ -89,8 +95,10 @@ kotlinx-serialization-json       = { group = "org.jetbrains.kotlinx", name = "ko
 kotlinx-serialization-properties = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-properties" }
 kotlinx-serialization-protobuf   = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-protobuf"   }
 
-kxs-charleskornKaml = { group = "com.charleskorn.kaml", name = "kaml",   version.ref = "kxs-charleskornKaml" }
-kxs-mamoeYamlkt     = { group = "net.mamoe.yamlkt",     name = "yamlkt", version.ref = "kxs-mamoeYamlkt"     }
+kxs-charleskornKaml = { group = "com.charleskorn.kaml", name = "kaml",            version.ref = "kxs-charleskornKaml" }
+kxs-mamoeYamlkt     = { group = "net.mamoe.yamlkt",     name = "yamlkt",          version.ref = "kxs-mamoeYamlkt"     }
+#kxs-kxsTsGen        = { group = "dev.adamko.kxstsgen",  name = "kxs-ts-gen-core", version.ref = "kxs-kxsTsGen"        }
+kxs-kxsTsGen        = { group = "com.github.adamko-dev.kotlinx-serialization-typescript-generator",  name = "kxs-ts-gen-core", version.ref = "kxs-kxsTsGen"        }
 
 
 kotlinx-coroutines-bom         = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-bom",        version.ref = "kotlinx-coroutines" }
