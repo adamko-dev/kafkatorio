@@ -50,6 +50,12 @@ abstract class UpdatePackageJson @Inject constructor(
     val packageJsonContentUpdated =
       jsonMapper
         .encodeToString(updatedPackageJson)
+
+        // change empty arrays/objects, because `npm install` also formats package.json, but
+        // slightly differently to kxs.
+        .replace(": {\n  },", ": {},")
+        .replace(": [\n  ],", ": [],")
+
         .suffixIfNot("\n")
 
     logger.debug(packageJsonContentUpdated)
