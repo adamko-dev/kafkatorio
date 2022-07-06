@@ -8,51 +8,8 @@ import kotlinx.serialization.Serializable
 /**
  * Both a [name] and [type] are required to unique identify a [prototype][FactorioPrototype].
  *
- *
  * @property[name] The name of the prototype, which is unique per specific Prototype [type]
  */
-// * Each subclass of [PrototypeId] is equivalent to a Prototype `type`.
-//sealed interface PrototypeId {
-//
-//  val name: String
-//
-//  @Serializable
-//  @JvmInline
-//  @SerialName("kafkatorio.prototype.id.PrototypeIdMapTile")
-//  value class MapTile(override val name: String) : PrototypeId {
-//    override fun toString(): String = name
-//  }
-//
-//  @Serializable
-//  @JvmInline
-//  @SerialName("kafkatorio.prototype.id.PrototypeIdEntity")
-//  value class Entity(override val name: String) : PrototypeId {
-//    override fun toString(): String = name
-//  }
-//
-//  @Serializable
-//  @JvmInline
-//  @SerialName("kafkatorio.prototype.id.PrototypeIdResourceEntity")
-//  value class ResourceEntity(override val name: String) : PrototypeId {
-//    override fun toString(): String = name
-//  }
-//
-//  @Serializable
-//  @JvmInline
-//  @SerialName("kafkatorio.prototype.id.PrototypeIdFluid")
-//  value class Fluid(override val name: String) : PrototypeId {
-//    override fun toString(): String = name
-//  }
-//
-//  @Serializable
-//  @JvmInline
-//  @SerialName("kafkatorio.prototype.id.PrototypeIdItem")
-//  value class Item(override val name: String) : PrototypeId {
-//    override fun toString(): String = name
-//  }
-//
-//}
-
 @Serializable
 @JvmInline
 @SerialName("kafkatorio.id.PrototypeId")
