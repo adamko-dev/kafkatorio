@@ -66,10 +66,10 @@ kotlin {
       }
     }
 
+
     main {
       dependencies {
-        implementation(dependencies.platform(libs.kotlinx.coroutines.bom))
-        implementation(dependencies.platform(libs.kotlin.jsWrappers.bom))
+        implementation(dependencies.platform(projects.modules.versionsPlatform))
 
         implementation(libs.kotlinx.coroutines.core)
 
@@ -118,6 +118,7 @@ kotlin {
     }
   }
 }
+
 
 fun KotlinDependencyHandler.kvision(
   module: String,

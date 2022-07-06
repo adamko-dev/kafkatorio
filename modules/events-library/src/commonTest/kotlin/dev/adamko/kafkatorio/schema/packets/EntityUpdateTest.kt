@@ -14,8 +14,7 @@ class EntityUpdateTest : FunSpec({
         	"data": {
         		"type": "kafkatorio.packet.keyed.EntityUpdate",
         		"key": {
-        			"name": "assembling-machine-2",
-        			"protoType": "assembling-machine-2",
+        			"protoId": "entity/assembling-machine-2",
         			"unitNumber": 4622
         		},
         		"events": {
@@ -30,8 +29,7 @@ class EntityUpdateTest : FunSpec({
         		"health": 350,
         		"isActive": true,
         		"isRotatable": true,
-        		"lastUser": 1,
-        		"prototype": "assembling-machine-2"
+        		"lastUser": 1
         	},
         	"modVersion": "0.4.0",
         	"tick": 38388

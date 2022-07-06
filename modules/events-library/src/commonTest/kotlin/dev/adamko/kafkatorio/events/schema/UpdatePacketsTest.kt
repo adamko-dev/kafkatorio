@@ -167,8 +167,7 @@ class UpdatePacketsTest : FunSpec({
           "isConnected": true,
           "diedCause": {
             "unitNumber": 66,
-            "name": "small-biter",
-            "protoType": "unit"
+            "protoId": "unit/small-biter"
           },
           "events": {
             "on_player_died": [2]

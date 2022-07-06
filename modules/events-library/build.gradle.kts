@@ -50,27 +50,24 @@ kotlin {
 
     val commonMain by getting {
       dependencies {
-        implementation(project.dependencies.platform(libs.kotlin.bom))
+        implementation(dependencies.platform(projects.modules.versionsPlatform))
 
-        implementation(project.dependencies.platform(libs.kotlinx.serialization.bom))
         implementation(libs.kotlinx.serialization.core)
         implementation(libs.kotlinx.serialization.json)
         api(libs.kxs.kxsTsGen)
 
-        implementation(dependencies.platform(libs.okio.bom))
         implementation(libs.okio.core)
 
-        implementation(dependencies.platform(libs.kotlinx.coroutines.bom))
         implementation(libs.kotlinx.coroutines.core)
       }
     }
 
     val commonTest by getting {
       dependencies {
+        implementation(dependencies.platform(projects.modules.versionsPlatform))
 
         implementation(kotlin("test"))
 
-        implementation(project.dependencies.platform(libs.kotest.bom))
         implementation(libs.kotest.core)
         implementation(libs.kotest.datatest)
         implementation(libs.kotest.frameworkEngine)
@@ -81,20 +78,22 @@ kotlin {
 
     val jvmMain by getting {
       dependencies {
+        implementation(dependencies.platform(projects.modules.versionsPlatform))
+
         implementation(kotlin("reflect"))
       }
     }
 
     val jvmTest by getting {
       dependencies {
+        implementation(dependencies.platform(projects.modules.versionsPlatform))
+
         implementation(libs.kotest.runnerJunit5)
       }
     }
 
     val jsTest by getting {
-      dependencies {
-//        implementation(kotlin("test-js"))
-      }
+      dependencies { }
     }
   }
 }

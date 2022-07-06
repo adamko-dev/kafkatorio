@@ -12,6 +12,8 @@ dependencies {
   api(platform(libs.kotlin.bom))
   api(platform(libs.kotlinx.coroutines.bom))
   api(platform(libs.kotlinx.serialization.bom))
+  api(platform(libs.kotlin.jsWrappers.bom))
+
 
   api(platform(libs.http4k.bom))
 
@@ -28,6 +30,7 @@ dependencies {
 
     api(libs.kxs.charleskornKaml)
     api(libs.kxs.mamoeYamlkt)
+    api(libs.kxs.kxsTsGen)
 
     api(libs.okio.core)
 

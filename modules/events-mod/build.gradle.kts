@@ -1,7 +1,6 @@
 import dev.adamko.kafkatorio.factoriomod.portal.FactorioModPublishTask
 import dev.adamko.kafkatorio.gradle.asConsumer
 import dev.adamko.kafkatorio.gradle.asProvider
-import dev.adamko.kafkatorio.gradle.dropDirectory
 import dev.adamko.kafkatorio.gradle.factorioModAttributes
 import dev.adamko.kafkatorio.gradle.typescriptAttributes
 import dev.adamko.kafkatorio.task.TypescriptToLuaTask
@@ -49,7 +48,6 @@ val projectTokensX1 = projectTokens.apply {
 }
 
 val tsSrcDir: Directory = layout.projectDirectory.dir("src/main/typescript")
-
 
 
 node {
