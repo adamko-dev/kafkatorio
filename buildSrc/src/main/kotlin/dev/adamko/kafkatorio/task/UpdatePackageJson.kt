@@ -31,9 +31,9 @@ abstract class UpdatePackageJson @Inject constructor(
 
 
   init {
-    group = NodePlugin.NODE_GROUP
+    group = NodePlugin.NPM_GROUP
     description =
-      "Read the package.json file and update the version and name, based on the project."
+      "Read the package.json file and update the version and name, based on the current project."
 
     outputs.upToDateWhen(JsonPropertiesUpToDateSpec)
   }
@@ -53,8 +53,8 @@ abstract class UpdatePackageJson @Inject constructor(
 
         // change empty arrays/objects, because `npm install` also formats package.json, but
         // slightly differently to kxs.
-        .replace(": {\n  },", ": {},")
-        .replace(": [\n  ],", ": [],")
+        .replace( ": {\n  }", ": {}")
+        .replace( ": [\n  ]", ": []")
 
         .suffixIfNot("\n")
 
