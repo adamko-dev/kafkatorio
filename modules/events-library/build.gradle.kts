@@ -71,11 +71,11 @@ kotlin {
         implementation(kotlin("test"))
 
         implementation(project.dependencies.platform(libs.kotest.bom))
-        implementation("io.kotest:kotest-framework-engine")
         implementation(libs.kotest.core)
         implementation(libs.kotest.datatest)
-        implementation(libs.kotest.prop)
+        implementation(libs.kotest.frameworkEngine)
         implementation(libs.kotest.json)
+        implementation(libs.kotest.prop)
       }
     }
 
@@ -87,13 +87,13 @@ kotlin {
 
     val jvmTest by getting {
       dependencies {
-        implementation("io.kotest:kotest-runner-junit5")
+        implementation(libs.kotest.runnerJunit5)
       }
     }
 
     val jsTest by getting {
       dependencies {
-        implementation(kotlin("test-js"))
+//        implementation(kotlin("test-js"))
       }
     }
   }

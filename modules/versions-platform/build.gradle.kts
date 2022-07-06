@@ -22,14 +22,18 @@ dependencies {
   api(platform(libs.kotest.bom))
 
   constraints {
-    api(libs.skrapeit)
-    api(libs.kxs.charleskornKaml)
-    api(libs.kxs.mamoeYamlkt)
     api(libs.kafka.kotkaStreams)
     api(libs.kafka.streams)
-    api(libs.okio.core)
-    api(libs.scrimage.core)
     api(libs.kafka.streamsTestUtils)
+
+    api(libs.kxs.charleskornKaml)
+    api(libs.kxs.mamoeYamlkt)
+
+    api(libs.okio.core)
+
+    api(libs.scrimage.core)
+
+    api(libs.skrapeit)
 
     api(libs.mockk)
   }

@@ -12,20 +12,20 @@ kotlin     = "1.7.0"
 camel-kafkaConnectors = "0.11.0"
 http4k                = "4.25.16.2"
 kafka                 = "3.2.0"
-kvision               = "5.11.0"
+kvision               = "5.12.0"
 log4j2                = "2.17.2"
-qosLogback            = "1.2.11"
-slf4j                 = "1.7.36"
 okio                  = "3.2.0"
+qosLogback            = "1.2.11"
 scrimage              = "4.0.31"
 semver                = "1.2.0"
+slf4j                 = "1.7.36"
 
 kotlinx-serialization = "1.3.3"
 kxs-charleskornKaml   = "0.44.0"
 kxs-mamoeYamlkt       = "0.12.0"
 kxs-kxsTsGen          = "0.2.1"
 
-kotlinJsWrappers      = "1.0.0-pre.349" # https://search.maven.org/artifact/org.jetbrains.kotlin-wrappers/kotlin-wrappers-bom
+kotlinJsWrappers      = "1.0.0-pre.351" # https://search.maven.org/artifact/org.jetbrains.kotlin-wrappers/kotlin-wrappers-bom
 
 kotlinx-cli           = "0.3.4"
 kotlinx-coroutines    = "1.6.3"
@@ -41,6 +41,7 @@ simpleSyslogParser    = "0.0.6"
 
 kotkaStreams          = "dev-SNAPSHOT"
 
+marykRocksDb          = "7.3.1" # https://search.maven.org/artifact/io.maryk.rocksdb/rocksdb-multiplatform
 
 ## test ##
 junit      = "5.8.2"
@@ -204,7 +205,7 @@ kafka-streamsTestUtils = { group = "org.apache.kafka", name = "kafka-streams-tes
 kafka-kotkaStreams = { group = "dev.adamko.kotka", name = "kotka-streams", version.ref = "kotkaStreams" }
 
 
-rocksdb = { group = "io.maryk.rocksdb", name = "rocksdb-multiplatform", version = "7.0.3" }
+mary-rocksdb = { group = "io.maryk.rocksdb", name = "rocksdb-multiplatform", version.ref = "marykRocksDb" }
 
 jsoup    = { group = "org.jsoup", name = "jsoup", version = "1.14.3" }
 skrapeit = { group = "it.skrape", name = "skrapeit", version = "1.2.0" }
@@ -239,12 +240,13 @@ junit-engine   = { group = "org.junit.jupiter",  name = "junit-jupiter-engine"  
 junit-launcher = { group = "org.junit.platform", name = "junit-platform-launcher"   } # version     = "1.7.2"  }
 
 ## kotest ##
-kotest-bom      = { group = "io.kotest",  name = "kotest-bom",                  version.ref = "kotest"  }
-kotest-core     = { group = "io.kotest",  name = "kotest-assertions-core",      version.ref = "kotest"  }
-kotest-datatest = { group = "io.kotest",  name = "kotest-framework-datatest",   version.ref = "kotest"  }
-kotest-runner   = { group = "io.kotest",  name = "kotest-runner-junit5",        version.ref = "kotest"  }
-kotest-prop     = { group = "io.kotest",  name = "kotest-property",             version.ref = "kotest"  }
-kotest-json     = { group = "io.kotest",  name = "kotest-assertions-json",      version.ref = "kotest"  }
+kotest-bom              = { group = "io.kotest",  name = "kotest-bom",               version.ref = "kotest"  }
+kotest-core             = { group = "io.kotest",  name = "kotest-assertions-core"    }
+kotest-datatest         = { group = "io.kotest",  name = "kotest-framework-datatest" }
+kotest-json             = { group = "io.kotest",  name = "kotest-assertions-json"    }
+kotest-prop             = { group = "io.kotest",  name = "kotest-property"           }
+kotest-frameworkEngine  = { group = "io.kotest",  name = "kotest-framework-engine"   }
+kotest-runnerJunit5     = { group = "io.kotest",  name = "kotest-runner-junit5"      }
 
 ## http4k ##
 http4k-test-chaos    = { group = "org.http4k",  name = "http4k-testing-chaos",     version.ref = "http4k"  }
@@ -264,37 +266,18 @@ logging = [
     "logback-encoder",
 ]
 
-kt-testing = [
-    "kotest-core",
-    "kotest-datatest",
-    "kotest-runner",
-    "kotest-prop",
-    "kotest-json",
-    "mockk",
-]
+#kt-testing = [
+#    "kotest-core",
+#    "kotest-datatest",
+#    "kotest-runner",
+#    "kotest-prop",
+#    "kotest-json",
+#    "mockk",
+#]
 
 junit-runtime = [
     "junit-engine",
     "junit-launcher",
-]
-
-http4k = [
-    "http4k-core",
-    "http4k-contract",
-    "http4k-client-okhttp",
-    "http4k-client-ws",
-    "http4k-server",
-    "http4k-cloudnative",
-#    "http4k-format-jackson-xml",
-#    "http4k-format-jackson-json",
-#    "http4k-format-jackson-yaml",
-    "http4k-format-kotlinx",
-]
-
-http4k-test = [
-    "http4k-test-chaos",
-    "http4k-test-approval",
-    "http4k-test-kotest",
 ]
 
 kotlinScripting-def = [
