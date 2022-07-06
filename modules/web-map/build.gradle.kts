@@ -1,7 +1,5 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
 
 
 plugins {
@@ -16,18 +14,6 @@ kvision {
   enableHiddenKotlinJsStore.set(false)
 }
 
-
-afterEvaluate {
-  rootProject.extensions.configure<NodeJsRootExtension> {
-    // https://github.com/rjaros/kvision/issues/410
-    versions.webpackCli.version = "4.10.0"
-    versions.webpackDevServer.version = "4.9.2"
-  }
-
-  rootProject.extensions.configure<YarnRootExtension> {
-    resolution("http-proxy-middleware", "^2.0.6")
-  }
-}
 
 kotlin {
   js(IR) {
@@ -124,7 +110,7 @@ kotlin {
 
     test {
       dependencies {
-        implementation(kotlin("test-js"))
+        implementation(kotlin("test"))
 
         kvision("kvision-testutils")
         //        implementation(npm("karma", "^6.3.16"))
