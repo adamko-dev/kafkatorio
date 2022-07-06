@@ -21,7 +21,7 @@ class MapChunkUpdateTest : FunSpec({
     val json = """
 {
   "data": {
-    "type": "kafkatorio.packet.keyed.MapChunkUpdate",
+    "type": "kafkatorio.packet.keyed.MapChunkTileUpdate",
     "key": {
       "surfaceIndex": 1,
       "chunkPosition": [
@@ -42,9 +42,9 @@ class MapChunkUpdateTest : FunSpec({
         }
       },
       "protos": {
-        "water": 1,
-        "grass-4": 2,
-        "grass-3": 32
+        "tile/water": 1,
+        "tile/grass-4": 2,
+        "tile/grass-3": 32
       }
     },
     "events": {
