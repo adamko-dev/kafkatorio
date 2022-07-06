@@ -21,6 +21,10 @@ services:
       options:
         syslog-address: "tcp://host.docker.internal:12034"
         syslog-format: "rfc5424"
+        tag: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJrZXkiOiIwMTIzNDU2Nzg5YWJjZGVmIn0.rozxe6m4HmvQIVtESq2kT_CumIw7cFK2zbeKc5aUwEg"
+
+
+# correct horse battery staple
 
   #    environment:
   #      RCON_PORT: 27715
