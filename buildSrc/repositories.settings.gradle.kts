@@ -32,7 +32,9 @@ dependencyResolutionManagement {
       content { includeModule("com.yarnpkg", "yarn") }
     }
 
-    maven("https://raw.githubusercontent.com/adamko-dev/kotka-streams/artifacts/m2")
+    maven("https://raw.githubusercontent.com/adamko-dev/kotka-streams/artifacts/m2") {
+      content { includeGroup("dev.adamko.kotka") }
+    }
   }
 
   pluginManagement {
