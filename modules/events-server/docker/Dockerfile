@@ -11,7 +11,7 @@ EXPOSE $SERVER_PORT
 
 ENV SERVER_DATA_DIR="/app/data"
 ENV KAFKA_STREAMS_STATE_DIR="/app/kafka-state"
-VOLUME ${TILE_DIR} \
+VOLUME ${SERVER_DATA_DIR} \
        ${KAFKA_STREAMS_STATE_DIR}
 
 COPY ${DIST_DIR}/events-server-${KAFKATORIO_VERSION}.tar events-server.tar
