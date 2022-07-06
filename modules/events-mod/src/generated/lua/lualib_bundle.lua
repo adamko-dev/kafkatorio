@@ -651,7 +651,7 @@ do
             end
         else
             local ____self_fulfilledCallbacks_2 = self.fulfilledCallbacks
-            ____self_fulfilledCallbacks_2[#____self_fulfilledCallbacks_2 + 1] = function() return resolve(nil, nil) end
+            ____self_fulfilledCallbacks_2[#____self_fulfilledCallbacks_2 + 1] = function(____, v) return resolve(nil, v) end
         end
         if onRejected then
             local internalCallback = self:createPromiseResolvingCallback(onRejected, resolve, reject)
@@ -660,6 +660,9 @@ do
             if isRejected then
                 internalCallback(nil, self.rejectionReason)
             end
+        else
+            local ____self_rejectedCallbacks_4 = self.rejectedCallbacks
+            ____self_rejectedCallbacks_4[#____self_rejectedCallbacks_4 + 1] = function(____, err) return reject(nil, err) end
         end
         if isFulfilled then
             resolve(nil, self.value)
@@ -674,8 +677,8 @@ do
     end
     function __TS__Promise.prototype.finally(self, onFinally)
         if onFinally then
-            local ____self_finallyCallbacks_4 = self.finallyCallbacks
-            ____self_finallyCallbacks_4[#____self_finallyCallbacks_4 + 1] = onFinally
+            local ____self_finallyCallbacks_5 = self.finallyCallbacks
+            ____self_finallyCallbacks_5[#____self_finallyCallbacks_5 + 1] = onFinally
             if self.state ~= 0 then
                 onFinally(nil)
             end
