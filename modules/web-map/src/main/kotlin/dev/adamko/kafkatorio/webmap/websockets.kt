@@ -6,6 +6,7 @@ import dev.adamko.kafkatorio.schema.packets.ConsoleCommandUpdate
 import dev.adamko.kafkatorio.schema.packets.EntityUpdate
 import dev.adamko.kafkatorio.schema.packets.EventServerPacket
 import dev.adamko.kafkatorio.schema.packets.KafkatorioPacketData
+import dev.adamko.kafkatorio.schema.packets.MapChunkEntityUpdate
 import dev.adamko.kafkatorio.schema.packets.MapChunkTileUpdate
 import dev.adamko.kafkatorio.schema.packets.PlayerUpdate
 import dev.adamko.kafkatorio.schema.packets.PrototypesUpdate
@@ -81,10 +82,11 @@ class WebsocketService(
               is ConfigurationUpdate,
               is ConsoleChatUpdate,
               is ConsoleCommandUpdate,
+              is EntityUpdate,
+              is MapChunkEntityUpdate,
+              is MapChunkTileUpdate,
               is PrototypesUpdate,
               is SurfaceUpdate,
-              is EntityUpdate,
-              is MapChunkTileUpdate,
               is KafkatorioPacketData.Error -> {
                 // to be continued...
               }
