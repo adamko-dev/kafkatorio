@@ -18,13 +18,13 @@ services:
       SERVER_PORT: "8080"
     ports:
       - "12080:8080" # http and ws
+      - "12034:9002" # syslog socket
     networks:
       - "kafka-nw"
       - "kafkatorio-nw"
       - "traefik-nw"
-    labels:
-      - "traefik.enable=true"
-#      - "traefik.http.services.events-server-kafkatorio.loadbalancer.server.port=12081"
+#    labels:
+#      - "traefik.enable=true"
 
 networks:
   kafka-nw:
