@@ -64,8 +64,12 @@ class SyslogSocketServer(
               channel.readUTF8Line()
             }.fold(
               onSuccess = { line ->
-                if (line != null) {
-                  log("received '$line' from ${socket.description()}")
+                when (line) {
+                  null -> {
+                    log("received 'null' from ${socket.description()} - closing connection")
+                    socket.close()
+                  }
+                  else -> log("received '$line' from ${socket.description()}")
                 }
                 line
               },
