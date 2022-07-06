@@ -91,3 +91,6 @@ fun Project.taskProvider(taskName: String): Provider<Task> = providers.provider 
 }.flatMap {
   tasks.named(it)
 }
+
+
+const val DOCKER_COMPOSE_TASK_GROUP = "docker-compose"

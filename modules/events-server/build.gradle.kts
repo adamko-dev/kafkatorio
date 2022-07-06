@@ -1,3 +1,4 @@
+import dev.adamko.kafkatorio.task.DockerEnvUpdateTask
 import dev.adamko.kafkatorio.task.KafkaConsumerGroupsTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -106,3 +107,14 @@ idea {
     )
   }
 }
+
+
+val dockerEnvUpdate by tasks.registering(DockerEnvUpdateTask::class) {
+  dotEnvFile.set(layout.projectDirectory.file("docker/.env"))
+
+  properties(
+    "COMPOSE_PROJECT_NAME" to rootProject.name,
+    "KAFKATORIO_VERSION" to project.version,
+  )
+}
+tasks.assemble { dependsOn(dockerEnvUpdate) }

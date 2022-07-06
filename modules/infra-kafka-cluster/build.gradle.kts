@@ -4,7 +4,7 @@ plugins {
 
 description = "Kafka cluster"
 
-tasks.dockerEnv {
+tasks.dockerEnvUpdate {
   properties(
     "GRAFANA_VERSION" to libs.versions.grafana,
     "PROMETHEUS_VERSION" to libs.versions.prometheus,

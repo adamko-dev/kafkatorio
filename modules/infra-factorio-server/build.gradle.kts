@@ -53,7 +53,7 @@ tasks.dockerUp {
 }
 
 
-tasks.dockerEnv {
+tasks.dockerEnvUpdate {
   properties("FACTORIO_VERSION" to libs.versions.factorio.get())
 }
 

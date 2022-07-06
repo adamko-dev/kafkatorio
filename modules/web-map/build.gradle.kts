@@ -144,3 +144,14 @@ fun KotlinDependencyHandler.kvision(
 //    resolution("webpack-dev-server", "4.9.1")
 //  }
 //}
+
+
+val dockerEnvUpdate by tasks.registering(dev.adamko.kafkatorio.task.DockerEnvUpdateTask::class) {
+  dotEnvFile.set(layout.projectDirectory.file("docker/.env"))
+
+  properties(
+    "COMPOSE_PROJECT_NAME" to rootProject.name,
+    "KAFKATORIO_VERSION" to project.version,
+  )
+}
+tasks.assemble { dependsOn(dockerEnvUpdate) }

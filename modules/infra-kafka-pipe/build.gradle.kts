@@ -15,7 +15,7 @@ tasks.dockerUp {
 
 
 val dockerBuildKafkaPipe by tasks.registering(DockerComposeExec::class) {
-  dependsOn(tasks.dockerEnv)
+  dependsOn(tasks.dockerEnvUpdate)
 
   dockerComposeDir.set(dockerSrcDir)
   command.set("docker-compose build kafka-pipe")

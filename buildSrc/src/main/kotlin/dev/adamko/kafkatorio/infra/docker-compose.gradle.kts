@@ -1,5 +1,7 @@
 package dev.adamko.kafkatorio.infra
 
+import dev.adamko.kafkatorio.gradle.DOCKER_COMPOSE_TASK_GROUP
+import dev.adamko.kafkatorio.task.DockerEnvUpdateTask
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
@@ -7,14 +9,13 @@ plugins {
   id("dev.adamko.kafkatorio.infra.process-runner")
 }
 
-val dockerComposeTaskGroup: String by extra("docker-compose")
 
 val dockerComposeProjectName: String by extra(rootProject.name)
 val dockerSrcDir: Directory by extra(layout.projectDirectory.dir("src"))
 
 
 val dockerUp by tasks.registering(Exec::class) {
-  group = dockerComposeTaskGroup
+  group = DOCKER_COMPOSE_TASK_GROUP
 
   dependsOn(tasks.assemble)
   logging.captureStandardOutput(LogLevel.LIFECYCLE)
@@ -25,7 +26,7 @@ val dockerUp by tasks.registering(Exec::class) {
 
 
 val dockerDown by tasks.registering(Exec::class) {
-  group = dockerComposeTaskGroup
+  group = DOCKER_COMPOSE_TASK_GROUP
 
   logging.captureStandardOutput(LogLevel.LIFECYCLE)
 
@@ -35,7 +36,7 @@ val dockerDown by tasks.registering(Exec::class) {
 
 
 val dockerRemove by tasks.registering(Exec::class) {
-  group = dockerComposeTaskGroup
+  group = DOCKER_COMPOSE_TASK_GROUP
 
   logging.captureStandardOutput(LogLevel.LIFECYCLE)
 
@@ -45,17 +46,13 @@ val dockerRemove by tasks.registering(Exec::class) {
 
 
 afterEvaluate {
-  tasks.named("processRun") { dependsOn(dockerUp, dockerEnv) }
+  tasks.named("processRun") { dependsOn(dockerUp, dockerEnvUpdate) }
   tasks.named("processKill") { dependsOn(dockerDown) }
 }
 
 
-val dockerEnv by tasks.registering(WriteProperties::class) {
-  group = dockerComposeTaskGroup
-
-  logging.captureStandardOutput(LogLevel.LIFECYCLE)
-
-  setOutputFile(dockerSrcDir.file(".env"))
+val dockerEnvUpdate by tasks.registering(DockerEnvUpdateTask::class) {
+  dotEnvFile.set(dockerSrcDir.file(".env"))
 
   properties(
     "COMPOSE_PROJECT_NAME" to dockerComposeProjectName,
@@ -64,4 +61,4 @@ val dockerEnv by tasks.registering(WriteProperties::class) {
 }
 
 
-tasks.assemble { dependsOn(dockerEnv) }
+tasks.assemble { dependsOn(dockerEnvUpdate) }
