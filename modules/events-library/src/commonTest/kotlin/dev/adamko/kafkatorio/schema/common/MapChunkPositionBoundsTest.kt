@@ -116,11 +116,11 @@ class MapChunkPositionBoundsTest : FunSpec({
         "44" to mapOf("1" to MapTileDictionary.PrototypeKey(44)),
       ),
       protos = mapOf(
-        PrototypeName("water") to MapTileDictionary.PrototypeKey(1),
-        PrototypeName("grass-4") to MapTileDictionary.PrototypeKey(2),
-        PrototypeName("grass-3") to MapTileDictionary.PrototypeKey(32),
+        PrototypeId("tile", "water") to MapTileDictionary.PrototypeKey(1),
+        PrototypeId("tile", "grass-4") to MapTileDictionary.PrototypeKey(2),
+        PrototypeId("tile", "grass-3") to MapTileDictionary.PrototypeKey(32),
 
-        PrototypeName("not-used") to MapTileDictionary.PrototypeKey(99),
+        PrototypeId("tile", "not-used") to MapTileDictionary.PrototypeKey(99),
       )
     )
 

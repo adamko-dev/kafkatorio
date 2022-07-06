@@ -191,7 +191,7 @@ class UpdatePacketsTest : FunSpec({
           colour = null,
           diedCause = EntityIdentifiersData(
             unitNumber = UnitNumber(66u),
-            protoId = PrototypeId("unit/small-biter"),
+            protoId = PrototypeId("unit", "small-biter"),
           ),
           disconnectReason = null,
           events = mapOf(
