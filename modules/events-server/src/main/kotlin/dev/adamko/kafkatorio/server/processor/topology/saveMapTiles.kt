@@ -4,6 +4,7 @@ import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.ScaleMethod
 import com.sksamuel.scrimage.nio.PngWriter
 import dev.adamko.kafkatorio.library.kxsBinary
+import dev.adamko.kafkatorio.schema.common.ChunkSize
 import dev.adamko.kafkatorio.schema.common.ColourHex
 import dev.adamko.kafkatorio.schema.common.FactorioServerId
 import dev.adamko.kafkatorio.schema.common.ServerMapChunkId
@@ -14,11 +15,15 @@ import dev.adamko.kafkatorio.server.processor.TOPIC_BROADCAST_TO_WEBSOCKET
 import dev.adamko.kafkatorio.server.processor.TOPIC_MAP_CHUNK_COLOURED_STATE
 import dev.adamko.kotka.extensions.consumedAs
 import dev.adamko.kotka.extensions.producedAs
+import dev.adamko.kotka.extensions.stream
+import dev.adamko.kotka.extensions.streams.filter
 import dev.adamko.kotka.extensions.streams.map
 import dev.adamko.kotka.extensions.streams.mapValues
 import dev.adamko.kotka.kxs.serde
 import java.awt.image.BufferedImage
 import java.nio.file.Path
+import kotlin.collections.component1
+import kotlin.collections.component2
 import kotlin.io.path.fileSize
 import kotlin.math.abs
 import org.apache.kafka.streams.StreamsBuilder
@@ -41,13 +46,15 @@ fun saveMapTiles(
 
   val subdividedMapChunkTilesDebounced: KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
     builder.stream(
-      TOPIC_MAP_CHUNK_COLOURED_STATE,
       consumedAs(
         "$pid.consume.grouped-map-chunks",
-        kxsBinary.serde(),
-        kxsBinary.serde(),
+        kxsBinary.serde(ServerMapChunkId.serializer()),
+        kxsBinary.serde(ServerMapChunkTiles.serializer(ColourHex.serializer())),
       ),
-    )
+      TOPIC_MAP_CHUNK_COLOURED_STATE,
+    ).filter("$pid.consume.grouped-map-chunks.filter-size") { _, y ->
+      y.chunkId.chunkSize.zoomLevel >= ChunkSize.CHUNK_256.zoomLevel
+    }
 
   val savedChunkFilenames: KStream<ServerMapChunkId, TilePngFilename> =
     subdividedMapChunkTilesDebounced.saveChunkAsImage(serverDataDir)

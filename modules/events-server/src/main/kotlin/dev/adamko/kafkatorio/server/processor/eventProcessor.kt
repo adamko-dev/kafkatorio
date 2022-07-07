@@ -16,16 +16,10 @@ suspend fun eventsProcessor(
   wsServer: WebmapWebsocketServer,
 ): Unit = coroutineScope {
 
-
   val admin = KafkatorioKafkaAdmin(appProps)
   admin.createKafkatorioTopics()
 
-
-//  val syslogServer = SyslogSocketServer(appProps)
-//  val wsServer = WebsocketServer()
-//  val tileServer = WebMapTileServer(appProps)
   val topology = KafkatorioTopology(appProps, wsServer, syslogServer)
-
 
   launch {
     topology.start()

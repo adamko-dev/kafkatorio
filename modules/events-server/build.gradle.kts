@@ -27,7 +27,6 @@ dependencies {
 
   implementation(libs.kotlinx.serialization.core)
   implementation(libs.kotlinx.serialization.json)
-//  implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf")
 
   implementation(libs.kotlinx.coroutines.core)
 
@@ -46,7 +45,6 @@ dependencies {
     implementation(callLogging)
     implementation(contentNegotiaion)
     implementation(cio)
-//    implementation(netty)
     implementation(autoHeadResponse)
     implementation(partialContent)
     implementation(resources)
@@ -59,7 +57,6 @@ dependencies {
     implementation(core)
     implementation(tls)
   }
-
   //</editor-fold>
 
 
