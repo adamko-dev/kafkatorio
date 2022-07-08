@@ -33,6 +33,8 @@ kotlinx-datetime      = "0.3.3"
 kotlinx-html          = "0.7.5"
 kotlinx-nodejs        = "0.0.7"
 
+kSvgDsl               = "v2.2.0"
+
 ktor                  = "2.0.3"
 
 hoplite               = "2.1.5"
@@ -109,6 +111,9 @@ kotlinx-html                   = { group = "org.jetbrains.kotlinx", name = "kotl
 kotlinx-nodejs                 = { group = "org.jetbrains.kotlinx", name = "kotlinx-nodejs",                version.ref = "kotlinx-nodejs" }
 kotlinx-cli                    = { group = "org.jetbrains.kotlinx", name = "kotlinx-cli",                   version.ref = "kotlinx-cli"    }
 kotlinx-datetime               = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime",              version.ref = "kotlinx-datetime"    }
+
+
+kSvgDsl = { group = "com.github.nwillc", name = "ksvg", version.ref = "kSvgDsl" }
 
 
 kotlin-jsWrappers-bom          = { group = "org.jetbrains.kotlin-wrappers", name = "kotlin-wrappers-bom",   version.ref = "kotlinJsWrappers" }
