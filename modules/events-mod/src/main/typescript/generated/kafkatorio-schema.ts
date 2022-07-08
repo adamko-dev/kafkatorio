@@ -211,15 +211,17 @@ export namespace FactorioPrototype {
   export interface Entity {
     type: FactorioPrototype.Type.Entity;
     protoId: PrototypeId;
-    mapColour: Colour;
-    protoType: string;
-    objectName: string;
-    colour: Colour;
+    group: EntityItemGroup;
+    subgroup: EntityItemGroup;
+    colour?: Colour | null;
+    mapColour?: Colour | null;
+    mapColourFriend?: Colour | null;
+    mapColourEnemy?: Colour | null;
     maxHealth: Float;
     isBuilding: boolean;
     isEntityWithOwner: boolean;
     isMilitaryTarget: boolean;
-    miningProperties: MiningProperties;
+    miningProperties?: EntityMiningProperties | null;
   }
   
   export interface MapTile {
@@ -278,7 +280,13 @@ export namespace FactorioEntityData {
   }
 }
 
-export interface MiningProperties {
+export interface EntityItemGroup {
+  name: string;
+  type: string;
+  parentName?: string | null;
+}
+
+export interface EntityMiningProperties {
   canBeMined: boolean;
   products: MinedProduct[] | null;
 }

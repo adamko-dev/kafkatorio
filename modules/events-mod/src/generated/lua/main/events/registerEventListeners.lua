@@ -9,8 +9,8 @@ local ____surfaceUpdates = require("main.events.surfaceUpdates")
 local handleSurfaceUpdate = ____surfaceUpdates.handleSurfaceUpdate
 local ____EventDataCache = require("main.cache.EventDataCache")
 local EventCacheService = ____EventDataCache.default
-local ____mapChunkUpdates = require("main.events.mapChunkUpdates")
-local MapChunkUpdate = ____mapChunkUpdates.default
+local ____MapChunkUpdateHandler = require("main.events.handlers.MapChunkUpdateHandler")
+local MapChunkUpdate = ____MapChunkUpdateHandler.default
 script.on_event(
     defines.events.on_tick,
     function(event)

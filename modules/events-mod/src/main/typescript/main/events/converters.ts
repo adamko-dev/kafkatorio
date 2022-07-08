@@ -1,10 +1,13 @@
 import {DefinedEventName} from "../types";
 import {
   Colour,
+  EntityMiningProperties,
   EntityStatus,
   EventName,
   FactorioEntityData,
+  KafkatorioPacketData,
   MapChunkPosition,
+  MinedProduct,
   PrototypeId,
 } from "../../generated/kafkatorio-schema";
 
@@ -130,6 +133,46 @@ export namespace Converters {
     } else {
       return EntityStatusRecord[status]
     }
+  }
+
+
+  export function miningProperties(
+      properties: LuaEntityPrototype["mineable_properties"]
+  ): EntityMiningProperties {
+
+    const products: MinedProduct[] = []
+
+    if (properties.products != null) {
+      for (const product of properties.products) {
+        if (product.type == "fluid") {
+          products[products.length] = {
+            type: MinedProduct.Type.MinedProductFluid,
+            amount: product.amount,
+            resultProtoId: Converters.prototypeId(product.type, product.name),
+          }
+        }
+        if (product.type == "item") {
+          products[products.length] = {
+            type: MinedProduct.Type.MinedProductItem,
+            amount: product.amount,
+            resultProtoId: Converters.prototypeId(product.type, product.name),
+          }
+        }
+      }
+    }
+
+    return {
+      canBeMined: properties.minable,
+      products: products,
+    }
+  }
+
+
+  export function playerOnlineInfo(player: LuaPlayer, data: KafkatorioPacketData.PlayerUpdate) {
+    data.lastOnline = player.last_online
+    data.onlineTime = player.online_time
+    data.afkTime = player.afk_time
+    data.isConnected = player.connected
   }
 
 

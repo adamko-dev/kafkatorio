@@ -2,6 +2,7 @@ local ____exports = {}
 local ____kafkatorio_2Dschema = require("generated.kafkatorio-schema")
 local EntityStatus = ____kafkatorio_2Dschema.EntityStatus
 local FactorioEntityData = ____kafkatorio_2Dschema.FactorioEntityData
+local MinedProduct = ____kafkatorio_2Dschema.MinedProduct
 ____exports.Converters = {}
 local Converters = ____exports.Converters
 do
@@ -86,6 +87,34 @@ do
         else
             return EntityStatusRecord[status]
         end
+    end
+    function Converters.miningProperties(properties)
+        local products = {}
+        if properties.products ~= nil then
+            for ____, product in ipairs(properties.products) do
+                if product.type == "fluid" then
+                    products[#products + 1] = {
+                        type = MinedProduct.Type.MinedProductFluid,
+                        amount = product.amount,
+                        resultProtoId = ____exports.Converters.prototypeId(product.type, product.name)
+                    }
+                end
+                if product.type == "item" then
+                    products[#products + 1] = {
+                        type = MinedProduct.Type.MinedProductItem,
+                        amount = product.amount,
+                        resultProtoId = ____exports.Converters.prototypeId(product.type, product.name)
+                    }
+                end
+            end
+        end
+        return {canBeMined = properties.minable, products = products}
+    end
+    function Converters.playerOnlineInfo(player, data)
+        data.lastOnline = player.last_online
+        data.onlineTime = player.online_time
+        data.afkTime = player.afk_time
+        data.isConnected = player.connected
     end
     EntityStatusRecord = {
         [defines.entity_status.cant_divide_segments] = EntityStatus.CANT_DIVIDE_SEGMENTS,

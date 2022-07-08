@@ -3,7 +3,7 @@ import {isEventType} from "./eventTypeCheck";
 import {Converters} from "./converters";
 import {handleSurfaceUpdate} from "./surfaceUpdates";
 import EventCacheService from "../cache/EventDataCache";
-import MapChunkUpdate from "./mapChunkUpdates";
+import MapChunkUpdate from "./handlers/MapChunkUpdateHandler";
 
 
 script.on_event(

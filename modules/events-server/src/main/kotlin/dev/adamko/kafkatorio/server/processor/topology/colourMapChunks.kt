@@ -211,16 +211,15 @@ fun KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>.streamMapChunkColou
   val pid = "$pid.output-chunk.${chunkSize.name}"
 
   toStream("$pid.stream")
-    .filter("$pid.filter-tiles-not-empty") { _, v ->
-      !v?.map.isNullOrEmpty()
+    .filter("$pid.filter-tiles-not-empty") { _, chunkTiles ->
+      !chunkTiles?.map.isNullOrEmpty()
     }
-    .mapValues("$pid.map-not-null") { _, v ->
-      requireNotNull(v)
+    .mapValues("$pid.map-not-null") { _, chunkTiles ->
+      requireNotNull(chunkTiles)
     }
-    .peek("$pid.print-group-result") { _, v ->
-      println("Grouping map tiles result: ${v.chunkId} / ${v.map.size}")
-    }
-    .to(
+    .peek("$pid.print-group-result") { _, chunkTiles ->
+      println("Grouping map tiles result: ${chunkTiles.chunkId} / size:${chunkTiles.map.size}")
+    }.to(
       outputTopic,
       producedAs(
         "$pid.grouped-map-chunks",
