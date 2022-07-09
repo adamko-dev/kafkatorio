@@ -6,8 +6,8 @@ local ____kafkatorio_2Dschema = require("generated.kafkatorio-schema")
 local KafkatorioPacketData = ____kafkatorio_2Dschema.KafkatorioPacketData
 local ____converters = require("main.events.converters")
 local Converters = ____converters.Converters
-local ____EventDataCache = require("main.cache.EventDataCache")
-local EventUpdatesManager = ____EventDataCache.default
+local ____EventDataCache = require("main.emitting.EventDataCache")
+local EventUpdates = ____EventDataCache.default
 ____exports.PlayerUpdateHandler = __TS__Class()
 local PlayerUpdateHandler = ____exports.PlayerUpdateHandler
 PlayerUpdateHandler.name = "PlayerUpdateHandler"
@@ -31,7 +31,7 @@ function PlayerUpdateHandler.prototype.playerUpdateThrottle(self, event, mutate,
         return
     end
     local eventName = Converters.eventNameString(event.name)
-    EventUpdatesManager:throttle(
+    EventUpdates:throttle(
         {index = playerIndex},
         KafkatorioPacketData.Type.PlayerUpdate,
         function(data)

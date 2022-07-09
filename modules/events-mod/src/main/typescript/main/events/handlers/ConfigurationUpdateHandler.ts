@@ -3,8 +3,9 @@ import {
   ConfigurationUpdateModData,
   KafkatorioPacketData
 } from "../../../generated/kafkatorio-schema";
-import PacketEmitter from "../../PacketEmitter";
+import PacketEmitter from "../../emitting/PacketEmitter";
 import ConfigurationUpdate = KafkatorioPacketData.ConfigurationUpdate;
+import KafkatorioPacketQueue from "../../emitting/KafkatorioPacketQueue";
 
 
 export class ConfigurationUpdateHandler {
@@ -20,7 +21,7 @@ export class ConfigurationUpdateHandler {
       factorioData: ConfigurationUpdateHandler.factorioData(changeData)
     }
 
-    PacketEmitter.emitInstantPacket(configUpdateData)
+    KafkatorioPacketQueue.enqueue(configUpdateData)
   }
 
 

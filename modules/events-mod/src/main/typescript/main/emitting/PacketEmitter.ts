@@ -1,8 +1,5 @@
-import {
-  KafkatorioPacket,
-  KafkatorioPacketData
-} from "../generated/kafkatorio-schema";
-import {KafkatorioKeyedPacketData} from "./types";
+import {KafkatorioPacket, KafkatorioPacketData} from "../../generated/kafkatorio-schema";
+import {KafkatorioKeyedPacketData} from "../types";
 
 
 export class KafkatorioPacketEmitter {

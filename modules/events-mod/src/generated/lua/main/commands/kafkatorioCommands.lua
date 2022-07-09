@@ -5,10 +5,10 @@ local __TS__ParseInt = ____lualib.__TS__ParseInt
 local ____exports = {}
 local ____global_2Dinit = require("main.global-init")
 local initGlobal = ____global_2Dinit.initGlobal
-local ____queue = require("main.queue.queue")
-local Queue = ____queue.Queue
 local ____prototypeUpdates = require("main.events.prototypeUpdates")
 local emitPrototypes = ____prototypeUpdates.emitPrototypes
+local ____queue = require("main.queue.queue")
+local EventDataQueue = ____queue.default
 commands.add_command(
     "kafkatorio",
     "kafkatorio innit bruv",
@@ -56,7 +56,7 @@ commands.add_command(
                                     surface = surface,
                                     tick = e.tick
                                 }
-                                Queue.enqueue(
+                                EventDataQueue:enqueue(
                                     (tostring(surface.index) .. tostring(chunk.x)) .. tostring(chunk.y),
                                     data,
                                     50

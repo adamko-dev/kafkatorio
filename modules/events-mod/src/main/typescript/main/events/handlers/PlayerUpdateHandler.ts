@@ -1,6 +1,6 @@
 import {KafkatorioPacketData} from "../../../generated/kafkatorio-schema";
 import {Converters} from "../converters";
-import EventUpdatesManager from "../../cache/EventDataCache";
+import EventUpdates from "../../emitting/EventDataCache";
 
 
 export type PlayerUpdater = (player: LuaPlayer, data: KafkatorioPacketData.PlayerUpdate) => void
@@ -43,7 +43,7 @@ export class PlayerUpdateHandler {
 
     const eventName = Converters.eventNameString(event.name)
 
-    EventUpdatesManager.throttle<KafkatorioPacketData.PlayerUpdate>(
+    EventUpdates.throttle<KafkatorioPacketData.PlayerUpdate>(
         {index: playerIndex},
         KafkatorioPacketData.Type.PlayerUpdate,
         data => {

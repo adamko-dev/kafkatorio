@@ -10,8 +10,8 @@ local ____eventTypeCheck = require("main.events.eventTypeCheck")
 local isEventType = ____eventTypeCheck.isEventType
 local ____kafkatorio_2Dschema = require("generated.kafkatorio-schema")
 local KafkatorioPacketData = ____kafkatorio_2Dschema.KafkatorioPacketData
-local ____EventDataCache = require("main.cache.EventDataCache")
-local EventUpdatesManager = ____EventDataCache.default
+local ____EventDataCache = require("main.emitting.EventDataCache")
+local EventUpdates = ____EventDataCache.default
 local MapChunkUpdateHandler = __TS__Class()
 MapChunkUpdateHandler.name = "MapChunkUpdateHandler"
 function MapChunkUpdateHandler.prototype.____constructor(self)
@@ -124,7 +124,7 @@ function MapChunkUpdateHandler.prototype.handlePreChunkDeleted(self, event)
     end
     for ____, position in ipairs(event.positions) do
         local key = {surfaceIndex = surface.index, chunkPosition = {position.x, position.y}}
-        EventUpdatesManager:debounce(
+        EventUpdates:debounce(
             key,
             KafkatorioPacketData.Type.MapChunkTileUpdate,
             function(data)
@@ -141,7 +141,7 @@ function MapChunkUpdateHandler.mapTilesUpdateDebounce(self, surface, chunkPositi
     end
     local eventName = Converters.eventNameString(event.name)
     local key = {surfaceIndex = surface.index, chunkPosition = chunkPosition}
-    EventUpdatesManager:debounce(
+    EventUpdates:debounce(
         key,
         KafkatorioPacketData.Type.MapChunkTileUpdate,
         function(data)

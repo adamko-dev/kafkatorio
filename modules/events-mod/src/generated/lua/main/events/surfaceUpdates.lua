@@ -1,5 +1,5 @@
 local ____exports = {}
-local ____PacketEmitter = require("main.PacketEmitter")
+local ____PacketEmitter = require("main.emitting.PacketEmitter")
 local PacketEmitter = ____PacketEmitter.default
 local ____kafkatorio_2Dschema = require("generated.kafkatorio-schema")
 local KafkatorioPacketData = ____kafkatorio_2Dschema.KafkatorioPacketData

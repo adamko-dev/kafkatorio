@@ -3,13 +3,11 @@ import {isEventType} from "../eventTypeCheck";
 import {
   KafkatorioPacketData,
   MapChunkPosition,
-  MinedProduct,
   PrototypeKey
 } from "../../../generated/kafkatorio-schema";
-import EventUpdatesManager, {EventUpdates} from "../../cache/EventDataCache";
+import EventUpdates, {PacketKey} from "../../emitting/EventDataCache";
 import {MapChunkUpdateEvent, MapTileChangeEvent} from "../mapChunkUpdates";
-import PacketKey = EventUpdates.PacketKey;
-import Type = MinedProduct.Type;
+
 
 type MapChunkTileUpdater = (data: KafkatorioPacketData.MapChunkTileUpdate) => void
 
@@ -141,7 +139,7 @@ class MapChunkUpdateHandler {
         chunkPosition: [position.x, position.y],
       }
 
-      EventUpdatesManager.debounce<KafkatorioPacketData.MapChunkTileUpdate>(
+      EventUpdates.debounce<KafkatorioPacketData.MapChunkTileUpdate>(
           key,
           KafkatorioPacketData.Type.MapChunkTileUpdate,
           data => data.isDeleted = true,
@@ -171,7 +169,7 @@ class MapChunkUpdateHandler {
       chunkPosition: chunkPosition,
     }
 
-    EventUpdatesManager.debounce<KafkatorioPacketData.MapChunkTileUpdate>(
+    EventUpdates.debounce<KafkatorioPacketData.MapChunkTileUpdate>(
         key,
         KafkatorioPacketData.Type.MapChunkTileUpdate,
         data => {

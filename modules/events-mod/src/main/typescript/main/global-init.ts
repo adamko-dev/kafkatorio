@@ -1,5 +1,5 @@
-import {Queue} from "./queue/queue";
-import EventUpdatesManager from "./cache/EventDataCache";
+import EventUpdates from "./emitting/EventDataCache";
+import {EventDataQueueManager} from "./queue/queue";
 
 
 export function initGlobal(force: boolean = false) {
@@ -8,8 +8,8 @@ export function initGlobal(force: boolean = false) {
   global.MOD_VERSION = script.active_mods[script.mod_name]
   global.FACTORIO_VERSION = script.active_mods["base"]
 
-  Queue.init(true)
-  EventUpdatesManager.init(true)
+  EventDataQueueManager.init(true)
+  EventUpdates.init(true)
 
   log("Finished initialising Kafkatorio Global variables")
 }

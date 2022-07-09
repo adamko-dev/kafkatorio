@@ -1,6 +1,6 @@
 import {Converters} from "./converters";
 import {ForceIndex, KafkatorioPacketData, PlayerUpdateKey} from "../../generated/kafkatorio-schema";
-import packetEmitter from "../PacketEmitter";
+import packetEmitter from "../emitting/PacketEmitter";
 import PlayerUpdates from "./handlers/PlayerUpdateHandler";
 
 

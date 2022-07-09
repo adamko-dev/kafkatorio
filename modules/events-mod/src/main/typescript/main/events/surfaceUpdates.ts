@@ -1,4 +1,4 @@
-import PacketEmitter from "../PacketEmitter";
+import PacketEmitter from "../emitting/PacketEmitter";
 import {KafkatorioPacketData} from "../../generated/kafkatorio-schema";
 import Type = KafkatorioPacketData.Type;
 

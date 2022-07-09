@@ -9,8 +9,8 @@ local __TS__ArrayMap = ____lualib.__TS__ArrayMap
 local ____exports = {}
 local ____kafkatorio_2Dschema = require("generated.kafkatorio-schema")
 local KafkatorioPacketData = ____kafkatorio_2Dschema.KafkatorioPacketData
-local ____PacketEmitter = require("main.PacketEmitter")
-local PacketEmitter = ____PacketEmitter.default
+local ____KafkatorioPacketQueue = require("main.emitting.KafkatorioPacketQueue")
+local KafkatorioPacketQueue = ____KafkatorioPacketQueue.default
 ____exports.ConfigurationUpdateHandler = __TS__Class()
 local ConfigurationUpdateHandler = ____exports.ConfigurationUpdateHandler
 ConfigurationUpdateHandler.name = "ConfigurationUpdateHandler"
@@ -24,7 +24,7 @@ function ConfigurationUpdateHandler.prototype.emitConfigurationUpdate(self, chan
         allMods = ____exports.ConfigurationUpdateHandler:allMods(changeData),
         factorioData = ____exports.ConfigurationUpdateHandler:factorioData(changeData)
     }
-    PacketEmitter:emitInstantPacket(configUpdateData)
+    KafkatorioPacketQueue:enqueue(configUpdateData)
 end
 function ConfigurationUpdateHandler.factorioData(self, changeData)
     return {oldVersion = changeData.old_version or nil, newVersion = changeData.new_version or nil}

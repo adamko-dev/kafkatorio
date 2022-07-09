@@ -1,23 +1,20 @@
-import PacketEmitter from "../PacketEmitter";
+import PacketEmitter from "../emitting/PacketEmitter";
 import {
   EntityItemGroup,
   FactorioPrototype,
   KafkatorioPacketData
 } from "../../generated/kafkatorio-schema";
 import {Converters} from "./converters";
+import KafkatorioPacketQueue from "../emitting/KafkatorioPacketQueue";
 
 
-type PrototypesByType<T extends FactorioPrototype> = LuaTable<string, T[]>
+type PrototypesByType<T extends FactorioPrototype> = Record<string, T[]>
 
 
 export function emitPrototypes() {
 
   const mapTileProtos: PrototypesByType<FactorioPrototype.MapTile> = getMapTilePrototypes()
   emit(mapTileProtos)
-
-
-  game.item_group_prototypes
-  game.item_subgroup_prototypes
 
 
   const entityProtos: PrototypesByType<FactorioPrototype.Entity> = getEntityPrototypes()
@@ -27,7 +24,7 @@ export function emitPrototypes() {
 
 function emit<T extends FactorioPrototype>(protosByType: PrototypesByType<T>) {
   for (const [, protos] of pairs(protosByType)) {
-    PacketEmitter.emitInstantPacket({
+    KafkatorioPacketQueue.enqueue({
       type: KafkatorioPacketData.Type.PrototypesUpdate,
       prototypes: protos,
     })
@@ -36,13 +33,10 @@ function emit<T extends FactorioPrototype>(protosByType: PrototypesByType<T>) {
 
 
 function getMapTilePrototypes(): PrototypesByType<FactorioPrototype.MapTile> {
-  const tiles = new LuaTable<string, FactorioPrototype.MapTile[]>()
-  if (!tiles.has("tile")) {
-    tiles.set("tile", [])
-  }
+  const tiles: FactorioPrototype.MapTile[] = []
 
   for (const [, tile] of game.tile_prototypes) {
-    tiles.get("tile").push({
+    tiles[tiles.length] = {
       type: FactorioPrototype.Type.MapTile,
 
       protoId: Converters.prototypeId("tile", tile.name),
@@ -51,21 +45,22 @@ function getMapTilePrototypes(): PrototypesByType<FactorioPrototype.MapTile> {
       collisionMasks: Converters.convertCollisionMaskToNames(tile.collision_mask),
       mapColour: Converters.mapColour(tile.map_color),
       canBeMined: tile.mineable_properties.minable,
-    })
+    }
   }
-  return tiles
+
+  return {
+    "tiles": tiles
+  }
 }
 
 
 function getEntityPrototypes(): PrototypesByType<FactorioPrototype.Entity> {
-  const protos = new LuaTable<string, FactorioPrototype.Entity[]>()
+  const protos: PrototypesByType<FactorioPrototype.Entity> = {}
 
   for (const [, entity] of game.entity_prototypes) {
     const key: string = `${entity.group.name}/${entity.subgroup.name}`
 
-    if (!protos.has(key)) {
-      protos.set(key, [])
-    }
+    protos[key] ??= []
 
     const entityProto: FactorioPrototype.Entity = {
       type: FactorioPrototype.Type.Entity,
@@ -91,7 +86,7 @@ function getEntityPrototypes(): PrototypesByType<FactorioPrototype.Entity> {
     }
     entityProto.miningProperties = Converters.miningProperties(entity.mineable_properties)
 
-    protos.get(key).push(entityProto)
+    protos[key].push(entityProto)
   }
   return protos
 }

@@ -1,6 +1,6 @@
 import {initGlobal} from "../global-init";
-import {Queue} from "../queue/queue";
 import {emitPrototypes} from "../events/prototypeUpdates";
+import EventDataQueue from "../queue/queue";
 
 
 commands.add_command(
@@ -58,7 +58,7 @@ commands.add_command(
                     tick: e.tick,
                   }
 
-                  Queue.enqueue(
+                  EventDataQueue.enqueue(
                       `${surface.index}${chunk.x}${chunk.y}`,
                       data,
                       50

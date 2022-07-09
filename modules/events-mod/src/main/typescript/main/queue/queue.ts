@@ -1,23 +1,13 @@
-export namespace Queue {
+export class EventDataQueueManager {
 
-  declare const global: {
-    store: EventQueueStore
-
-    head: Node | null
-    tail: Node | null
-
-    size: uint
-  }
-
-
-  export function init(force?: boolean) {
+  static init(force?: boolean) {
 
     const isAnythingUndefined = global.store == undefined ||
                                 global.size == undefined ||
                                 global.head == undefined ||
                                 global.tail == undefined
 
-    log(`Initialising EventQueue globals (force=${force}, isAnythingUndefined=${isAnythingUndefined})`)
+    log(`Initialising EventDataQueueManager globals (force=${force}, isAnythingUndefined=${isAnythingUndefined})`)
 
     if (force == true || isAnythingUndefined) {
       global.store = {}
@@ -26,16 +16,16 @@ export namespace Queue {
       global.size = 0
     }
 
-    log(`Finished initialising EventQueue`)
+    log(`Finished initialising EventDataQueueManager`)
   }
 
 
-  export function size(): uint | undefined {
+  size(): uint | undefined {
     return global.size
   }
 
 
-  export function enqueue(key: string, event: EventData, weight: int = 1) {
+  enqueue(key: string, event: EventData, weight: int = 1) {
     if (key ! in global.store) {
       let node = new Node(key, weight)
       if (global.head == null) {
@@ -52,7 +42,7 @@ export namespace Queue {
   }
 
 
-  export function dequeue(): WeightedPacket | null {
+  dequeue(): WeightedPacket | null {
     if (global.head == null) {
       return null
     } else {
@@ -76,12 +66,12 @@ export namespace Queue {
   }
 
 
-  export function dequeueValues(targetWeight: uint = 50): EventData[] {
+  dequeueValues(targetWeight: uint = 50): EventData[] {
     let values: EventData[] = []
     let weight: uint = 0
 
     do {
-      let packet = dequeue()
+      let packet = this.dequeue()
 
       if (packet == null) {
         break;
@@ -94,27 +84,43 @@ export namespace Queue {
     return values
   }
 
+}
 
-  class Node {
-    storeKey: string;
-    next: Node | null = null;
-    weight: uint
 
-    constructor(storeKey: string, weight: uint) {
-      this.storeKey = storeKey;
-      this.weight = weight
-    }
+const EventDataQueue = new EventDataQueueManager()
+
+
+export default EventDataQueue
+
+
+declare const global: {
+  store: EventQueueStore
+
+  head: Node | null
+  tail: Node | null
+
+  size: uint
+}
+
+
+class Node {
+  storeKey: string;
+  next: Node | null = null;
+  weight: uint
+
+  constructor(storeKey: string, weight: uint) {
+    this.storeKey = storeKey;
+    this.weight = weight
   }
+}
 
 
-  interface EventQueueStore {
-    [key: string]: EventData | null;
-  }
+interface EventQueueStore {
+  [key: string]: EventData | null;
+}
 
 
-  interface WeightedPacket {
-    value: EventData,
-    weight: int,
-  }
-
+interface WeightedPacket {
+  value: EventData,
+  weight: int,
 }

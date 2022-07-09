@@ -6,7 +6,7 @@ import {
   Tick
 } from "../../../generated/kafkatorio-schema";
 import {Converters} from "../converters";
-import EventDataCache from "../../cache/EventDataCache";
+import EventDataCache from "../../emitting/EventDataCache";
 
 
 export class EntityUpdatesHandler {
