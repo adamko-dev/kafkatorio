@@ -53,7 +53,7 @@ fun saveMapTiles(
       ),
       TOPIC_MAP_CHUNK_COLOURED_STATE,
     ).filter("$pid.consume.grouped-map-chunks.filter-size") { _, y ->
-      y.chunkId.chunkSize.zoomLevel >= ChunkSize.CHUNK_256.zoomLevel
+      y.chunkId.chunkSize.lengthInTiles >= ChunkSize.CHUNK_256.lengthInTiles
     }
 
   val savedChunkFilenames: KStream<ServerMapChunkId, TilePngFilename> =
