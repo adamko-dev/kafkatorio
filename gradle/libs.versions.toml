@@ -6,12 +6,12 @@
 
 ## compilation ##
 jvm        = "11"
-kotlin     = "1.7.0"
+kotlin     = "1.7.10"
 
 ## libs ##
 camel-kafkaConnectors = "0.11.0"
 http4k                = "4.25.16.2"
-kafka                 = "3.2.0"
+kafka                 = "3.2.0"       # https://kafka.apache.org/downloads
 kvision               = "5.12.0"
 log4j2                = "2.17.2"
 okio                  = "3.2.0"
@@ -71,8 +71,6 @@ kotlinJs            = { id = "org.jetbrains.kotlin.js",                     vers
 kotlinSerialization = { id = "org.jetbrains.kotlin.kotlin-serialization",   version.ref  = "kotlin" }
 
 loggingCapabilities = { id = "dev.jacomet.logging-capabilities",            version      = "0.10.0"  }
-#shadowJar           = { id = "com.github.jengelman.gradle.plugins.shadow",  version      = "6.1.0"  }
-#dependencyCheck     = { id = "com.github.ben-manes.versions",               version      = "0.39.0" }
 
 
 ###########
@@ -210,7 +208,7 @@ kafka-streamsTestUtils = { group = "org.apache.kafka", name = "kafka-streams-tes
 kafka-kotkaStreams = { group = "dev.adamko.kotka", name = "kotka-streams", version.ref = "kotkaStreams" }
 
 
-mary-rocksdb = { group = "io.maryk.rocksdb", name = "rocksdb-multiplatform", version.ref = "marykRocksDb" }
+marykRocksDb = { group = "io.maryk.rocksdb", name = "rocksdb-multiplatform", version.ref = "marykRocksDb" }
 
 jsoup    = { group = "org.jsoup", name = "jsoup", version = "1.14.3" }
 skrapeit = { group = "it.skrape", name = "skrapeit", version = "1.2.0" }
