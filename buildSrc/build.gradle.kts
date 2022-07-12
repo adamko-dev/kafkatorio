@@ -55,10 +55,6 @@ dependencies {
   // https://github.com/avast/gradle-docker-compose-plugin
 //  implementation("com.avast.gradle:gradle-docker-compose-plugin:${Versions.gradleDockerComposePlugin}")
 
-//  implementation(platform("org.http4k:http4k-bom:${libs.versions.http4k.get()}"))
-//  implementation("org.http4k:http4k-core")
-//  implementation("org.http4k:http4k-client-okhttp")
-
   // https://github.com/gradle/gradle/issues/15383#issuecomment-779893192
   // https://youtrack.jetbrains.com/issue/IDEA-262280#focus=Comments-27-5397040.0-0
 //  implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
