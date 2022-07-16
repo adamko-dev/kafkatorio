@@ -7,7 +7,7 @@ plugins {
   `project-report`
   `build-dashboard`
 
-//  kotlin("multiplatform") apply false // try to stop error 'Projects must be configuring'
+  kotlin("multiplatform") apply false // try to stop error 'Projects must be configuring'
 //  kotlin("js") apply false // try to stop error 'Projects must be configuring'
 }
 
@@ -39,7 +39,7 @@ idea {
 }
 
 tasks.wrapper {
-  gradleVersion = "7.4.2"
+  gradleVersion = "7.5"
   distributionType = Wrapper.DistributionType.ALL
 }
 
