@@ -129,7 +129,7 @@ val generateTypeScript by tasks.registering(GenerateTypeScriptTask::class) {
 //    kotlinMainDependencies,
   )
   output.set(layout.buildDirectory.dir("generated/typescript"))
-  mainClass.set("dev.adamko.kafkatorio.events.schema.Kt2ts2Kt")
+  mainClass.set("dev.adamko.kafkatorio.schema.Kt2ts2Kt")
   args(temporaryDir.canonicalPath)
 }
 

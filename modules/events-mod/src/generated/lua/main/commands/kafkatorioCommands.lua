@@ -7,8 +7,8 @@ local ____global_2Dinit = require("main.global-init")
 local initGlobal = ____global_2Dinit.initGlobal
 local ____prototypeUpdates = require("main.events.prototypeUpdates")
 local emitPrototypes = ____prototypeUpdates.emitPrototypes
-local ____queue = require("main.queue.queue")
-local EventDataQueue = ____queue.default
+local ____EventDataQueue = require("main.emitting.EventDataQueue")
+local EventDataQueue = ____EventDataQueue.default
 commands.add_command(
     "kafkatorio",
     "kafkatorio innit bruv",

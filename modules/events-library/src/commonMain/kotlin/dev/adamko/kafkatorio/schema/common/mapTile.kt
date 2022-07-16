@@ -1,9 +1,10 @@
 package dev.adamko.kafkatorio.schema.common
 
-
 import dev.adamko.kafkatorio.schema.common.MapTileDictionary.PrototypeKey
 import kotlin.jvm.JvmInline
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+
 
 const val MAP_CHUNK_SIZE = 32
 
@@ -24,11 +25,11 @@ data class MapTile(
  * [PrototypeKey] is an arbitrary integer value, which maps to one [PrototypeId] only for a
  * specific instance of [MapTileDictionary].
  *
- * Each X/Y coordinate in [tilesXY] maps to a [PrototypeKey].
+ * @param[tilesXY] Map an X/Y coordinate to a [PrototypeKey].
  */
 @Serializable
+@SerialName("kafkatorio.packet.keyed.MapTileDictionary")
 data class MapTileDictionary(
-  /** Map an X,Y coordinate a prototype name */
   val tilesXY: Map<String, Map<String, PrototypeKey>>,
   val protos: Map<PrototypeId, PrototypeKey>,
 ) {
@@ -55,59 +56,68 @@ data class MapTileDictionary(
   /** An arbitrary ID for a prototype in [MapTileDictionary.protos]. */
   @Serializable
   @JvmInline
-  value class PrototypeKey(private val index: Int)
+  value class PrototypeKey(private val index: Int) : Comparable<Int> by index
 
-  companion object {
-    fun MapTileDictionary?.isNullOrEmpty(): Boolean {
-      return this == null || (tilesXY.isEmpty() && tilesXY.all { it.value.isEmpty() })
-    }
-  }
+//  companion object {
+//    fun MapTileDictionary?.isNullOrEmpty(): Boolean {
+//      return this == null || (tilesXY.isEmpty() && tilesXY.all { it.value.isEmpty() })
+//    }
+//  }
 }
-
-
-@Serializable
-data class MapBoundingBox(
-  val topLeft: MapTilePosition,
-  val bottomRight: MapTilePosition,
-)
 
 
 @Serializable
 data class ServerMapChunkId(
   val serverId: FactorioServerId,
+  val layer: ServerMapTileLayer,
   val chunkPosition: MapChunkPosition,
   val surfaceIndex: SurfaceIndex,
-  val chunkSize: ChunkSize,
-)
+) {
+  val chunkSize: ChunkSize get() = chunkPosition.chunkSize
+}
 
 
-/** `${serverDataDir}/servers/{serverId}/map/tiles/s{surfaceIndex}/z{zoomLevel}/x{chunkX}/y{chunkY}.png` */
+@Serializable
+enum class ServerMapTileLayer(val dir: String) {
+  @SerialName("terrain")
+  TERRAIN("terrain"),
+  @SerialName("resource")
+  RESOURCE("resource"),
+  @SerialName("building")
+  BUILDING("building"),
+}
+
+
+/** `${serverDataDir}/servers/{serverId}/map/${layer}/s{surfaceIndex}/z{zoomLevel}/x{chunkX}/y{chunkY}.png` */
 @Serializable
 @JvmInline
-value class TilePngFilename(
-  val value: String,
-) {
+value class ServerMapTilePngFilename(val value: String) {
+
   constructor(id: ServerMapChunkId) : this(
-    id.serverId,
-    id.surfaceIndex,
-    id.chunkSize.zoomLevel,
-    id.chunkPosition.x,
-    id.chunkPosition.y,
+    serverId = id.serverId,
+    layer = id.layer,
+    surfaceIndex = id.surfaceIndex,
+    zoomLevel = id.chunkSize.zoomLevel,
+    chunkX = id.chunkPosition.x,
+    chunkY = id.chunkPosition.y,
   )
 
   constructor(
     serverId: FactorioServerId,
+    layer: ServerMapTileLayer,
     surfaceIndex: SurfaceIndex,
     zoomLevel: Int,
     chunkX: Int,
     chunkY: Int,
-  ) : this(buildString {
-    append("servers/${serverId}")
-    append("/map/tiles")
-    append("/s${surfaceIndex}")
-    append("/z${zoomLevel}")
-    append("/x${chunkX}")
-    append("/y${chunkY}")
-    append(".png")
-  })
+  ) : this(
+    "servers/${serverId}" +
+        "/map" +
+        "/layers/${layer.dir}" +
+        "/s${surfaceIndex}" +
+        "/z${zoomLevel}" +
+        "/x${chunkX}" +
+        "/y${chunkY}" +
+        ".png"
+  )
+
 }

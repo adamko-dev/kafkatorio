@@ -15,6 +15,7 @@ export type KafkatorioPacketData =
   | KafkatorioPacketData.EntityUpdate
   | KafkatorioPacketData.Error
   | KafkatorioPacketData.MapChunkEntityUpdate
+  | KafkatorioPacketData.MapChunkResourceUpdate
   | KafkatorioPacketData.MapChunkTileUpdate
   | KafkatorioPacketData.PlayerUpdate
   | KafkatorioPacketData.PrototypesUpdate
@@ -29,6 +30,7 @@ export namespace KafkatorioPacketData {
     SurfaceUpdate = "kafkatorio.packet.instant.SurfaceUpdate",
     EntityUpdate = "kafkatorio.packet.keyed.EntityUpdate",
     MapChunkEntityUpdate = "kafkatorio.packet.keyed.MapChunkEntityUpdate",
+    MapChunkResourceUpdate = "kafkatorio.packet.keyed.MapChunkResourceUpdate",
     MapChunkTileUpdate = "kafkatorio.packet.keyed.MapChunkTileUpdate",
     PlayerUpdate = "kafkatorio.packet.keyed.PlayerUpdate",
     Error = "kafkatorio.packet.KafkatorioPacketData.Error",
@@ -74,8 +76,8 @@ export namespace KafkatorioPacketData {
     chunkPosition?: MapEntityPosition | null;
     graphicsVariation?: UByte | null;
     health?: Float | null;
-    isActive?: boolean | null;
-    isRotatable?: boolean | null;
+    isActive?: boolean;
+    isRotatable?: boolean;
     lastUser?: UInt | null;
     localisedDescription?: string | null;
     localisedName?: string | null;
@@ -85,7 +87,14 @@ export namespace KafkatorioPacketData {
     type: KafkatorioPacketData.Type.MapChunkEntityUpdate;
     key: MapChunkEntityUpdateKey;
     events?: { [key: EventName]: Tick[] } | null;
-    distinctEntities?: { [key: string]: FactorioEntityData } | null;
+    entitiesXY: FactorioEntityUpdateEntityDictionary;
+  }
+  
+  export interface MapChunkResourceUpdate {
+    type: KafkatorioPacketData.Type.MapChunkResourceUpdate;
+    key: MapChunkResourceUpdateKey;
+    events?: { [key: EventName]: Tick[] } | null;
+    resourcesXY: FactorioEntityUpdateResourceDictionary;
   }
   
   export interface MapChunkTileUpdate {
@@ -96,7 +105,7 @@ export namespace KafkatorioPacketData {
     robot?: EntityIdentifiersData | null;
     force?: ForceIndex | null;
     tileDictionary?: MapTileDictionary | null;
-    isDeleted?: boolean | null;
+    isDeleted?: boolean;
   }
   
   export interface PlayerUpdate {
@@ -110,10 +119,10 @@ export namespace KafkatorioPacketData {
     afkTime?: Tick | null;
     ticksToRespawn?: Tick | null;
     forceIndex?: ForceIndex | null;
-    isAdmin?: boolean | null;
-    isConnected?: boolean | null;
-    isShowOnMap?: boolean | null;
-    isSpectator?: boolean | null;
+    isAdmin?: boolean;
+    isConnected?: boolean;
+    isShowOnMap?: boolean;
+    isSpectator?: boolean;
     lastOnline?: Tick | null;
     onlineTime?: Tick | null;
     position?: MapEntityPosition | null;
@@ -161,6 +170,16 @@ export interface MapChunkEntityUpdateKey {
   surfaceIndex: SurfaceIndex;
   chunkPosition: MapChunkPosition;
 }
+
+export type FactorioEntityUpdateEntityDictionary = { [key: string]: { [key: string]: FactorioEntityUpdateEntity } };
+
+export interface MapChunkResourceUpdateKey {
+  protoId: PrototypeId;
+  surfaceIndex: SurfaceIndex;
+  chunkPosition: MapChunkPosition;
+}
+
+export type FactorioEntityUpdateResourceDictionary = { [key: string]: { [key: string]: FactorioEntityUpdateResource } };
 
 export interface MapChunkTileUpdateKey {
   chunkPosition: MapChunkPosition;
@@ -218,10 +237,11 @@ export namespace FactorioPrototype {
     mapColourFriend?: Colour | null;
     mapColourEnemy?: Colour | null;
     maxHealth: Float;
-    isBuilding: boolean;
-    isEntityWithOwner: boolean;
-    isMilitaryTarget: boolean;
+    isBuilding?: boolean;
+    isEntityWithOwner?: boolean;
+    isMilitaryTarget?: boolean;
     miningProperties?: EntityMiningProperties | null;
+    collisionBox?: MapBoundingBox | null;
   }
   
   export interface MapTile {
@@ -229,7 +249,7 @@ export namespace FactorioPrototype {
     protoId: PrototypeId;
     mapColour: Colour;
     layer: UInt;
-    collisionMasks: List;
+    collisionMasks: string[];
     order: string;
     canBeMined: boolean;
   }
@@ -244,41 +264,8 @@ export type Byte = int8;
 export type MapChunkPosition = [
   x: Int,
   y: Int,
+  chunkSize: ChunkSize,
 ];
-
-export type FactorioEntityData =
-  | FactorioEntityData.Resource
-  | FactorioEntityData.Standard;
-
-export namespace FactorioEntityData {
-  export enum Type {
-    Resource = "kafkatorio.entity.FactorioEntityData.Resource",
-    Standard = "kafkatorio.entity.FactorioEntityData.Standard",
-  }
-  
-  export interface Resource {
-    type: FactorioEntityData.Type.Resource;
-    protoId: PrototypeId;
-    status?: EntityStatus | null;
-    position: MapEntityPosition;
-    amount: UInt;
-    initialAmount?: UInt | null;
-  }
-  
-  export interface Standard {
-    type: FactorioEntityData.Type.Standard;
-    protoId: PrototypeId;
-    status?: EntityStatus | null;
-    position: MapEntityPosition;
-    graphicsVariation?: UByte | null;
-    health?: Float | null;
-    isActive?: boolean | null;
-    isRotatable?: boolean | null;
-    lastUser?: UInt | null;
-    localisedDescription?: string | null;
-    localisedName?: string | null;
-  }
-}
 
 export interface EntityItemGroup {
   name: string;
@@ -291,55 +278,35 @@ export interface EntityMiningProperties {
   products: MinedProduct[] | null;
 }
 
-export type List = any & { __List__: void };
+export interface MapBoundingBox {
+  leftTop: MapEntityPosition;
+  rightBottom: MapEntityPosition;
+}
 
-export enum EntityStatus {
-  CANT_DIVIDE_SEGMENTS = "CANT_DIVIDE_SEGMENTS",
-  CHARGING = "CHARGING",
-  CLOSED_BY_CIRCUIT_NETWORK = "CLOSED_BY_CIRCUIT_NETWORK",
-  DISABLED = "DISABLED",
-  DISABLED_BY_CONTROL_BEHAVIOR = "DISABLED_BY_CONTROL_BEHAVIOR",
-  DISABLED_BY_SCRIPT = "DISABLED_BY_SCRIPT",
-  DISCHARGING = "DISCHARGING",
-  FLUID_INGREDIENT_SHORTAGE = "FLUID_INGREDIENT_SHORTAGE",
-  FULLY_CHARGED = "FULLY_CHARGED",
-  FULL_OUTPUT = "FULL_OUTPUT",
-  ITEM_INGREDIENT_SHORTAGE = "ITEM_INGREDIENT_SHORTAGE",
-  LAUNCHING_ROCKET = "LAUNCHING_ROCKET",
-  LOW_INPUT_FLUID = "LOW_INPUT_FLUID",
-  LOW_POWER = "LOW_POWER",
-  LOW_TEMPERATURE = "LOW_TEMPERATURE",
-  MARKED_FOR_DECONSTRUCTION = "MARKED_FOR_DECONSTRUCTION",
-  MISSING_REQUIRED_FLUID = "MISSING_REQUIRED_FLUID",
-  MISSING_SCIENCE_PACKS = "MISSING_SCIENCE_PACKS",
-  NETWORKS_CONNECTED = "NETWORKS_CONNECTED",
-  NETWORKS_DISCONNECTED = "NETWORKS_DISCONNECTED",
-  NORMAL = "NORMAL",
-  NOT_CONNECTED_TO_RAIL = "NOT_CONNECTED_TO_RAIL",
-  NOT_PLUGGED_IN_ELECTRIC_NETWORK = "NOT_PLUGGED_IN_ELECTRIC_NETWORK",
-  NO_AMMO = "NO_AMMO",
-  NO_FUEL = "NO_FUEL",
-  NO_INGREDIENTS = "NO_INGREDIENTS",
-  NO_INPUT_FLUID = "NO_INPUT_FLUID",
-  NO_MINABLE_RESOURCES = "NO_MINABLE_RESOURCES",
-  NO_MODULES_TO_TRANSMIT = "NO_MODULES_TO_TRANSMIT",
-  NO_POWER = "NO_POWER",
-  NO_RECIPE = "NO_RECIPE",
-  NO_RESEARCH_IN_PROGRESS = "NO_RESEARCH_IN_PROGRESS",
-  OPENED_BY_CIRCUIT_NETWORK = "OPENED_BY_CIRCUIT_NETWORK",
-  OUT_OF_LOGISTIC_NETWORK = "OUT_OF_LOGISTIC_NETWORK",
-  PREPARING_ROCKET_FOR_LAUNCH = "PREPARING_ROCKET_FOR_LAUNCH",
-  RECHARGING_AFTER_POWER_OUTAGE = "RECHARGING_AFTER_POWER_OUTAGE",
-  TURNED_OFF_DURING_DAYTIME = "TURNED_OFF_DURING_DAYTIME",
-  WAITING_FOR_SOURCE_ITEMS = "WAITING_FOR_SOURCE_ITEMS",
-  WAITING_FOR_SPACE_IN_DESTINATION = "WAITING_FOR_SPACE_IN_DESTINATION",
-  WAITING_FOR_TARGET_TO_BE_BUILT = "WAITING_FOR_TARGET_TO_BE_BUILT",
-  WAITING_FOR_TRAIN = "WAITING_FOR_TRAIN",
-  WAITING_TO_LAUNCH_ROCKET = "WAITING_TO_LAUNCH_ROCKET",
-  WORKING = "WORKING",
+export enum ChunkSize {
+  CHUNK_512 = "CHUNK_512",
+  CHUNK_256 = "CHUNK_256",
+  CHUNK_128 = "CHUNK_128",
+  CHUNK_064 = "CHUNK_064",
+  CHUNK_032 = "CHUNK_032",
 }
 
 export type PrototypeKey = Int & { __PrototypeKey__: void };
+
+export interface FactorioEntityUpdateEntity {
+  status?: FactorioEntityStatus | null;
+  unitNumber?: UnitNumber | null;
+  graphicsVariation?: UByte | null;
+  health?: Float | null;
+  isActive?: boolean | null;
+  isRotatable?: boolean | null;
+  lastUser?: UInt | null;
+}
+
+export interface FactorioEntityUpdateResource {
+  amount: UInt;
+  initialAmount?: UInt | null;
+}
 
 export type MinedProduct =
   | MinedProduct.MinedProductFluid
@@ -362,4 +329,50 @@ export namespace MinedProduct {
     amount?: Double | null;
     resultProtoId: PrototypeId;
   }
+}
+
+export enum FactorioEntityStatus {
+  WORKING = "WORKING",
+  NORMAL = "NORMAL",
+  NO_POWER = "NO_POWER",
+  LOW_POWER = "LOW_POWER",
+  NO_FUEL = "NO_FUEL",
+  DISABLED_BY_CONTROL_BEHAVIOR = "DISABLED_BY_CONTROL_BEHAVIOR",
+  OPENED_BY_CIRCUIT_NETWORK = "OPENED_BY_CIRCUIT_NETWORK",
+  CLOSED_BY_CIRCUIT_NETWORK = "CLOSED_BY_CIRCUIT_NETWORK",
+  DISABLED_BY_SCRIPT = "DISABLED_BY_SCRIPT",
+  MARKED_FOR_DECONSTRUCTION = "MARKED_FOR_DECONSTRUCTION",
+  NOT_PLUGGED_IN_ELECTRIC_NETWORK = "NOT_PLUGGED_IN_ELECTRIC_NETWORK",
+  NETWORKS_CONNECTED = "NETWORKS_CONNECTED",
+  NETWORKS_DISCONNECTED = "NETWORKS_DISCONNECTED",
+  CHARGING = "CHARGING",
+  DISCHARGING = "DISCHARGING",
+  FULLY_CHARGED = "FULLY_CHARGED",
+  OUT_OF_LOGISTIC_NETWORK = "OUT_OF_LOGISTIC_NETWORK",
+  NO_RECIPE = "NO_RECIPE",
+  NO_INGREDIENTS = "NO_INGREDIENTS",
+  NO_INPUT_FLUID = "NO_INPUT_FLUID",
+  NO_RESEARCH_IN_PROGRESS = "NO_RESEARCH_IN_PROGRESS",
+  NO_MINABLE_RESOURCES = "NO_MINABLE_RESOURCES",
+  LOW_INPUT_FLUID = "LOW_INPUT_FLUID",
+  FLUID_INGREDIENT_SHORTAGE = "FLUID_INGREDIENT_SHORTAGE",
+  FULL_OUTPUT = "FULL_OUTPUT",
+  ITEM_INGREDIENT_SHORTAGE = "ITEM_INGREDIENT_SHORTAGE",
+  MISSING_REQUIRED_FLUID = "MISSING_REQUIRED_FLUID",
+  MISSING_SCIENCE_PACKS = "MISSING_SCIENCE_PACKS",
+  WAITING_FOR_SOURCE_ITEMS = "WAITING_FOR_SOURCE_ITEMS",
+  WAITING_FOR_SPACE_IN_DESTINATION = "WAITING_FOR_SPACE_IN_DESTINATION",
+  PREPARING_ROCKET_FOR_LAUNCH = "PREPARING_ROCKET_FOR_LAUNCH",
+  WAITING_TO_LAUNCH_ROCKET = "WAITING_TO_LAUNCH_ROCKET",
+  LAUNCHING_ROCKET = "LAUNCHING_ROCKET",
+  NO_MODULES_TO_TRANSMIT = "NO_MODULES_TO_TRANSMIT",
+  RECHARGING_AFTER_POWER_OUTAGE = "RECHARGING_AFTER_POWER_OUTAGE",
+  WAITING_FOR_TARGET_TO_BE_BUILT = "WAITING_FOR_TARGET_TO_BE_BUILT",
+  WAITING_FOR_TRAIN = "WAITING_FOR_TRAIN",
+  NO_AMMO = "NO_AMMO",
+  LOW_TEMPERATURE = "LOW_TEMPERATURE",
+  DISABLED = "DISABLED",
+  TURNED_OFF_DURING_DAYTIME = "TURNED_OFF_DURING_DAYTIME",
+  NOT_CONNECTED_TO_RAIL = "NOT_CONNECTED_TO_RAIL",
+  CANT_DIVIDE_SEGMENTS = "CANT_DIVIDE_SEGMENTS",
 }

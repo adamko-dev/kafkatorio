@@ -1,22 +1,21 @@
-package dev.adamko.kafkatorio.events.schema
+package dev.adamko.kafkatorio.schema.packets
 
+import dev.adamko.kafkatorio.library.LuaJsonList
 import dev.adamko.kafkatorio.library.jsonMapperKafkatorio
+import dev.adamko.kafkatorio.schema.common.ChunkSize
 import dev.adamko.kafkatorio.schema.common.EventName
 import dev.adamko.kafkatorio.schema.common.MapChunkPosition
 import dev.adamko.kafkatorio.schema.common.MapTileDictionary
 import dev.adamko.kafkatorio.schema.common.PrototypeId
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
 import dev.adamko.kafkatorio.schema.common.tick
-import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
-import dev.adamko.kafkatorio.schema.packets.MapChunkTileUpdate
-import dev.adamko.kafkatorio.schema.packets.MapChunkTileUpdateKey
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import kotlinx.serialization.decodeFromString
 
-class MapChunkUpdateTest : FunSpec({
+class MapChunkTileUpdateTest : FunSpec({
 
-  context("MapChunkUpdate update") {
+  context("MapChunkTileUpdate update") {
     //language=json
     val json = """
 {
@@ -26,7 +25,8 @@ class MapChunkUpdateTest : FunSpec({
       "surfaceIndex": 1,
       "chunkPosition": [
         -6,
-        -3
+        -3,
+        "CHUNK_032"
       ]
     },
     "tileDictionary": {
@@ -61,11 +61,11 @@ class MapChunkUpdateTest : FunSpec({
       modVersion = "0.4.0",
       data = MapChunkTileUpdate(
         key = MapChunkTileUpdateKey(
-          MapChunkPosition(-6, -3),
+          MapChunkPosition(-6, -3, ChunkSize.CHUNK_032),
           SurfaceIndex(1u),
         ),
         events = mapOf(
-          EventName("on_chunk_generated") to listOf(1u.tick)
+          EventName("on_chunk_generated") to LuaJsonList(listOf(1u.tick))
         ),
         tileDictionary = MapTileDictionary(
           tilesXY = mapOf(

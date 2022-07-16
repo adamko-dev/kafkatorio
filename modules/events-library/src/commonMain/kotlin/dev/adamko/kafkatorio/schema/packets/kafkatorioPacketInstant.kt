@@ -1,5 +1,6 @@
 package dev.adamko.kafkatorio.schema.packets
 
+import dev.adamko.kafkatorio.library.LuaJsonList
 import dev.adamko.kafkatorio.schema.common.FactorioPrototype
 import dev.adamko.kafkatorio.schema.common.PlayerIndex
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
@@ -20,7 +21,8 @@ sealed class KafkatorioInstantPacketData : KafkatorioPacketData()
 @SerialName("kafkatorio.packet.instant.ConfigurationUpdate")
 data class ConfigurationUpdate(
   val factorioData: ConfigurationUpdateGameData,
-  val allMods: List<ConfigurationUpdateModData>,
+//  @Contextual
+  val allMods: LuaJsonList<ConfigurationUpdateModData>,
   val modStartupSettingsChange: Boolean,
   val migrationApplied: Boolean,
 ) : KafkatorioInstantPacketData() {
@@ -62,7 +64,8 @@ data class ConsoleCommandUpdate(
 @Serializable
 @SerialName("kafkatorio.packet.instant.PrototypesUpdate")
 data class PrototypesUpdate(
-  val prototypes: List<FactorioPrototype>,
+//  @Contextual
+  val prototypes: LuaJsonList<FactorioPrototype>,
 ) : KafkatorioInstantPacketData()
 
 

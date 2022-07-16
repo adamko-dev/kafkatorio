@@ -1,7 +1,11 @@
 package dev.adamko.kafkatorio.schema.common
 
+import kotlin.jvm.JvmInline
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+
+
+// TODO change all booleans to be optional, and default to 'false' (also in events-mod)
 
 
 @Serializable
@@ -9,16 +13,17 @@ import kotlinx.serialization.Serializable
 sealed interface FactorioEntityData {
 
   val protoId: PrototypeId
-  val status: Status?
 
   val position: MapEntityPosition
 
   /** Non-specific entity data */
   @Serializable
-  @SerialName("kafkatorio.entity.FactorioEntityData.Standard")
+  @SerialName("kafkatorio.entity.FactorioEntityData")
   data class Standard(
     override val protoId: PrototypeId,
-    override val status: Status? = null,
+    val status: Status? = null,
+
+    val unitNumber: UnitNumber? = null,
 
     override val position: MapEntityPosition,
     val graphicsVariation: UByte? = null,
@@ -26,121 +31,230 @@ sealed interface FactorioEntityData {
     val isActive: Boolean? = null,
     val isRotatable: Boolean? = null,
     val lastUser: UInt? = null,
-    val localisedDescription: String? = null,
-    val localisedName: String? = null,
-  ) : FactorioEntityData
+  ) : FactorioEntityData {
+    constructor(
+      position: MapEntityPosition,
+      protoId: PrototypeId,
+      element: FactorioEntityUpdateElement.Entity
+    ) : this(
+      protoId = protoId,
+      position = position,
+
+      status = element.status,
+      unitNumber = element.unitNumber,
+      graphicsVariation = element.graphicsVariation,
+      health = element.health,
+      isActive = element.isActive,
+      isRotatable = element.isRotatable,
+      lastUser = element.lastUser
+    )
+  }
 
 
   @Serializable
-  @SerialName("kafkatorio.entity.FactorioEntityData.Resource")
+  @SerialName("kafkatorio.entity.FactorioResourceData")
   data class Resource(
     override val protoId: PrototypeId,
-    override val status: Status? = null,
 
     override val position: MapEntityPosition,
     val amount: UInt,
     /** Count of initial resource units contained. `null` if resource is not infinite. */
     val initialAmount: UInt? = null,
-  ) : FactorioEntityData
+  ) : FactorioEntityData {
+    constructor(
+      position: MapEntityPosition,
+      protoId: PrototypeId,
+      element: FactorioEntityUpdateElement.Resource
+    ) : this(
+      protoId = protoId,
+      position = position,
+
+      amount = element.amount,
+      initialAmount = element.initialAmount,
+    )
+  }
 
 
+  /**
+   * [`https://lua-api.factorio.com/latest/defines.html#defines.entity_status`](https://lua-api.factorio.com/latest/defines.html#defines.entity_status)
+   */
+  @Suppress("unused") // not directly used at the moment - maybe later
   @Serializable
-  @SerialName("kafkatorio.entity.FactorioEntityData.EntityStatus")
+  @SerialName("kafkatorio.entity.FactorioEntityData.FactorioEntityStatus")
   enum class Status {
-    CANT_DIVIDE_SEGMENTS,
-    CHARGING,
-    CLOSED_BY_CIRCUIT_NETWORK,
-    DISABLED,
-    DISABLED_BY_CONTROL_BEHAVIOR,
-    DISABLED_BY_SCRIPT,
-    DISCHARGING,
-    FLUID_INGREDIENT_SHORTAGE,
-    FULLY_CHARGED,
-    FULL_OUTPUT,
-    ITEM_INGREDIENT_SHORTAGE,
-    LAUNCHING_ROCKET,
-    LOW_INPUT_FLUID,
-    LOW_POWER,
-    LOW_TEMPERATURE,
-    MARKED_FOR_DECONSTRUCTION,
-    MISSING_REQUIRED_FLUID,
-    MISSING_SCIENCE_PACKS,
-    NETWORKS_CONNECTED,
-    NETWORKS_DISCONNECTED,
-    NORMAL,
-    NOT_CONNECTED_TO_RAIL,
-    NOT_PLUGGED_IN_ELECTRIC_NETWORK,
-    NO_AMMO,
-    NO_FUEL,
-    NO_INGREDIENTS,
-    NO_INPUT_FLUID,
-    NO_MINABLE_RESOURCES,
-    NO_MODULES_TO_TRANSMIT,
-    NO_POWER,
-    NO_RECIPE,
-    NO_RESEARCH_IN_PROGRESS,
-    OPENED_BY_CIRCUIT_NETWORK,
-    OUT_OF_LOGISTIC_NETWORK,
-    PREPARING_ROCKET_FOR_LAUNCH,
-    RECHARGING_AFTER_POWER_OUTAGE,
-    TURNED_OFF_DURING_DAYTIME,
-    WAITING_FOR_SOURCE_ITEMS,
-    WAITING_FOR_SPACE_IN_DESTINATION,
-    WAITING_FOR_TARGET_TO_BE_BUILT,
-    WAITING_FOR_TRAIN,
-    WAITING_TO_LAUNCH_ROCKET,
     WORKING,
+    NORMAL,
+    NO_POWER,
+    LOW_POWER,
+    NO_FUEL,
+    DISABLED_BY_CONTROL_BEHAVIOR,
+    OPENED_BY_CIRCUIT_NETWORK,
+    CLOSED_BY_CIRCUIT_NETWORK,
+    DISABLED_BY_SCRIPT,
+    MARKED_FOR_DECONSTRUCTION,
+
+    /** Used by generators and solar panels. */
+    NOT_PLUGGED_IN_ELECTRIC_NETWORK,
+
+    /** Used by power switches. */
+    NETWORKS_CONNECTED,
+
+    /** Used by power switches. */
+    NETWORKS_DISCONNECTED,
+
+    /** Used by accumulators. */
+    CHARGING,
+    /** Used by accumulators. */
+    DISCHARGING,
+    /** Used by accumulators. */
+    FULLY_CHARGED,
+
+    /** Used by logistic containers. */
+    OUT_OF_LOGISTIC_NETWORK,
+
+    /** Used by assembling machines. */
+    NO_RECIPE,
+
+    /** Used by furnaces. */
+    NO_INGREDIENTS,
+
+    /** USED BY BOILERS, fluid turrets and fluid energy sources: Boiler has no fluid to work with. */
+    NO_INPUT_FLUID,
+
+    /** Used by labs. */
+    NO_RESEARCH_IN_PROGRESS,
+
+    /** Used by mining drills. */
+    NO_MINABLE_RESOURCES,
+
+    /** Used by boilers and fluid turrets: Boiler still has some fluid but is about to run out. */
+    LOW_INPUT_FLUID,
+
+    /** Used by crafting machines. */
+    FLUID_INGREDIENT_SHORTAGE,
+
+    /**
+     * Used by crafting machines, boilers, burner energy sources and reactors: Reactor/burner has
+     * full burnt result inventory, boiler has full output fluid box.
+     */
+    FULL_OUTPUT,
+
+    /** Used by crafting machines. */
+    ITEM_INGREDIENT_SHORTAGE,
+
+    /** Used by mining drills when the mining fluid is missing. */
+    MISSING_REQUIRED_FLUID,
+
+    /** Used by labs. */
+    MISSING_SCIENCE_PACKS,
+
+    /** Used by inserters. */
+    WAITING_FOR_SOURCE_ITEMS,
+
+    /** Used by inserters and mining drills. */
+    WAITING_FOR_SPACE_IN_DESTINATION,
+
+    /** Used by the rocket silo. */
+    PREPARING_ROCKET_FOR_LAUNCH,
+    /** Used by the rocket silo. */
+    WAITING_TO_LAUNCH_ROCKET,
+    /** Used by the rocket silo. */
+    LAUNCHING_ROCKET,
+
+    /** Used by beacons. */
+    NO_MODULES_TO_TRANSMIT,
+
+    /** Used by roboports. */
+    RECHARGING_AFTER_POWER_OUTAGE,
+
+    /** Used by inserters targeting entity ghosts. */
+    WAITING_FOR_TARGET_TO_BE_BUILT,
+    /** Used by inserters targeting rails. */
+    WAITING_FOR_TRAIN,
+
+    /** Used by ammo turrets. */
+    NO_AMMO,
+
+    /** Used by heat energy sources. */
+    LOW_TEMPERATURE,
+
+    /** Used by constant combinators: Combinator is turned off via switch in GUI. */
+    DISABLED,
+
+    /** Used by lamps. */
+    TURNED_OFF_DURING_DAYTIME,
+
+    /** Used by rail signals. */
+    NOT_CONNECTED_TO_RAIL,
+    /** Used by rail signals. */
+    CANT_DIVIDE_SEGMENTS,
   }
 
 }
-/*
-  enum entity_status {
-    working,
-    normal,
-    no_power,
-    low_power,
-    no_fuel,
-    disabled_by_control_behavior,
-    opened_by_circuit_network,
-    closed_by_circuit_network,
-    disabled_by_script,
-    marked_for_deconstruction,
-    not_plugged_in_electric_network,
-    networks_connected,
-    networks_disconnected,
-    charging,
-    discharging,
-    fully_charged,
-    out_of_logistic_network,
-    no_recipe,
-    no_ingredients,
-    no_input_fluid,
-    no_research_in_progress,
-    no_minable_resources,
-    low_input_fluid,
-    fluid_ingredient_shortage,
-    full_output,
-    item_ingredient_shortage,
-    missing_required_fluid,
-    missing_science_packs,
-    waiting_for_source_items,
-    waiting_for_space_in_destination,
-    preparing_rocket_for_launch,
-    waiting_to_launch_rocket,
-    launching_rocket,
-    no_modules_to_transmit,
-    recharging_after_power_outage,
-    waiting_for_target_to_be_built,
-    waiting_for_train,
-    no_ammo,
-    low_temperature,
-    disabled,
-    turned_off_during_daytime,
-    not_connected_to_rail,
-    cant_divide_segments,
-  }
 
- */
+
+sealed interface FactorioEntityUpdateDictionary<T : FactorioEntityUpdateElement>
+  : Iterable<Pair<MapEntityPosition, T>> {
+
+  val entitiesXY: Map<String, Map<String, T>>
+
+  operator fun get(position: MapEntityPosition): T? =
+    entitiesXY[position.x.toString()]?.get(position.y.toString())
+
+  override fun iterator(): Iterator<Pair<MapEntityPosition, T>> =
+    iterator {
+      entitiesXY.forEach { (x, column) ->
+        column.forEach { (y, entity) ->
+          yield(
+            MapEntityPosition(x.toDouble(), y.toDouble()) to entity
+          )
+        }
+      }
+    }
+
+  @Serializable
+  @SerialName("kafkatorio.entity.FactorioEntityUpdateResourceDictionary")
+  @JvmInline
+  value class Resource(
+    override val entitiesXY: Map<String, Map<String, FactorioEntityUpdateElement.Resource>>
+  ) : FactorioEntityUpdateDictionary<FactorioEntityUpdateElement.Resource>
+
+  @Serializable
+  @SerialName("kafkatorio.entity.FactorioEntityUpdateEntityDictionary")
+  @JvmInline
+  value class Entity(
+    override val entitiesXY: Map<String, Map<String, FactorioEntityUpdateElement.Entity>>
+  ) : FactorioEntityUpdateDictionary<FactorioEntityUpdateElement.Entity>
+
+}
+
+
+sealed interface FactorioEntityUpdateElement {
+
+  @Serializable
+  @SerialName("kafkatorio.entity.FactorioEntityUpdateResource")
+  data class Resource(
+    val amount: UInt,
+    /** Count of initial resource units contained. `null` if resource is not infinite. */
+    val initialAmount: UInt? = null,
+  ) : FactorioEntityUpdateElement
+
+  @Serializable
+  @SerialName("kafkatorio.entity.FactorioEntityUpdateEntity")
+  data class Entity(
+    val status: FactorioEntityData.Status? = null,
+
+    val unitNumber: UnitNumber? = null,
+
+    val graphicsVariation: UByte? = null,
+    val health: Float? = null,
+    val isActive: Boolean? = null,
+    val isRotatable: Boolean? = null,
+    val lastUser: UInt? = null,
+  ) : FactorioEntityUpdateElement
+
+}
+
 
 /*
 AssemblingMachine

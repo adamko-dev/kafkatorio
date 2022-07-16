@@ -14,7 +14,7 @@ class MapChunkPositionTest : FunSpec({
 
     context("MapChunkPosition(0, 0)") {
 
-      val chunkPos = MapChunkPosition(0, 0)
+      val chunkPos = MapChunkPosition(0, 0, ChunkSize.CHUNK_032)
 
       test("should contain tiles from (0,0) to (31,31)") {
         checkAll(mapTilePositionArb(0..31)) { tilePos ->
@@ -40,7 +40,7 @@ class MapChunkPositionTest : FunSpec({
     }
     context("MapChunkPosition(-10, -10)") {
 
-      val chunkPos = MapChunkPosition(-10, -10)
+      val chunkPos = MapChunkPosition(-10, -10, ChunkSize.CHUNK_032)
 
       test("should contain tiles from (-320,-320) to (-289,-289)") {
         checkAll(mapTilePositionArb(-320..-289)) { tilePos ->

@@ -1,8 +1,9 @@
 import {
   EventName,
-  FactorioEntityData,
+  FactorioEntityUpdateEntity,
   KafkatorioPacketData,
-  MapChunkPosition, PrototypeId,
+  MapChunkPosition,
+  PrototypeId,
   Tick
 } from "../../../generated/kafkatorio-schema";
 import {Converters} from "../converters";
@@ -19,29 +20,34 @@ export class EntityUpdatesHandler {
       return
     }
 
-    const tilesByChunk: LuaTable<MapChunkPosition, OldTileAndPosition> = new LuaTable<MapChunkPosition, OldTileAndPosition>()
+    const tilesByChunk: LuaTable<MapChunkPosition, OldTileAndPosition[]> = new LuaTable<MapChunkPosition, OldTileAndPosition[]>()
 
     for (const tile of event.tiles) {
       const chunkPosition = Converters.tilePositionToChunkPosition(tile.position)
-      tilesByChunk.set(chunkPosition, tile)
+      if (!tilesByChunk.has(chunkPosition)) {
+        tilesByChunk.set(chunkPosition, [])
+      }
+      const tiles = tilesByChunk.get(chunkPosition)
+      tiles[tiles.length] = tile
+      tilesByChunk.set(chunkPosition, tiles)
     }
 
     for (const [chunkPos, tiles] of pairs(tilesByChunk)) {
 
-      const entities: FactorioEntityData.Resource[] = []
+      const entities: LuaEntity[] = []
 
-      for (const tile in tiles) {
-        const resources: FactorioEntityData.Resource[] = EntityUpdatesHandler.getTileResourceEntities(surface, chunkPos)
-        for (const resource of resources) {
+      for (const tile of tiles) {
+        const tileEntities = EntityUpdatesHandler.getTileResourceEntities(surface, tile.position)
+        for (const resource of tileEntities) {
           entities[entities.length] = resource
         }
       }
 
-      EntityUpdatesHandler.throttleResourceEntitiesUpdate(
+      EntityUpdatesHandler.throttleResourcesUpdate(
           Converters.eventNameString(event.name),
           event.tick as Tick,
           event.surface_index,
-          [chunkPos[0], chunkPos[1]],
+          chunkPos,
           entities,
       )
     }
@@ -64,11 +70,11 @@ export class EntityUpdatesHandler {
 
   handleChunkGeneratedEvent(event: OnChunkGeneratedEvent) {
     const entities = EntityUpdatesHandler.getAreaResourceEntities(event.surface, event.area)
-    EntityUpdatesHandler.throttleResourceEntitiesUpdate(
+    EntityUpdatesHandler.throttleResourcesUpdate(
         Converters.eventNameString(event.name),
         event.tick as Tick,
         event.surface.index,
-        [event.position.x, event.position.y],
+        Converters.chunkPosition(event.position),
         entities,
     )
   }
@@ -88,21 +94,15 @@ export class EntityUpdatesHandler {
       chunkPosition: Converters.mapPositionToChunkPosition(entity.position)
     }
 
-    const entityUpdate: FactorioEntityData.Standard = {
-      type: FactorioEntityData.Type.Standard,
-      protoId: Converters.prototypeIdEntity(entity),
+    const entityUpdate: FactorioEntityUpdateEntity = {
+      unitNumber: entity.unit_number,
       graphicsVariation: entity.graphics_variation,
       health: entity.health,
       isActive: entity.active,
       isRotatable: entity.rotatable,
       lastUser: entity.last_user?.index,
-      localisedDescription: null,
-      localisedName: null,
-      position: [entity.position.x, entity.position.y],
       status: Converters.entityStatus(entity.status),
     }
-
-    const entityKey: string = `${entity.unit_number}`
 
     EventDataCache.throttle<KafkatorioPacketData.MapChunkEntityUpdate>(
         entityUpdateKey,
@@ -113,42 +113,44 @@ export class EntityUpdatesHandler {
           data.events[eventName] ??= []
           data.events[eventName].push(event.tick)
 
-          data.distinctEntities ??= {}
-          data.distinctEntities[entityKey] = entityUpdate
+          data.entitiesXY ??= {}
+          data.entitiesXY[`${entity.position.x}`] ??= {}
+          data.entitiesXY[`${entity.position.x}`][`${entity.position.y}`] ??= entityUpdate
         }
     )
   }
 
 
-  private static throttleResourceEntitiesUpdate(
+  private static throttleResourcesUpdate(
       eventName: EventName,
       eventTick: Tick,
       surfaceIndex: SurfaceIndex,
       chunkPosition: MapChunkPosition,
-      entities: FactorioEntityData.Resource[],
+      entities: LuaEntity[],
   ) {
 
     // first group by prototype ID
-    const entitiesByProtoId: { [protoId: PrototypeId]: FactorioEntityData.Resource[] } = {}
+    const entitiesByProtoId: { [protoId: PrototypeId]: LuaEntity[] } = {}
 
     for (const entity of entities) {
-      entitiesByProtoId[entity.protoId] ??= []
-      entitiesByProtoId[entity.protoId].push(entity)
+      const protoId = Converters.prototypeIdEntity(entity)
+      entitiesByProtoId[protoId] ??= []
+      entitiesByProtoId[protoId].push(entity)
     }
 
     for (const [protoId, resourceEntities] of pairs(entitiesByProtoId)) {
 
-      // create an update for each prototype
+      // create an update for each prototype ID
 
-      const entityUpdateKey: KafkatorioPacketData.MapChunkEntityUpdate["key"] = {
+      const entityUpdateKey: KafkatorioPacketData.MapChunkResourceUpdate["key"] = {
         protoId: protoId,
         surfaceIndex: surfaceIndex,
-        chunkPosition: [chunkPosition[0], chunkPosition[1]],
+        chunkPosition: chunkPosition,
       }
 
-      EventDataCache.throttle<KafkatorioPacketData.MapChunkEntityUpdate>(
+      EventDataCache.throttle<KafkatorioPacketData.MapChunkResourceUpdate>(
           entityUpdateKey,
-          KafkatorioPacketData.Type.MapChunkEntityUpdate,
+          KafkatorioPacketData.Type.MapChunkResourceUpdate,
           data => {
 
             data.events ??= {}
@@ -156,11 +158,13 @@ export class EntityUpdatesHandler {
             data.events[eventName].push(eventTick)
 
             for (const entity of resourceEntities) {
-              const [x, y] = entity.position
-              const entityKey: string = `${x},${y}`
+              const resourceUpdate = Converters.convertResourceEntity(entity)
 
-              data.distinctEntities ??= {}
-              data.distinctEntities[entityKey] = entity
+              if (resourceUpdate != null) {
+                data.resourcesXY ??= {}
+                data.resourcesXY[`${entity.position.x}`] ??= {}
+                data.resourcesXY[`${entity.position.x}`][`${entity.position.y}`] = resourceUpdate
+              }
             }
           }
       )
@@ -173,24 +177,12 @@ export class EntityUpdatesHandler {
   private static getTileResourceEntities(
       surface: LuaSurface,
       mapPosition: MapPosition,
-  ): FactorioEntityData.Resource[] {
-
-    const rawEntities = surface.find_entities_filtered({
+  ): LuaEntity[] {
+    return surface.find_entities_filtered({
           position: mapPosition,
           collision_mask: "resource-layer",
         }
     )
-
-    const resources: FactorioEntityData.Resource[] = []
-
-    for (const rawEntity of rawEntities) {
-      const entity = Converters.convertResourceEntity(rawEntity)
-      if (entity != null) {
-        resources[resources.length] = entity
-      }
-    }
-
-    return resources
   }
 
 
@@ -198,24 +190,12 @@ export class EntityUpdatesHandler {
   private static getAreaResourceEntities(
       surface: LuaSurface,
       area: BoundingBoxTable,
-  ): FactorioEntityData.Resource[] {
-
-    const rawEntities = surface.find_entities_filtered({
+  ): LuaEntity[] {
+    return surface.find_entities_filtered({
           area: area,
           collision_mask: "resource-layer",
         }
     )
-
-    const resources: FactorioEntityData.Resource[] = []
-
-    for (const rawEntity of rawEntities) {
-      const entity = Converters.convertResourceEntity(rawEntity)
-      if (entity != null) {
-        resources[resources.length] = entity
-      }
-    }
-
-    return resources
   }
 }
 

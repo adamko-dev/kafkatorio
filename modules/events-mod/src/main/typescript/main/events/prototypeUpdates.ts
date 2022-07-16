@@ -1,4 +1,3 @@
-import PacketEmitter from "../emitting/PacketEmitter";
 import {
   EntityItemGroup,
   FactorioPrototype,
@@ -15,7 +14,6 @@ export function emitPrototypes() {
 
   const mapTileProtos: PrototypesByType<FactorioPrototype.MapTile> = getMapTilePrototypes()
   emit(mapTileProtos)
-
 
   const entityProtos: PrototypesByType<FactorioPrototype.Entity> = getEntityPrototypes()
   emit(entityProtos)
@@ -58,7 +56,7 @@ function getEntityPrototypes(): PrototypesByType<FactorioPrototype.Entity> {
   const protos: PrototypesByType<FactorioPrototype.Entity> = {}
 
   for (const [, entity] of game.entity_prototypes) {
-    const key: string = `${entity.group.name}/${entity.subgroup.name}`
+    const key: string = `${entity.group.name}/${entity.subgroup.name}/${entity.type}`
 
     protos[key] ??= []
 
@@ -73,7 +71,9 @@ function getEntityPrototypes(): PrototypesByType<FactorioPrototype.Entity> {
       isEntityWithOwner: entity.is_entity_with_owner,
       isMilitaryTarget: entity.is_military_target,
       maxHealth: entity.max_health,
+      collisionBox: Converters.collisionBox(entity.collision_box),
     }
+    entity.infinite_resource
 
     if (entity.map_color != undefined) {
       entityProto.mapColour = Converters.mapColour(entity.map_color)

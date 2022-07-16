@@ -1,8 +1,8 @@
 local ____exports = {}
 local ____EventDataCache = require("main.emitting.EventDataCache")
 local EventUpdates = ____EventDataCache.default
-local ____queue = require("main.queue.queue")
-local EventDataQueueManager = ____queue.EventDataQueueManager
+local ____EventDataQueue = require("main.emitting.EventDataQueue")
+local EventDataQueueManager = ____EventDataQueue.EventDataQueueManager
 function ____exports.initGlobal(force)
     if force == nil then
         force = false

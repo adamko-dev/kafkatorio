@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
-data class ServerMapChunkTiles<Data>(
+data class ServerMapChunkTiles<Data : Any>(
   val chunkId: ServerMapChunkId,
   val map: Map<MapTilePosition, Data>,
 ) {
@@ -19,7 +19,7 @@ data class ServerMapChunkTiles<Data>(
 
 
 val MapTile.position
-  get() = MapTilePosition(x, y)
+  get() = MapTilePosition(x = x, y = y)
 
 
 val TRANSPARENT_AWT: Color = ColourHex.TRANSPARENT.toRgbColor().awt()

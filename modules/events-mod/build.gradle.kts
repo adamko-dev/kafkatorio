@@ -68,7 +68,11 @@ dependencies {
 
 
 val typescriptToLua by tasks.registering(TypescriptToLuaTask::class) {
-  dependsOn(tasks.npmInstall, installEventsTsSchema, tasks.updatePackageJson)
+  dependsOn(
+    tasks.npmInstall,
+    installEventsTsSchema,
+    tasks.updatePackageJson,
+  )
 
   inputs.file(tasks.updatePackageJson.map { it.packageJsonFile })
 

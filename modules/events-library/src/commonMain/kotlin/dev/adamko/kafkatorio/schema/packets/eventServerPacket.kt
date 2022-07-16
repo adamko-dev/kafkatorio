@@ -1,7 +1,7 @@
 package dev.adamko.kafkatorio.schema.packets
 
 import dev.adamko.kafkatorio.schema.common.ServerMapChunkId
-import dev.adamko.kafkatorio.schema.common.TilePngFilename
+import dev.adamko.kafkatorio.schema.common.ServerMapTilePngFilename
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -21,7 +21,7 @@ sealed class EventServerPacket {
   @SerialName("kafkatorio.event-server-packet.ChunkTileSaved")
   data class ChunkTileSaved(
     val chunkId: ServerMapChunkId,
-    val filename: TilePngFilename,
+    val filename: ServerMapTilePngFilename,
   ) : EventServerPacket()
 
 }

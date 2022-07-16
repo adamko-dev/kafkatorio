@@ -3,10 +3,10 @@ import {Converters} from "./converters";
 import {handleSurfaceUpdate} from "./surfaceUpdates";
 import EventCacheService from "../emitting/EventDataCache";
 import MapChunkUpdate from "./handlers/MapChunkUpdateHandler";
-import EventDataQueue from "../queue/queue";
 import KafkatorioPacketQueue from "../emitting/KafkatorioPacketQueue";
 import PacketEmitter from "../emitting/PacketEmitter";
 import {KafkatorioPacketData} from "../../generated/kafkatorio-schema";
+import EventDataQueue from "../emitting/EventDataQueue";
 
 
 script.on_event(defines.events.on_tick, (event: OnTickEvent) => {

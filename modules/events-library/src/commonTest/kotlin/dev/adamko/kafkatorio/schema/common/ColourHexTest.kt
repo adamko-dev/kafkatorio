@@ -1,10 +1,6 @@
-package dev.adamko.kafkatorio.events.schema
+package dev.adamko.kafkatorio.schema.common
 
 import dev.adamko.kafkatorio.library.jsonMapperKafkatorio
-import dev.adamko.kafkatorio.schema.common.Colour
-import dev.adamko.kafkatorio.schema.common.ColourHex
-import dev.adamko.kafkatorio.schema.common.toHex
-import dev.adamko.kafkatorio.schema.common.toPercentile
 import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.floats.shouldBeWithinPercentageOf

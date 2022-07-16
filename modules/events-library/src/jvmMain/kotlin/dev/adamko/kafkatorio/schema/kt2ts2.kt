@@ -1,4 +1,4 @@
-package dev.adamko.kafkatorio.events.schema
+package dev.adamko.kafkatorio.schema
 
 import dev.adamko.kafkatorio.schema.common.PlayerIndex
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
@@ -85,13 +85,21 @@ class MySourceCodeGenerator(
   config: KxsTsConfig,
 ) : TsSourceCodeGenerator.Default(config) {
 
+  private val seenTypeAliases: MutableSet<TsElementId> = mutableSetOf()
+
   override fun generateTypeAlias(element: TsTypeAlias): String {
+
+    if (!seenTypeAliases.add(element.id)) {
+      return ""
+    }
 
     return if (element.id.name in listOf("PlayerIndex", "SurfaceIndex", "UnitNumber")) {
       ""
     } else if (
       (element.typeRef as? TsTypeRef.Literal)?.element is TsLiteral.Custom
       || element.id.name == "Tick"
+      || element.id.name == "FactorioEntityUpdateEntityDictionary"
+      || element.id.name == "FactorioEntityUpdateResourceDictionary"
     ) {
       val aliasedRef = generateTypeReference(element.typeRef)
       """

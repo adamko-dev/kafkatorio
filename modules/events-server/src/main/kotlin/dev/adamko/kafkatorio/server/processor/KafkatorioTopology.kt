@@ -1,12 +1,24 @@
 package dev.adamko.kafkatorio.server.processor
 
 import com.github.palindromicity.syslog.dsl.SyslogFieldKeys
+import dev.adamko.kafkatorio.schema.common.FactorioServerId
+import dev.adamko.kafkatorio.schema.common.PrototypeHashCode
+import dev.adamko.kafkatorio.schema.common.ServerMapChunkId
+import dev.adamko.kafkatorio.schema.common.ServerMapTileLayer
+import dev.adamko.kafkatorio.schema.packets.MapChunkEntityUpdate
+import dev.adamko.kafkatorio.schema.packets.MapChunkResourceUpdate
+import dev.adamko.kafkatorio.schema.packets.PrototypesUpdate
 import dev.adamko.kafkatorio.server.config.ApplicationProperties
+import dev.adamko.kafkatorio.server.processor.topology.ServerMapChunkTiles
 import dev.adamko.kafkatorio.server.processor.topology.broadcastToWebsocket
+import dev.adamko.kafkatorio.server.processor.topology.colourEntityChunks
 import dev.adamko.kafkatorio.server.processor.topology.colourMapChunks
+import dev.adamko.kafkatorio.server.processor.topology.convertEntityUpdateToServerMapChunkTiles
+import dev.adamko.kafkatorio.server.processor.topology.convertResourceUpdateToServerMapChunkTiles
 import dev.adamko.kafkatorio.server.processor.topology.factorioServerPacketStream
 import dev.adamko.kafkatorio.server.processor.topology.saveMapTiles
 import dev.adamko.kafkatorio.server.processor.topology.splitFactorioServerPacketStream
+import dev.adamko.kafkatorio.server.processor.topology.streamPacketData
 import dev.adamko.kafkatorio.server.socket.SyslogSocketServer
 import dev.adamko.kafkatorio.server.web.websocket.WebmapWebsocketServer
 import java.util.Properties
@@ -35,6 +47,7 @@ import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.StreamsConfig
 import org.apache.kafka.streams.Topology
 import org.apache.kafka.streams.TopologyDescription
+import org.apache.kafka.streams.kstream.KStream
 
 
 internal class KafkatorioTopology(
@@ -50,6 +63,19 @@ internal class KafkatorioTopology(
     splitPackets()
 
     groupTilesMapChunks()
+
+    groupEntitiesMapChunks(
+      layer = ServerMapTileLayer.BUILDING,
+      colouredUpdatesStreamTopic = TOPIC_MAP_CHUNK_BUILDING_COLOURED_032_UPDATES,
+      colouredChunkStateTopic = TOPIC_MAP_CHUNK_BUILDING_COLOURED_STATE,
+    )
+
+    groupEntitiesMapChunks(
+      layer = ServerMapTileLayer.RESOURCE,
+      colouredUpdatesStreamTopic = TOPIC_MAP_CHUNK_RESOURCE_COLOURED_032_UPDATES,
+      colouredChunkStateTopic = TOPIC_MAP_CHUNK_RESOURCE_COLOURED_STATE,
+    )
+
     saveTiles()
 
     websocketBroadcaster()
@@ -69,10 +95,53 @@ internal class KafkatorioTopology(
   }
 
 
+  /** Terrain tiles */
   private suspend fun groupTilesMapChunks() {
     val builder = StreamsBuilder()
-    val topology = colourMapChunks(builder)
-    launchTopology("groupTilesMapChunks", topology)
+
+    val protosStream: KStream<FactorioServerId, PrototypesUpdate> =
+      builder.streamPacketData()
+
+    val topology = colourMapChunks(builder, protosStream)
+
+    launchTopology("groupTilesMapChunks.${ServerMapTileLayer.TERRAIN.dir}", topology)
+  }
+
+
+  /** Building and resource tiles */
+  private suspend fun groupEntitiesMapChunks(
+    layer: ServerMapTileLayer,
+    colouredUpdatesStreamTopic: String,
+    colouredChunkStateTopic: String,
+  ) {
+    val builder = StreamsBuilder()
+
+    val entityChunksStream: KStream<ServerMapChunkId, ServerMapChunkTiles<PrototypeHashCode>> =
+      when (layer) {
+        ServerMapTileLayer.TERRAIN  -> return
+
+        ServerMapTileLayer.RESOURCE ->
+          builder.streamPacketData<MapChunkResourceUpdate>()
+            .convertResourceUpdateToServerMapChunkTiles("groupEntitiesMapChunks.${layer.dir}")
+
+        ServerMapTileLayer.BUILDING ->
+          builder.streamPacketData<MapChunkEntityUpdate>()
+            .convertEntityUpdateToServerMapChunkTiles("groupEntitiesMapChunks.${layer.dir}")
+      }
+
+    val protosStream: KStream<FactorioServerId, PrototypesUpdate> =
+      builder.streamPacketData()
+
+    val topology = colourEntityChunks(
+      builder,
+      entityChunksStream,
+      protosStream,
+      layer,
+      colouredUpdatesStreamTopic,
+      colouredChunkStateTopic,
+    )
+
+    launchTopology("groupTilesMapChunks.${layer.dir}", topology)
   }
 
 

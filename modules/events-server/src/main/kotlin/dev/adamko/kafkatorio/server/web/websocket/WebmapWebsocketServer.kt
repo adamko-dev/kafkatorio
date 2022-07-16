@@ -97,7 +97,9 @@ class WebmapWebsocketServer {
     override suspend fun send(frame: Frame): Unit = runCatching {
       super.send(frame)
     }.fold(
-      onSuccess = { log("sent message to client $name: $frame") },
+      onSuccess = {
+//        log("sent message to client $name: $frame")
+      },
       onFailure = { e -> log("failed to send message to client $name: $e") }
     )
 

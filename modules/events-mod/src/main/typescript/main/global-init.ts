@@ -1,5 +1,5 @@
 import EventUpdates from "./emitting/EventDataCache";
-import {EventDataQueueManager} from "./queue/queue";
+import {EventDataQueueManager} from "./emitting/EventDataQueue";
 
 
 export function initGlobal(force: boolean = false) {

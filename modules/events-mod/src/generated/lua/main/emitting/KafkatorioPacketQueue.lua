@@ -3,6 +3,10 @@ local __TS__Class = ____lualib.__TS__Class
 local __TS__SetDescriptor = ____lualib.__TS__SetDescriptor
 local __TS__New = ____lualib.__TS__New
 local ____exports = {}
+--- Simple ordered queue for {@link KafkatorioPacketData}.
+-- 
+-- Implemented so printing multiple packets won't flood the output log, causing messages to be
+-- missed or garbled.
 ____exports.KafkatorioPacketQueueManager = __TS__Class()
 local KafkatorioPacketQueueManager = ____exports.KafkatorioPacketQueueManager
 KafkatorioPacketQueueManager.name = "KafkatorioPacketQueueManager"

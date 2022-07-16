@@ -1,83 +1,171 @@
 package dev.adamko.kafkatorio.schema.common
 
-import dev.adamko.kxstsgen.core.*
+import dev.adamko.kafkatorio.library.leftTopTile
+import dev.adamko.kafkatorio.library.rightBottomTile
 import dev.adamko.kxstsgen.core.experiments.TupleSerializer
-import kotlin.math.floor
+import kotlin.math.abs
+import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+
 /**
- * Coordinates of a [EntityData] on a map.
+ * The position of something that exists in-game (not conceptually, like a
+ * [chunk][MapChunkPosition])
+ */
+sealed interface MapPosition : Comparable<MapPosition> {
+  val x: Number
+  val y: Number
+}
+
+
+/**
+ * Coordinates of an [entity][FactorioEntityData.Standard] on a map.
+ *
+ * Positive y points south, positive x points east.
  *
  * A [MapEntityPosition] can be translated to a [MapChunkPosition] by dividing the `x`/`y` values
  * by [32][MAP_CHUNK_SIZE].
  */
-@Serializable(with = MapEntityPosition.Serializer::class)
+@Serializable(with = MapEntityPosition.Companion.Serializer::class)
 data class MapEntityPosition(
-  val x: Double,
-  val y: Double,
-) {
-  object Serializer : TupleSerializer<MapEntityPosition>(
-    "MapEntityPosition",
-    {
-      element(MapEntityPosition::x)
-      element(MapEntityPosition::y)
+  override val x: Double,
+  override val y: Double,
+) : MapPosition {
+
+
+  override fun compareTo(other: MapPosition): Int =
+    when (val resultX = x.compareTo(other.x.toDouble())) {
+      0    -> y.compareTo(other.y.toDouble())
+      else -> resultX
     }
-  ) {
-    override fun tupleConstructor(elements: Iterator<*>): MapEntityPosition {
-      return MapEntityPosition(
-        elements.next() as Double,
-        elements.next() as Double,
-      )
+
+
+  companion object {
+    object Serializer : TupleSerializer<MapEntityPosition>(
+      "MapEntityPosition",
+      {
+        element(MapEntityPosition::x)
+        element(MapEntityPosition::y)
+      }
+    ) {
+      override fun tupleConstructor(elements: Iterator<*>): MapEntityPosition {
+        return MapEntityPosition(
+          elements.next() as Double,
+          elements.next() as Double,
+        )
+      }
     }
   }
 }
 
 
-/** Coordinates of a chunk in a [SurfaceData] where each integer `x`/`y` represents a different
+/**
+ * Coordinates of a tile on a surface, where each `x`/`y` coordinate represents a different
+ * [MapTile].
+ *
+ * Positive y points south, positive x points east.
+ *
+ * It rounds any `x`/`y` down to whole numbers.
+ */
+@Serializable(with = MapTilePosition.Companion.Serializer::class)
+data class MapTilePosition(
+  override val x: Int,
+  override val y: Int,
+) : MapPosition {
+
+
+  override fun compareTo(other: MapPosition): Int =
+    when (val resultX = x.compareTo(other.x.toInt())) {
+      0    -> y.compareTo(other.y.toInt())
+      else -> resultX
+    }
+
+
+  companion object {
+    object Serializer : TupleSerializer<MapTilePosition>(
+      "MapTilePosition",
+      {
+        element(MapTilePosition::x)
+        element(MapTilePosition::y)
+      }
+    ) {
+      override fun tupleConstructor(elements: Iterator<*>): MapTilePosition {
+        val x = requireNotNull(elements.next() as? Int)
+        val y = requireNotNull(elements.next() as? Int)
+        return MapTilePosition(x, y)
+      }
+    }
+  }
+
+}
+
+
+/**
+ * Coordinates of a chunk on a surface, where each `x`/`y` coordinate represents a different
  * chunk.
+ *
+ * Positive y points south, positive x points east.
  *
  * A [MapChunkPosition] can be translated to a [MapEntityPosition] by multiplying the `x`/`y`
  * values by [32][MAP_CHUNK_SIZE].
  */
-@Serializable(with = MapChunkPosition.Serializer::class)
+@Serializable(with = MapChunkPosition.Companion.Serializer::class)
 data class MapChunkPosition(
   val x: Int,
   val y: Int,
+  // Don't set a default for ChunkSize. It could default to 32, but it's clearer to make it explicit
+  // and avoid accidentally not setting it. Also, a default doesn't save much in serialization size.
+  val chunkSize: ChunkSize,
 ) {
-  object Serializer : TupleSerializer<MapChunkPosition>(
-    "MapChunkPosition",
-    {
-      element(MapChunkPosition::x)
-      element(MapChunkPosition::y)
-    }
-  ) {
-    override fun tupleConstructor(elements: Iterator<*>): MapChunkPosition {
-      return MapChunkPosition(
-        elements.next() as Int,
-        elements.next() as Int,
-      )
-    }
-  }
 
-  private val bounds: MapChunkPositionBounds by lazy {
-    MapChunkPositionBounds(this, ChunkSize.CHUNK_032)
+  val bounds: MapChunkPositionBounds by lazy {
+    MapChunkPositionBounds(this)
   }
 
   operator fun contains(tilePosition: MapTilePosition): Boolean = tilePosition in bounds
+  operator fun contains(entityPosition: MapEntityPosition): Boolean = entityPosition in bounds
+
+  companion object {
+    object Serializer : TupleSerializer<MapChunkPosition>(
+      "MapChunkPosition",
+      {
+        element(MapChunkPosition::x)
+        element(MapChunkPosition::y)
+        element(MapChunkPosition::chunkSize)
+      }
+    ) {
+      override fun tupleConstructor(elements: Iterator<*>): MapChunkPosition {
+        return MapChunkPosition(
+          elements.next() as Int,
+          elements.next() as Int,
+          elements.next() as ChunkSize,
+        )
+      }
+    }
+  }
 }
 
 
+/**
+ * The bounds of a [MapChunkPosition], that may contain a [MapPosition].
+ *
+ * Because Factorio uses screen-coordinates, the lowest `x/y` coordinate is the [leftTop], and
+ * the highest is [rightBottomTile].
+ */
 @Serializable
 data class MapChunkPositionBounds(
   val leftTop: MapTilePosition,
   val rightBottom: MapTilePosition,
-) : ClosedRange<MapTilePosition> {
+  val chunkSize: ChunkSize, // should be computable based on the tiles, but include it for completeness
+) : ClosedRange<MapPosition> {
 
-  constructor(chunkPosition: MapChunkPosition, chunkSize: ChunkSize) : this(
-    chunkPosition.leftTopTile(chunkSize),
-    chunkPosition.rightBottomTile(chunkSize),
+  constructor(chunkPosition: MapChunkPosition) : this(
+    chunkPosition.leftTopTile(),
+    chunkPosition.rightBottomTile(),
+    chunkPosition.chunkSize,
   )
 
   override val start: MapTilePosition
@@ -86,117 +174,6 @@ data class MapChunkPositionBounds(
   override val endInclusive: MapTilePosition
     get() = rightBottom
 }
-
-
-/**
- * Coordinates of a tile in a chunk on a [SurfaceData] where each integer `x`/`y` represents a
- * different [MapTile].
- *
- * It rounds any `x`/`y` down to whole numbers.
- */
-@Serializable(with = MapTilePosition.Serializer::class)
-data class MapTilePosition(
-  val x: Int,
-  val y: Int,
-) : Comparable<MapTilePosition> {
-  object Serializer : TupleSerializer<MapTilePosition>(
-    "MapTilePosition",
-    {
-      element(MapTilePosition::x)
-      element(MapTilePosition::y)
-    }
-  ) {
-    override fun tupleConstructor(elements: Iterator<*>): MapTilePosition {
-      val x = requireNotNull(elements.next() as? Int)
-      val y = requireNotNull(elements.next() as? Int)
-      return MapTilePosition(x, y)
-    }
-  }
-
-  override operator fun compareTo(other: MapTilePosition): Int =
-    when {
-      other.x != x -> x.compareTo(other.x)
-      else         -> y.compareTo(other.y)
-    }
-}
-
-
-/* *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  * */
-
-
-operator fun MapTilePosition.times(factor: Int) =
-  MapTilePosition(x * factor, y * factor)
-
-operator fun MapTilePosition.div(divisor: Int) =
-  MapTilePosition(x / divisor, y / divisor)
-
-operator fun MapTilePosition.plus(addend: Int) =
-  MapTilePosition(x + addend, y + addend)
-
-operator fun MapTilePosition.plus(addend: MapTilePosition) =
-  MapTilePosition(x + addend.x, y + addend.y)
-
-
-operator fun MapTilePosition.minus(subtrahend: MapTilePosition) =
-  MapTilePosition(x - subtrahend.x, y - subtrahend.y)
-
-
-fun MapTilePosition.toMapChunkPosition(chunkSize: ChunkSize) =
-  MapChunkPosition(
-    floor(x.toDouble() / chunkSize.lengthInTiles.toDouble()).toInt(),
-    floor(y.toDouble() / chunkSize.lengthInTiles.toDouble()).toInt(),
-  )
-
-
-fun MapEntityPosition.toMapTilePosition() =
-  MapChunkPosition(floor(x).toInt(), floor(y).toInt())
-
-fun MapEntityPosition.toMapChunkPosition(chunkSize: ChunkSize) =
-  MapChunkPosition(
-    floor(x / chunkSize.lengthInTiles.toDouble()).toInt(),
-    floor(y / chunkSize.lengthInTiles.toDouble()).toInt(),
-  )
-
-
-operator fun MapChunkPosition.times(factor: Int) =
-  MapChunkPosition(x * factor, y * factor)
-
-operator fun MapChunkPosition.plus(addend: Int) =
-  MapChunkPosition(x + addend, y + addend)
-
-operator fun MapChunkPosition.minus(subtrahend: Int) =
-  MapChunkPosition(x - subtrahend, y - subtrahend)
-
-
-fun MapChunkPosition.leftTopTile(chunkSize: ChunkSize): MapTilePosition =
-  MapTilePosition(
-    x * chunkSize.lengthInTiles,
-    y * chunkSize.lengthInTiles,
-  )
-
-fun MapChunkPosition.rightBottomTile(chunkSize: ChunkSize): MapTilePosition =
-  leftTopTile(chunkSize) + (chunkSize.lengthInTiles - 1)
-
-
-fun MapChunkPosition.iterateTiles(chunkSize: ChunkSize): Iterator<MapTilePosition> {
-  val leftTop = leftTopTile(chunkSize)
-  val rightBottom = rightBottomTile(chunkSize)
-  return iterator {
-    (leftTop.x..rightBottom.x).forEach { x ->
-      (leftTop.y..rightBottom.y).forEach { y ->
-        yield(MapTilePosition(x, y))
-      }
-    }
-  }
-}
-
-
-//val MapChunkPosition.rightBottomTile: MapTilePosition
-//  get() = leftTopTile + (MAP_CHUNK_SIZE - 1)
-
-//
-//val MapChunkPosition.boundingBox: MapBoundingBox
-//  get() = MapBoundingBox(leftTopTile, rightBottomTile)
 
 
 @Serializable
@@ -230,4 +207,18 @@ enum class ChunkSize(
     val MIN: ChunkSize = entries.minByOrNull { it.lengthInTiles }!!
     val STANDARD: ChunkSize = entries.first { it.zoomLevel == 0 }
   }
+}
+
+
+@Serializable
+@SerialName("kafkatorio.position.MapBoundingBox")
+data class MapBoundingBox(
+  val leftTop: MapEntityPosition,
+  val rightBottom: MapEntityPosition,
+) {
+  val width: Double get() = abs(leftTop.x - rightBottom.x)
+  val height: Double get() = abs(leftTop.y - rightBottom.y)
+
+  val tileWidth: Int get() = ceil(width).toInt()
+  val tileHeight: Int get() = ceil(height).toInt()
 }

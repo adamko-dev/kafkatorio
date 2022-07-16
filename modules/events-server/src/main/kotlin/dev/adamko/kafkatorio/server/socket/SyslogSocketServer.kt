@@ -69,7 +69,7 @@ class SyslogSocketServer(
                     log("received 'null' from ${socket.description()} - closing connection")
                     socket.close()
                   }
-                  else -> log("received '$line' from ${socket.description()}")
+//                  else -> log("received '$line' from ${socket.description()}")
                 }
                 line
               },

@@ -1,6 +1,6 @@
 import {initGlobal} from "../global-init";
 import {emitPrototypes} from "../events/prototypeUpdates";
-import EventDataQueue from "../queue/queue";
+import EventDataQueue from "../emitting/EventDataQueue";
 
 
 commands.add_command(

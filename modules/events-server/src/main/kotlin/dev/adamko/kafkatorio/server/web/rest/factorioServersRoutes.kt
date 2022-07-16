@@ -2,8 +2,9 @@ package dev.adamko.kafkatorio.server.web.rest
 
 import dev.adamko.kafkatorio.schema.common.FactorioServerId
 import dev.adamko.kafkatorio.schema.common.PlayerIndex
+import dev.adamko.kafkatorio.schema.common.ServerMapTileLayer
+import dev.adamko.kafkatorio.schema.common.ServerMapTilePngFilename
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
-import dev.adamko.kafkatorio.schema.common.TilePngFilename
 import dev.adamko.kafkatorio.server.config.ApplicationProperties
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.EntityTagVersion
@@ -41,8 +42,9 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.handleTileRequest(
   appProps: ApplicationProperties,
 ) {
 
-  val tileFilename = TilePngFilename(
+  val tileFilename = ServerMapTilePngFilename(
     tile.serverId,
+    tile.layer,
     tile.surfaceIndex,
     tile.zoomLevel,
     tile.chunkX,
@@ -60,6 +62,19 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.handleTileRequest(
     }
   } else {
     call.respond(HttpStatusCode.NotFound)
+//    // It's not a client error to request this tile, it just doesn't exist (yet). So return 304?
+//    call.response.cacheControl(CacheControl.NoStore(null))
+//
+//    HeadersBuilder(size = 2).apply {
+//      EntityTagVersion(System.currentTimeMillis().hashCode().toString())
+//        .appendHeadersTo(this)
+//      LastModifiedVersion(System.currentTimeMillis())
+//        .appendHeadersTo(this)
+//    }.build().flattenForEach { name, value ->
+//      call.response.header(name, value)
+//    }
+//
+//    call.respond(HttpStatusCode.NotModified)
   }
 }
 
@@ -82,9 +97,11 @@ data class FactorioServer(
   ) {
 
     @Serializable
-    @Resource("tiles/s{surfaceIndex}/z{zoomLevel}/x{chunkX}/y{chunkY}.png")
+    @Resource("layers/{layer}/s{surfaceIndex}/z{zoomLevel}/x{chunkX}/y{chunkY}.png")
     data class Tile(
       val mapData: MapData,
+
+      val layer: ServerMapTileLayer,
       val surfaceIndex: SurfaceIndex,
       val zoomLevel: Int,
       val chunkX: Int,

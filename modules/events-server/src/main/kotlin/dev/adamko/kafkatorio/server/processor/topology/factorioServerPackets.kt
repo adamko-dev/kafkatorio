@@ -3,7 +3,7 @@ package dev.adamko.kafkatorio.server.processor.topology
 import dev.adamko.kafkatorio.schema.common.FactorioServerId
 import dev.adamko.kafkatorio.schema.common.Tick
 import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
-import dev.adamko.kafkatorio.schema.packets.KafkatorioPacketData
+import dev.adamko.kafkatorio.schema.packets.KafkatorioPacketDataError
 import dev.adamko.kafkatorio.server.config.jsonMapper
 import dev.adamko.kafkatorio.server.processor.TOPIC_SRC_SERVER_LOG
 import dev.adamko.kafkatorio.server.processor.topicName
@@ -38,20 +38,18 @@ fun factorioServerPacketStream(
       KafkatorioPacket(
         modVersion = "unknown",
         tick = Tick(0u),
-        data = KafkatorioPacketData.Error(
+        data = KafkatorioPacketDataError(
           message = e.message,
           rawValue = value,
         )
       )
     }
 
-    if (packet.data is KafkatorioPacketData.Error) {
+    if (packet.data is KafkatorioPacketDataError) {
       println("error parsing $TOPIC_SRC_SERVER_LOG message: ${packet.data}")
     }
 
     FactorioServerId(serverId) to packet
-  }.filter { _, value ->
-    value.data !is KafkatorioPacketData.Error
   }
 }
 

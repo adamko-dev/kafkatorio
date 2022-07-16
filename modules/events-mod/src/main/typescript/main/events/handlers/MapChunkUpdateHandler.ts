@@ -22,7 +22,7 @@ class MapChunkUpdateHandler {
 
     MapChunkUpdateHandler.mapTilesUpdateDebounce(
         event.surface,
-        Converters.convertMapTablePosition(event.position),
+        Converters.chunkPosition(event.position),
         tiles,
         event,
         undefined,
@@ -136,7 +136,7 @@ class MapChunkUpdateHandler {
     for (const position of event.positions) {
       const key: PacketKey<KafkatorioPacketData.MapChunkTileUpdate> = {
         surfaceIndex: surface.index,
-        chunkPosition: [position.x, position.y],
+        chunkPosition: Converters.chunkPosition(position),
       }
 
       EventUpdates.debounce<KafkatorioPacketData.MapChunkTileUpdate>(
@@ -219,10 +219,7 @@ class MapChunkUpdateHandler {
 
     const mapChunkPositionToTiles = new Map<MapChunkPosition, TileRead[]>()
     for (const tile of tiles) {
-      const chunkPosition: MapChunkPosition = [
-        math.floor((tile.position.x / 32)),
-        math.floor((tile.position.y / 32)),
-      ]
+      const chunkPosition = Converters.tilePositionToChunkPosition(tile.position)
       if (!mapChunkPositionToTiles.has(chunkPosition)) {
         mapChunkPositionToTiles.set(chunkPosition, [])
       }

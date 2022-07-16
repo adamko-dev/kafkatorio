@@ -8,11 +8,13 @@ import dev.adamko.kafkatorio.schema.common.ChunkSize
 import dev.adamko.kafkatorio.schema.common.ColourHex
 import dev.adamko.kafkatorio.schema.common.FactorioServerId
 import dev.adamko.kafkatorio.schema.common.ServerMapChunkId
-import dev.adamko.kafkatorio.schema.common.TilePngFilename
+import dev.adamko.kafkatorio.schema.common.ServerMapTilePngFilename
 import dev.adamko.kafkatorio.schema.packets.EventServerPacket
 import dev.adamko.kafkatorio.server.config.jsonMapper
 import dev.adamko.kafkatorio.server.processor.TOPIC_BROADCAST_TO_WEBSOCKET
-import dev.adamko.kafkatorio.server.processor.TOPIC_MAP_CHUNK_COLOURED_STATE
+import dev.adamko.kafkatorio.server.processor.TOPIC_MAP_CHUNK_BUILDING_COLOURED_STATE
+import dev.adamko.kafkatorio.server.processor.TOPIC_MAP_CHUNK_RESOURCE_COLOURED_STATE
+import dev.adamko.kafkatorio.server.processor.TOPIC_MAP_CHUNK_TERRAIN_COLOURED_STATE
 import dev.adamko.kotka.extensions.consumedAs
 import dev.adamko.kotka.extensions.producedAs
 import dev.adamko.kotka.extensions.stream
@@ -51,12 +53,14 @@ fun saveMapTiles(
         kxsBinary.serde(ServerMapChunkId.serializer()),
         kxsBinary.serde(ServerMapChunkTiles.serializer(ColourHex.serializer())),
       ),
-      TOPIC_MAP_CHUNK_COLOURED_STATE,
+      TOPIC_MAP_CHUNK_TERRAIN_COLOURED_STATE,
+      TOPIC_MAP_CHUNK_RESOURCE_COLOURED_STATE,
+      TOPIC_MAP_CHUNK_BUILDING_COLOURED_STATE,
     ).filter("$pid.consume.grouped-map-chunks.filter-size") { _, y ->
       y.chunkId.chunkSize.lengthInTiles >= ChunkSize.CHUNK_256.lengthInTiles
     }
 
-  val savedChunkFilenames: KStream<ServerMapChunkId, TilePngFilename> =
+  val savedChunkFilenames: KStream<ServerMapChunkId, ServerMapTilePngFilename> =
     subdividedMapChunkTilesDebounced.saveChunkAsImage(serverDataDir)
 
   savedChunkFilenames.broadcastSavedTileUpdates()
@@ -67,7 +71,7 @@ fun saveMapTiles(
 
 private fun KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>.saveChunkAsImage(
   tileDirectory: Path,
-): KStream<ServerMapChunkId, TilePngFilename> = mapValues(
+): KStream<ServerMapChunkId, ServerMapTilePngFilename> = mapValues(
   "$pid.save-tiles"
 ) { chunkId: ServerMapChunkId, tileColours: ServerMapChunkTiles<ColourHex> ->
 
@@ -81,19 +85,36 @@ private fun KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>.saveChunkA
   val chunkOriginX: Int = chunkId.chunkPosition.x * chunkId.chunkSize.lengthInTiles
   val chunkOriginY: Int = chunkId.chunkPosition.y * chunkId.chunkSize.lengthInTiles
 
+  val validPixelRangeX = 0 until chunkImage.width
+  val validPixelRangeY = 0 until chunkImage.height
+
   tileColours.map.forEach { (tilePosition, colour) ->
     val rgbColour = colour.toRgbColor()
 
     val pixelX = abs(abs(tilePosition.x) - abs(chunkOriginX))
     val pixelY = abs(abs(tilePosition.y) - abs(chunkOriginY))
 
-    chunkImage.setColor(pixelX, pixelY, rgbColour)
+    if (!(pixelX in validPixelRangeX && pixelY in validPixelRangeY)) {
+      // TODO figure out why buildings on chunk boundaries aren't re-chunked, and so cause this error
+      println(
+        "ERROR - pixel XY:[$pixelX,$pixelY] was out of bounds (x:$validPixelRangeX, y:$validPixelRangeY). $tilePosition, $colour, chunkOriginXY[$chunkOriginX,$chunkOriginY], $chunkId"
+      )
+    } else {
+      try {
+        chunkImage.setColor(pixelX, pixelY, rgbColour)
+      } catch (e: Exception) {
+        println(
+          "ERROR $e - pixel XY:[$pixelX,$pixelY] (x:$validPixelRangeX, y:$validPixelRangeY). $tilePosition, $colour, chunkOriginXY[$chunkOriginX,$chunkOriginY], $chunkId"
+        )
+        throw e
+      }
+    }
   }
 
   val scaledImage =
     chunkImage.scaleTo(WEB_MAP_TILE_SIZE_PX, WEB_MAP_TILE_SIZE_PX, ScaleMethod.FastScale)
 
-  val filename = TilePngFilename(chunkId)
+  val filename = ServerMapTilePngFilename(chunkId)
   saveTile(filename, tileDirectory, scaledImage)
   filename
 }
@@ -101,7 +122,7 @@ private fun KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>.saveChunkA
 
 @Synchronized
 private fun saveTile(
-  filename: TilePngFilename,
+  filename: ServerMapTilePngFilename,
   serverDataDir: Path,
   img: ImmutableImage,
 ) {
@@ -124,8 +145,8 @@ private fun saveTile(
 }
 
 
-private fun KStream<ServerMapChunkId, TilePngFilename>.broadcastSavedTileUpdates() {
-  map<ServerMapChunkId, TilePngFilename, FactorioServerId, EventServerPacket>(
+private fun KStream<ServerMapChunkId, ServerMapTilePngFilename>.broadcastSavedTileUpdates() {
+  map<ServerMapChunkId, ServerMapTilePngFilename, FactorioServerId, EventServerPacket>(
     "$pid.broadcast.filename-update.convert",
   ) { id, filename ->
     id.serverId to EventServerPacket.ChunkTileSaved(id, filename)

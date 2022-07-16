@@ -8,6 +8,7 @@ export class KafkatorioSettingsConfig {
     "kafkatorio.packet.keyed.PlayerUpdate": 0.5,
     "kafkatorio.packet.keyed.MapChunkTileUpdate": 30,
     "kafkatorio.packet.keyed.MapChunkEntityUpdate": 30,
+    "kafkatorio.packet.keyed.MapChunkResourceUpdate": 30,
     "kafkatorio.packet.keyed.EntityUpdate": 5,
   }
 

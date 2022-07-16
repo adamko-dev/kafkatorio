@@ -14,6 +14,7 @@ services:
         KAFKA_DL_URL: "https://dlcdn.apache.org/kafka/${KAFKA_VERSION}/kafka_2.13-${KAFKA_VERSION}.tgz"
     volumes:
       - "./kafka-server.properties:/kafka/server.properties"
+#      - "./kafka-data:/tmp/kraft-combined-logs" # see Dockerfile
     environment:
       JMX_PORT: "9991"
       #      KAFKA_JMX_OPTS: "9991"

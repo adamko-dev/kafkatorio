@@ -1,9 +1,6 @@
-package dev.adamko.kafkatorio.events.schema
+package dev.adamko.kafkatorio.schema.common
 
 import dev.adamko.kafkatorio.library.jsonMapperKafkatorio
-import dev.adamko.kafkatorio.schema.common.Colour
-import dev.adamko.kafkatorio.schema.common.FactorioPrototype
-import dev.adamko.kafkatorio.schema.common.PrototypeId
 import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
 import dev.adamko.kafkatorio.schema.packets.PrototypesUpdate
 import io.kotest.core.spec.style.BehaviorSpec

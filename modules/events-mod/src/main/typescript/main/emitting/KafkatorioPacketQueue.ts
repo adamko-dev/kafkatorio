@@ -1,5 +1,12 @@
 import {KafkatorioPacketData} from "../../generated/kafkatorio-schema";
 
+
+/**
+ * Simple ordered queue for {@link KafkatorioPacketData}.
+ *
+ * Implemented so printing multiple packets won't flood the output log, causing messages to be
+ * missed or garbled.
+ */
 export class KafkatorioPacketQueueManager {
 
   private size: int = 0

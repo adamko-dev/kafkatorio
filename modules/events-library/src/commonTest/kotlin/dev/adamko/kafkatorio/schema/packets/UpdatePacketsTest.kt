@@ -1,5 +1,6 @@
-package dev.adamko.kafkatorio.events.schema
+package dev.adamko.kafkatorio.schema.packets
 
+import dev.adamko.kafkatorio.library.LuaJsonList
 import dev.adamko.kafkatorio.library.jsonMapperKafkatorio
 import dev.adamko.kafkatorio.schema.common.Colour
 import dev.adamko.kafkatorio.schema.common.EntityIdentifiersData
@@ -12,14 +13,11 @@ import dev.adamko.kafkatorio.schema.common.SurfaceIndex
 import dev.adamko.kafkatorio.schema.common.Tick
 import dev.adamko.kafkatorio.schema.common.UnitNumber
 import dev.adamko.kafkatorio.schema.common.tick
-import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
-import dev.adamko.kafkatorio.schema.packets.PlayerUpdate
-import dev.adamko.kafkatorio.schema.packets.PlayerUpdateKey
-import dev.adamko.kafkatorio.schema.packets.SurfaceUpdate
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
+
 
 class UpdatePacketsTest : FunSpec({
 
@@ -72,8 +70,8 @@ class UpdatePacketsTest : FunSpec({
           diedCause = null,
           disconnectReason = null,
           events = mapOf(
-            EventName("on_player_changed_position") to listOf(7u.tick, 99u.tick),
-            EventName("on_player_joined_game") to listOf(14u.tick),
+            EventName("on_player_changed_position") to LuaJsonList(listOf(7u.tick, 99u.tick)),
+            EventName("on_player_joined_game") to LuaJsonList(listOf(14u.tick)),
           ),
           forceIndex = ForceIndex(1u),
           isAdmin = true,
@@ -194,7 +192,7 @@ class UpdatePacketsTest : FunSpec({
           ),
           disconnectReason = null,
           events = mapOf(
-            EventName("on_player_died") to listOf(2u.tick),
+            EventName("on_player_died") to LuaJsonList(listOf(2u.tick)),
           ),
           forceIndex = null,
           key = PlayerUpdateKey(PlayerIndex(1u)),

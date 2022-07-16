@@ -1,6 +1,7 @@
 package dev.adamko.kafkatorio.webmap
 
-import dev.adamko.kafkatorio.schema.common.TilePngFilename
+import dev.adamko.kafkatorio.schema.common.ServerMapTileLayer
+import dev.adamko.kafkatorio.schema.common.ServerMapTilePngFilename
 import dev.adamko.kafkatorio.webmap.externals.TileOnLoadFn
 import dev.adamko.kafkatorio.webmap.externals.tileOnLoad
 import io.kvision.maps.Maps
@@ -30,9 +31,7 @@ import org.w3c.fetch.RequestInit
 import org.w3c.fetch.RequestMode
 
 
-class FactorioMap(
-  private val tileUrlTemplate: String = """/kafkatorio/data/servers/syslog-test/map/tiles/s1/z{z}/x{x}/y{y}.png""",
-) {
+class FactorioMap {
 
   val kvMap: Maps = Maps {
     width = 800.px
@@ -40,18 +39,22 @@ class FactorioMap(
     margin = 10.px
   }
 
-  private val factorioTerrainLayer: TileLayer<*> = buildFactorioTerrainLayer()
+  private val terrainTileLayer: TileLayer<*> = createServerTileLayer(ServerMapTileLayer.TERRAIN)
+  private val resourcesTileLayer: TileLayer<*> = createServerTileLayer(ServerMapTileLayer.RESOURCE)
+  private val buildingsTileLayer: TileLayer<*> = createServerTileLayer(ServerMapTileLayer.BUILDING)
 
   val playerIconsLayer: LayerGroup = LayerGroup()
 
   init {
 
     val baseLayers: Control.LayersObject = jso {
-      set("Terrain", factorioTerrainLayer)
+      set("Terrain", terrainTileLayer)
     }
 
     val overlays: Control.LayersObject = jso {
       set("Players", playerIconsLayer)
+      set("Resources", resourcesTileLayer)
+      set("Buildings", buildingsTileLayer)
     }
 
     val layersControl = Layers(
@@ -76,14 +79,17 @@ class FactorioMap(
 //    options.fadeAnimation = false
       addControl(layersControl)
 
-      factorioTerrainLayer.addTo(this)
+      terrainTileLayer.addTo(this)
+      resourcesTileLayer.addTo(this)
+      buildingsTileLayer.addTo(this)
+
       playerIconsLayer.addTo(this)
     }
   }
 
 
   suspend fun refreshUpdatedTilePng(
-    tilePngFilename: TilePngFilename,
+    tilePngFilename: ServerMapTilePngFilename,
   ): Unit = coroutineScope {
     document
       .querySelectorAll("img.leaflet-tile-loaded")
@@ -111,10 +117,14 @@ class FactorioMap(
       }
   }
 
-  private fun buildFactorioTerrainLayer(): TileLayer<TileLayer.TileLayerOptions> {
+  private fun createServerTileLayer(
+    layer: ServerMapTileLayer
+  ): TileLayer<TileLayer.TileLayerOptions> {
+
+    val urlTemplate: String = tileLayerUrlTemplate(layer)
 
     val baseTileLayer = L.tileLayer(
-      tileUrlTemplate
+      urlTemplate
     ) {
       attribution = "kafkatorio"
       tileSize = 256
@@ -147,5 +157,8 @@ class FactorioMap(
 
   companion object {
     const val DYNAMIC_RELOAD_ATT = "dynamic-reload"
+
+    private fun tileLayerUrlTemplate(layer: ServerMapTileLayer): String =
+      "/kafkatorio/data/servers/syslog-test/map/layers/${layer.dir}/s1/z{z}/x{x}/y{y}.png"
   }
 }

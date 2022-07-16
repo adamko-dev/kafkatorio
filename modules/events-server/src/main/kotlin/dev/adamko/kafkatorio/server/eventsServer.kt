@@ -20,11 +20,9 @@ suspend fun main(): Unit = coroutineScope {
     startWebServer(appProps, websocketServer)
   }
 
-
   launch {
     syslogSocketServer.start()
   }
-
 
   launch {
     eventsProcessor(appProps, syslogSocketServer, websocketServer)

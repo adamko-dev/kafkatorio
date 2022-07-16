@@ -2,10 +2,12 @@ package dev.adamko.kafkatorio.schema.common
 
 import dev.adamko.kafkatorio.library.kxsBinary
 import io.kotest.assertions.asClue
+import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.ints.shouldBeExactly
 import io.kotest.matchers.maps.shouldContainExactly
+import io.kotest.matchers.shouldBe
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
 
@@ -17,18 +19,17 @@ class MapChunkPositionBoundsTest : FunSpec({
 
       context("chunk size 32") {
 
-        val chunkPos = MapChunkPosition(0, 0)
-        val bounds = MapChunkPositionBounds(chunkPos, ChunkSize.CHUNK_032)
+        val chunkPos = MapChunkPosition(0, 0, ChunkSize.CHUNK_032)
 
         test("leftTop should be 0,0") {
-          bounds.leftTop.asClue {
+          chunkPos.bounds.leftTop.asClue {
             it.x shouldBeExactly 0
             it.y shouldBeExactly 0
           }
         }
 
         test("rightBottom should be 31,31") {
-          bounds.rightBottom.asClue {
+          chunkPos.bounds.rightBottom.asClue {
             it.x shouldBeExactly 31
             it.y shouldBeExactly 31
           }
@@ -38,18 +39,17 @@ class MapChunkPositionBoundsTest : FunSpec({
 
     context("chunk size 256") {
 
-      val chunkPos = MapChunkPosition(0, 0)
-      val bounds = MapChunkPositionBounds(chunkPos, ChunkSize.CHUNK_256)
+      val chunkPos = MapChunkPosition(0, 0, ChunkSize.CHUNK_256)
 
       test("leftTop should be 0,0") {
-        bounds.leftTop.asClue {
+        chunkPos.bounds.leftTop.asClue {
           it.x shouldBeExactly 0
           it.y shouldBeExactly 0
         }
       }
 
       test("rightBottom should be 255,255") {
-        bounds.rightBottom.asClue {
+        chunkPos.bounds.rightBottom.asClue {
           it.x shouldBeExactly 255
           it.y shouldBeExactly 255
         }
@@ -61,18 +61,17 @@ class MapChunkPositionBoundsTest : FunSpec({
 
     context("chunk size 32") {
 
-      val chunkPos = MapChunkPosition(-10, -10)
-      val bounds = MapChunkPositionBounds(chunkPos, ChunkSize.CHUNK_032)
+      val chunkPos = MapChunkPosition(-10, -10, ChunkSize.CHUNK_032)
 
       test("leftTop should be -320,-320") {
-        bounds.leftTop.asClue {
+        chunkPos.bounds.leftTop.asClue {
           it.x shouldBeExactly -320
           it.y shouldBeExactly -320
         }
       }
 
       test("rightBottom should be -289,-289") {
-        bounds.rightBottom.asClue {
+        chunkPos.bounds.rightBottom.asClue {
           it.x shouldBeExactly -289
           it.y shouldBeExactly -289
         }
@@ -81,18 +80,17 @@ class MapChunkPositionBoundsTest : FunSpec({
 
     context("chunk size 256") {
 
-      val chunkPos = MapChunkPosition(-10, -10)
-      val bounds = MapChunkPositionBounds(chunkPos, ChunkSize.CHUNK_256)
+      val chunkPos = MapChunkPosition(-10, -10, ChunkSize.CHUNK_256)
 
       test("leftTop should be -2560") {
-        bounds.leftTop.asClue {
+        chunkPos.bounds.leftTop.asClue {
           it.x shouldBeExactly -2560
           it.y shouldBeExactly -2560
         }
       }
 
       test("rightBottom should be (-2560 + 255)") {
-        bounds.rightBottom.asClue {
+        chunkPos.bounds.rightBottom.asClue {
           it.x shouldBeExactly (-2560 + 255)
           it.y shouldBeExactly (-2560 + 255)
         }
@@ -132,6 +130,59 @@ class MapChunkPositionBoundsTest : FunSpec({
       decoded.protos shouldContainExactly actual.protos
 
       decoded.toMapTileList() shouldContainExactly actual.toMapTileList()
+    }
+  }
+
+  context("verify map chunk 'contains'") {
+
+    context("MapChunkPosition(1, 1)") {
+
+      val chunkPos = MapChunkPosition(1, 1, ChunkSize.CHUNK_032) // from 32,32 to 63,63
+
+      test("tile outside of chunk") {
+        val outerTilePos = MapTilePosition(1, 1)
+
+        withClue("$outerTilePos in ${chunkPos.bounds}") {
+          (outerTilePos in chunkPos) shouldBe false
+        }
+      }
+
+      test("tile inside of chunk") {
+        val innerTilePos = MapTilePosition(34, 33)
+
+        withClue("$innerTilePos in ${chunkPos.bounds}") {
+          (innerTilePos in chunkPos) shouldBe true
+        }
+      }
+
+      test("entity outside of chunk") {
+        val outerEntityPos = MapEntityPosition(1.0, 1.0)
+
+        withClue("$outerEntityPos in ${chunkPos.bounds}") {
+          (outerEntityPos !in chunkPos) shouldBe true
+          (outerEntityPos in chunkPos) shouldBe false
+        }
+      }
+
+      test("entity inside of chunk") {
+        val innerEntityPos = MapEntityPosition(34.0, 33.0)
+
+        withClue("$innerEntityPos in ${chunkPos.bounds}") {
+          (innerEntityPos !in chunkPos) shouldBe false
+          (innerEntityPos in chunkPos) shouldBe true
+        }
+      }
+    }
+    context(" MapChunkPosition(9, -5)") {
+      val chunkPos2 = MapChunkPosition(9, -5, ChunkSize.CHUNK_032)
+
+      test("tile inside of chunk") {
+        val innerTilePos = MapTilePosition(288, -160)
+
+        withClue("$innerTilePos in ${chunkPos2.bounds}") {
+          (innerTilePos in chunkPos2) shouldBe true
+        }
+      }
     }
   }
 })

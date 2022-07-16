@@ -47,8 +47,8 @@ val startInfra by tasks.registering {
   group = project.name
 
   dependsOn(
-    ":modules:infra-kafka-pipe:processRun",
-    ":modules:infra-kafka-cluster:processRun",
+//    ":modules:infra-kafka-pipe:processRun",
+    runKafkaCluster
 //    ":modules:infra-kafka-connect:processRun",
   )
 }
@@ -73,4 +73,31 @@ val runWebMap by tasks.registering {
   group = project.name
 
   dependsOn(":modules:web-map:browserDevelopmentRun")
+}
+
+
+val runKafkaCluster by tasks.registering {
+  group = project.name
+
+  dependsOn(
+    ":modules:infra-kafka-cluster:processRun",
+  )
+}
+
+
+val runFactorioServer by tasks.registering {
+  group = project.name
+
+  dependsOn(
+    ":modules:infra-factorio-server:processRun",
+  )
+}
+
+
+val runFactorioClient by tasks.registering {
+  group = project.name
+
+  dependsOn(
+    ":modules:infra-factorio-client:processRun",
+  )
 }

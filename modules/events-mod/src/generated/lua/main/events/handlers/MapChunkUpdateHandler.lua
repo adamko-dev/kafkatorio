@@ -20,7 +20,7 @@ function MapChunkUpdateHandler.prototype.handleChunkGeneratedEvent(self, event, 
     local tiles = event.surface.find_tiles_filtered({area = event.area})
     MapChunkUpdateHandler:mapTilesUpdateDebounce(
         event.surface,
-        Converters.convertMapTablePosition(event.position),
+        Converters.chunkPosition(event.position),
         tiles,
         event,
         nil,
@@ -123,7 +123,10 @@ function MapChunkUpdateHandler.prototype.handlePreChunkDeleted(self, event)
         return
     end
     for ____, position in ipairs(event.positions) do
-        local key = {surfaceIndex = surface.index, chunkPosition = {position.x, position.y}}
+        local key = {
+            surfaceIndex = surface.index,
+            chunkPosition = Converters.chunkPosition(position)
+        }
         EventUpdates:debounce(
             key,
             KafkatorioPacketData.Type.MapChunkTileUpdate,
@@ -187,10 +190,7 @@ end
 function MapChunkUpdateHandler.groupTiles(self, tiles)
     local mapChunkPositionToTiles = __TS__New(Map)
     for ____, tile in ipairs(tiles) do
-        local chunkPosition = {
-            math.floor(tile.position.x / 32),
-            math.floor(tile.position.y / 32)
-        }
+        local chunkPosition = Converters.tilePositionToChunkPosition(tile.position)
         if not mapChunkPositionToTiles:has(chunkPosition) then
             mapChunkPositionToTiles:set(chunkPosition, {})
         end

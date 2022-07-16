@@ -9,12 +9,12 @@ local ____EventDataCache = require("main.emitting.EventDataCache")
 local EventCacheService = ____EventDataCache.default
 local ____MapChunkUpdateHandler = require("main.events.handlers.MapChunkUpdateHandler")
 local MapChunkUpdate = ____MapChunkUpdateHandler.default
-local ____queue = require("main.queue.queue")
-local EventDataQueue = ____queue.default
 local ____KafkatorioPacketQueue = require("main.emitting.KafkatorioPacketQueue")
 local KafkatorioPacketQueue = ____KafkatorioPacketQueue.default
 local ____PacketEmitter = require("main.emitting.PacketEmitter")
 local PacketEmitter = ____PacketEmitter.default
+local ____EventDataQueue = require("main.emitting.EventDataQueue")
+local EventDataQueue = ____EventDataQueue.default
 script.on_event(
     defines.events.on_tick,
     function(event)

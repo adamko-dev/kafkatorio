@@ -55,6 +55,15 @@ value class PrototypeId private constructor(
 }
 
 
+/** Serialize a [PrototypeId] as an integer - more efficient storage */
+@JvmInline
+@Serializable
+value class PrototypeHashCode private constructor(val code: Int) {
+  constructor(id: PrototypeId) : this(id.hashCode())
+  constructor(tile: FactorioPrototype) : this(tile.protoId)
+}
+
+
 //@Suppress("unused")
 //enum class PrototypeTypeId(
 //  val id: String

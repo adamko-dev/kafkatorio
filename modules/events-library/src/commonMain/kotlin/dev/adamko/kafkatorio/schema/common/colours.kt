@@ -52,6 +52,7 @@ data class ColourHex(
 ) {
   companion object {
     val TRANSPARENT = ColourHex(0u, 0u, 0u, 0u)
+    val WHITE = ColourHex(UByte.MAX_VALUE, UByte.MAX_VALUE, UByte.MAX_VALUE, UByte.MAX_VALUE)
   }
 }
 

@@ -1,6 +1,6 @@
 package dev.adamko.kafkatorio.schema.common
 
-import kotlinx.serialization.Contextual
+import dev.adamko.kafkatorio.library.LuaJsonList
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -20,8 +20,8 @@ sealed interface FactorioPrototype {
     val mapColour: Colour,
 
     val layer: UInt,
-    @Contextual
-    val collisionMasks: List<String>,
+//    @Contextual
+    val collisionMasks: LuaJsonList<String>,
     val order: String,
     /** Can the tile be mined for resources? */
     val canBeMined: Boolean,
@@ -49,17 +49,23 @@ sealed interface FactorioPrototype {
     val mapColourEnemy: Colour? = null,
 
     val maxHealth: Float,
-    val isBuilding: Boolean,
-    val isEntityWithOwner: Boolean,
-    val isMilitaryTarget: Boolean,
+    val isBuilding: Boolean = false,
+    val isEntityWithOwner: Boolean = false,
+    val isMilitaryTarget: Boolean = false,
     val miningProperties: MiningProperties? = null,
+
+    val collisionBox: MapBoundingBox? = null,
   ) : FactorioPrototype {
+
+    val tileHeight: Int? get() = collisionBox?.tileHeight
+    val tileWidth: Int? get() = collisionBox?.tileWidth
 
     @Serializable
     @SerialName("kafkatorio.prototype.EntityMiningProperties")
     data class MiningProperties(
       val canBeMined: Boolean,
-      val products: List<MinedProduct>?,
+//      @Contextual
+      val products: LuaJsonList<MinedProduct>?,
     )
 
     @Serializable

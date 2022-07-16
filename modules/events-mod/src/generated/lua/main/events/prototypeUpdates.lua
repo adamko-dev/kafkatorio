@@ -30,7 +30,7 @@ end
 function getEntityPrototypes()
     local protos = {}
     for ____, entity in pairs(game.entity_prototypes) do
-        local key = (entity.group.name .. "/") .. entity.subgroup.name
+        local key = (((entity.group.name .. "/") .. entity.subgroup.name) .. "/") .. entity.type
         if protos[key] == nil then
             protos[key] = {}
         end
@@ -42,8 +42,10 @@ function getEntityPrototypes()
             isBuilding = entity.is_building,
             isEntityWithOwner = entity.is_entity_with_owner,
             isMilitaryTarget = entity.is_military_target,
-            maxHealth = entity.max_health
+            maxHealth = entity.max_health,
+            collisionBox = Converters.collisionBox(entity.collision_box)
         }
+        local ____ = entity.infinite_resource
         if entity.map_color ~= nil then
             entityProto.mapColour = Converters.mapColour(entity.map_color)
         end

@@ -16,13 +16,12 @@ data class KafkatorioPacket(
 
 @Serializable
 @SerialName("kafkatorio.packet.KafkatorioPacketData")
-sealed class KafkatorioPacketData {
+sealed class KafkatorioPacketData
 
-  @Serializable
-  @SerialName("kafkatorio.packet.KafkatorioPacketData.Error")
-  data class Error(
-    val message: String? = null,
-    val rawValue: String? = null,
-  ) : KafkatorioPacketData()
 
-}
+@Serializable
+@SerialName("kafkatorio.packet.KafkatorioPacketData.Error")
+data class KafkatorioPacketDataError(
+  val message: String? = null,
+  val rawValue: String? = null,
+) : KafkatorioPacketData()

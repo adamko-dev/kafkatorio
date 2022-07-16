@@ -3,6 +3,7 @@ package dev.adamko.kafkatorio.server.web.rest
 import dev.adamko.kafkatorio.server.config.ApplicationProperties
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -24,7 +25,12 @@ import io.ktor.server.routing.routing
 fun Application.webmapTileServer(appProps: ApplicationProperties) {
 
   install(AutoHeadResponse)
-  install(CallLogging)
+  install(CallLogging) {
+    filter { call ->
+      // only log failures
+      !(call.response.status()?.isSuccess() ?: false)
+    }
+  }
   install(Compression) {
     default()
     minimumSize(1024)

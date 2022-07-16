@@ -1,11 +1,12 @@
 package dev.adamko.kafkatorio.library
 
-import dev.adamko.kafkatorio.schema.common.ServerMapChunkId
 import dev.adamko.kafkatorio.schema.common.ChunkSize
 import dev.adamko.kafkatorio.schema.common.ColourHex
 import dev.adamko.kafkatorio.schema.common.FactorioServerId
 import dev.adamko.kafkatorio.schema.common.MapChunkPosition
 import dev.adamko.kafkatorio.schema.common.MapTilePosition
+import dev.adamko.kafkatorio.schema.common.ServerMapChunkId
+import dev.adamko.kafkatorio.schema.common.ServerMapTileLayer
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
 import io.kotest.assertions.withClue
 import io.kotest.core.spec.style.FunSpec
@@ -51,7 +52,7 @@ class KxsBinaryTests : FunSpec({
 
   test("byte array") {
     val ba = byteArrayOf(
-      4, 116, 101, 115, 116, 2, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 3
+      4, 116, 101, 115, 116, 0, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 1
     )
 
     val result = kxsBinary.decodeFromByteArray(ServerMapChunkId.serializer(), ba)
@@ -60,9 +61,9 @@ class KxsBinaryTests : FunSpec({
 
       result shouldBeEqualToComparingFields ServerMapChunkId(
         serverId = FactorioServerId("test"),
-        chunkPosition = MapChunkPosition(1, 2),
+        layer = ServerMapTileLayer.TERRAIN,
+        chunkPosition = MapChunkPosition(1, 2, ChunkSize.CHUNK_064),
         surfaceIndex = SurfaceIndex(1u),
-        chunkSize = ChunkSize.CHUNK_064,
       )
 
     }
@@ -72,15 +73,15 @@ class KxsBinaryTests : FunSpec({
     val ba = kxsBinary.encodeToByteArray(
       ServerMapChunkId(
         serverId = FactorioServerId("test"),
-        chunkPosition = MapChunkPosition(1, 2),
+        layer = ServerMapTileLayer.TERRAIN,
+        chunkPosition = MapChunkPosition(1, 2, ChunkSize.CHUNK_064),
         surfaceIndex = SurfaceIndex(1u),
-        chunkSize = ChunkSize.CHUNK_064,
       )
     )
 
     withClue(ba.toString(Charsets.UTF_8)) {
       ba shouldBe byteArrayOf(
-        4, 116, 101, 115, 116, 2, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 3
+        4, 116, 101, 115, 116, 0, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0, 1
       )
     }
   }
@@ -112,10 +113,10 @@ class KxsBinaryTests : FunSpec({
   context("ServerMapChunkTiles") {
     val initial = ServerMapChunkTiles(
       ServerMapChunkId(
-        FactorioServerId("server-id"),
-        MapChunkPosition(33, 44),
-        SurfaceIndex(4u),
-        ChunkSize.CHUNK_032,
+        serverId = FactorioServerId("server-id"),
+        layer = ServerMapTileLayer.TERRAIN,
+        chunkPosition = MapChunkPosition(33, 44, ChunkSize.CHUNK_032),
+        surfaceIndex = SurfaceIndex(4u),
       ),
       mapOf(
         MapTilePosition(1, 2) to ColourHex(1u, 2u, 3u, 4u),

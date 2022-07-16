@@ -7,6 +7,7 @@ import dev.adamko.kafkatorio.schema.common.ColourHex
 import dev.adamko.kafkatorio.schema.common.FactorioServerId
 import dev.adamko.kafkatorio.schema.common.MapChunkPosition
 import dev.adamko.kafkatorio.schema.common.MapTilePosition
+import dev.adamko.kafkatorio.schema.common.ServerMapTileLayer
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
 import dev.adamko.kafkatorio.server.processor.topology.ServerMapChunkTiles
 import java.util.UUID
@@ -22,9 +23,9 @@ class Blah {
     val tiles = ServerMapChunkTiles<ColourHex>(
       chunkId = ServerMapChunkId(
         serverId = FactorioServerId(UUID.randomUUID().toString()),
-        chunkPosition = MapChunkPosition(Int.MAX_VALUE, Int.MAX_VALUE),
+        layer = ServerMapTileLayer.BUILDING,
+        chunkPosition = MapChunkPosition(Int.MAX_VALUE, Int.MAX_VALUE, ChunkSize.MAX),
         surfaceIndex = SurfaceIndex(UInt.MAX_VALUE),
-        chunkSize = ChunkSize.MAX,
       ),
       buildMap {
         repeat(512) { x ->

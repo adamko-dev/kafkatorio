@@ -1,15 +1,16 @@
 package dev.adamko.kafkatorio.server.processor.topology
 
+import dev.adamko.kafkatorio.library.iterateTiles
 import dev.adamko.kafkatorio.library.kxsBinary
+import dev.adamko.kafkatorio.library.toMapChunkPosition
 import dev.adamko.kafkatorio.schema.common.ChunkSize
 import dev.adamko.kafkatorio.schema.common.ColourHex
 import dev.adamko.kafkatorio.schema.common.FactorioServerId
 import dev.adamko.kafkatorio.schema.common.MapChunkPosition
 import dev.adamko.kafkatorio.schema.common.MapTilePosition
 import dev.adamko.kafkatorio.schema.common.ServerMapChunkId
+import dev.adamko.kafkatorio.schema.common.ServerMapTileLayer
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
-import dev.adamko.kafkatorio.schema.common.iterateTiles
-import dev.adamko.kafkatorio.schema.common.toMapChunkPosition
 import dev.adamko.kotka.kxs.serde
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.property.Arb
@@ -55,11 +56,11 @@ class SaveMapChunksTest : FunSpec({
         scenario += 1.minutes
         delay(5.seconds)
         scenario += 1.minutes
-//        delay(5.seconds)
+        // delay(5.seconds)
         scenario += 1.minutes
-//        delay(5.seconds)
+        // delay(5.seconds)
         scenario += 1.minutes
-//        delay(5.seconds)
+        // delay(5.seconds)
 
         println("file:///${scenario.outputDir.absolutePathString()}")
       }
@@ -71,7 +72,7 @@ class SaveMapChunksTest : FunSpec({
   class Scenario(
     streamsBuilder: StreamsBuilder = StreamsBuilder(),
 
-    groupedMapChunksInputTopicName: String = "kafkatorio.state.map-chunk.colour",
+    groupedMapChunksInputTopicName: String = "kafkatorio.state.map-chunk.terrain.colour",
 
     val serverId: FactorioServerId = FactorioServerId("test-server-id"),
   ) : AutoCloseable {
@@ -104,8 +105,9 @@ class SaveMapChunksTest : FunSpec({
     private fun mapChunkPositionArb(
       xArb: Arb<Int> = Arb.int(-10..10),
       yArb: Arb<Int> = Arb.int(-10..10),
+      chunkSize: ChunkSize = ChunkSize.MAX,
     ): Arb<MapChunkPosition> = arbitrary {
-      MapChunkPosition(xArb.bind(), yArb.bind())
+      MapChunkPosition(xArb.bind(), yArb.bind(), chunkSize)
     }
 
     private fun colourHexArb(
@@ -124,15 +126,15 @@ class SaveMapChunksTest : FunSpec({
 
     private fun serverMapChunkIdArb(
       serverId: FactorioServerId,
-      chunkPosition: Arb<MapChunkPosition> = mapChunkPositionArb(),
-      surfaceIndex: SurfaceIndex = SurfaceIndex(1u),
       chunkSize: ChunkSize = ChunkSize.MAX,
+      chunkPosition: Arb<MapChunkPosition> = mapChunkPositionArb(chunkSize = chunkSize),
+      surfaceIndex: SurfaceIndex = SurfaceIndex(1u),
     ): Arb<ServerMapChunkId> = arbitrary {
       ServerMapChunkId(
         serverId = serverId,
+        layer = ServerMapTileLayer.RESOURCE,
         chunkPosition = chunkPosition.bind(),
         surfaceIndex = surfaceIndex,
-        chunkSize = chunkSize,
       )
     }
 
@@ -145,7 +147,7 @@ class SaveMapChunksTest : FunSpec({
       println("chunk size: ${chunkId.chunkSize} ${chunkId.chunkSize.lengthInTiles}")
 
       val map = chunkId.chunkPosition
-        .iterateTiles(chunkId.chunkSize)
+        .iterateTiles()
         .asSequence()
         .map { tilePos ->
           val colour =
@@ -154,7 +156,7 @@ class SaveMapChunksTest : FunSpec({
             }
           tilePos to colour
         }
-//        .take(2500)
+//        .take(100)
         .toMap()
 
       println(map.size)

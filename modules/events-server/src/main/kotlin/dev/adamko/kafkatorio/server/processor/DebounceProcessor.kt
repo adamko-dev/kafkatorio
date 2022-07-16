@@ -20,18 +20,14 @@ import org.apache.kafka.streams.state.StoreBuilder
 import org.apache.kafka.streams.state.Stores
 import org.apache.kafka.streams.state.TimestampedKeyValueStore
 import org.apache.kafka.streams.state.ValueAndTimestamp
-import java.time.Duration as DurationJvm
-import kotlin.time.Duration as DurationKt
+import kotlin.time.Duration
 
 
 class DebounceProcessor<K, V>(
-  private val inactivityDuration: DurationKt,
-  checkInterval: DurationKt,
+  private val inactivityDuration: Duration,
+  private val checkInterval: Duration,
   private val storeName: String,
 ) : Processor<K, V, K, V> {
-
-
-  private val checkInterval: DurationJvm = checkInterval.toJavaDuration()
 
   private lateinit var state: State<K, V>
 
@@ -70,7 +66,7 @@ class DebounceProcessor<K, V>(
   ) : State<K, V> {
     val store: TimestampedKeyValueStore<K, V> = context.getStateStore(storeName)
     val schedule: Cancellable = context.schedule(
-      checkInterval,
+      checkInterval.toJavaDuration(),
       PunctuationType.WALL_CLOCK_TIME,
       ::checkRecords
     )
@@ -95,8 +91,8 @@ class DebounceProcessor<K, V>(
       sourceTopic: String,
       sinkTopic: String,
 
-      inactivityDuration: DurationKt,
-      checkInterval: DurationKt = inactivityDuration / 10,
+      inactivityDuration: Duration,
+      checkInterval: Duration = inactivityDuration / 10,
       keySerde: Serde<K>,
       valueSerde: Serde<V>,
       storeName: String = "$namePrefix.debounce-store",
@@ -131,8 +127,8 @@ class DebounceProcessor<K, V>(
     }
 
     class Supplier<K, V>(
-      private val inactivityDuration: DurationKt,
-      private val checkInterval: DurationKt,
+      private val inactivityDuration: Duration,
+      private val checkInterval: Duration,
       private val storeName: String,
       private val keySerde: Serde<K>,
       private val valueSerde: Serde<V>,
