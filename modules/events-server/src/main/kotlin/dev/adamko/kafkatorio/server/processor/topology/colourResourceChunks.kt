@@ -113,28 +113,6 @@ fun KStream<FactorioServerId, MapChunkEntityUpdate>.convertEntityUpdateToServerM
 
   return flatMap("$pid.map") { serverId: FactorioServerId, update: MapChunkEntityUpdate ->
 
-//    val entities = update.entitiesXY.convert { entity, position ->
-//      FactorioEntityData.Standard(
-//        protoId = update.key.protoId,
-//        position = position,
-//        element = entity,
-//      )
-//    }
-
-//    val (validEntityPositions, unboundedEntityPositions) = entities.map { entity ->
-//      entity.position.toMapTilePosition() to entity
-//    }.partition { (position, _) ->
-//      position in update.key.chunkPosition
-//    }
-//
-//    if (unboundedEntityPositions.isNotEmpty()) {
-//      val unboundedEntities = unboundedEntityPositions.map { (_, entity) -> entity }
-//      println(
-//        "WARNING [convertToServerMapChunkTiles] MapChunkEntityUpdate ${update.key} " + "contained ${unboundedEntities.size} out-of-bounds entities " + unboundedEntities.joinToString(
-//          limit = 10
-//        )
-//      )
-//    }
 //
 //    // TODO There might be multiple resources per tile position, therefore this will arbitrarily
 //    //      exclude resources. Maybe change it from a Map to a List? Or have multiple resources per
@@ -192,38 +170,6 @@ fun KStream<FactorioServerId, MapChunkResourceUpdate>.convertResourceUpdateToSer
     reChunkTiles(pid, tiles)
   }
 }
-
-
-//private fun KStream<ServerMapChunkId, ServerMapChunkTiles<PrototypeHashCode>>.reduceServerMapResourceTilesToTable()
-//    : KTable<ServerMapChunkId, ServerMapChunkTiles<PrototypeHashCode>> {
-//
-//  val pid = "$pid.reduceServerMapResourceTilesToTable"
-//
-//  return repartition(
-//    repartitionedAs(
-//      "$pid.pre-table-repartition",
-//      kxsBinary.serde<ServerMapChunkId>(),
-//      kxsBinary.serde<ServerMapChunkTiles<PrototypeHashCode>>(),
-//      // force, otherwise KTable-KTable FK join doesn't work
-//      numberOfPartitions = 1,
-//    )
-//  ).groupByKey(
-//    groupedAs(
-//      "$pid.group-by-key",
-//      kxsBinary.serde<ServerMapChunkId>(),
-//      kxsBinary.serde<ServerMapChunkTiles<PrototypeHashCode>>(),
-//    )
-//  ).reduce(
-//    "$pid.reduce",
-//    materializedAs(
-//      "$pid.reduce.store",
-//      kxsBinary.serde<ServerMapChunkId>(),
-//      kxsBinary.serde<ServerMapChunkTiles<PrototypeHashCode>>(),
-//    )
-//  ) { chunkTiles, otherChunkTiles ->
-//    chunkTiles + otherChunkTiles
-//  }
-//}
 
 
 private fun KTable<ServerMapChunkId, ServerMapChunkTiles<PrototypeHashCode>>.enrichWithColourData(
@@ -304,18 +250,6 @@ private fun MapBoundingBox.iterator(origin: MapTilePosition): Iterator<MapTilePo
 }
 
 
-/**
- * Rounds a number 'up', away from zero.
- * (Towards positive infinity if positive, and towards negative infinity if negative.)
- */
-private fun Double.roundToInfinity(): Int = when {
-  this > 0 -> ceil(this).toInt()
-  this < 0 -> floor(this).toInt()
-  else     -> 0
-}
-// ceil(abs(this)).toInt() * this.sign.toInt()
-
-
 private fun FactorioPrototype.Entity.mapColour(): ColourHex =
   (colour ?: mapColour ?: mapColourFriend)?.toHex() ?: ColourHex.WHITE
 
@@ -334,109 +268,3 @@ private operator fun ColourHex.plus(other: ColourHex): ColourHex = copy(
   blue = (blue + other.blue).toUByte(),
   alpha = (alpha + other.alpha).toUByte(),
 )
-
-
-//// https://stackoverflow.com/a/9355778/4161471
-//private operator fun ColourHex.plus(other: ColourHex): ColourHex {
-//
-//  @Suppress("LocalVariableName")
-//  val `255` = UByte.MAX_VALUE
-//
-//  val compositeAlpha: UByte = (
-//      `255` - ((`255` - other.alpha) * (`255` - this.alpha)) / `255`
-//      ).toUByte()
-//
-//  if (compositeAlpha == UByte.MIN_VALUE) {
-//    return ColourHex.TRANSPARENT
-//  } else {
-//
-//    fun compositeColour(
-//      colour: (ColourHex) -> UByte,
-//    ): UByte {
-//      val colour1 = colour(this)
-//      val colour2 = colour(other)
-//      return ((
-//          (
-//              ( colour2 * other.alpha) + (colour1 * this.alpha * ( other.alpha))
-//              ) / compositeAlpha
-//          ) / `255`
-//          ).toUByte()
-//    }
-//
-//    return ColourHex(
-//      compositeColour(ColourHex::red),
-//      compositeColour(ColourHex::green),
-//      compositeColour(ColourHex::blue),
-//      compositeAlpha,
-//    )
-//  }
-//}
-
-//private fun KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>.streamMapChunkColouredTo(
-//  chunkSize: ChunkSize,
-//  outputTopic: String,
-//) {
-//  val pid = "$pid.output-chunk.${chunkSize.name}"
-//
-//  toStream("$pid.stream")
-//    .filter("$pid.filter-tiles-not-empty") { _, chunkTiles ->
-//      !chunkTiles?.map.isNullOrEmpty()
-//    }
-//    .mapValues("$pid.map-not-null") { _, chunkTiles ->
-//      requireNotNull(chunkTiles)
-//    }
-//    .peek("$pid.print-group-result") { _, chunkTiles ->
-//      println("Grouping map tiles result: ${chunkTiles.chunkId} / size:${chunkTiles.map.size}")
-//    }.to(
-//      outputTopic,
-//      producedAs(
-//        "$pid.grouped-map-chunks",
-//        kxsBinary.serde<ServerMapChunkId>(),
-//        kxsBinary.serde<ServerMapChunkTiles<ColourHex>>(),
-//      )
-//    )
-//}
-
-
-///**
-// * Group [MapChunkTileUpdate]s by the Chunk position.
-// *
-// * They should already be grouped, but do it again to make sure, and to filter out empty updates.
-// */
-//private fun KStream<ServerMapChunkId, ServerMapChunkTiles<ColourHex>>.groupByChunkPosition(
-//  chunkSize: ChunkSize = ChunkSize.CHUNK_032
-//): KTable<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> {
-//
-//  val pid = "$pid.groupByChunkPosition.${chunkSize.name}"
-//
-//  return map("$pid.change-chunk-size") { chunkId: ServerMapChunkId, chunkTiles: ServerMapChunkTiles<ColourHex>? ->
-//
-//    val newChunkPosition = chunkId.chunkPosition
-//      .leftTopTile(chunkId.chunkSize)
-//      .toMapChunkPosition(chunkSize)
-//
-//    val newId = chunkId.copy(
-//      chunkSize = chunkSize,
-//      chunkPosition = newChunkPosition,
-//    )
-//
-//    val newChunkTiles = chunkTiles?.map ?: emptyMap()
-//
-//    newId to ServerMapChunkTiles(chunkId = newId, map = newChunkTiles)
-//  }.groupByKey(
-//    groupedAs(
-//      "$pid.group-by-key",
-//      kxsBinary.serde<ServerMapChunkId>(),
-//      kxsBinary.serde<ServerMapChunkTiles<ColourHex>>(),
-//    )
-//  ).reduce(
-//    "$pid.reduce",
-//    materializedAs(
-//      "$pid.reduce.store",
-//      kxsBinary.serde<ServerMapChunkId>(),
-//      kxsBinary.serde<ServerMapChunkTiles<ColourHex>>(),
-//    )
-//  ) { chunkTiles, otherChunkTiles ->
-//    chunkTiles + otherChunkTiles
-//  }
-//}
