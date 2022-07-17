@@ -23,8 +23,8 @@ data class ConfigurationUpdate(
   val factorioData: ConfigurationUpdateGameData,
 //  @Contextual
   val allMods: LuaJsonList<ConfigurationUpdateModData>,
-  val modStartupSettingsChange: Boolean,
-  val migrationApplied: Boolean,
+  val modStartupSettingsChange: Boolean = false,
+  val migrationApplied: Boolean = false,
 ) : KafkatorioInstantPacketData() {
 
   @Serializable

@@ -15,7 +15,8 @@ function KafkatorioPacketEmitter.prototype.emitKeyedPacket(self, data)
 end
 function KafkatorioPacketEmitter.emitPacket(self, packet)
     local data = game.table_to_json(packet)
-    localised_print("KafkatorioPacket: " .. data)
+    local encoded = game.encode_string(data)
+    print("KafkatorioPacket encoded::: " .. tostring(encoded))
 end
 local PacketEmitter = __TS__New(____exports.KafkatorioPacketEmitter)
 ____exports.default = PacketEmitter

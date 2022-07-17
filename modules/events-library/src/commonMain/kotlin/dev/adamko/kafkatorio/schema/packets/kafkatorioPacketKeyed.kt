@@ -7,6 +7,7 @@ import dev.adamko.kafkatorio.schema.common.EntityIdentifiersData
 import dev.adamko.kafkatorio.schema.common.EventName
 import dev.adamko.kafkatorio.schema.common.FactorioEntityData
 import dev.adamko.kafkatorio.schema.common.FactorioEntityUpdateDictionary
+import dev.adamko.kafkatorio.schema.common.FactorioEntityUpdateDictionary.ResourceAmounts
 import dev.adamko.kafkatorio.schema.common.ForceIndex
 import dev.adamko.kafkatorio.schema.common.MapChunkPosition
 import dev.adamko.kafkatorio.schema.common.MapEntityPosition
@@ -135,7 +136,7 @@ data class PlayerUpdate(
   val kickedReason: String? = null,
   val disconnectReason: String? = null,
   /** `true` when a player is removed (deleted) from the game */
-  val isRemoved: Boolean? = null,
+  val isRemoved: Boolean = false,
 ) : KafkatorioKeyedPacketData()
 
 
@@ -166,7 +167,14 @@ data class MapChunkEntityUpdate(
       FactorioEntityData.Standard(
         protoId = key.protoId,
         position = position,
-        element = entity,
+
+        status = entity.status,
+        unitNumber = entity.unitNumber,
+        graphicsVariation = entity.graphicsVariation,
+        health = entity.health,
+        isActive = entity.isActive,
+        isRotatable = entity.isRotatable,
+        lastUser = entity.lastUser
       )
     }
 }
@@ -191,15 +199,20 @@ data class MapChunkResourceUpdate(
 
   override val events: Map<EventName, LuaJsonList<Tick>>? = null,
 
-  val resourcesXY: FactorioEntityUpdateDictionary.Resource,
+  // Optimise JSON size by storing amounts separately.
+  val amounts: ResourceAmounts = ResourceAmounts(),
+  // Initial amount is only available for infinite resources, and infinite resources (oil) are more
+  // uncommon, so there are unlikely to be many per chunk
+  val initialAmounts: ResourceAmounts = ResourceAmounts(),
 ) : KafkatorioKeyedPacketData() {
 
   fun resources(): List<FactorioEntityData.Resource> =
-    resourcesXY.map { (position, resource) ->
+    amounts.map { (position, amount) ->
       FactorioEntityData.Resource(
         protoId = key.protoId,
         position = position,
-        element = resource,
+        amount = amount,
+        initialAmount = initialAmounts[position],
       )
     }
 }

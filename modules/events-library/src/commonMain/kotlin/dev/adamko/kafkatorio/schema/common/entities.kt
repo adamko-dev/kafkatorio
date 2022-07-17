@@ -18,41 +18,23 @@ sealed interface FactorioEntityData {
 
   /** Non-specific entity data */
   @Serializable
-  @SerialName("kafkatorio.entity.FactorioEntityData")
+  @SerialName("kafkatorio.entity.FactorioEntityDataStandard")
   data class Standard(
     override val protoId: PrototypeId,
-    val status: Status? = null,
-
-    val unitNumber: UnitNumber? = null,
-
     override val position: MapEntityPosition,
+
     val graphicsVariation: UByte? = null,
     val health: Float? = null,
-    val isActive: Boolean? = null,
-    val isRotatable: Boolean? = null,
+    val isActive: Boolean = false,
+    val isRotatable: Boolean = false,
     val lastUser: UInt? = null,
-  ) : FactorioEntityData {
-    constructor(
-      position: MapEntityPosition,
-      protoId: PrototypeId,
-      element: FactorioEntityUpdateElement.Entity
-    ) : this(
-      protoId = protoId,
-      position = position,
-
-      status = element.status,
-      unitNumber = element.unitNumber,
-      graphicsVariation = element.graphicsVariation,
-      health = element.health,
-      isActive = element.isActive,
-      isRotatable = element.isRotatable,
-      lastUser = element.lastUser
-    )
-  }
+    val status: Status? = null,
+    val unitNumber: UnitNumber? = null,
+  ) : FactorioEntityData
 
 
   @Serializable
-  @SerialName("kafkatorio.entity.FactorioResourceData")
+  @SerialName("kafkatorio.entity.FactorioEntityDataResource")
   data class Resource(
     override val protoId: PrototypeId,
 
@@ -60,19 +42,7 @@ sealed interface FactorioEntityData {
     val amount: UInt,
     /** Count of initial resource units contained. `null` if resource is not infinite. */
     val initialAmount: UInt? = null,
-  ) : FactorioEntityData {
-    constructor(
-      position: MapEntityPosition,
-      protoId: PrototypeId,
-      element: FactorioEntityUpdateElement.Resource
-    ) : this(
-      protoId = protoId,
-      position = position,
-
-      amount = element.amount,
-      initialAmount = element.initialAmount,
-    )
-  }
+  ) : FactorioEntityData
 
 
   /**
@@ -193,7 +163,7 @@ sealed interface FactorioEntityData {
 }
 
 
-sealed interface FactorioEntityUpdateDictionary<T : FactorioEntityUpdateElement>
+sealed interface FactorioEntityUpdateDictionary<T : Any>
   : Iterable<Pair<MapEntityPosition, T>> {
 
   val entitiesXY: Map<String, Map<String, T>>
@@ -203,28 +173,37 @@ sealed interface FactorioEntityUpdateDictionary<T : FactorioEntityUpdateElement>
 
   override fun iterator(): Iterator<Pair<MapEntityPosition, T>> =
     iterator {
-      entitiesXY.forEach { (x, column) ->
-        column.forEach { (y, entity) ->
-          yield(
-            MapEntityPosition(x.toDouble(), y.toDouble()) to entity
-          )
+      val invalid = mutableListOf<String>()
+      entitiesXY.forEach { (xString, column) ->
+        val x = xString.toDoubleOrNull()
+        column.forEach { (yString, entity) ->
+          val y = yString.toDoubleOrNull()
+          if (x == null || y == null) {
+            invalid += "$xString/$yString"
+          } else {
+            yield(MapEntityPosition(x, y) to entity)
+          }
         }
+      }
+
+      if (invalid.isNotEmpty()) {
+        println("WARNING FactorioEntityUpdateDictionary contained invalid x/y coords: ${invalid.joinToString()}")
       }
     }
 
   @Serializable
-  @SerialName("kafkatorio.entity.FactorioEntityUpdateResourceDictionary")
+  @SerialName("kafkatorio.entity.FactorioEntityUpdateResourceAmountDictionary")
   @JvmInline
-  value class Resource(
-    override val entitiesXY: Map<String, Map<String, FactorioEntityUpdateElement.Resource>>
-  ) : FactorioEntityUpdateDictionary<FactorioEntityUpdateElement.Resource>
+  value class ResourceAmounts(
+    override val entitiesXY: Map<String, Map<String, UInt>> = emptyMap()
+  ) : FactorioEntityUpdateDictionary<UInt>
 
   @Serializable
   @SerialName("kafkatorio.entity.FactorioEntityUpdateEntityDictionary")
   @JvmInline
   value class Entity(
-    override val entitiesXY: Map<String, Map<String, FactorioEntityUpdateElement.Entity>>
-  ) : FactorioEntityUpdateDictionary<FactorioEntityUpdateElement.Entity>
+    override val entitiesXY: Map<String, Map<String, FactorioEntityUpdateElement.Standard>>
+  ) : FactorioEntityUpdateDictionary<FactorioEntityUpdateElement.Standard>
 
 }
 
@@ -232,24 +211,16 @@ sealed interface FactorioEntityUpdateDictionary<T : FactorioEntityUpdateElement>
 sealed interface FactorioEntityUpdateElement {
 
   @Serializable
-  @SerialName("kafkatorio.entity.FactorioEntityUpdateResource")
-  data class Resource(
-    val amount: UInt,
-    /** Count of initial resource units contained. `null` if resource is not infinite. */
-    val initialAmount: UInt? = null,
-  ) : FactorioEntityUpdateElement
-
-  @Serializable
-  @SerialName("kafkatorio.entity.FactorioEntityUpdateEntity")
-  data class Entity(
+  @SerialName("kafkatorio.entity.FactorioEntityUpdateElementStandard")
+  data class Standard(
     val status: FactorioEntityData.Status? = null,
 
     val unitNumber: UnitNumber? = null,
 
     val graphicsVariation: UByte? = null,
     val health: Float? = null,
-    val isActive: Boolean? = null,
-    val isRotatable: Boolean? = null,
+    val isActive: Boolean = false,
+    val isRotatable: Boolean = false,
     val lastUser: UInt? = null,
   ) : FactorioEntityUpdateElement
 

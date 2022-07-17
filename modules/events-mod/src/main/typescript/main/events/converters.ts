@@ -5,7 +5,6 @@ import {
   EntityMiningProperties,
   EventName,
   FactorioEntityStatus,
-  FactorioEntityUpdateResource,
   KafkatorioPacketData,
   MapBoundingBox,
   MapChunkPosition,
@@ -73,20 +72,6 @@ export namespace Converters {
       masks.push(name)
     }
     return masks
-  }
-
-
-  export function convertResourceEntity(
-      entity: LuaEntity
-  ): FactorioEntityUpdateResource | null {
-    if (entity.type != "resource") {
-      return null
-    } else {
-      return {
-        amount: entity.amount,
-        initialAmount: entity.initial_amount,
-      }
-    }
   }
 
 

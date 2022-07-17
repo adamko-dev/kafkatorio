@@ -99,7 +99,7 @@ class MySourceCodeGenerator(
       (element.typeRef as? TsTypeRef.Literal)?.element is TsLiteral.Custom
       || element.id.name == "Tick"
       || element.id.name == "FactorioEntityUpdateEntityDictionary"
-      || element.id.name == "FactorioEntityUpdateResourceDictionary"
+      || element.id.name == "FactorioEntityUpdateResourceAmountDictionary"
     ) {
       val aliasedRef = generateTypeReference(element.typeRef)
       """

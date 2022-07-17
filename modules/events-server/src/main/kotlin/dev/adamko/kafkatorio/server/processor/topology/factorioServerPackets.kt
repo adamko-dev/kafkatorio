@@ -14,7 +14,13 @@ import dev.adamko.kotka.extensions.producedAs
 import dev.adamko.kotka.extensions.streams.map
 import dev.adamko.kotka.extensions.streams.to
 import dev.adamko.kotka.kxs.serde
+import java.util.zip.Inflater
 import kotlinx.serialization.decodeFromString
+import okio.Buffer
+import okio.ByteString
+import okio.ByteString.Companion.decodeBase64
+import okio.buffer
+import okio.inflate
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.kstream.KStream
@@ -33,7 +39,8 @@ fun factorioServerPacketStream(
     )
   ).map("decode-packets") { serverId: String, value: String ->
     val packet = runCatching {
-      jsonMapper.decodeFromString<KafkatorioPacket>(value)
+      val decoded = decodeFactorioEncodedString(value)
+      jsonMapper.decodeFromString<KafkatorioPacket>(decoded)
     }.getOrElse { e ->
       KafkatorioPacket(
         modVersion = "unknown",
@@ -68,4 +75,19 @@ fun splitFactorioServerPacketStream(
 //        println("[$key] sending event:${value.eventType} to topic:${value.data.objectName()}")
       value.data.topicName
     }
+}
+
+
+/**
+ * Factorio `game.encode_string` zlib encodes a string, then base64's it. Here we do the reverse.
+ */
+private fun decodeFactorioEncodedString(
+  source: String
+): String {
+  val bytes: ByteString = source.decodeBase64() ?: error("failed to base64 decode $source")
+
+  return Buffer().write(bytes)
+    .inflate(Inflater())
+    .buffer()
+    .readString(Charsets.UTF_8)
 }

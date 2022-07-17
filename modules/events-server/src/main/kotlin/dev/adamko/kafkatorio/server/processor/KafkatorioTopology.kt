@@ -167,6 +167,7 @@ internal class KafkatorioTopology(
   }
 
 
+  /** Receive log messages from the syslog socket, and send them to a Kafka topic */
   private fun syslogProducer(
     id: String = "syslog-producer"
   ) {
@@ -187,10 +188,14 @@ internal class KafkatorioTopology(
     }
 
     syslogServer.messages
-      .filter { it.message?.startsWith("KafkatorioPacket:") == true }
+      .filter {
+        (it.message ?: "").run {
+          startsWith("KafkatorioPacket:::") || startsWith("KafkatorioPacket encoded:::")
+        }
+      }
       .onEach { syslogMsg ->
 
-        val kafkatorioMessage = syslogMsg.message?.substringAfter("KafkatorioPacket:")
+        val kafkatorioMessage = syslogMsg.message?.substringAfter(":::")
 
         val record = ProducerRecord<String, String>(
           TOPIC_SRC_SERVER_LOG,

@@ -40,8 +40,8 @@ export namespace KafkatorioPacketData {
     type: KafkatorioPacketData.Type.ConfigurationUpdate;
     factorioData: ConfigurationUpdateGameData;
     allMods: ConfigurationUpdateModData[];
-    modStartupSettingsChange: boolean;
-    migrationApplied: boolean;
+    modStartupSettingsChange?: boolean;
+    migrationApplied?: boolean;
   }
   
   export interface ConsoleChatUpdate {
@@ -94,7 +94,8 @@ export namespace KafkatorioPacketData {
     type: KafkatorioPacketData.Type.MapChunkResourceUpdate;
     key: MapChunkResourceUpdateKey;
     events?: { [key: EventName]: Tick[] } | null;
-    resourcesXY: FactorioEntityUpdateResourceDictionary;
+    amounts?: FactorioEntityUpdateResourceAmountDictionary;
+    initialAmounts?: FactorioEntityUpdateResourceAmountDictionary;
   }
   
   export interface MapChunkTileUpdate {
@@ -132,7 +133,7 @@ export namespace KafkatorioPacketData {
     bannedReason?: string | null;
     kickedReason?: string | null;
     disconnectReason?: string | null;
-    isRemoved?: boolean | null;
+    isRemoved?: boolean;
   }
   
   export interface Error {
@@ -171,7 +172,7 @@ export interface MapChunkEntityUpdateKey {
   chunkPosition: MapChunkPosition;
 }
 
-export type FactorioEntityUpdateEntityDictionary = { [key: string]: { [key: string]: FactorioEntityUpdateEntity } };
+export type FactorioEntityUpdateEntityDictionary = { [key: string]: { [key: string]: FactorioEntityUpdateElementStandard } };
 
 export interface MapChunkResourceUpdateKey {
   protoId: PrototypeId;
@@ -179,7 +180,7 @@ export interface MapChunkResourceUpdateKey {
   chunkPosition: MapChunkPosition;
 }
 
-export type FactorioEntityUpdateResourceDictionary = { [key: string]: { [key: string]: FactorioEntityUpdateResource } };
+export type FactorioEntityUpdateResourceAmountDictionary = { [key: string]: { [key: string]: UInt } };
 
 export interface MapChunkTileUpdateKey {
   chunkPosition: MapChunkPosition;
@@ -251,7 +252,7 @@ export namespace FactorioPrototype {
     layer: UInt;
     collisionMasks: string[];
     order: string;
-    canBeMined: boolean;
+    canBeMined?: boolean;
   }
 }
 
@@ -274,7 +275,7 @@ export interface EntityItemGroup {
 }
 
 export interface EntityMiningProperties {
-  canBeMined: boolean;
+  canBeMined?: boolean;
   products: MinedProduct[] | null;
 }
 
@@ -293,19 +294,14 @@ export enum ChunkSize {
 
 export type PrototypeKey = Int & { __PrototypeKey__: void };
 
-export interface FactorioEntityUpdateEntity {
+export interface FactorioEntityUpdateElementStandard {
   status?: FactorioEntityStatus | null;
   unitNumber?: UnitNumber | null;
   graphicsVariation?: UByte | null;
   health?: Float | null;
-  isActive?: boolean | null;
-  isRotatable?: boolean | null;
+  isActive?: boolean;
+  isRotatable?: boolean;
   lastUser?: UInt | null;
-}
-
-export interface FactorioEntityUpdateResource {
-  amount: UInt;
-  initialAmount?: UInt | null;
 }
 
 export type MinedProduct =

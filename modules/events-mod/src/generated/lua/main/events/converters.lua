@@ -42,13 +42,6 @@ do
         end
         return masks
     end
-    function Converters.convertResourceEntity(entity)
-        if entity.type ~= "resource" then
-            return nil
-        else
-            return {amount = entity.amount, initialAmount = entity.initial_amount}
-        end
-    end
     local function convertEntityStatus(status)
         if status == nil then
             return nil

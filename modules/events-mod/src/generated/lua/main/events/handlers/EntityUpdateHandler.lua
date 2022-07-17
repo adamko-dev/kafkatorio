@@ -142,16 +142,23 @@ function EntityUpdatesHandler.throttleResourcesUpdate(self, eventName, eventTick
                 local ____data_events_eventName_17 = data.events[eventName]
                 ____data_events_eventName_17[#____data_events_eventName_17 + 1] = eventTick
                 for ____, entity in ipairs(resourceEntities) do
-                    local resourceUpdate = Converters.convertResourceEntity(entity)
-                    if resourceUpdate ~= nil then
-                        if data.resourcesXY == nil then
-                            data.resourcesXY = {}
+                    if data.amounts == nil then
+                        data.amounts = {}
+                    end
+                    local ____data_amounts_18, ____tostring_result_19 = data.amounts, tostring(entity.position.x)
+                    if ____data_amounts_18[____tostring_result_19] == nil then
+                        ____data_amounts_18[____tostring_result_19] = {}
+                    end
+                    data.amounts[tostring(entity.position.x)][tostring(entity.position.y)] = entity.amount
+                    if entity.initial_amount ~= nil then
+                        if data.initialAmounts == nil then
+                            data.initialAmounts = {}
                         end
-                        local ____data_resourcesXY_18, ____tostring_result_19 = data.resourcesXY, tostring(entity.position.x)
-                        if ____data_resourcesXY_18[____tostring_result_19] == nil then
-                            ____data_resourcesXY_18[____tostring_result_19] = {}
+                        local ____data_initialAmounts_20, ____tostring_result_21 = data.initialAmounts, tostring(entity.position.x)
+                        if ____data_initialAmounts_20[____tostring_result_21] == nil then
+                            ____data_initialAmounts_20[____tostring_result_21] = {}
                         end
-                        data.resourcesXY[tostring(entity.position.x)][tostring(entity.position.y)] = resourceUpdate
+                        data.initialAmounts[tostring(entity.position.x)][tostring(entity.position.y)] = entity.initial_amount
                     end
                 end
             end

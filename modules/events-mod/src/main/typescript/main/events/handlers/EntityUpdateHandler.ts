@@ -1,6 +1,6 @@
 import {
   EventName,
-  FactorioEntityUpdateEntity,
+  FactorioEntityUpdateElementStandard,
   KafkatorioPacketData,
   MapChunkPosition,
   PrototypeId,
@@ -94,7 +94,7 @@ export class EntityUpdatesHandler {
       chunkPosition: Converters.mapPositionToChunkPosition(entity.position)
     }
 
-    const entityUpdate: FactorioEntityUpdateEntity = {
+    const entityUpdate: FactorioEntityUpdateElementStandard = {
       unitNumber: entity.unit_number,
       graphicsVariation: entity.graphics_variation,
       health: entity.health,
@@ -140,7 +140,7 @@ export class EntityUpdatesHandler {
 
     for (const [protoId, resourceEntities] of pairs(entitiesByProtoId)) {
 
-      // create an update for each prototype ID
+      // create a MapChunkResourceUpdate for each prototype ID
 
       const entityUpdateKey: KafkatorioPacketData.MapChunkResourceUpdate["key"] = {
         protoId: protoId,
@@ -158,18 +158,20 @@ export class EntityUpdatesHandler {
             data.events[eventName].push(eventTick)
 
             for (const entity of resourceEntities) {
-              const resourceUpdate = Converters.convertResourceEntity(entity)
 
-              if (resourceUpdate != null) {
-                data.resourcesXY ??= {}
-                data.resourcesXY[`${entity.position.x}`] ??= {}
-                data.resourcesXY[`${entity.position.x}`][`${entity.position.y}`] = resourceUpdate
+              data.amounts ??= {}
+              data.amounts[`${entity.position.x}`] ??= {}
+              data.amounts[`${entity.position.x}`][`${entity.position.y}`] = entity.amount
+
+              if (entity.initial_amount != null) {
+                data.initialAmounts ??= {}
+                data.initialAmounts[`${entity.position.x}`] ??= {}
+                data.initialAmounts[`${entity.position.x}`][`${entity.position.y}`] = entity.initial_amount
               }
             }
           }
       )
     }
-
   }
 
 

@@ -24,7 +24,7 @@ sealed interface FactorioPrototype {
     val collisionMasks: LuaJsonList<String>,
     val order: String,
     /** Can the tile be mined for resources? */
-    val canBeMined: Boolean,
+    val canBeMined: Boolean = false,
   ) : FactorioPrototype
 
 
@@ -63,7 +63,7 @@ sealed interface FactorioPrototype {
     @Serializable
     @SerialName("kafkatorio.prototype.EntityMiningProperties")
     data class MiningProperties(
-      val canBeMined: Boolean,
+      val canBeMined: Boolean = false,
 //      @Contextual
       val products: LuaJsonList<MinedProduct>?,
     )
