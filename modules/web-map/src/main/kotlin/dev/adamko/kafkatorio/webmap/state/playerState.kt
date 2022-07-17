@@ -149,8 +149,8 @@ sealed interface PlayerProperties {
     val surfaceIndex = update.surfaceIndex ?: this.surfaceIndex
     val colour = update.colour ?: this.colour
     val name = update.name ?: this.name
-    val isConnected = update.isConnected ?: false
-    val isShowOnMap = update.isShowOnMap ?: false
+    val isConnected = update.isConnected
+    val isShowOnMap = update.isShowOnMap
 
     return when {
       position != null
