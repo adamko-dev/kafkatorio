@@ -61,20 +61,9 @@ private suspend fun PipelineContext<Unit, ApplicationCall>.handleTileRequest(
       )
     }
   } else {
-    call.respond(HttpStatusCode.NotFound)
-//    // It's not a client error to request this tile, it just doesn't exist (yet). So return 304?
-//    call.response.cacheControl(CacheControl.NoStore(null))
-//
-//    HeadersBuilder(size = 2).apply {
-//      EntityTagVersion(System.currentTimeMillis().hashCode().toString())
-//        .appendHeadersTo(this)
-//      LastModifiedVersion(System.currentTimeMillis())
-//        .appendHeadersTo(this)
-//    }.build().flattenForEach { name, value ->
-//      call.response.header(name, value)
-//    }
-//
-//    call.respond(HttpStatusCode.NotModified)
+    // It's not a client or server error to request a non-existent tile, it just doesn't exist
+    // (yet). So return 304.
+    call.respond(HttpStatusCode.NotModified)
   }
 }
 
