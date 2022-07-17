@@ -67,7 +67,6 @@ abstract class FactorioModPublishTask @Inject constructor(
   @TaskAction
   fun deploy() = runBlocking {
 
-
     val userInputHandler = services.get<UserInputHandler>()
 
     val portalUploadEndpoint = URLBuilder(portalApiUrl.get())

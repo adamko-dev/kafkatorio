@@ -5,9 +5,6 @@ import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logger
-import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.client.request.forms.submitForm
@@ -27,6 +24,10 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import org.gradle.api.internal.tasks.userinput.UserInputHandler
 import org.gradle.kotlin.dsl.support.useToRun
+import io.ktor.client.plugins.logging.Logger as KtorLogger
+import io.ktor.client.plugins.logging.Logging as KtorLogging
+import org.gradle.api.logging.Logger as GradleLogger
+import org.gradle.api.logging.Logging as GradleLogging
 
 
 class FactorioModPortalPublishClient(
@@ -39,9 +40,15 @@ class FactorioModPortalPublishClient(
   private val modPortalBaseURl: String,
 ) {
 
+  private val logger: GradleLogger = GradleLogging.getLogger(this::class.java)
+
   private fun client() = HttpClient(CIO) {
-    install(Logging) {
-      logger = Logger.SIMPLE
+    install(KtorLogging) {
+      logger = object : KtorLogger {
+        override fun log(message: String) {
+          this@FactorioModPortalPublishClient.logger.debug(message)
+        }
+      }
       level = LogLevel.ALL
     }
     install(ContentNegotiation) {
@@ -76,7 +83,7 @@ class FactorioModPortalPublishClient(
       if (confirmed) {
         upload(initUploadResponse)
       } else {
-        println("aborting upload")
+        logger.lifecycle("aborting mod '$modName' upload")
       }
     }
   }
@@ -90,10 +97,10 @@ class FactorioModPortalPublishClient(
       }
     )
 
-    println(response)
+//    println(response)
     val initUploadResponse: InitUploadResponse =
       Json.decodeFromString(InitUploadResponse.serializer(), response.bodyAsText())
-    println(initUploadResponse)
+//    println(initUploadResponse)
 
     require(response.status.isSuccess()) { "init upload request failed" }
 
@@ -123,11 +130,11 @@ class FactorioModPortalPublishClient(
     val submitUploadResponse =
       Json.decodeFromString(SubmitUploadResponse.serializer(), response.bodyAsText())
 
-    println(response)
-    println(submitUploadResponse)
+//    logger(response)
+//    println(submitUploadResponse)
     require(response.status.isSuccess() && submitUploadResponse is SubmitUploadResponse.Success) {
       "upload request failed"
     }
-    println("Mod uploaded successfully! ${modPortalBaseURl.removeSuffix("/")}/$modName")
+    logger.lifecycle("Mod '$modName' uploaded successfully! ${modPortalBaseURl.removeSuffix("/")}/$modName")
   }
 }

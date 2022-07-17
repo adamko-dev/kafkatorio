@@ -7,12 +7,6 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 
 
-//@Serializable
-//data class InitUploadRequest(
-//  @SerialName("mod") val modName: String,
-//)
-
-
 @Serializable(with = InitUploadResponse.Serializer::class)
 sealed interface InitUploadResponse {
 
