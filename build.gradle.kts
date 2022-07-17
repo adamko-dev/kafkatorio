@@ -7,7 +7,7 @@ plugins {
   `project-report`
   `build-dashboard`
 
-  kotlin("multiplatform") apply false // try to stop error 'Projects must be configuring'
+//  kotlin("multiplatform") apply false // try to stop error 'Projects must be configuring'
 //  kotlin("js") apply false // try to stop error 'Projects must be configuring'
 }
 
@@ -101,3 +101,6 @@ val runFactorioClient by tasks.registering {
     ":modules:infra-factorio-client:processRun",
   )
 }
+
+
+apply(from = "$projectDir/kt52647.gradle.kts")
