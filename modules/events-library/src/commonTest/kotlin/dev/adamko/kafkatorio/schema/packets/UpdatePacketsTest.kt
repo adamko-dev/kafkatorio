@@ -75,7 +75,7 @@ class UpdatePacketsTest : FunSpec({
           forceIndex = ForceIndex(1u),
           isAdmin = true,
           isConnected = true,
-          isRemoved = null,
+//          isRemoved = false,
           isShowOnMap = true,
           isSpectator = false,
           kickedReason = null,
@@ -116,7 +116,7 @@ class UpdatePacketsTest : FunSpec({
           bannedReason = null,
           kickedReason = null,
           disconnectReason = null,
-          isRemoved = null,
+//          isRemoved = null,
         )
       )
 
@@ -196,7 +196,7 @@ class UpdatePacketsTest : FunSpec({
           key = PlayerUpdateKey(PlayerIndex(1u)),
 //          isAdmin = ,
           isConnected = true,
-          isRemoved = null,
+//          isRemoved = null,
 //          isShowOnMap = ,
 //          isSpectator = ,
           kickedReason = null,
