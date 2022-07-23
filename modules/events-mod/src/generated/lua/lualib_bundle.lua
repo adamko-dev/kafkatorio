@@ -345,7 +345,11 @@ end
 
 local function __TS__ArraySlice(self, first, last)
     local len = #self
-    first = first or 0
+    local ____first_0 = first
+    if ____first_0 == nil then
+        ____first_0 = 0
+    end
+    first = ____first_0
     if first < 0 then
         first = len + first
         if first < 0 then
@@ -356,7 +360,11 @@ local function __TS__ArraySlice(self, first, last)
             first = len
         end
     end
-    last = last or len
+    local ____last_1 = last
+    if ____last_1 == nil then
+        ____last_1 = len
+    end
+    last = ____last_1
     if last < 0 then
         last = len + last
         if last < 0 then
@@ -412,7 +420,11 @@ local function __TS__ArraySplice(self, ...)
     elseif actualArgumentCount == 1 then
         actualDeleteCount = len - start
     else
-        actualDeleteCount = deleteCount or 0
+        local ____deleteCount_0 = deleteCount
+        if ____deleteCount_0 == nil then
+            ____deleteCount_0 = 0
+        end
+        actualDeleteCount = ____deleteCount_0
         if actualDeleteCount < 0 then
             actualDeleteCount = 0
         end
@@ -1175,7 +1187,14 @@ do
             local args = {...}
             local argsLength = select("#", ...)
             return {
-                ____coroutine = coroutine.create(function() return fn((unpack or table.unpack)(args, 1, argsLength)) end),
+                ____coroutine = coroutine.create(function()
+                    local ____fn_1 = fn
+                    local ____unpack_0 = unpack
+                    if ____unpack_0 == nil then
+                        ____unpack_0 = table.unpack
+                    end
+                    return ____fn_1(____unpack_0(args, 1, argsLength))
+                end),
                 [Symbol.iterator] = generatorIterator,
                 next = generatorNext
             }
@@ -1553,7 +1572,11 @@ local function __TS__ParseFloat(numberString)
         return ____temp_0
     end
     local number = tonumber(string.match(numberString, "^%s*(-?%d+%.?%d*)"))
-    return number or 0 / 0
+    local ____number_1 = number
+    if ____number_1 == nil then
+        ____number_1 = 0 / 0
+    end
+    return ____number_1
 end
 
 local function __TS__StringSubstr(self, from, length)
@@ -1947,7 +1970,11 @@ local function __TS__SparseArrayPush(sparseArray, ...)
 end
 
 local function __TS__SparseArraySpread(sparseArray)
-    local _unpack = unpack or table.unpack
+    local ____unpack_0 = unpack
+    if ____unpack_0 == nil then
+        ____unpack_0 = table.unpack
+    end
+    local _unpack = ____unpack_0
     return _unpack(sparseArray, 1, sparseArray.sparseLength)
 end
 
@@ -2127,7 +2154,11 @@ local function __TS__StringCharCodeAt(self, index)
     if index < 0 then
         return 0 / 0
     end
-    return string.byte(self, index + 1) or 0 / 0
+    local ____string_byte_result_0 = string.byte(self, index + 1)
+    if ____string_byte_result_0 == nil then
+        ____string_byte_result_0 = 0 / 0
+    end
+    return ____string_byte_result_0
 end
 
 local function __TS__StringEndsWith(self, searchString, endPosition)
