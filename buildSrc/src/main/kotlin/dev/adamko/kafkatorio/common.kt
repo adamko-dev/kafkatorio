@@ -2,15 +2,13 @@ package dev.adamko.kafkatorio
 
 import io.kvision.gradle.KVisionExtension
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonObject
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.findByType
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
-
-val jsonMapper = Json {
-  prettyPrint = true
-  prettyPrintIndent = "  "
-}
 
 
 object Versions {
