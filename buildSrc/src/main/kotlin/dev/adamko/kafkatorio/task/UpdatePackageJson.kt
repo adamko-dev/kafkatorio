@@ -1,15 +1,19 @@
 package dev.adamko.kafkatorio.task
 
 import com.github.gradle.node.NodePlugin
-import dev.adamko.kafkatorio.jsonMapper
+import dev.adamko.kafkatorio.*
+import java.io.File
 import javax.inject.Inject
 import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.JsonObjectBuilder
+import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
@@ -18,13 +22,19 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.support.useToRun
 import org.jetbrains.kotlin.util.suffixIfNot
 
+
 @CacheableTask
 abstract class UpdatePackageJson @Inject constructor(
   private val providers: ProviderFactory,
-) : DefaultTask() {
+) : DefaultTask(),
+  ProviderFactory by providers {
 
+//  @get:Input
+//  abstract val propertiesToCheck: MapProperty<String, String>
+
+  /** Cumulative updates */
   @get:Input
-  abstract val propertiesToCheck: MapProperty<String, String>
+  internal abstract val expectedJsonUpdates: ListProperty<String>
 
   @get:OutputFile
   abstract val packageJsonFile: RegularFileProperty
@@ -32,51 +42,93 @@ abstract class UpdatePackageJson @Inject constructor(
 
   init {
     group = NodePlugin.NPM_GROUP
-    description =
-      "Read the package.json file and update the version and name, based on the current project."
+    description = "Update package.json properties"
 
     outputs.upToDateWhen(JsonPropertiesUpToDateSpec)
+
+//    expectedJson.convention("{}")
   }
 
 
   @TaskAction
   fun exec() {
     val packageJsonFile = packageJsonFile.asFile.get()
+    val expectedJsonUpdates: List<String> = expectedJsonUpdates.get().toList()
 
-    logger.lifecycle("updating package.json ${packageJsonFile.canonicalPath}")
+    logger.lifecycle("updating package.json ${packageJsonFile.canonicalFile}")
 
-    val updatedPackageJson = updatedPackageJson()
+    val expectedJson = expectedJsonUpdates.fold(JsonObject(emptyMap())) { acc, update ->
+      val updateJson = jsonMapper.parseToJsonElement(update).jsonObject
+      JsonObject(acc + updateJson)
+    }
 
-    val packageJsonContentUpdated =
+    val updatedPackageJson = JsonObject(
+      packageJsonFile.parseToJsonObject() + expectedJson
+    )
+
+    val packageJsonContentFormatted =
       jsonMapper
         .encodeToString(updatedPackageJson)
 
-        // change empty arrays/objects, because `npm install` also formats package.json, but
-        // slightly differently to kxs.
-        .replace( ": {\n  }", ": {}")
-        .replace( ": [\n  ]", ": []")
+        // change empty arrays/objects, because `npm install` also formats package.json,
+        // but slightly differently to kxs.
+        .replace(": {\n  }", ": {}")
+        .replace(": [\n  ]", ": []")
 
         .suffixIfNot("\n")
 
-    logger.debug(packageJsonContentUpdated)
+    logger.info(packageJsonContentFormatted)
 
     packageJsonFile.writer().useToRun {
-      write(packageJsonContentUpdated)
+      write(packageJsonContentFormatted)
     }
   }
 
-  internal fun currentPackageJson(): JsonObject {
-    val packageJsonFile = packageJsonFile.get().asFile
-    return jsonMapper.parseToJsonElement(packageJsonFile.readText()).jsonObject
+
+  /** Update [expectedJson] by merging [updateJsonProvider] with the existing value. */
+  fun updateExpectedJson(
+    expectedJsonUpdate: JsonObjectBuilder.() -> Unit
+  ) {
+    val expectedJsonUpdateProvider = provider {
+      buildJsonObject(expectedJsonUpdate).toString()
+    }
+
+    expectedJsonUpdates.add(expectedJsonUpdateProvider)
+
+//    val newJson =
+//      expectedJson.zip(expectedJsonUpdateProvider) { currentJsonString, inputJsonString ->
+//        val currentJson = jsonMapper.encodeToJsonElement(currentJsonString).jsonObject
+//
+//        val inputJson = jsonMapper.encodeToJsonElement(inputJsonString).jsonObject
+//
+//        val newJson = JsonObject(currentJson + inputJson)
+//
+//        jsonMapper.encodeToString(newJson)
+//      }
+//
+//    expectedJson.set(newJson)
   }
 
-  internal fun updatedPackageJson(
-    currentPackageJson: JsonObject = currentPackageJson(),
-  ): JsonObject {
-    val propertiesToCheck: Map<String, String> = propertiesToCheck.get()
-    val newJsonProps = propertiesToCheck.mapValues { (_, newVal) ->
-      JsonPrimitive(newVal)
+
+  companion object {
+    private val jsonMapper = Json {
+      prettyPrint = true
+      prettyPrintIndent = "  "
     }
-    return JsonObject(currentPackageJson + newJsonProps)
+
+
+    internal fun File.parseToJsonObject(): JsonObject =
+      jsonMapper.parseToJsonElement(readText()).jsonObject
+
+
+    internal fun Property<String>.parseToJsonObject(): JsonObject =
+      jsonMapper.parseToJsonElement(get()).jsonObject
+
+
+    internal fun List<String>.foldParseToJsonObject(): JsonObject =
+      fold(JsonObject(emptyMap())) { acc, update ->
+        val updateJson = jsonMapper.parseToJsonElement(update).jsonObject
+        JsonObject(acc + updateJson)
+      }
   }
 }

@@ -4,6 +4,8 @@ import dev.adamko.kafkatorio.gradle.asProvider
 import dev.adamko.kafkatorio.gradle.factorioModAttributes
 import dev.adamko.kafkatorio.gradle.typescriptAttributes
 import dev.adamko.kafkatorio.task.TypescriptToLuaTask
+import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonObject
 import net.swiftzer.semver.SemVer
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.plugins.ide.idea.model.Module as IdeaImlModule
@@ -175,15 +177,26 @@ val factorioModProvider by configurations.registering {
 }
 
 
-val packageJsonName: Provider<String> = providers.provider { "${rootProject.name}-${project.name}" }
-val pjProvider: RegularFileProperty =
-  objects.fileProperty().convention(layout.projectDirectory.file("package.json"))
+val projectPackageJsonName: Provider<String> =
+  providers.provider { "${rootProject.name}-${project.name}" }
+val projectPackageJsonFile: RegularFile = layout.projectDirectory.file("package.json")
+val projectVersion: Provider<String> = providers.provider { "${project.version}" }
+
 
 tasks.updatePackageJson {
 //  mustRunAfter(tasks.npmInstall)
-  inputs.property("packageJsonName", packageJsonName)
-  propertiesToCheck.put("name", packageJsonName)
-  packageJsonFile.set(pjProvider)
+
+  updateExpectedJson {
+    put("name", projectPackageJsonName.get())
+    putJsonObject("dependencies") {
+      put("lua-types", libs.versions.npm.luaTypes.get())
+      put("typescript-to-lua", libs.versions.npm.typescriptToLua.get())
+      put("typed-factorio", libs.versions.npm.typedFactorio.get())
+      put("typescript", libs.versions.npm.typescript.get())
+    }
+  }
+
+  packageJsonFile.set(projectPackageJsonFile)
 }
 
 

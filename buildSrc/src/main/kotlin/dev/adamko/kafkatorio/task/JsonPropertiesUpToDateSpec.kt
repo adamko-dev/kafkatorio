@@ -1,15 +1,23 @@
 package dev.adamko.kafkatorio.task
 
+import dev.adamko.kafkatorio.task.UpdatePackageJson.Companion.foldParseToJsonObject
+import dev.adamko.kafkatorio.task.UpdatePackageJson.Companion.parseToJsonObject
+import kotlinx.serialization.json.JsonObject
 import org.gradle.api.Task
 import org.gradle.api.internal.specs.ExplainingSpec
+import org.gradle.api.logging.Logger
+import org.gradle.api.logging.Logging
+
 
 object JsonPropertiesUpToDateSpec : ExplainingSpec<Task> {
+
+  private val logger: Logger = Logging.getLogger(this::class.java)
 
   override fun isSatisfiedBy(element: Task?): Boolean {
     val reason = whyUnsatisfied(element)
 
     if (reason != null) {
-      println("JsonProperties not up to date:\n$reason")
+      logger.lifecycle("JsonProperties not up to date:\n$reason")
     }
 
     return reason == null
@@ -21,26 +29,31 @@ object JsonPropertiesUpToDateSpec : ExplainingSpec<Task> {
   override fun whyUnsatisfied(task: Task?): String? {
     require(task is UpdatePackageJson) { "$task is not a UpdatePackageJson task" }
 
-    val current = task.currentPackageJson()
-    val updated = task.updatedPackageJson(current)
+    val current = task.packageJsonFile.asFile.orNull?.parseToJsonObject()
+      ?: return "no package.json file"
 
-    return if (current != updated) {
-      (current.keys + updated.keys)
+    val updates = task.expectedJsonUpdates.orNull?.toList()?.foldParseToJsonObject()
+      ?: return "no package.json updates"
+
+    val expected = JsonObject(current + updates)
+
+    if (current != expected) {
+      return (current.keys + expected.keys)
         .asSequence()
         .distinct()
         .sorted()
         .mapNotNull {
           val currentVal = current[it]
-          val updatedVal = updated[it]
+          val expectedVal = expected[it]
 
-          if (currentVal == updatedVal) {
+          if (currentVal == expectedVal) {
             null
           } else {
-            "'$it' - expected:$updatedVal, actual:$currentVal"
+            "'$it' - expected:$expectedVal, actual:$currentVal"
           }
         }.joinToString(separator = "\n\t", prefix = "package.json is not up to date.\n\t")
-    } else {
-      null
     }
+
+    return null
   }
 }

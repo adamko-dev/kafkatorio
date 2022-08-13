@@ -45,6 +45,15 @@ kotkaStreams          = "dev-SNAPSHOT"
 
 marykRocksDb          = "7.3.1"         # https://search.maven.org/artifact/io.maryk.rocksdb/rocksdb-multiplatform
 
+
+## npm ##
+
+npm-luaTypes        = "2.12.0"
+npm-typescriptToLua = "1.8.2"
+npm-typedFactorio   = "1.6.1"
+npm-typescript      = "4.7.4"
+
+
 ## test ##
 junit      = "5.8.2"
 kotest     = "5.3.1"
