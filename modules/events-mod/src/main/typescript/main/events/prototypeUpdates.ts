@@ -65,7 +65,7 @@ function getEntityPrototypes(): PrototypesByType<FactorioPrototype.Entity> {
       protoId: Converters.prototypeId(entity.type, entity.name),
 
       group: convertItemGroup(entity.group),
-      subgroup: convertItemSubgroup(entity.subgroup),
+      subgroup: convertItemGroup(entity.subgroup),
 
       isBuilding: entity.is_building,
       isEntityWithOwner: entity.is_entity_with_owner,
@@ -96,15 +96,6 @@ function convertItemGroup(itemGroup: LuaGroup): EntityItemGroup {
   return {
     name: itemGroup.name,
     type: itemGroup.type,
-    parentName: null,
-  }
-}
-
-
-function convertItemSubgroup(itemGroup: LuaGroup): EntityItemGroup {
-  return {
-    name: itemGroup.name,
-    type: itemGroup.type,
-    parentName: itemGroup.group?.name,
+    parentName: itemGroup.group?.name ?? null,
   }
 }

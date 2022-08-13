@@ -1,6 +1,9 @@
 package dev.adamko.kafkatorio.server.socket
 
 import com.github.palindromicity.syslog.AllowableDeviations
+import com.github.palindromicity.syslog.DefaultKeyProvider
+import com.github.palindromicity.syslog.Flat5424MessageHandler
+import com.github.palindromicity.syslog.NilPolicy
 import com.github.palindromicity.syslog.SyslogParser
 import com.github.palindromicity.syslog.SyslogParserBuilder
 import com.github.palindromicity.syslog.SyslogSpecification
@@ -38,10 +41,17 @@ class SyslogSocketServer(
     )
 
 
-  private val syslogParser: SyslogParser = SyslogParserBuilder()
-    .withDeviations(EnumSet.of(AllowableDeviations.PRIORITY, AllowableDeviations.VERSION))
-    .forSpecification(SyslogSpecification.RFC_5424)
-    .build()
+  private val syslogParser: SyslogParser<Map<String, String>> =
+    SyslogParserBuilder<Map<String, String>>()
+      .forSpecification(SyslogSpecification.RFC_5424)
+      .withSyslogBuilder(
+        Flat5424MessageHandler(
+          DefaultKeyProvider(),
+          NilPolicy.OMIT,
+          EnumSet.of(AllowableDeviations.PRIORITY, AllowableDeviations.VERSION),
+        )
+      )
+      .build()
 
 
   private val _messages: MutableSharedFlow<SyslogMsg> = MutableSharedFlow()

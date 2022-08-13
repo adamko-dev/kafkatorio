@@ -1,5 +1,5 @@
 local ____exports = {}
-local emit, getMapTilePrototypes, getEntityPrototypes, convertItemGroup, convertItemSubgroup
+local emit, getMapTilePrototypes, getEntityPrototypes, convertItemGroup
 local ____kafkatorio_2Dschema = require("generated.kafkatorio-schema")
 local FactorioPrototype = ____kafkatorio_2Dschema.FactorioPrototype
 local KafkatorioPacketData = ____kafkatorio_2Dschema.KafkatorioPacketData
@@ -30,7 +30,7 @@ end
 function getEntityPrototypes()
     local protos = {}
     for ____, entity in pairs(game.entity_prototypes) do
-        local key = (((entity.group.name .. "/") .. entity.subgroup.name) .. "/") .. entity.type
+        local key = (((tostring(entity.group.name) .. "/") .. tostring(entity.subgroup.name)) .. "/") .. entity.type
         if protos[key] == nil then
             protos[key] = {}
         end
@@ -38,7 +38,7 @@ function getEntityPrototypes()
             type = FactorioPrototype.Type.Entity,
             protoId = Converters.prototypeId(entity.type, entity.name),
             group = convertItemGroup(entity.group),
-            subgroup = convertItemSubgroup(entity.subgroup),
+            subgroup = convertItemGroup(entity.subgroup),
             isBuilding = entity.is_building,
             isEntityWithOwner = entity.is_entity_with_owner,
             isMilitaryTarget = entity.is_military_target,
@@ -62,16 +62,13 @@ function getEntityPrototypes()
     return protos
 end
 function convertItemGroup(itemGroup)
-    return {name = itemGroup.name, type = itemGroup.type, parentName = nil}
-end
-function convertItemSubgroup(itemGroup)
     local ____itemGroup_name_3 = itemGroup.name
     local ____itemGroup_type_4 = itemGroup.type
     local ____itemGroup_group_name_1 = itemGroup.group
     if ____itemGroup_group_name_1 ~= nil then
         ____itemGroup_group_name_1 = ____itemGroup_group_name_1.name
     end
-    return {name = ____itemGroup_name_3, type = ____itemGroup_type_4, parentName = ____itemGroup_group_name_1}
+    return {name = ____itemGroup_name_3, type = ____itemGroup_type_4, parentName = ____itemGroup_group_name_1 or nil}
 end
 function ____exports.emitPrototypes()
     local mapTileProtos = getMapTilePrototypes()

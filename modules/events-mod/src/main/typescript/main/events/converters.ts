@@ -18,13 +18,13 @@ export namespace Converters {
 
 
   import floor = math.floor;
-  const mapEventIdToName = new LuaTable<defines.Events, DefinedEventName>()
+  const mapEventIdToName = new LuaTable<defines.events, DefinedEventName>()
   for (const [eventName, eventId] of pairs(defines.events)) {
     mapEventIdToName.set(eventId, eventName)
   }
 
 
-  export function eventNameString(event: defines.Events): EventName {
+  export function eventNameString(event: defines.events): EventName {
     return mapEventIdToName.get(event) as EventName
   }
 
@@ -165,7 +165,7 @@ export namespace Converters {
   }
 
 
-  export function collisionBox(collision_box: BoundingBoxRead): MapBoundingBox {
+  export function collisionBox(collision_box: BoundingBox): MapBoundingBox {
     return {
       leftTop: Converters.entityPosition(collision_box.left_top),
       rightBottom: Converters.entityPosition(collision_box.right_bottom),

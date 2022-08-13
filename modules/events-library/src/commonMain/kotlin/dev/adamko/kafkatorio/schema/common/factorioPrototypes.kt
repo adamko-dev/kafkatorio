@@ -71,8 +71,8 @@ sealed interface FactorioPrototype {
     @Serializable
     @SerialName("kafkatorio.prototype.EntityItemGroup")
     data class ItemGroup(
-      val name: String,
-      val type: String,
+      val name: String? = null,
+      val type: String? = null,
       val parentName: String? = null,
     )
 

@@ -11,7 +11,7 @@ kotlin     = "1.7.10"
 ## libs ##
 camel-kafkaConnectors = "0.11.0"
 http4k                = "4.25.16.2"
-kafka                 = "3.2.0"         # https://kafka.apache.org/downloads
+kafka                 = "3.2.1"         # https://kafka.apache.org/downloads
 kvision               = "5.13.1"
 log4j2                = "2.17.2"
 okio                  = "3.2.0"         # https://search.maven.org/artifact/com.squareup.okio/okio
@@ -35,13 +35,14 @@ kotlinx-nodejs        = "0.0.7"
 
 kSvgDsl               = "v2.2.0"
 
-ktor                  = "2.0.3"         # https://github.com/ktorio/ktor/releases
+ktor                  = "2.1.0"         # https://github.com/ktorio/ktor/releases
 
-hoplite               = "2.3.1"         # https://github.com/sksamuel/hoplite/releases
+hoplite               = "2.5.2"         # https://github.com/sksamuel/hoplite/releases
 
-simpleSyslogParser    = "0.0.6"         # https://search.maven.org/artifact/com.github.palindromicity/simple-syslog
+#simpleSyslogParser    = "0.0.6"         # https://search.maven.org/artifact/com.github.palindromicity/simple-syslog
+simpleSyslogParser    = "cbf7d86559"    # https://jitpack.io/#palindromicity/simple-syslog/
 
-kotkaStreams          = "dev-SNAPSHOT"
+kotkaStreams          = "22.08.06"
 
 marykRocksDb          = "7.3.1"         # https://search.maven.org/artifact/io.maryk.rocksdb/rocksdb-multiplatform
 
@@ -61,14 +62,14 @@ mockk      = "1.12.4"
 
 
 ## infra ##
-factorio               = "1.1.61"
+factorio               = "1.1.64"
 confluent-kafkaConnect = "7.0.1"
 grafana                = "8.5.0"
 prometheus             = "v2.34.0"
 
 
 ## gradle plugins ##
-gradleNodePlugin = "3.3.0" # https://github.com/node-gradle/gradle-node-plugin/releases
+gradleNodePlugin = "3.4.0" # https://github.com/node-gradle/gradle-node-plugin/releases
 
 
 #########
@@ -213,7 +214,6 @@ kafka-streamsTestUtils = { group = "org.apache.kafka", name = "kafka-streams-tes
 # kafka helpers
 #kotka         = { group = "com.github.blueanvil", name = "kotka",         version =     "1.1.1" }
 
-#kafka-kotkaStreams = { group = "com.github.adamko-dev.kotka-streams", name = "kotka-streams", version.ref = "kotkaStreams" }
 kafka-kotkaStreams = { group = "dev.adamko.kotka", name = "kotka-streams", version.ref = "kotkaStreams" }
 
 
@@ -236,6 +236,7 @@ hoplite-datetime = { group = "com.sksamuel.hoplite", name = "hoplite-datetime", 
 hoplite-yaml     = { group = "com.sksamuel.hoplite", name = "hoplite-yaml",     version.ref = "hoplite" }
 
 
+#simpleSyslogParser = { group = "com.github.palindromicity", name = "simple-syslog", version.ref = "simpleSyslogParser" }
 simpleSyslogParser = { group = "com.github.palindromicity", name = "simple-syslog", version.ref = "simpleSyslogParser" }
 
 

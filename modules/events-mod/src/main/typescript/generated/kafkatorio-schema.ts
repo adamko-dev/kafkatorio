@@ -269,8 +269,8 @@ export type MapChunkPosition = [
 ];
 
 export interface EntityItemGroup {
-  name: string;
-  type: string;
+  name?: string | null;
+  type?: string | null;
   parentName?: string | null;
 }
 

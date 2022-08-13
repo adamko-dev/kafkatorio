@@ -1207,6 +1207,16 @@ local function __TS__InstanceOfObject(value)
     return valueType == "table" or valueType == "function"
 end
 
+local function __TS__LuaIteratorSpread(self, state, firstKey)
+    local results = {}
+    local key, value = self(state, firstKey)
+    while key do
+        results[#results + 1] = {key, value}
+        key, value = self(state, key)
+    end
+    return __TS__Unpack(results)
+end
+
 local Map
 do
     Map = __TS__Class()
@@ -2448,6 +2458,7 @@ return {
   __TS__InstanceOf = __TS__InstanceOf,
   __TS__InstanceOfObject = __TS__InstanceOfObject,
   __TS__Iterator = __TS__Iterator,
+  __TS__LuaIteratorSpread = __TS__LuaIteratorSpread,
   Map = Map,
   __TS__MathAtan2 = __TS__MathAtan2,
   __TS__MathSign = __TS__MathSign,
