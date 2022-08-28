@@ -53,8 +53,14 @@ tasks.dockerUp {
 }
 
 
+val kafkatorioServerToken: String by project
+
+
 tasks.dockerEnvUpdate {
-  properties("FACTORIO_VERSION" to libs.versions.factorio.get())
+  properties(
+    "FACTORIO_VERSION" to libs.versions.factorio.get(),
+    "KAFKATORIO_TOKEN" to kafkatorioServerToken,
+  )
 }
 
 

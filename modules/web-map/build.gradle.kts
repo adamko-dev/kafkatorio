@@ -88,8 +88,10 @@ kotlin {
         kvision("kvision-state")
         kvision("kvision-chart")
         kvision("kvision-maps")
+        kvision("kvision-rest")
         kvision("kvision-redux")
         kvision("kvision-state-flow")
+        kvision("kvision-routing-navigo-ng")
 
         implementation(devNpm("http-proxy-middleware", "^2.0.6"))
         implementation(dependencies.platform(devNpm("http-proxy-middleware", "^2.0.6")))

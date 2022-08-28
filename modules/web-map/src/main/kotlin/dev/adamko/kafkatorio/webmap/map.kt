@@ -158,7 +158,13 @@ class FactorioMap {
   companion object {
     const val DYNAMIC_RELOAD_ATT = "dynamic-reload"
 
-    private fun tileLayerUrlTemplate(layer: ServerMapTileLayer): String =
-      "/kafkatorio/data/servers/syslog-test/map/layers/${layer.dir}/s1/z{z}/x{x}/y{y}.png"
+    private val serverName: String
+      get() = window.location.pathname
+        .substringAfter("kafkatorio/data/servers/")
+        .substringBefore("/")
+
+    private fun tileLayerUrlTemplate(layer: ServerMapTileLayer): String {
+      return "/kafkatorio/data/servers/$serverName/map/layers/${layer.dir}/s1/z{z}/x{x}/y{y}.png"
+    }
   }
 }

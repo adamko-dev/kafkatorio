@@ -2,6 +2,7 @@ package dev.adamko.kafkatorio.server
 
 import dev.adamko.kafkatorio.server.config.ApplicationProperties
 import dev.adamko.kafkatorio.server.processor.eventsProcessor
+import dev.adamko.kafkatorio.server.security.Authenticator
 import dev.adamko.kafkatorio.server.socket.SyslogSocketServer
 import dev.adamko.kafkatorio.server.web.startWebServer
 import dev.adamko.kafkatorio.server.web.websocket.WebmapWebsocketServer
@@ -15,6 +16,7 @@ suspend fun main(): Unit = coroutineScope {
 
   val websocketServer = WebmapWebsocketServer()
   val syslogSocketServer = SyslogSocketServer(appProps)
+  val authenticator = Authenticator(appProps)
 
   launch {
     startWebServer(appProps, websocketServer)
@@ -25,6 +27,6 @@ suspend fun main(): Unit = coroutineScope {
   }
 
   launch {
-    eventsProcessor(appProps, syslogSocketServer, websocketServer)
+    eventsProcessor(appProps, syslogSocketServer, websocketServer, authenticator)
   }
 }

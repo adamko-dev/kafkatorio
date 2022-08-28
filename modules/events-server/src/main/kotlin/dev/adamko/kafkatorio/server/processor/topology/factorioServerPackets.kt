@@ -11,11 +11,11 @@ import dev.adamko.kotka.extensions.component1
 import dev.adamko.kotka.extensions.component2
 import dev.adamko.kotka.extensions.consumedAs
 import dev.adamko.kotka.extensions.producedAs
-import dev.adamko.kotka.extensions.streams.map
+import dev.adamko.kotka.extensions.streams.mapValues
 import dev.adamko.kotka.extensions.streams.to
 import dev.adamko.kotka.kxs.serde
 import java.util.zip.Inflater
-import kotlinx.serialization.decodeFromString
+import kotlinx.coroutines.CancellationException
 import okio.Buffer
 import okio.ByteString
 import okio.ByteString.Companion.decodeBase64
@@ -34,29 +34,32 @@ fun factorioServerPacketStream(
     TOPIC_SRC_SERVER_LOG,
     consumedAs(
       "read-raw-packets-from-server",
-      Serdes.String(),
+      jsonMapper.serde(FactorioServerId.serializer()),
       Serdes.String(),
     )
-  ).map("decode-packets") { serverId: String, value: String ->
-    val packet = runCatching {
-      val decoded = decodeFactorioEncodedString(value)
-      jsonMapper.decodeFromString<KafkatorioPacket>(decoded)
-    }.getOrElse { e ->
+  ).mapValues("decode-packets") { _: FactorioServerId, value: String? ->
+
+    val packet = try {
+      val decoded = decodeFactorioEncodedString(value!!)
+      jsonMapper.decodeFromString(KafkatorioPacket.serializer(), decoded)
+    } catch (e: Exception) {
+      if (e is CancellationException) throw e
+
       KafkatorioPacket(
         modVersion = "unknown",
         tick = Tick(0u),
         data = KafkatorioPacketDataError(
-          message = e.message,
+          exception = e,
           rawValue = value,
         )
       )
     }
 
     if (packet.data is KafkatorioPacketDataError) {
-      println("error parsing $TOPIC_SRC_SERVER_LOG message: ${packet.data}")
+      println("error parsing $TOPIC_SRC_SERVER_LOG message: $packet")
     }
 
-    FactorioServerId(serverId) to packet
+    packet
   }
 }
 

@@ -110,7 +110,7 @@ value class ServerMapTilePngFilename(val value: String) {
     chunkX: Int,
     chunkY: Int,
   ) : this(
-    "servers/${serverId}" +
+    "servers/${serverId.id}" +
         "/map" +
         "/layers/${layer.dir}" +
         "/s${surfaceIndex}" +

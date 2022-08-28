@@ -6,6 +6,7 @@ import dev.adamko.kafkatorio.schema.common.ServerMapTileLayer
 import dev.adamko.kafkatorio.schema.common.ServerMapTilePngFilename
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
 import dev.adamko.kafkatorio.server.config.ApplicationProperties
+import dev.adamko.kafkatorio.server.config.jsonMapper
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.EntityTagVersion
 import io.ktor.http.content.versions
@@ -21,6 +22,7 @@ import io.ktor.util.combineSafe
 import io.ktor.util.pipeline.PipelineContext
 import kotlin.io.path.Path
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.encodeToJsonElement
 
 
 fun Routing.factorioServersRoutes(
@@ -28,7 +30,9 @@ fun Routing.factorioServersRoutes(
 ) {
 
   get<FactorioServers> {
-    call.respond(HttpStatusCode.NotImplemented)
+    val serverIds = appProps.kafkatorioServers.values.toSet().sortedBy { it.id }
+    val serverIdsJson = jsonMapper.encodeToJsonElement(serverIds)
+    call.respond(serverIdsJson)
   }
 
   get<FactorioServer.MapData.Tile> { tile ->

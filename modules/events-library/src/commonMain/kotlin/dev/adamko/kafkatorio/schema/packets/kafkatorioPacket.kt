@@ -24,4 +24,16 @@ sealed class KafkatorioPacketData
 data class KafkatorioPacketDataError(
   val message: String? = null,
   val rawValue: String? = null,
-) : KafkatorioPacketData()
+) : KafkatorioPacketData() {
+  constructor(
+    exception: Exception,
+    rawValue: String? = null
+  ) : this(
+    message = """
+      ${exception::class.qualifiedName} ${exception.message}
+      
+      ${exception.stackTraceToString()}
+    """.trimIndent(),
+    rawValue = rawValue,
+  )
+}

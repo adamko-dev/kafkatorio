@@ -20,12 +20,9 @@ services:
       driver: syslog
       options:
         syslog-address: "tcp://host.docker.internal:12034" # pc
-#        syslog-address: "tcp://localhost:12034"  # nuc
+        #syslog-address: "tcp://localhost:12034"  # nuc
         syslog-format: "rfc5424"
-        tag: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiaWF0IjoxNTE2MjM5MDIyLCJrZXkiOiIwMTIzNDU2Nzg5YWJjZGVmIn0.rozxe6m4HmvQIVtESq2kT_CumIw7cFK2zbeKc5aUwEg"
-
-
-# correct horse battery staple
+        tag: ${KAFKATORIO_TOKEN}
 
   #    environment:
   #      RCON_PORT: 27715

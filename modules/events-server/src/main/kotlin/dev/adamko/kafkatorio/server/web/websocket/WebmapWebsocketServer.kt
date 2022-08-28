@@ -7,6 +7,7 @@ import io.ktor.websocket.send
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.coroutineScope
@@ -57,6 +58,8 @@ class WebmapWebsocketServer {
         if (client.isActive) {
           client.outgoing.send(Frame.Text(msg))
         }
+      }.onFailure { e ->
+        if (e is CancellationException) throw e
       }
     }.launchIn(client)
 
@@ -68,6 +71,8 @@ class WebmapWebsocketServer {
       while (isActive) {
         runCatching {
           client.send("elapsed ${startTime.elapsedNow()}")
+        }.onFailure { e ->
+          if (e is CancellationException) throw e
         }
         delay(10.seconds)
         yield()
@@ -100,7 +105,11 @@ class WebmapWebsocketServer {
       onSuccess = {
 //        log("sent message to client $name: $frame")
       },
-      onFailure = { e -> log("failed to send message to client $name: $e") }
+      onFailure = { e ->
+        if (e is CancellationException) throw e
+
+        log("failed to send message to client $name: $e")
+      }
     )
 
     override fun equals(other: Any?): Boolean = name == other

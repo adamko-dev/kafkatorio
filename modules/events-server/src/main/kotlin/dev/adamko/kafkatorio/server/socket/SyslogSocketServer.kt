@@ -8,13 +8,13 @@ import com.github.palindromicity.syslog.SyslogParser
 import com.github.palindromicity.syslog.SyslogParserBuilder
 import com.github.palindromicity.syslog.SyslogSpecification
 import dev.adamko.kafkatorio.server.config.ApplicationProperties
-import dev.adamko.kafkatorio.server.socket.SyslogMsg.Companion.toSyslogMsg
 import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.Socket
 import io.ktor.network.sockets.aSocket
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.utils.io.readUTF8Line
 import java.util.EnumSet
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -30,10 +30,8 @@ class SyslogSocketServer(
   appProps: ApplicationProperties,
 ) {
 
-  private val selectorManager: SelectorManager = SelectorManager(Dispatchers.IO)
-
-
-  private val serverSocketTcp = aSocket(selectorManager)
+  /** Incoming messages */
+  private val serverSocketTcp = aSocket(SelectorManager(Dispatchers.IO))
     .tcp()
     .bind(
       appProps.socketServerHost,
@@ -50,8 +48,7 @@ class SyslogSocketServer(
           NilPolicy.OMIT,
           EnumSet.of(AllowableDeviations.PRIORITY, AllowableDeviations.VERSION),
         )
-      )
-      .build()
+      ).build()
 
 
   private val _messages: MutableSharedFlow<SyslogMsg> = MutableSharedFlow()
@@ -74,31 +71,30 @@ class SyslogSocketServer(
               channel.readUTF8Line()
             }.fold(
               onSuccess = { line ->
-                when (line) {
-                  null -> {
-                    log("received 'null' from ${socket.description()} - closing connection")
-                    socket.close()
-                  }
-//                  else -> log("received '$line' from ${socket.description()}")
+                if (line == null) {
+                  log("received 'null' from ${socket.description()} - closing connection")
+                  socket.close()
                 }
+                // log("received '$line' from ${socket.description()}")
                 line
               },
-              onFailure = { e ->
-                log("reading line from socket failed ${socket.description()}, cause: $e")
+              onFailure = { ex ->
+                if (ex is CancellationException) throw ex
+
+                log("reading line from socket failed ${socket.description()}, cause: $ex")
                 null
               },
             )
             if (line != null) {
-
-              val syslog = syslogParser.parseLine(line).toSyslogMsg()
-
+              val syslog = SyslogMsg(syslogParser.parseLine(line))
               _messages.emit(syslog)
             }
-
             yield()
           }
         } catch (e: Exception) {
-          log("closing socket ${socket.description()}, cause: $e")
+          if (e is CancellationException) throw e
+          log("closing socket ${socket.description()}, cause: ${e::class.java.name} ${e.message}")
+          e.printStackTrace()
           withContext(Dispatchers.IO) { socket.close() }
         }
       }

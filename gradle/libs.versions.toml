@@ -20,12 +20,12 @@ scrimage              = "4.0.31"        # https://github.com/sksamuel/scrimage/r
 semver                = "1.2.0"         # https://github.com/swiftzer/semver/releases
 slf4j                 = "1.7.36"
 
-kotlinx-serialization = "1.3.3"         # https://github.com/Kotlin/kotlinx.serialization/releases
+kotlinx-serialization = "1.4.0"         # https://github.com/Kotlin/kotlinx.serialization/releases
 kxs-charleskornKaml   = "0.44.0"
 kxs-mamoeYamlkt       = "0.12.0"
 kxs-kxsTsGen          = "0.2.1"
 
-kotlinJsWrappers      = "1.0.0-pre.367" # https://search.maven.org/artifact/org.jetbrains.kotlin-wrappers/kotlin-wrappers-bom
+kotlinJsWrappers      = "1.0.0-pre.378" # https://search.maven.org/artifact/org.jetbrains.kotlin-wrappers/kotlin-wrappers-bom
 
 kotlinx-cli           = "0.3.4"
 kotlinx-coroutines    = "1.6.4"         # https://github.com/Kotlin/kotlinx.coroutines/releases
@@ -37,21 +37,22 @@ kSvgDsl               = "v2.2.0"
 
 ktor                  = "2.1.0"         # https://github.com/ktorio/ktor/releases
 
-hoplite               = "2.5.2"         # https://github.com/sksamuel/hoplite/releases
+hoplite               = "2.6.1"         # https://github.com/sksamuel/hoplite/releases
 
-#simpleSyslogParser    = "0.0.6"         # https://search.maven.org/artifact/com.github.palindromicity/simple-syslog
-simpleSyslogParser    = "cbf7d86559"    # https://jitpack.io/#palindromicity/simple-syslog/
+simpleSyslogParser    = "1.0.0"         # https://search.maven.org/artifact/com.github.palindromicity/simple-syslog
 
 kotkaStreams          = "22.08.06"
 
 marykRocksDb          = "7.3.1-1"       # https://search.maven.org/artifact/io.maryk.rocksdb/rocksdb-multiplatform
 
+klogging              = "0.4.9"
 
 ## npm ##
 
 npm-luaTypes        = "2.12.0"
 npm-typescriptToLua = "1.9.0"
-npm-typedFactorio   = "1.7.0"
+#npm-typedFactorio   = "1.6.1" # https://github.com/GlassBricks/typed-factorio/blob/main/Changelog.md
+npm-typedFactorio   = "1.7.0" # for factorio 1.1.61
 npm-typescript      = "4.7.4"
 
 
@@ -63,7 +64,7 @@ mockk      = "1.12.5"
 
 
 ## infra ##
-factorio               = "1.1.64"
+factorio               = "1.1.68"
 confluent-kafkaConnect = "7.0.1"
 grafana                = "8.5.0"
 prometheus             = "v2.34.0"
@@ -191,7 +192,6 @@ ktorNetwork-core              = { group = "io.ktor",  name = "ktor-network"     
 ktorNetwork-tls               = { group = "io.ktor",  name = "ktor-network-tls"                }
 
 
-
 ### jackson ##
 #jackson-bom     = { group = " com.fasterxml.jackson.module",  name = ":jackson-module-kotlin", version = "2.13.+"     }
 #jackson-kotlin     = { group = " com.fasterxml.jackson.module",  name = ":jackson-module-kotlin", version = "2.13.+"  }
@@ -202,6 +202,9 @@ kotlin-logging  = { group = "io.github.microutils",  name = "kotlin-logging-jvm"
 logback-core    = { group = "ch.qos.logback",        name = "logback-core",              version.ref = "qosLogback" }
 logback-classic = { group = "ch.qos.logback",        name = "logback-classic",           version.ref = "qosLogback" }
 logback-encoder = { group = "net.logstash.logback",  name = "logstash-logback-encoder",  version     = "6.6"        }
+
+
+klogging = { group = "io.klogging", name = "klogging-jvm", version.ref = "klogging" }
 
 ## gcp ##
 #gcp-bom    = { group = "com.google.cloud",  name = "libraries-bom",       version = "23.1.0" }
@@ -237,7 +240,6 @@ hoplite-datetime = { group = "com.sksamuel.hoplite", name = "hoplite-datetime", 
 hoplite-yaml     = { group = "com.sksamuel.hoplite", name = "hoplite-yaml",     version.ref = "hoplite" }
 
 
-#simpleSyslogParser = { group = "com.github.palindromicity", name = "simple-syslog", version.ref = "simpleSyslogParser" }
 simpleSyslogParser = { group = "com.github.palindromicity", name = "simple-syslog", version.ref = "simpleSyslogParser" }
 
 

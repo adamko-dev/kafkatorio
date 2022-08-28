@@ -3,7 +3,7 @@ package dev.adamko.kafkatorio.server.socket
 import com.github.palindromicity.syslog.dsl.SyslogFieldKeys
 
 data class SyslogMsg(
-  val src: Map<String, String?>
+  val src: Map<String, String?>,
 ) {
 
   val message: String?
@@ -48,16 +48,4 @@ data class SyslogMsg(
   val structuredElementIdPnamePattern: String?
     get() = src[SyslogFieldKeys.STRUCTURED_ELEMENT_ID_PNAME_PATTERN.field]
 
-
-  companion object {
-    fun Map<String, Any?>.toSyslogMsg(): SyslogMsg {
-      val map = entries.mapNotNull { (k, v) ->
-        when (v) {
-          is String -> k to v
-          else      -> null
-        }
-      }.toMap()
-      return SyslogMsg(map)
-    }
-  }
 }

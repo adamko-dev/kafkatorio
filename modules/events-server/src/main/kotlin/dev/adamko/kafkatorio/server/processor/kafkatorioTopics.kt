@@ -18,6 +18,7 @@ import kotlin.reflect.KClass
 private const val DOMAIN = "kafkatorio"
 
 const val TOPIC_SRC_SERVER_LOG = "$DOMAIN.src.server-log"
+const val TOPIC_SRC_SERVER_LOG_DLQ = "$DOMAIN.src.server-log.dlq"
 
 //const val TOPIC_GROUPED_MAP_CHUNKS_STATE = "$DOMAIN.state.map-chunks.grouped"
 
@@ -41,6 +42,7 @@ const val TOPIC_BROADCAST_TO_WEBSOCKET = "$DOMAIN.broadcast.websocket"
 
 fun allTopics(): Set<String> = buildSet {
   add(TOPIC_SRC_SERVER_LOG)
+  add(TOPIC_SRC_SERVER_LOG_DLQ)
 
 //  add(TOPIC_GROUPED_MAP_CHUNKS_STATE)
 

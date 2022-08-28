@@ -65,7 +65,7 @@ abstract class FactorioModPublishTask @Inject constructor(
 
 
   @TaskAction
-  fun deploy() = runBlocking {
+  fun deploy(): Unit = runBlocking {
 
     val userInputHandler = services.get<UserInputHandler>()
 

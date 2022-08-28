@@ -65,7 +65,7 @@ class FactorioModPortalPublishClient(
     expectSuccess = false
   }
 
-  fun uploadMod() = runBlocking {
+  fun uploadMod(): Unit = runBlocking {
     client().useToRun {
       val initUploadResponse = initUpload()
 

@@ -76,9 +76,39 @@ data class EntityIdentifiersData(
 ) : EntityIdentifiers
 
 
+/** Friendly identifier, used in URLs. Should be human-readable. */
 @Serializable
 @SerialName("kafkatorio.id.FactorioServerId")
 @JvmInline
-value class FactorioServerId(private val id: String) {
-  override fun toString() = id
+value class FactorioServerId(val id: String) : CharSequence by id {
+
+  init {
+    require(id.isNotBlank()) { "require FactorioServerId is not blank: '$id'" }
+    require(id.matches(validIdRegex)) { "require FactorioServerId matches $validIdRegex: '$id'" }
+  }
+
+  override fun toString(): String = id
+
+  companion object {
+    val validIdRegex = Regex("""^[a-zA-Z0-9\-_]+""" + "\$")
+  }
+}
+
+
+/** Short identifier, used in tokens. Might not be human-readable. */
+@Serializable
+@SerialName("kafkatorio.id.FactorioServerToken")
+@JvmInline
+value class FactorioServerToken(private val id: String) : CharSequence by id {
+
+  init {
+    require(id.isNotBlank()) { "require FactorioServerToken is not blank: '$id'" }
+    require(id.matches(FactorioServerId.validIdRegex)) { "require FactorioServerToken matches ${validIdRegex}: '$id'" }
+  }
+
+  override fun toString(): String = id
+
+  companion object {
+    val validIdRegex = Regex("^[a-zA-Z0-9]+\$")
+  }
 }

@@ -40,6 +40,8 @@ dependencies {
   implementation(libs.ktorSerialization.kotlinxJson)
 
   with(libs.ktorServer) {
+    implementation(auth)
+    implementation(authJwt)
     implementation(core)
     implementation(callId)
     implementation(callLogging)
@@ -59,8 +61,12 @@ dependencies {
   }
   //</editor-fold>
 
-
   implementation(libs.simpleSyslogParser)
+
+  // https://search.maven.org/artifact/org.bouncycastle/bcprov-jdk15on
+  implementation("org.bouncycastle:bcprov-jdk15on:1.70")
+  implementation("com.brendangoldberg:kotlin-jwt:1.1.0")
+  implementation("com.auth0:java-jwt:4.0.0")
 
   implementation(libs.kafka.kotkaStreams) {
     isChanging = false

@@ -1,1 +1,4 @@
-factorio-server
+factorio-server/
+
+# .env contains secret token
+.env
