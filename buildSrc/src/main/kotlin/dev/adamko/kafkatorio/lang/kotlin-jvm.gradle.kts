@@ -22,6 +22,7 @@ dependencies {
   testImplementation("io.mockk:mockk")
 }
 
+
 tasks.withType<KotlinCompile>().configureEach {
 
   kotlinOptions {
@@ -40,15 +41,18 @@ tasks.withType<KotlinCompile>().configureEach {
   )
 }
 
+
 tasks.compileTestKotlin {
   kotlinOptions.freeCompilerArgs += "-opt-in=io.kotest.common.ExperimentalKotest"
 }
+
 
 kotlin {
   jvmToolchain {
     languageVersion.set(JavaLanguageVersion.of(projectJvmTarget))
   }
 }
+
 
 tasks.withType<Test>().configureEach {
   useJUnitPlatform()

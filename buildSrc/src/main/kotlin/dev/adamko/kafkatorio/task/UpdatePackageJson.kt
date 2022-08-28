@@ -29,10 +29,7 @@ abstract class UpdatePackageJson @Inject constructor(
 ) : DefaultTask(),
   ProviderFactory by providers {
 
-//  @get:Input
-//  abstract val propertiesToCheck: MapProperty<String, String>
-
-  /** Cumulative updates */
+  /** Cumulative updates - will be combined one by one, then applied to [packageJsonFile] */
   @get:Input
   internal abstract val expectedJsonUpdates: ListProperty<String>
 
@@ -45,8 +42,6 @@ abstract class UpdatePackageJson @Inject constructor(
     description = "Update package.json properties"
 
     outputs.upToDateWhen(JsonPropertiesUpToDateSpec)
-
-//    expectedJson.convention("{}")
   }
 
 
@@ -94,19 +89,6 @@ abstract class UpdatePackageJson @Inject constructor(
     }
 
     expectedJsonUpdates.add(expectedJsonUpdateProvider)
-
-//    val newJson =
-//      expectedJson.zip(expectedJsonUpdateProvider) { currentJsonString, inputJsonString ->
-//        val currentJson = jsonMapper.encodeToJsonElement(currentJsonString).jsonObject
-//
-//        val inputJson = jsonMapper.encodeToJsonElement(inputJsonString).jsonObject
-//
-//        val newJson = JsonObject(currentJson + inputJson)
-//
-//        jsonMapper.encodeToString(newJson)
-//      }
-//
-//    expectedJson.set(newJson)
   }
 
 

@@ -13,7 +13,7 @@ val gradleKotlinTarget = "1.6"
 
 dependencies {
 
-  implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:${libs.versions.kotlin.get()}"))
+  implementation(platform(libs.kotlin.bom))
   implementation("org.jetbrains.kotlin:kotlin-serialization")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable")
@@ -29,7 +29,8 @@ dependencies {
 
   implementation("com.github.node-gradle:gradle-node-plugin:${libs.versions.gradleNodePlugin.get()}")
 
-  implementation("io.kotest:kotest-framework-multiplatform-plugin-gradle:${libs.versions.kotest.get()}")
+  implementation(platform(libs.kotest.bom))
+  implementation("io.kotest:kotest-framework-multiplatform-plugin-gradle")
 
   implementation("io.kvision:io.kvision.gradle.plugin:${libs.versions.kvision.get()}")
 

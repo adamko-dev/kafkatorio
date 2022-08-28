@@ -39,6 +39,8 @@ dependencyResolutionManagement {
     maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven") {
       content { includeGroup("org.jetbrains.kotlinx") }
     }
+
+    sonatypeSnapshot()
   }
 
   pluginManagement {
@@ -47,9 +49,9 @@ dependencyResolutionManagement {
       gradlePluginPortal()
       mavenCentral()
       jitpack()
+      sonatypeSnapshot()
     }
   }
-
 }
 
 

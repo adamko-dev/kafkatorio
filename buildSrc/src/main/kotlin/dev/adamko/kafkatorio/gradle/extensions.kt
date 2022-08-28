@@ -68,7 +68,7 @@ fun Project.execCapture(spec: ExecSpec.() -> Unit): String {
 fun Project.yarn(configure: YarnRootExtension.() -> Unit) = with(yarn, configure)
 
 
-fun Directory.filesChecksum() = asFileTree
+fun Directory.filesChecksum(): Long = asFileTree
   .files
   .map { it.readBytes() + it.absolutePath.toByteArray() }
   .fold(byteArrayOf()) { acc, bytes -> acc + bytes }
