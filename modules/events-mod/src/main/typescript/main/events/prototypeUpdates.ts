@@ -72,6 +72,9 @@ function getEntityPrototypes(): PrototypesByType<FactorioPrototype.Entity> {
       isMilitaryTarget: entity.is_military_target,
       maxHealth: entity.max_health,
       collisionBox: Converters.collisionBox(entity.collision_box),
+
+      tileWidth: entity.tile_width,
+      tileHeight: entity.tile_height,
     }
     entity.infinite_resource
 

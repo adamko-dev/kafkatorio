@@ -60,14 +60,25 @@ fun RepositoryHandler.jitpack() {
 }
 
 
-fun RepositoryHandler.myMavenLocal(enabled: Boolean = false) {
+fun RepositoryHandler.myMavenLocal(enabled: Boolean = true) {
   if (enabled) {
     logger.lifecycle("Maven local is enabled")
     mavenLocal {
       content {
-        includeGroup("dev.adamko")
-        includeGroup("dev.adamko.kxtsgen")
+//        includeGroup("dev.adamko")
+//        includeGroup("dev.adamko.kxtsgen")
+        includeGroup("io.kotest")
       }
+    }
+  }
+}
+
+
+fun RepositoryHandler.sonatypeSnapshot() {
+  maven("https://oss.sonatype.org/content/repositories/snapshots") {
+    mavenContent {
+      snapshotsOnly()
+      includeGroup("io.kotest")
     }
   }
 }

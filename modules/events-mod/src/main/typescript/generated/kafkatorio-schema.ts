@@ -243,6 +243,8 @@ export namespace FactorioPrototype {
     isMilitaryTarget?: boolean;
     miningProperties?: EntityMiningProperties | null;
     collisionBox?: MapBoundingBox | null;
+    tileWidth?: Int | null;
+    tileHeight?: Int | null;
   }
   
   export interface MapTile {

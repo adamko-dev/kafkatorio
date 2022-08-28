@@ -34,6 +34,8 @@ sealed interface FactorioPrototype {
    * [friendly][mapColourFriend] or [enemy][mapColourEnemy] colour isn't defined or `null`.
    * @param[mapColourFriend] The friendly map colour used when charting this entity.
    * @param[mapColourEnemy] The enemy map colour used when charting this entity.
+   * @param[tileWidth] Tiling size. If odd, center is the center of the tiles. If even, it's on the tile border.
+   * @param[tileHeight] Tiling size. If odd, center is the center of the tiles. If even, it's on the tile border.
    */
   @SerialName("kafkatorio.prototype.Entity")
   @Serializable
@@ -55,10 +57,10 @@ sealed interface FactorioPrototype {
     val miningProperties: MiningProperties? = null,
 
     val collisionBox: MapBoundingBox? = null,
-  ) : FactorioPrototype {
 
-    val tileHeight: Int? get() = collisionBox?.tileHeight
-    val tileWidth: Int? get() = collisionBox?.tileWidth
+    val tileWidth: Int? = null,
+    val tileHeight: Int? = null,
+  ) : FactorioPrototype {
 
     @Serializable
     @SerialName("kafkatorio.prototype.EntityMiningProperties")

@@ -12,12 +12,12 @@ kotlin     = "1.7.10"
 camel-kafkaConnectors = "0.11.0"
 http4k                = "4.25.16.2"
 kafka                 = "3.2.1"         # https://kafka.apache.org/downloads
-kvision               = "5.13.1"
+kvision               = "5.13.1"        # https://github.com/rjaros/kvision/releases
 log4j2                = "2.17.2"
 okio                  = "3.2.0"         # https://search.maven.org/artifact/com.squareup.okio/okio
 qosLogback            = "1.2.11"
 scrimage              = "4.0.31"        # https://github.com/sksamuel/scrimage/releases
-semver                = "1.2.0"
+semver                = "1.2.0"         # https://github.com/swiftzer/semver/releases
 slf4j                 = "1.7.36"
 
 kotlinx-serialization = "1.3.3"         # https://github.com/Kotlin/kotlinx.serialization/releases
@@ -25,7 +25,7 @@ kxs-charleskornKaml   = "0.44.0"
 kxs-mamoeYamlkt       = "0.12.0"
 kxs-kxsTsGen          = "0.2.1"
 
-kotlinJsWrappers      = "1.0.0-pre.359" # https://search.maven.org/artifact/org.jetbrains.kotlin-wrappers/kotlin-wrappers-bom
+kotlinJsWrappers      = "1.0.0-pre.367" # https://search.maven.org/artifact/org.jetbrains.kotlin-wrappers/kotlin-wrappers-bom
 
 kotlinx-cli           = "0.3.4"
 kotlinx-coroutines    = "1.6.4"         # https://github.com/Kotlin/kotlinx.coroutines/releases
@@ -44,21 +44,22 @@ simpleSyslogParser    = "cbf7d86559"    # https://jitpack.io/#palindromicity/sim
 
 kotkaStreams          = "22.08.06"
 
-marykRocksDb          = "7.3.1"         # https://search.maven.org/artifact/io.maryk.rocksdb/rocksdb-multiplatform
+marykRocksDb          = "7.3.1-1"       # https://search.maven.org/artifact/io.maryk.rocksdb/rocksdb-multiplatform
 
 
 ## npm ##
 
 npm-luaTypes        = "2.12.0"
-npm-typescriptToLua = "1.8.2"
-npm-typedFactorio   = "1.6.1"
+npm-typescriptToLua = "1.9.0"
+npm-typedFactorio   = "1.7.0"
 npm-typescript      = "4.7.4"
 
 
 ## test ##
-junit      = "5.8.2"
-kotest     = "5.3.1"
-mockk      = "1.12.4"
+junit      = "5.9.0"
+#kotest     = "5.4.2"
+kotest     = "5.5.0-LOCAL"
+mockk      = "1.12.5"
 
 
 ## infra ##
@@ -260,6 +261,9 @@ kotest-json             = { group = "io.kotest",  name = "kotest-assertions-json
 kotest-prop             = { group = "io.kotest",  name = "kotest-property"           }
 kotest-frameworkEngine  = { group = "io.kotest",  name = "kotest-framework-engine"   }
 kotest-runnerJunit5     = { group = "io.kotest",  name = "kotest-runner-junit5"      }
+
+kotestPlugin-embeddedCompiler = { group = "io.kotest",  name = "kotest-framework-multiplatform-plugin-embeddable-compiler" }
+kotestPlugin-multiplatform    = { group = "io.kotest",  name = "kotest-framework-multiplatform-plugin-gradle"              }
 
 ## http4k ##
 http4k-test-chaos    = { group = "org.http4k",  name = "http4k-testing-chaos",     version.ref = "http4k"  }

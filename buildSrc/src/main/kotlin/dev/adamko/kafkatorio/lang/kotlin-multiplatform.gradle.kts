@@ -10,6 +10,7 @@ plugins {
   id("dev.adamko.kafkatorio.base")
 //  id("dev.adamko.kafkatorio.lang.node")
   kotlin("multiplatform")
+  id("io.kotest.multiplatform")
 }
 
 

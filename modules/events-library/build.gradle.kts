@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   dev.adamko.kafkatorio.lang.`kotlin-multiplatform`
-  id("io.kotest.multiplatform")
   kotlin("plugin.serialization")
   distribution
 }
