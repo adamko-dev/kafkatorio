@@ -4,8 +4,8 @@ import java.time.LocalDate
 plugins {
   idea
   base
-  `project-report`
-  `build-dashboard`
+//  `project-report`
+//  `build-dashboard`
 }
 
 group = "dev.adamko.kafkatorio"
