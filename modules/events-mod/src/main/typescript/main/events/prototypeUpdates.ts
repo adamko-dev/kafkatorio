@@ -65,7 +65,7 @@ function getEntityPrototypes(): PrototypesByType<FactorioPrototype.Entity> {
       protoId: Converters.prototypeId(entity.type, entity.name),
 
       group: convertItemGroup(entity.group),
-      subgroup: convertItemGroup(entity.subgroup),
+      subgroup: convertItemSubgroup(entity.subgroup),
 
       isBuilding: entity.is_building,
       isEntityWithOwner: entity.is_entity_with_owner,
@@ -76,7 +76,6 @@ function getEntityPrototypes(): PrototypesByType<FactorioPrototype.Entity> {
       tileWidth: entity.tile_width,
       tileHeight: entity.tile_height,
     }
-    entity.infinite_resource
 
     if (entity.map_color != undefined) {
       entityProto.mapColour = Converters.mapColour(entity.map_color)
@@ -96,6 +95,15 @@ function getEntityPrototypes(): PrototypesByType<FactorioPrototype.Entity> {
 
 
 function convertItemGroup(itemGroup: LuaGroup): EntityItemGroup {
+  return {
+    name: itemGroup.name,
+    type: itemGroup.type,
+    parentName: null,
+  }
+}
+
+
+function convertItemSubgroup(itemGroup: LuaGroup): EntityItemGroup {
   return {
     name: itemGroup.name,
     type: itemGroup.type,

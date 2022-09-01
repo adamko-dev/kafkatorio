@@ -1,5 +1,5 @@
 local ____exports = {}
-local emit, getMapTilePrototypes, getEntityPrototypes, convertItemGroup
+local emit, getMapTilePrototypes, getEntityPrototypes, convertItemGroup, convertItemSubgroup
 local ____kafkatorio_2Dschema = require("generated.kafkatorio-schema")
 local FactorioPrototype = ____kafkatorio_2Dschema.FactorioPrototype
 local KafkatorioPacketData = ____kafkatorio_2Dschema.KafkatorioPacketData
@@ -38,7 +38,7 @@ function getEntityPrototypes()
             type = FactorioPrototype.Type.Entity,
             protoId = Converters.prototypeId(entity.type, entity.name),
             group = convertItemGroup(entity.group),
-            subgroup = convertItemGroup(entity.subgroup),
+            subgroup = convertItemSubgroup(entity.subgroup),
             isBuilding = entity.is_building,
             isEntityWithOwner = entity.is_entity_with_owner,
             isMilitaryTarget = entity.is_military_target,
@@ -64,6 +64,9 @@ function getEntityPrototypes()
     return protos
 end
 function convertItemGroup(itemGroup)
+    return {name = itemGroup.name, type = itemGroup.type, parentName = nil}
+end
+function convertItemSubgroup(itemGroup)
     local ____itemGroup_name_3 = itemGroup.name
     local ____itemGroup_type_4 = itemGroup.type
     local ____itemGroup_group_name_1 = itemGroup.group
