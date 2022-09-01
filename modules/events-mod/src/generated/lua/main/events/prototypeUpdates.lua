@@ -47,7 +47,6 @@ function getEntityPrototypes()
             tileWidth = entity.tile_width,
             tileHeight = entity.tile_height
         }
-        local ____ = entity.infinite_resource
         if entity.map_color ~= nil then
             entityProto.mapColour = Converters.mapColour(entity.map_color)
         end
