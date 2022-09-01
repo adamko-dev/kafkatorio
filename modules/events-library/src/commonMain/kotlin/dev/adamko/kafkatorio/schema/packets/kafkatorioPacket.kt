@@ -30,7 +30,7 @@ data class KafkatorioPacketDataError(
     rawValue: String? = null
   ) : this(
     message = """
-      ${exception::class.qualifiedName} ${exception.message}
+      $exception ${exception.message}
       
       ${exception.stackTraceToString()}
     """.trimIndent(),
