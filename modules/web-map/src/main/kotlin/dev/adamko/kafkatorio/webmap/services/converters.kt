@@ -1,4 +1,4 @@
-package dev.adamko.kafkatorio.webmap
+package dev.adamko.kafkatorio.webmap.services
 
 import dev.adamko.kafkatorio.schema.common.MapEntityPosition
 import dev.adamko.kafkatorio.schema.packets.PlayerUpdate

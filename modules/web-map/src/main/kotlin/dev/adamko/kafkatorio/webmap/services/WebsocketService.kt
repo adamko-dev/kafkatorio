@@ -1,4 +1,4 @@
-package dev.adamko.kafkatorio.webmap
+package dev.adamko.kafkatorio.webmap.services
 
 import dev.adamko.kafkatorio.schema.packets.ConfigurationUpdate
 import dev.adamko.kafkatorio.schema.packets.ConsoleChatUpdate
@@ -12,8 +12,11 @@ import dev.adamko.kafkatorio.schema.packets.MapChunkTileUpdate
 import dev.adamko.kafkatorio.schema.packets.PlayerUpdate
 import dev.adamko.kafkatorio.schema.packets.PrototypesUpdate
 import dev.adamko.kafkatorio.schema.packets.SurfaceUpdate
-import dev.adamko.kafkatorio.webmap.state.FactorioGameState
-import dev.adamko.kafkatorio.webmap.state.FactorioUpdate
+import dev.adamko.kafkatorio.webmap.SiteAction
+import dev.adamko.kafkatorio.webmap.SiteState
+import dev.adamko.kafkatorio.webmap.config.ApplicationProperties
+import dev.adamko.kafkatorio.webmap.config.jsonMapper
+import dev.adamko.kafkatorio.webmap.rootJob
 import io.kvision.redux.ReduxStore
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineName
@@ -29,14 +32,13 @@ import org.w3c.dom.events.Event
 
 
 class WebsocketService(
-  wsUrl: String = Props.websocketServerUrl,
-  private val reduxStore: ReduxStore<FactorioGameState, FactorioUpdate>,
+  private val siteStateStore: ReduxStore<SiteState, SiteAction>
 ) : CoroutineScope {
 
   override val coroutineContext: CoroutineContext =
     CoroutineName("WebsocketService") + Job(rootJob)
 
-  private val ws = WebSocket(wsUrl)
+  private val ws = WebSocket(ApplicationProperties.websocketServerUrl)
 //  private val ws = WebSocket("ws://localhost:12080/ws/foo")
 
   private val _packetsFlow = MutableSharedFlow<EventServerPacket>()
@@ -78,7 +80,9 @@ class WebsocketService(
           is EventServerPacket.Kafkatorio     ->
             when (val packetData = packet.packet.data) {
               is PlayerUpdate              ->
-                reduxStore.dispatch(FactorioUpdate.Player(packet.packet.tick, packetData))
+                siteStateStore.dispatch(
+                  SiteAction.FactorioUpdate.Player(packet.packet.tick, packetData)
+                )
 
               is ConfigurationUpdate,
               is ConsoleChatUpdate,

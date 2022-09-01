@@ -1,5 +1,6 @@
 package dev.adamko.kafkatorio.webmap
 
+import dev.adamko.kafkatorio.schema.common.FactorioServerId
 import dev.adamko.kafkatorio.schema.common.ServerMapTileLayer
 import dev.adamko.kafkatorio.schema.common.ServerMapTilePngFilename
 import dev.adamko.kafkatorio.webmap.externals.TileOnLoadFn
@@ -31,7 +32,9 @@ import org.w3c.fetch.RequestInit
 import org.w3c.fetch.RequestMode
 
 
-class FactorioMap {
+class FactorioMap(
+  private val serverId: FactorioServerId,
+) {
 
   val kvMap: Maps = Maps {
     width = 800.px
@@ -155,16 +158,18 @@ class FactorioMap {
     return baseTileLayer
   }
 
+  private fun tileLayerUrlTemplate(layer: ServerMapTileLayer): String {
+    return "/kafkatorio/data/servers/${serverId.id}/map/layers/${layer.dir}/s1/z{z}/x{x}/y{y}.png"
+  }
+
   companion object {
     const val DYNAMIC_RELOAD_ATT = "dynamic-reload"
 
-    private val serverName: String
-      get() = window.location.pathname
-        .substringAfter("kafkatorio/data/servers/")
-        .substringBefore("/")
+//    private val serverName: String?
+//      get() = window.location.pathname
+//        .substringAfter("servers")
+//        .substringBefore("/")
+//        .ifBlank { null }
 
-    private fun tileLayerUrlTemplate(layer: ServerMapTileLayer): String {
-      return "/kafkatorio/data/servers/$serverName/map/layers/${layer.dir}/s1/z{z}/x{x}/y{y}.png"
-    }
   }
 }

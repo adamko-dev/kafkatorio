@@ -1,9 +1,10 @@
 package dev.adamko.kafkatorio.webmap
 
 import dev.adamko.kafkatorio.schema.packets.EventServerPacket
-import dev.adamko.kafkatorio.webmap.state.FactorioGameState
-import dev.adamko.kafkatorio.webmap.state.FactorioUpdate
-import dev.adamko.kafkatorio.webmap.state.createFactorioReduxStore
+import dev.adamko.kafkatorio.webmap.layout.headerNav
+import dev.adamko.kafkatorio.webmap.layout.homePage
+import dev.adamko.kafkatorio.webmap.layout.serverPage
+import dev.adamko.kafkatorio.webmap.services.WebsocketService
 import io.kvision.Application
 import io.kvision.BootstrapCssModule
 import io.kvision.BootstrapIconsModule
@@ -12,17 +13,21 @@ import io.kvision.ChartModule
 import io.kvision.CoreModule
 import io.kvision.FontAwesomeModule
 import io.kvision.html.div
-import io.kvision.maps.Maps
-import io.kvision.maps.externals.leaflet.layer.tile.GridLayer
+import io.kvision.html.header
+import io.kvision.html.main
 import io.kvision.module
 import io.kvision.panel.root
 import io.kvision.redux.ReduxStore
+import io.kvision.redux.createReduxStore
 import io.kvision.require
+import io.kvision.routing.Routing
 import io.kvision.startApplication
-import kotlin.coroutines.CoroutineContext
+import io.kvision.state.bind
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.filterIsInstance
@@ -33,54 +38,78 @@ import kotlinx.coroutines.flow.onEach
 val rootJob = Job()
 
 
-class App(
-  reduxStore: ReduxStore<FactorioGameState, FactorioUpdate>,
-  wsService: WebsocketService,
-) : Application(), CoroutineScope {
+class App : Application() {
 
-  override val coroutineContext: CoroutineContext = CoroutineName("WebMapApp")
+  private val coroutineScope: CoroutineScope = CoroutineScope(
+    Dispatchers.Default
+        + SupervisorJob(rootJob)
+        + CoroutineName("WebMapApp")
+  )
 
   private var appState: MutableMap<String, Any> = mutableMapOf()
 
-  var reduxStore: ReduxStore<FactorioGameState, FactorioUpdate> by appState
-  var wsService: WebsocketService by appState
+  var reduxStore: ReduxStore<SiteState, SiteAction> by appState
+    private set
+//  var wsService: WebsocketService by appState
+//    private set
 
   init {
-    this.reduxStore = reduxStore
-    this.wsService = wsService
+    this.reduxStore = createReduxStore(SiteState::plus, SiteState())
+//    this.wsService = wsService
     require("./css/kafkatorio.css")
   }
 
-  private val gameState: FactorioGameState
-    get() = reduxStore.getState()
+//  private val gameState: FactorioGameState
+//    get() = reduxStore.getState()
 
-  private val kvMaps: Maps
-    get() = gameState.map.kvMap
-
+//  private val kvMaps: Maps
+//    get() = gameState.map.kvMap
 
   override fun start(state: Map<String, Any>) {
+    Routing.init(useHash = false)
+
     this.appState = state.toMutableMap()
 
+    val siteRouting = SiteRouting(reduxStore)
+    val websocketService = WebsocketService(reduxStore)
+
+    siteRouting.init()
+
     root("kvapp") {
+
+      header().bind(siteRouting.siteStateStore) { state ->
+        headerNav(state)
+      }
+
       div("Kafkatorio Web Map")
-      add(kvMaps)
-    }
 
-    kvMaps.leafletMap {
-      invalidateSize(true)
-      eachLayer({
-        if (it is GridLayer<*>) {
-          it.redraw()
+      main().bind(siteRouting.siteStateStore) { state ->
+        when (state.view) {
+          SiteView.HOME   -> homePage(state)
+          SiteView.SERVER -> serverPage(state)
         }
-      })
+      }
+
+//      div("Kafkatorio Web Map")
+//      add(kvMaps)
     }
 
-    wsService.packetsFlow
+//    kvMaps.leafletMap {
+//      invalidateSize(true)
+//      eachLayer({
+//        if (it is GridLayer<*>) {
+//          it.redraw()
+//        }
+//      })
+//    }
+
+    websocketService.packetsFlow
       .filterIsInstance<EventServerPacket.ChunkTileSaved>()
       .onEach { tileSavedEvent ->
 //        println("[packetsFlow] triggering tile refresh ${tileSavedEvent.filename.value}")
-        gameState.map.refreshUpdatedTilePng(tileSavedEvent.filename)
-      }.launchIn(this)
+        reduxStore.dispatch(SiteAction.EventServerUpdate(tileSavedEvent))
+//        reduxStore.map.refreshUpdatedTilePng(tileSavedEvent.filename)
+      }.launchIn(coroutineScope)
 
   }
 
@@ -96,14 +125,13 @@ class App(
 fun main() {
   startApplication(
     {
-      val reduxStore = createFactorioReduxStore()
-      val wsService = WebsocketService(
-//        "ws://localhost:9073/ws", // TODO load from config
-        reduxStore = reduxStore,
-      )
+//      val reduxStore = createFactorioReduxStore()
+//      val wsService = WebsocketService(
+//        reduxStore = reduxStore,
+//      )
       App(
-        reduxStore = reduxStore,
-        wsService = wsService,
+//        reduxStore = reduxStore,
+//        wsService = wsService,
       )
     },
     module.hot,
