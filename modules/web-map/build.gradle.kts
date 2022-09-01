@@ -1,3 +1,4 @@
+import dev.adamko.kafkatorio.task.DockerEnvUpdateTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
@@ -93,8 +94,8 @@ kotlin {
         kvision("kvision-state-flow")
         kvision("kvision-routing-navigo-ng")
 
-        implementation(devNpm("http-proxy-middleware", "^2.0.6"))
-        implementation(dependencies.platform(devNpm("http-proxy-middleware", "^2.0.6")))
+//        implementation(devNpm("http-proxy-middleware", "^2.0.6"))
+//        implementation(dependencies.platform(devNpm("http-proxy-middleware", "^2.0.6")))
 
 //        implementation(dependencies.platform(npm("follow-redirects", "^1.14.8")))
 //        implementation(dependencies.platform(npm("nanoid", "^3.1.31")))
@@ -148,7 +149,7 @@ fun KotlinDependencyHandler.kvision(
 //}
 
 
-val dockerEnvUpdate by tasks.registering(dev.adamko.kafkatorio.task.DockerEnvUpdateTask::class) {
+val dockerEnvUpdate by tasks.registering(DockerEnvUpdateTask::class) {
   dotEnvFile.set(layout.projectDirectory.file("docker/.env"))
 
   properties(
