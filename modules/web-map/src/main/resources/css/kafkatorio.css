@@ -7,14 +7,16 @@
   image-rendering: pixelated;
 }
 
-html {
-  background: #2B2B2BFF;
-}
+/*html {*/
+/*  background: #2B2B2BFF;*/
+/*}*/
 
-body {
-  background: #2B2B2BFF;
-}
+/*body {*/
+/*  background: #2B2B2BFF;*/
+/*}*/
 
 .leaflet-container {
-  background-color: rgba(255, 0, 0, 0.0);
+  background-color: rgba(255, 0, 0, 0.0) !important;
+  /*background: rgb(34, 34, 34) !important;*/
+  /*background: var(--bs-body-bg-rgb) !important;*/
 }

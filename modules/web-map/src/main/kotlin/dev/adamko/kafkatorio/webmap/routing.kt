@@ -9,40 +9,44 @@ import dev.adamko.kafkatorio.webmap.state.FactorioGameState
 import io.kvision.navigo.Match
 import io.kvision.navigo.Navigo
 import io.kvision.redux.RAction
-import io.kvision.redux.ReduxStore
 import io.kvision.routing.routing
+import kotlin.coroutines.CoroutineContext
 import kotlin.js.RegExp
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 
-class SiteRouting(
-  val siteStateStore: ReduxStore<SiteState, SiteAction>
-) : CoroutineScope by CoroutineScope(Dispatchers.Default + SupervisorJob()) {
+object SiteRouting : CoroutineScope {
+
+  override val coroutineContext: CoroutineContext =
+    Dispatchers.Default + SupervisorJob(rootJob) + CoroutineName("SiteRouting")
+
 
   fun init() {
     routing
       .on(SiteView.HOME) { homepageView() }
       .on(SiteView.SERVER) { match ->
-        serverView(match)
+        val serverId = match.data[0] as? String ?: error("invalid server id")
+        serverView(FactorioServerId(serverId))
       }
       .resolve()
   }
 
-  private fun homepageView() {
-    siteStateStore.dispatch(SiteAction.HomePage)
+  fun homepageView() {
+    App.siteStateStore.dispatch(SiteAction.HomePage)
     launch {
       val serverIds = EventsServerClient.serverIds()
-      siteStateStore.dispatch(SiteAction.ServerIdsLoaded(serverIds))
+      App.siteStateStore.dispatch(SiteAction.ServerIdsLoaded(serverIds))
     }
   }
 
-  private fun serverView(match: Match) {
-    val serverId = match.data[0] as? String ?: error("invalid server id")
-    siteStateStore.dispatch(SiteAction.ServerPage(FactorioServerId(serverId)))
+  fun serverView(serverId: FactorioServerId) {
+    App.siteStateStore.dispatch(SiteAction.ServerPage(serverId))
   }
+
 }
 
 
@@ -52,7 +56,10 @@ data class SiteState(
   val serverIds: List<FactorioServerId>? = null,
 
   val factorioGameState: FactorioGameState? = null,
-) {
+) : CoroutineScope {
+
+  override val coroutineContext: CoroutineContext =
+    Dispatchers.Default + SupervisorJob(rootJob) + CoroutineName("SiteState")
 
   operator fun plus(action: SiteAction): SiteState = when (action) {
     is SiteAction.HomePage          -> copy(view = SiteView.HOME)
@@ -68,9 +75,20 @@ data class SiteState(
       factorioGameState = factorioGameState?.let { it + action }
     )
 
-    is SiteAction.EventServerUpdate -> copy(
+    is SiteAction.EventServerUpdate -> when (action.packet) {
+      is EventServerPacket.ChunkTileSaved -> {
+        if (factorioGameState?.map != null) {
+          launch {
+            factorioGameState.map.refreshUpdatedTilePng(action.packet.filename)
+          }
+        }
+        this
+      }
 
-    )
+      is EventServerPacket.Kafkatorio     -> {
+        this
+      }
+    }
   }
 }
 
@@ -93,19 +111,18 @@ sealed interface SiteAction : RAction {
 
 
 sealed interface SiteView {
-  val pathMatcher: Any
 
   sealed interface StaticPath : SiteView {
-    override val pathMatcher: String
+    val path: String
   }
 
   sealed interface DynamicPath : SiteView {
-    override val pathMatcher: RegExp
+    val pathMatcher: RegExp
   }
 
 
   object HOME : StaticPath {
-    override val pathMatcher: String = "/"
+    override val path: String = "/"
   }
 
   object SERVER : DynamicPath {
@@ -113,18 +130,14 @@ sealed interface SiteView {
   }
 }
 
-//val SiteView.urlMatcher: String
-//  get() = when (this) {
-//    SiteView.HOME   -> "/"
-//    SiteView.SERVER -> "servers/${FactorioServerId.validIdRegex}"
-//  }
 
 private fun Navigo.on(view: SiteView, handler: (Match) -> Unit): Navigo {
   return when (view) {
-    is SiteView.StaticPath  -> on(view.pathMatcher, { match: Match -> handler(match) })
+    is SiteView.StaticPath  -> on(view.path, { match: Match -> handler(match) })
     is SiteView.DynamicPath -> on(view.pathMatcher, { match: Match -> handler(match) })
   }
 }
+
 
 //private fun Navigo.on(
 //  view: SiteView,

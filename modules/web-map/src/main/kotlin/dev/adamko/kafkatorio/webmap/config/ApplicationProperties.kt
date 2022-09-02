@@ -1,12 +1,13 @@
-package dev.adamko.kafkatorio.webmap
+package dev.adamko.kafkatorio.webmap.config
 
 import kotlinx.browser.window
 
-object Props {
+
+object ApplicationProperties {
   @Suppress("HttpUrlsUsage")
   val websocketServerUrl: String
-    get() = window.location.href
+    get() = window.location.origin
       .replace("http://", "ws://")
       .replace("https://", "wss://") +
-        "kafkatorio/ws"
+        "/kafkatorio/ws"
 }

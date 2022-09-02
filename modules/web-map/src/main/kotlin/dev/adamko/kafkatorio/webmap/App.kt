@@ -3,16 +3,16 @@ package dev.adamko.kafkatorio.webmap
 import dev.adamko.kafkatorio.schema.packets.EventServerPacket
 import dev.adamko.kafkatorio.webmap.layout.headerNav
 import dev.adamko.kafkatorio.webmap.layout.homePage
-import dev.adamko.kafkatorio.webmap.layout.serverPage
+import dev.adamko.kafkatorio.webmap.layout.servers.serverPage
 import dev.adamko.kafkatorio.webmap.services.WebsocketService
 import io.kvision.Application
-import io.kvision.BootstrapCssModule
 import io.kvision.BootstrapIconsModule
 import io.kvision.BootstrapModule
 import io.kvision.ChartModule
 import io.kvision.CoreModule
 import io.kvision.FontAwesomeModule
 import io.kvision.html.div
+import io.kvision.html.h3
 import io.kvision.html.header
 import io.kvision.html.main
 import io.kvision.module
@@ -38,7 +38,7 @@ import kotlinx.coroutines.flow.onEach
 val rootJob = Job()
 
 
-class App : Application() {
+object App : Application() {
 
   private val coroutineScope: CoroutineScope = CoroutineScope(
     Dispatchers.Default
@@ -48,15 +48,23 @@ class App : Application() {
 
   private var appState: MutableMap<String, Any> = mutableMapOf()
 
-  var reduxStore: ReduxStore<SiteState, SiteAction> by appState
+  var siteStateStore: ReduxStore<SiteState, SiteAction> by appState
     private set
 //  var wsService: WebsocketService by appState
 //    private set
 
   init {
-    this.reduxStore = createReduxStore(SiteState::plus, SiteState())
+    this.siteStateStore = createReduxStore(SiteState::plus, SiteState())
 //    this.wsService = wsService
     require("./css/kafkatorio.css")
+
+    WebsocketService.packetsFlow
+      .filterIsInstance<EventServerPacket.ChunkTileSaved>()
+      .onEach { tileSavedEvent ->
+//        println("[packetsFlow] triggering tile refresh ${tileSavedEvent.filename.value}")
+        siteStateStore.dispatch(SiteAction.EventServerUpdate(tileSavedEvent))
+//        reduxStore.map.refreshUpdatedTilePng(tileSavedEvent.filename)
+      }.launchIn(coroutineScope)
   }
 
 //  private val gameState: FactorioGameState
@@ -70,23 +78,25 @@ class App : Application() {
 
     this.appState = state.toMutableMap()
 
-    val siteRouting = SiteRouting(reduxStore)
-    val websocketService = WebsocketService(reduxStore)
+//    val siteRouting = SiteRouting(reduxStore)
+//    val websocketService = WebsocketService(siteStateStore)
 
-    siteRouting.init()
+    SiteRouting.init()
 
     root("kvapp") {
 
-      header().bind(siteRouting.siteStateStore) { state ->
+      header().bind(siteStateStore) { state ->
         headerNav(state)
       }
 
-      div("Kafkatorio Web Map")
+      h3("Kafkatorio Web Map")
 
-      main().bind(siteRouting.siteStateStore) { state ->
-        when (state.view) {
-          SiteView.HOME   -> homePage(state)
-          SiteView.SERVER -> serverPage(state)
+      main().bind(siteStateStore) { state ->
+        div(className = "container-fluid") {
+          when (state.view) {
+            SiteView.HOME   -> homePage(state)
+            SiteView.SERVER -> serverPage(state)
+          }
         }
       }
 
@@ -102,14 +112,6 @@ class App : Application() {
 //        }
 //      })
 //    }
-
-    websocketService.packetsFlow
-      .filterIsInstance<EventServerPacket.ChunkTileSaved>()
-      .onEach { tileSavedEvent ->
-//        println("[packetsFlow] triggering tile refresh ${tileSavedEvent.filename.value}")
-        reduxStore.dispatch(SiteAction.EventServerUpdate(tileSavedEvent))
-//        reduxStore.map.refreshUpdatedTilePng(tileSavedEvent.filename)
-      }.launchIn(coroutineScope)
 
   }
 
@@ -129,14 +131,16 @@ fun main() {
 //      val wsService = WebsocketService(
 //        reduxStore = reduxStore,
 //      )
-      App(
+//      App(
 //        reduxStore = reduxStore,
 //        wsService = wsService,
-      )
+//      )
+
+      App
     },
     module.hot,
     BootstrapModule,
-    BootstrapCssModule,
+//    BootstrapCssModule,
     BootstrapIconsModule,
     FontAwesomeModule,
     ChartModule,

@@ -10,7 +10,7 @@ import io.kvision.html.nav
 fun Container.headerNav(state: SiteState) {
   nav(className = "navbar") {
     div(className = "container") {
-      link("home", "#${SiteView.HOME.pathMatcher}")
+      link("home", SiteView.HOME.path)
     }
   }
 }

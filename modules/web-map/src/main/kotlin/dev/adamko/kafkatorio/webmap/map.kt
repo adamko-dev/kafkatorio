@@ -37,8 +37,10 @@ class FactorioMap(
 ) {
 
   val kvMap: Maps = Maps {
-    width = 800.px
-    height = 800.px
+    minHeight = 800.px
+    minWidth = 800.px
+//    width = 100.vh
+//    height = 100.vh
     margin = 10.px
   }
 
@@ -164,12 +166,5 @@ class FactorioMap(
 
   companion object {
     const val DYNAMIC_RELOAD_ATT = "dynamic-reload"
-
-//    private val serverName: String?
-//      get() = window.location.pathname
-//        .substringAfter("servers")
-//        .substringBefore("/")
-//        .ifBlank { null }
-
   }
 }

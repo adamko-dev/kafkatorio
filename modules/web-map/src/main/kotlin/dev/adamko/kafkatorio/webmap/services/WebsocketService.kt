@@ -12,12 +12,11 @@ import dev.adamko.kafkatorio.schema.packets.MapChunkTileUpdate
 import dev.adamko.kafkatorio.schema.packets.PlayerUpdate
 import dev.adamko.kafkatorio.schema.packets.PrototypesUpdate
 import dev.adamko.kafkatorio.schema.packets.SurfaceUpdate
+import dev.adamko.kafkatorio.webmap.App
 import dev.adamko.kafkatorio.webmap.SiteAction
-import dev.adamko.kafkatorio.webmap.SiteState
 import dev.adamko.kafkatorio.webmap.config.ApplicationProperties
 import dev.adamko.kafkatorio.webmap.config.jsonMapper
 import dev.adamko.kafkatorio.webmap.rootJob
-import io.kvision.redux.ReduxStore
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -31,9 +30,7 @@ import org.w3c.dom.WebSocket
 import org.w3c.dom.events.Event
 
 
-class WebsocketService(
-  private val siteStateStore: ReduxStore<SiteState, SiteAction>
-) : CoroutineScope {
+object WebsocketService : CoroutineScope {
 
   override val coroutineContext: CoroutineContext =
     CoroutineName("WebsocketService") + Job(rootJob)
@@ -80,7 +77,7 @@ class WebsocketService(
           is EventServerPacket.Kafkatorio     ->
             when (val packetData = packet.packet.data) {
               is PlayerUpdate              ->
-                siteStateStore.dispatch(
+                App.siteStateStore.dispatch(
                   SiteAction.FactorioUpdate.Player(packet.packet.tick, packetData)
                 )
 

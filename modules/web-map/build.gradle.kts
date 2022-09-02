@@ -158,3 +158,18 @@ val dockerEnvUpdate by tasks.registering(DockerEnvUpdateTask::class) {
   )
 }
 tasks.assemble { dependsOn(dockerEnvUpdate) }
+
+
+val installThemeCss by tasks.registering(Copy::class) {
+//  val bootswatchThemeCss = resources.text.fromUri("https://bootswatch.com/5/darkly/bootstrap.css")
+  val bootswatchThemeMinCss =
+    resources.text.fromUri("https://bootswatch.com/5/darkly/bootstrap.min.css")
+  from(bootswatchThemeMinCss) {
+    rename { "bootstrap.min.css" }
+  }
+  into(layout.projectDirectory.dir("src/main/resources/css"))
+}
+
+tasks.assemble {
+  dependsOn(installThemeCss)
+}
