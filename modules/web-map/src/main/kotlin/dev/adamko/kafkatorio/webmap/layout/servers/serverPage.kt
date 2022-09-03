@@ -9,7 +9,7 @@ import io.kvision.maps.externals.leaflet.layer.tile.GridLayer
 fun Container.serverPage(state: SiteState) {
   val factorioGameState = state.factorioGameState
 
-  div(className = "server-page") {
+  div(className = "server-page container-fluid") {
     if (factorioGameState != null) {
 
       add(factorioGameState.map.kvMap)

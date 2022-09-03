@@ -20,6 +20,7 @@ import dev.adamko.kafkatorio.webmap.rootJob
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -33,14 +34,13 @@ import org.w3c.dom.events.Event
 object WebsocketService : CoroutineScope {
 
   override val coroutineContext: CoroutineContext =
-    CoroutineName("WebsocketService") + Job(rootJob)
+    Dispatchers.Default + CoroutineName("WebsocketService") + Job(rootJob)
 
   private val ws = WebSocket(ApplicationProperties.websocketServerUrl)
-//  private val ws = WebSocket("ws://localhost:12080/ws/foo")
 
-  private val _packetsFlow = MutableSharedFlow<EventServerPacket>()
+  private val packetsMutableFlow = MutableSharedFlow<EventServerPacket>()
   val packetsFlow: SharedFlow<EventServerPacket>
-    get() = _packetsFlow.asSharedFlow()
+    get() = packetsMutableFlow.asSharedFlow()
 
   init {
     ws.onmessage = ::handleMessageEvent
@@ -69,7 +69,7 @@ object WebsocketService : CoroutineScope {
 
       if (packet != null) {
 
-        launch { _packetsFlow.emit(packet) }
+        launch { packetsMutableFlow.emit(packet) }
 
         when (packet) {
           is EventServerPacket.ChunkTileSaved -> {}

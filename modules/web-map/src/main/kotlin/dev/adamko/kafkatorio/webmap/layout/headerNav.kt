@@ -3,14 +3,15 @@ package dev.adamko.kafkatorio.webmap.layout
 import dev.adamko.kafkatorio.webmap.SiteState
 import dev.adamko.kafkatorio.webmap.SiteView
 import io.kvision.core.Container
-import io.kvision.html.div
-import io.kvision.html.link
-import io.kvision.html.nav
+import io.kvision.navbar.nav
+import io.kvision.navbar.navLink
+import io.kvision.navbar.navbar
+
 
 fun Container.headerNav(state: SiteState) {
-  nav(className = "navbar") {
-    div(className = "container") {
-      link("home", SiteView.HOME.path)
+  navbar {
+    nav {
+      navLink("Home", SiteView.HOME.path)
     }
   }
 }

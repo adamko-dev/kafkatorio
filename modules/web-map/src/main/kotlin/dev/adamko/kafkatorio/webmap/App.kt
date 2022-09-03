@@ -50,12 +50,10 @@ object App : Application() {
 
   var siteStateStore: ReduxStore<SiteState, SiteAction> by appState
     private set
-//  var wsService: WebsocketService by appState
-//    private set
 
   init {
     this.siteStateStore = createReduxStore(SiteState::plus, SiteState())
-//    this.wsService = wsService
+
     require("./css/kafkatorio.css")
 
     WebsocketService.packetsFlow
@@ -78,9 +76,6 @@ object App : Application() {
 
     this.appState = state.toMutableMap()
 
-//    val siteRouting = SiteRouting(reduxStore)
-//    val websocketService = WebsocketService(siteStateStore)
-
     SiteRouting.init()
 
     root("kvapp") {
@@ -99,9 +94,6 @@ object App : Application() {
           }
         }
       }
-
-//      div("Kafkatorio Web Map")
-//      add(kvMaps)
     }
 
 //    kvMaps.leafletMap {
@@ -124,20 +116,10 @@ object App : Application() {
 
 }
 
+
 fun main() {
   startApplication(
-    {
-//      val reduxStore = createFactorioReduxStore()
-//      val wsService = WebsocketService(
-//        reduxStore = reduxStore,
-//      )
-//      App(
-//        reduxStore = reduxStore,
-//        wsService = wsService,
-//      )
-
-      App
-    },
+    { App },
     module.hot,
     BootstrapModule,
 //    BootstrapCssModule,

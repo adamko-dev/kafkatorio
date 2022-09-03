@@ -122,6 +122,7 @@ class FactorioMap(
       }
   }
 
+
   private fun createServerTileLayer(
     layer: ServerMapTileLayer
   ): TileLayer<TileLayer.TileLayerOptions> {
@@ -160,11 +161,11 @@ class FactorioMap(
     return baseTileLayer
   }
 
-  private fun tileLayerUrlTemplate(layer: ServerMapTileLayer): String {
-    return "/kafkatorio/data/servers/${serverId.id}/map/layers/${layer.dir}/s1/z{z}/x{x}/y{y}.png"
-  }
+  private fun tileLayerUrlTemplate(layer: ServerMapTileLayer): String =
+    "/kafkatorio/data/servers/${serverId.id}/map/layers/${layer.dir}/s1/z{z}/x{x}/y{y}.png"
 
   companion object {
+    /** Add this attribute to `<img>` tiles that need to be dynamically refreshed. */
     const val DYNAMIC_RELOAD_ATT = "dynamic-reload"
   }
 }

@@ -40,7 +40,7 @@ private fun Container.servers(state: SiteState) {
 //          }
 //        }
 
-          button(text = "$serverId") {
+          button(text = "$serverId", className = "btn btn-link") {
             style = ButtonStyle.PRIMARY
             size = ButtonSize.SMALL
 
