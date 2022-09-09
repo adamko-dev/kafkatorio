@@ -38,8 +38,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 
-val rootJob = Job()
-
 
 object App : Application() {
 
@@ -110,21 +108,4 @@ object App : Application() {
     return appState
   }
 
-}
-
-
-fun main() {
-  startApplication(
-    {
-      Link.useDataNavigoForLinks = true
-      App
-    },
-    module.hot,
-    BootstrapModule,
-//    BootstrapCssModule,
-    BootstrapIconsModule,
-    FontAwesomeModule,
-    ChartModule,
-    CoreModule,
-  )
 }

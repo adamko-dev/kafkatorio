@@ -7,33 +7,6 @@ import io.kvision.maps.Maps
 import io.kvision.maps.externals.leaflet.layer.vector.CircleMarker
 import kotlinx.js.jso
 
-
-fun handlePlayerUpdate(
-  gameState: FactorioGameState,
-  update: SiteAction.FactorioUpdate.Player,
-): FactorioGameState {
-
-  val previous = gameState.players[update.data.key.index]
-    ?: PlayerState(update.data.key.index, update.tick)
-
-  val updated = previous.update(update.tick, update.data)
-
-  if (previous.mapMarker != updated.mapMarker) {
-    if (previous.mapMarker != null) {
-      println("removing player icon ${previous.index}")
-      gameState.playerIconsLayer.removeLayer(previous.mapMarker)
-    }
-    if (updated.mapMarker != null) {
-      println("adding player icon ${updated.index}")
-      gameState.playerIconsLayer.addLayer(updated.mapMarker)
-    }
-  }
-
-  val updatedPlayersState = gameState.players + (previous.index to updated)
-  return gameState.copy(players = updatedPlayersState)
-}
-
-
 data class PlayerState(
   val index: PlayerIndex,
   val lastTick: Tick,
