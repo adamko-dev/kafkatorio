@@ -3,7 +3,6 @@ package dev.adamko.kafkatorio.webmap.state
 import dev.adamko.kafkatorio.schema.common.PlayerIndex
 import dev.adamko.kafkatorio.schema.common.Tick
 import dev.adamko.kafkatorio.schema.packets.PlayerUpdate
-import dev.adamko.kafkatorio.webmap.SiteAction
 import io.kvision.maps.Maps
 import io.kvision.maps.externals.leaflet.layer.vector.CircleMarker
 import kotlinx.js.jso

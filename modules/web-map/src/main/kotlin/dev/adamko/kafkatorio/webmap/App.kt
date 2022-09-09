@@ -4,15 +4,19 @@ import dev.adamko.kafkatorio.schema.packets.EventServerPacket
 import dev.adamko.kafkatorio.webmap.layout.headerNav
 import dev.adamko.kafkatorio.webmap.layout.homePage
 import dev.adamko.kafkatorio.webmap.layout.servers.serverPage
+import dev.adamko.kafkatorio.webmap.routing.SiteRouter
+import dev.adamko.kafkatorio.webmap.routing.SiteView
 import dev.adamko.kafkatorio.webmap.services.WebsocketService
+import dev.adamko.kafkatorio.webmap.state.SiteAction
+import dev.adamko.kafkatorio.webmap.state.SiteState
 import io.kvision.Application
 import io.kvision.BootstrapIconsModule
 import io.kvision.BootstrapModule
 import io.kvision.ChartModule
 import io.kvision.CoreModule
 import io.kvision.FontAwesomeModule
+import io.kvision.html.Link
 import io.kvision.html.div
-import io.kvision.html.h3
 import io.kvision.html.header
 import io.kvision.html.main
 import io.kvision.module
@@ -20,7 +24,6 @@ import io.kvision.panel.root
 import io.kvision.redux.ReduxStore
 import io.kvision.redux.createReduxStore
 import io.kvision.require
-import io.kvision.routing.Routing
 import io.kvision.startApplication
 import io.kvision.state.bind
 import kotlinx.coroutines.CoroutineName
@@ -51,6 +54,7 @@ object App : Application() {
   var siteStateStore: ReduxStore<SiteState, SiteAction> by appState
     private set
 
+
   init {
     this.siteStateStore = createReduxStore(SiteState::plus, SiteState())
 
@@ -65,26 +69,16 @@ object App : Application() {
       }.launchIn(coroutineScope)
   }
 
-//  private val gameState: FactorioGameState
-//    get() = reduxStore.getState()
-
-//  private val kvMaps: Maps
-//    get() = gameState.map.kvMap
 
   override fun start(state: Map<String, Any>) {
-    Routing.init(useHash = false)
+    SiteRouter.init()
 
     this.appState = state.toMutableMap()
 
-    SiteRouting.init()
-
     root("kvapp") {
-
       header().bind(siteStateStore) { state ->
         headerNav(state)
       }
-
-      h3("Kafkatorio Web Map")
 
       main().bind(siteStateStore) { state ->
         div(className = "container-fluid") {
@@ -93,6 +87,7 @@ object App : Application() {
             SiteView.SERVER -> serverPage(state)
           }
         }
+        SiteRouter.updatePageLinks()
       }
     }
 
@@ -107,6 +102,7 @@ object App : Application() {
 
   }
 
+
   override fun dispose(): Map<String, Any> {
     rootJob.cancelChildren()
     rootJob.cancel("app dispose")
@@ -119,7 +115,10 @@ object App : Application() {
 
 fun main() {
   startApplication(
-    { App },
+    {
+      Link.useDataNavigoForLinks = true
+      App
+    },
     module.hot,
     BootstrapModule,
 //    BootstrapCssModule,

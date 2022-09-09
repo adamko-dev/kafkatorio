@@ -15,41 +15,5 @@ config.performance = {
   },
 };
 
-
-// // dev server
-// config.devServer = {
-//   open: false,
-//   // devMiddleware: {
-//   //   index: false, // specify to enable root proxying
-//   // },
-//   port: 3000,
-//   proxy: {
-//     // context: () => true,
-//     // target: "http://localhost:12080",
-//     // secure: false,
-//     // ws: true,
-//     // changeOrigin: true,
-//
-//     // "/tiles": {
-//     //   target: "http://localhost:12080",
-//     //   // "pathRewrite": { "^/tiles": "" },
-//     //   // "logger": "console",
-//     //   // "logLevel": "debug",
-//     //   secure: false,
-//     //   changeOrigin: true,
-//     // },
-//     // "/ws": {
-//     //   target: "http://localhost:12080",
-//     //   // pathRewrite: { "^/ws": "" },
-//     //   // "logLevel": "debug",
-//     //   // "logger": "console",
-//     //   secure: false,
-//     //   ws: true,
-//     //   changeOrigin: true,
-//     // },
-//   },
-//   "static": [
-//     // "../../processedResources/js/main",
-//     "D:\\Users\\Adam\\Projects\\games\\kafkatorio\\modules\\web-map\\build\\processedResources\\frontend\\main",
-//   ],
-// };
+// required for single-page app
+config.devServer.historyApiFallback = true

@@ -13,7 +13,7 @@ import dev.adamko.kafkatorio.schema.packets.PlayerUpdate
 import dev.adamko.kafkatorio.schema.packets.PrototypesUpdate
 import dev.adamko.kafkatorio.schema.packets.SurfaceUpdate
 import dev.adamko.kafkatorio.webmap.App
-import dev.adamko.kafkatorio.webmap.SiteAction
+import dev.adamko.kafkatorio.webmap.state.SiteAction
 import dev.adamko.kafkatorio.webmap.config.ApplicationProperties
 import dev.adamko.kafkatorio.webmap.config.jsonMapper
 import dev.adamko.kafkatorio.webmap.rootJob

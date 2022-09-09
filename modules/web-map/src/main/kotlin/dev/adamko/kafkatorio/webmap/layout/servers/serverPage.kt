@@ -1,6 +1,6 @@
 package dev.adamko.kafkatorio.webmap.layout.servers
 
-import dev.adamko.kafkatorio.webmap.SiteState
+import dev.adamko.kafkatorio.webmap.state.SiteState
 import io.kvision.core.Container
 import io.kvision.html.div
 import io.kvision.maps.externals.leaflet.layer.tile.GridLayer

@@ -173,3 +173,8 @@ val installThemeCss by tasks.registering(Copy::class) {
 tasks.assemble {
   dependsOn(installThemeCss)
 }
+
+
+tasks.withType<io.kvision.gradle.tasks.KVConvertPoTask>().configureEach {
+  enabled = false
+}

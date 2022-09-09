@@ -3,7 +3,6 @@ package dev.adamko.kafkatorio.webmap.state
 import dev.adamko.kafkatorio.schema.common.FactorioServerId
 import dev.adamko.kafkatorio.schema.common.PlayerIndex
 import dev.adamko.kafkatorio.webmap.FactorioMap
-import dev.adamko.kafkatorio.webmap.SiteAction
 import io.kvision.maps.externals.leaflet.layer.LayerGroup
 
 
