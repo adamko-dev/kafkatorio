@@ -255,11 +255,15 @@ local function __TS__ArrayPushArray(self, items)
     return len
 end
 
+local function __TS__CountVarargs(...)
+    return select("#", ...)
+end
+
 local function __TS__ArrayReduce(self, callbackFn, ...)
     local len = #self
     local k = 0
     local accumulator = nil
-    if select("#", ...) ~= 0 then
+    if __TS__CountVarargs(...) ~= 0 then
         accumulator = ...
     elseif len > 0 then
         accumulator = self[1]
@@ -283,7 +287,7 @@ local function __TS__ArrayReduceRight(self, callbackFn, ...)
     local len = #self
     local k = len - 1
     local accumulator = nil
-    if select("#", ...) ~= 0 then
+    if __TS__CountVarargs(...) ~= 0 then
         accumulator = ...
     elseif len > 0 then
         accumulator = self[k + 1]
@@ -399,7 +403,7 @@ end
 local function __TS__ArraySplice(self, ...)
     local args = {...}
     local len = #self
-    local actualArgumentCount = select("#", ...)
+    local actualArgumentCount = __TS__CountVarargs(...)
     local start = args[1]
     local deleteCount = args[2]
     if start < 0 then
@@ -1016,6 +1020,16 @@ local function __TS__DecorateParam(paramIndex, decorator)
     return function(____, target, key) return decorator(nil, target, key, paramIndex) end
 end
 
+local function __TS__StringIncludes(self, searchString, position)
+    if not position then
+        position = 1
+    else
+        position = position + 1
+    end
+    local index = string.find(self, searchString, position, true)
+    return index ~= nil
+end
+
 local Error, RangeError, ReferenceError, SyntaxError, TypeError, URIError
 do
     local function getErrorStack(self, constructor)
@@ -1030,13 +1044,18 @@ do
                 break
             end
         end
-        return debug.traceback(nil, level)
+        if __TS__StringIncludes(_VERSION, "Lua 5.0") then
+            return debug.traceback(("[Level " .. tostring(level)) .. "]")
+        else
+            return debug.traceback(nil, level)
+        end
     end
     local function wrapErrorToString(self, getDescription)
         return function(self)
             local description = getDescription(self)
             local caller = debug.getinfo(3, "f")
-            if _VERSION == "Lua 5.1" or caller and caller.func ~= error then
+            local isClassicLua = __TS__StringIncludes(_VERSION, "Lua 5.0") or _VERSION == "Lua 5.1"
+            if isClassicLua or caller and caller.func ~= error then
                 return description
             else
                 return (tostring(description) .. "\n") .. self.stack
@@ -1185,16 +1204,9 @@ do
     function __TS__Generator(fn)
         return function(...)
             local args = {...}
-            local argsLength = select("#", ...)
+            local argsLength = __TS__CountVarargs(...)
             return {
-                ____coroutine = coroutine.create(function()
-                    local ____fn_1 = fn
-                    local ____unpack_0 = unpack
-                    if ____unpack_0 == nil then
-                        ____unpack_0 = table.unpack
-                    end
-                    return ____fn_1(____unpack_0(args, 1, argsLength))
-                end),
+                ____coroutine = coroutine.create(function() return fn(__TS__Unpack(args, 1, argsLength)) end),
                 [Symbol.iterator] = generatorIterator,
                 next = generatorNext
             }
@@ -1358,7 +1370,11 @@ do
     Map[Symbol.species] = Map
 end
 
+local __TS__Match = string.match
+
 local __TS__MathAtan2 = math.atan2 or math.atan
+
+local __TS__MathModf = math.modf
 
 local function __TS__MathSign(val)
     if val > 0 then
@@ -1367,6 +1383,10 @@ local function __TS__MathSign(val)
         return -1
     end
     return 0
+end
+
+local function __TS__Modulo50(a, b)
+    return a - math.floor(a / b) * b
 end
 
 local function __TS__Number(value)
@@ -1415,7 +1435,7 @@ do
         if radix < 2 or radix > 36 then
             error("toString() radix argument must be between 2 and 36", 0)
         end
-        local integer, fraction = math.modf(math.abs(self))
+        local integer, fraction = __TS__MathModf(math.abs(self))
         local result = ""
         if radix == 8 then
             result = string.format("%o", integer)
@@ -1571,7 +1591,7 @@ local function __TS__ObjectValues(obj)
 end
 
 local function __TS__ParseFloat(numberString)
-    local infinityMatch = string.match(numberString, "^%s*(-?Infinity)")
+    local infinityMatch = __TS__Match(numberString, "^%s*(-?Infinity)")
     if infinityMatch then
         local ____temp_0
         if __TS__StringAccess(infinityMatch, 0) == "-" then
@@ -1581,7 +1601,7 @@ local function __TS__ParseFloat(numberString)
         end
         return ____temp_0
     end
-    local number = tonumber(string.match(numberString, "^%s*(-?%d+%.?%d*)"))
+    local number = tonumber(__TS__Match(numberString, "^%s*(-?%d+%.?%d*)"))
     local ____number_1 = number
     if ____number_1 == nil then
         ____number_1 = 0 / 0
@@ -1629,16 +1649,16 @@ do
     function __TS__ParseInt(numberString, base)
         if base == nil then
             base = 10
-            local hexMatch = string.match(numberString, "^%s*-?0[xX]")
+            local hexMatch = __TS__Match(numberString, "^%s*-?0[xX]")
             if hexMatch then
                 base = 16
-                local ____string_match_result__0_0
-                if string.match(hexMatch, "-") then
-                    ____string_match_result__0_0 = "-" .. __TS__StringSubstr(numberString, #hexMatch)
+                local ____TS__Match_result__0_0
+                if __TS__Match(hexMatch, "-") then
+                    ____TS__Match_result__0_0 = "-" .. __TS__StringSubstr(numberString, #hexMatch)
                 else
-                    ____string_match_result__0_0 = __TS__StringSubstr(numberString, #hexMatch)
+                    ____TS__Match_result__0_0 = __TS__StringSubstr(numberString, #hexMatch)
                 end
-                numberString = ____string_match_result__0_0
+                numberString = ____TS__Match_result__0_0
             end
         end
         if base < 2 or base > 36 then
@@ -1653,7 +1673,7 @@ do
         local allowedDigits = ____temp_1
         local pattern = ("^%s*(-?[" .. allowedDigits) .. "]*)"
         local number = tonumber(
-            string.match(numberString, pattern),
+            __TS__Match(numberString, pattern),
             base
         )
         if number == nil then
@@ -1965,13 +1985,13 @@ end
 
 local function __TS__SparseArrayNew(...)
     local sparseArray = {...}
-    sparseArray.sparseLength = select("#", ...)
+    sparseArray.sparseLength = __TS__CountVarargs(...)
     return sparseArray
 end
 
 local function __TS__SparseArrayPush(sparseArray, ...)
     local args = {...}
-    local argsLen = select("#", ...)
+    local argsLen = __TS__CountVarargs(...)
     local listLen = sparseArray.sparseLength
     for i = 1, argsLen do
         sparseArray[listLen + i] = args[i]
@@ -2086,6 +2106,8 @@ local function __TS__SourceMapTraceBack(fileName, sourceMap)
             local trace
             if thread == nil and message == nil and level == nil then
                 trace = originalTraceback()
+            elseif __TS__StringIncludes(_VERSION, "Lua 5.0") then
+                trace = originalTraceback((("[Level " .. tostring(level)) .. "] ") .. message)
             else
                 trace = originalTraceback(thread, message, level)
             end
@@ -2111,7 +2133,7 @@ local function __TS__SourceMapTraceBack(fileName, sourceMap)
             local function stringReplacer(____, file, line)
                 local fileSourceMap = _G.__TS__sourcemap[file]
                 if fileSourceMap and fileSourceMap[line] then
-                    local chunkName = string.match(file, "%[string \"([^\"]+)\"%]")
+                    local chunkName = __TS__Match(file, "%[string \"([^\"]+)\"%]")
                     local sourceName = string.gsub(chunkName, ".lua$", ".ts")
                     local data = fileSourceMap[line]
                     if type(data) == "number" then
@@ -2176,16 +2198,6 @@ local function __TS__StringEndsWith(self, searchString, endPosition)
         endPosition = #self
     end
     return string.sub(self, endPosition - #searchString + 1, endPosition) == searchString
-end
-
-local function __TS__StringIncludes(self, searchString, position)
-    if not position then
-        position = 1
-    else
-        position = position + 1
-    end
-    local index = string.find(self, searchString, position, true)
-    return index ~= nil
 end
 
 local function __TS__StringPadEnd(self, maxLength, fillString)
@@ -2443,6 +2455,7 @@ return {
   __TS__Class = __TS__Class,
   __TS__ClassExtends = __TS__ClassExtends,
   __TS__CloneDescriptor = __TS__CloneDescriptor,
+  __TS__CountVarargs = __TS__CountVarargs,
   __TS__Decorate = __TS__Decorate,
   __TS__DecorateParam = __TS__DecorateParam,
   __TS__Delete = __TS__Delete,
@@ -2460,8 +2473,11 @@ return {
   __TS__Iterator = __TS__Iterator,
   __TS__LuaIteratorSpread = __TS__LuaIteratorSpread,
   Map = Map,
+  __TS__Match = __TS__Match,
   __TS__MathAtan2 = __TS__MathAtan2,
+  __TS__MathModf = __TS__MathModf,
   __TS__MathSign = __TS__MathSign,
+  __TS__Modulo50 = __TS__Modulo50,
   __TS__New = __TS__New,
   __TS__Number = __TS__Number,
   __TS__NumberIsFinite = __TS__NumberIsFinite,

@@ -8,7 +8,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "types": [
-      "typescript-to-lua/language-extensions",
+      "@typescript-to-lua/language-extensions",
       "lua-types/5.2",
       "typed-factorio/runtime",
       "typed-factorio/strict-index-types"

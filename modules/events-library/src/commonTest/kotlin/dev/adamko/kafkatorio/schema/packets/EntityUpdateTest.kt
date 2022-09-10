@@ -37,8 +37,7 @@ class EntityUpdateTest : FunSpec({
       """.trimIndent()
     test("decode") {
       val entityUpdate: KafkatorioPacket = jsonMapperKafkatorio.decodeFromString(json)
-      entityUpdate.data
-        .shouldBeInstanceOf<EntityUpdate>()
+      entityUpdate.data.shouldBeInstanceOf<EntityUpdate>()
 
 //      entityUpdate.health.shouldNotBeNull().shouldBeExactly(350f)
     }

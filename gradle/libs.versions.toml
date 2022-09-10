@@ -16,7 +16,7 @@ kvision               = "5.14.0"        # https://github.com/rjaros/kvision/rele
 log4j2                = "2.17.2"
 okio                  = "3.2.0"         # https://search.maven.org/artifact/com.squareup.okio/okio
 qosLogback            = "1.2.11"
-scrimage              = "4.0.31"        # https://github.com/sksamuel/scrimage/releases
+scrimage              = "4.0.32"        # https://github.com/sksamuel/scrimage/releases
 semver                = "1.2.0"         # https://github.com/swiftzer/semver/releases
 slf4j                 = "1.7.36"
 
@@ -25,7 +25,7 @@ kxs-charleskornKaml   = "0.44.0"
 kxs-mamoeYamlkt       = "0.12.0"
 kxs-kxsTsGen          = "0.2.1"
 
-kotlinJsWrappers      = "1.0.0-pre.378" # https://search.maven.org/artifact/org.jetbrains.kotlin-wrappers/kotlin-wrappers-bom
+kotlinJsWrappers      = "1.0.0-pre.383" # https://search.maven.org/artifact/org.jetbrains.kotlin-wrappers/kotlin-wrappers-bom
 
 kotlinx-cli           = "0.3.4"
 kotlinx-coroutines    = "1.6.4"         # https://github.com/Kotlin/kotlinx.coroutines/releases
@@ -35,9 +35,9 @@ kotlinx-nodejs        = "0.0.7"
 
 kSvgDsl               = "v2.2.0"
 
-ktor                  = "2.1.0"         # https://github.com/ktorio/ktor/releases
+ktor                  = "2.1.1"         # https://github.com/ktorio/ktor/releases
 
-hoplite               = "2.6.1"         # https://github.com/sksamuel/hoplite/releases
+hoplite               = "2.6.2"         # https://github.com/sksamuel/hoplite/releases
 
 simpleSyslogParser    = "1.0.0"         # https://search.maven.org/artifact/com.github.palindromicity/simple-syslog
 
@@ -49,11 +49,10 @@ klogging              = "0.4.9"
 
 ## npm ##
 
-npm-luaTypes        = "2.12.0"
-npm-typescriptToLua = "1.9.0"
-#npm-typedFactorio   = "1.6.1" # https://github.com/GlassBricks/typed-factorio/blob/main/Changelog.md
-npm-typedFactorio   = "1.7.0" # for factorio 1.1.61
-npm-typescript      = "4.7.4"
+npm-luaTypes        = "2.13.0"   # https://www.npmjs.com/package/lua-types
+npm-typescriptToLua = "1.10.0"   # https://www.npmjs.com/package/typescript-to-lua
+npm-typedFactorio   = "1.7.5"    # https://www.npmjs.com/package/typed-factorio
+npm-typescript      = "4.8.3"    # https://github.com/microsoft/TypeScript/releases
 
 
 ## test ##
