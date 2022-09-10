@@ -47,6 +47,8 @@ marykRocksDb          = "7.3.1-1"       # https://search.maven.org/artifact/io.m
 
 klogging              = "0.4.9"
 
+nimbusJoseJwt         = "9.24.4"        # https://search.maven.org/artifact/com.nimbusds/nimbus-jose-jwt
+
 ## npm ##
 
 npm-luaTypes        = "2.13.0"   # https://www.npmjs.com/package/lua-types
@@ -99,18 +101,20 @@ kotlinScripting-dependencies      = { group = "org.jetbrains.kotlin", name = "ko
 kotlinScripting-dependenciesMaven = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-dependencies-maven" }
 
 
-kotlinx-serialization-bom        = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-bom",       version.ref = "kotlinx-serialization" }
-kotlinx-serialization-core       = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core"       }
-kotlinx-serialization-cbor       = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-cbor"       }
-kotlinx-serialization-hocon      = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-hocon"      }
-kotlinx-serialization-json       = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json"       }
-kotlinx-serialization-properties = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-properties" }
-kotlinx-serialization-protobuf   = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-protobuf"   }
+kotlinxSerialization-bom        = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-bom",       version.ref = "kotlinx-serialization" }
+kotlinxSerialization-core       = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core"       }
+kotlinxSerialization-cbor       = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-cbor"       }
+kotlinxSerialization-hocon      = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-hocon"      }
+kotlinxSerialization-json       = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json"       }
+kotlinxSerialization-properties = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-properties" }
+kotlinxSerialization-protobuf   = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-protobuf"   }
+kotlinxSerialization-jsonOkio   = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json-okio"   }
 
-kxs-charleskornKaml = { group = "com.charleskorn.kaml", name = "kaml",            version.ref = "kxs-charleskornKaml" }
-kxs-mamoeYamlkt     = { group = "net.mamoe.yamlkt",     name = "yamlkt",          version.ref = "kxs-mamoeYamlkt"     }
+
+kotlinxSerialization-charleskornKaml = { group = "com.charleskorn.kaml", name = "kaml",            version.ref = "kxs-charleskornKaml" }
+kotlinxSerialization-mamoeYamlkt     = { group = "net.mamoe.yamlkt",     name = "yamlkt",          version.ref = "kxs-mamoeYamlkt"     }
 #kxs-kxsTsGen        = { group = "dev.adamko.kxstsgen",  name = "kxs-ts-gen-core", version.ref = "kxs-kxsTsGen"        }
-kxs-kxsTsGen        = { group = "com.github.adamko-dev.kotlinx-serialization-typescript-generator",  name = "kxs-ts-gen-core", version.ref = "kxs-kxsTsGen"        }
+kotlinxSerialization-kxsTsGen        = { group = "com.github.adamko-dev.kotlinx-serialization-typescript-generator",  name = "kxs-ts-gen-core", version.ref = "kxs-kxsTsGen"        }
 
 
 kotlinx-coroutines-bom         = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-bom",        version.ref = "kotlinx-coroutines" }
@@ -241,6 +245,8 @@ hoplite-yaml     = { group = "com.sksamuel.hoplite", name = "hoplite-yaml",     
 
 simpleSyslogParser = { group = "com.github.palindromicity", name = "simple-syslog", version.ref = "simpleSyslogParser" }
 
+
+nimbusJoseJwt = { group = "com.nimbusds", name = "nimbus-jose-jwt", version.ref = "nimbusJoseJwt" }
 
 #############
 ### test  ###

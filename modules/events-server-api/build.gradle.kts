@@ -1,5 +1,3 @@
-import dev.adamko.kafkatorio.task.DockerEnvUpdateTask
-import dev.adamko.kafkatorio.task.KafkaConsumerGroupsTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
@@ -10,7 +8,7 @@ plugins {
 }
 
 
-description = "serves Kafkatorio content over the web"
+//description = "serves Kafkatorio content over the web"
 
 val projectId: String by project.extra
 
@@ -63,16 +61,9 @@ dependencies {
 
   implementation(libs.simpleSyslogParser)
 
-//  // https://search.maven.org/artifact/org.bouncycastle/bcprov-jdk15on
-//  implementation("org.bouncycastle:bcprov-jdk15on:1.70")
-//  implementation("com.brendangoldberg:kotlin-jwt:1.1.0")
-//  implementation("com.auth0:java-jwt:4.0.0")
-
 //  implementation(libs.nimbusJoseJwt)
 
   implementation(libs.kafka.kotkaStreams)
-
-  implementation(libs.bundles.hoplite)
 }
 
 
@@ -88,36 +79,3 @@ tasks.withType<KotlinCompile>().configureEach {
     "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
   )
 }
-
-
-val kafkaStateDirDelete by tasks.registering(Delete::class) {
-  group = project.name
-  mustRunAfter(kafkaConsumersDelete)
-  delete(kafkaStateDir)
-}
-
-
-val kafkaConsumersDelete by tasks.registering(KafkaConsumerGroupsTask.DeleteAll::class) {
-  group = project.name
-}
-
-
-idea {
-  module {
-    excludeDirs = excludeDirs + listOf(
-      kafkaStateDir.asFile,
-      file("server-data"),
-    )
-  }
-}
-
-
-val dockerEnvUpdate by tasks.registering(DockerEnvUpdateTask::class) {
-  dotEnvFile.set(layout.projectDirectory.file("docker/.env"))
-
-  properties(
-    "COMPOSE_PROJECT_NAME" to rootProject.name,
-    "KAFKATORIO_VERSION" to project.version,
-  )
-}
-tasks.assemble { dependsOn(dockerEnvUpdate) }

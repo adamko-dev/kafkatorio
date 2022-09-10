@@ -51,9 +51,9 @@ kotlin {
       dependencies {
         implementation(dependencies.platform(projects.modules.versionsPlatform))
 
-        implementation(libs.kotlinx.serialization.core)
-        implementation(libs.kotlinx.serialization.json)
-        api(libs.kxs.kxsTsGen)
+        implementation(libs.kotlinxSerialization.core)
+        implementation(libs.kotlinxSerialization.json)
+        api(libs.kotlinxSerialization.kxsTsGen)
 
         implementation(libs.okio.core)
 

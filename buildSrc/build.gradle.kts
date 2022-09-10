@@ -22,9 +22,9 @@ dependencies {
   implementation(platform(libs.kotlinx.coroutines.bom))
   implementation(libs.kotlinx.coroutines.core)
 
-  implementation(platform(libs.kotlinx.serialization.bom))
-  implementation(libs.kotlinx.serialization.core)
-  implementation(libs.kotlinx.serialization.json)
+  implementation(platform(libs.kotlinxSerialization.bom))
+  implementation(libs.kotlinxSerialization.core)
+  implementation(libs.kotlinxSerialization.json)
 //  implementation("com.charleskorn.kaml:kaml:0.37.0")
 
   implementation("com.github.node-gradle:gradle-node-plugin:${libs.versions.gradleNodePlugin.get()}")

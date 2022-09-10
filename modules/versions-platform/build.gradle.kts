@@ -11,7 +11,7 @@ javaPlatform {
 dependencies {
   api(platform(libs.kotlin.bom))
   api(platform(libs.kotlinx.coroutines.bom))
-  api(platform(libs.kotlinx.serialization.bom))
+  api(platform(libs.kotlinxSerialization.bom))
   api(platform(libs.kotlin.jsWrappers.bom))
 
 
@@ -28,9 +28,9 @@ dependencies {
     api(libs.kafka.streams)
     api(libs.kafka.streamsTestUtils)
 
-    api(libs.kxs.charleskornKaml)
-    api(libs.kxs.mamoeYamlkt)
-    api(libs.kxs.kxsTsGen)
+    api(libs.kotlinxSerialization.charleskornKaml)
+    api(libs.kotlinxSerialization.mamoeYamlkt)
+    api(libs.kotlinxSerialization.kxsTsGen)
 
     api(libs.okio.core)
 
