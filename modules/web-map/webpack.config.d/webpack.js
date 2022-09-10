@@ -4,6 +4,8 @@ if (config.devServer) {
   config.devServer.hot = true;
   config.devtool = 'eval-cheap-source-map';
   config.devServer.host = "0.0.0.0"
+  // required for single-page app
+  config.devServer.historyApiFallback = true
 } else {
   config.devtool = undefined;
 }
@@ -14,6 +16,3 @@ config.performance = {
     return !assetFilename.endsWith('.js');
   },
 };
-
-// required for single-page app
-config.devServer.historyApiFallback = true
