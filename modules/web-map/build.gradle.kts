@@ -178,3 +178,10 @@ tasks.assemble {
 tasks.withType<io.kvision.gradle.tasks.KVConvertPoTask>().configureEach {
   enabled = false
 }
+
+
+val runWebMap by tasks.registering {
+  group = rootProject.name
+
+  dependsOn(tasks.matching { it.name == "browserDevelopmentRun" })
+}

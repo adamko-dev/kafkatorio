@@ -27,3 +27,9 @@ tasks.dockerEnvUpdate {
 //    "SCHEMA_REGISTRY_MEM_LIMIT" to "256m",
   )
 }
+
+val runKafkaCluster by tasks.registering {
+  group = rootProject.name
+
+  dependsOn(tasks.processRun)
+}

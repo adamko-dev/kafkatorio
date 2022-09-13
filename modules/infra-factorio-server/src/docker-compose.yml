@@ -20,7 +20,7 @@ services:
       driver: syslog
       options:
         syslog-address: "tcp://host.docker.internal:12034" # pc
-        #syslog-address: "tcp://localhost:12034"  # nuc
+#        syslog-address: "tcp://localhost:12034"  # nuc
         syslog-format: "rfc5424"
         tag: ${KAFKATORIO_TOKEN}
 

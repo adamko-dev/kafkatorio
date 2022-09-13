@@ -7,9 +7,13 @@ import org.gradle.api.file.Directory
 import org.gradle.api.file.FileCopyDetails
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RelativePath
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.specs.NotSpec
 import org.gradle.api.specs.Spec
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.application.CreateStartScripts
+import org.gradle.kotlin.dsl.register
 import org.gradle.plugins.ide.idea.model.IdeaModule
 import org.gradle.process.ExecSpec
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
@@ -94,3 +98,21 @@ fun Project.taskProvider(taskName: String): Provider<Task> = providers.provider 
 
 
 const val DOCKER_COMPOSE_TASK_GROUP = "docker-compose"
+
+
+fun Project.registerStartScriptTask(
+  appName: String,
+  configureStartScripts: CreateStartScripts.() -> Unit = {},
+): TaskProvider<CreateStartScripts> =
+  tasks.register<CreateStartScripts>("startScript$appName") {
+
+    val jarTask = tasks.getByName(JavaPlugin.JAR_TASK_NAME)
+    val runtimeClasspath = configurations.getByName(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME)
+    dependsOn(jarTask)
+    dependsOn(runtimeClasspath)
+
+    applicationName = appName
+    outputDir = layout.buildDirectory.dir("scripts").get().asFile
+    classpath = jarTask.outputs.files + runtimeClasspath
+    configureStartScripts()
+  }

@@ -35,7 +35,7 @@ val deployModToLocalServer by tasks.registering(Copy::class) {
   into(factorioServerDataDir.dir("mods"))
 
   doLast {
-    logger.lifecycle("Copying mods ${source.files} to $destinationDir")
+    logger.lifecycle("Copying mods ${source.files} into $destinationDir")
   }
 }
 
@@ -74,4 +74,10 @@ idea {
   module {
     excludeDirs.add(file("src/factorio-server"))
   }
+}
+
+val runFactorioServer by tasks.registering {
+  group = rootProject.name
+
+  dependsOn(tasks.processRun)
 }

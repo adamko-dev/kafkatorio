@@ -109,3 +109,10 @@ tasks.processRun {
 tasks.processKill {
   dependsOn(clientKill)
 }
+
+
+val runFactorioClient by tasks.registering {
+  group = rootProject.name
+
+  dependsOn(tasks.processRun)
+}

@@ -8,7 +8,7 @@ plugins {
 }
 
 
-//description = "serves Kafkatorio content over the web"
+description = "Consumes Syslog Kafkatorio packets and sends them to Kafka"
 
 val projectId: String by project.extra
 
@@ -20,6 +20,7 @@ dependencies {
   testImplementation(libs.kafka.streamsTestUtils)
 
   implementation(projects.modules.eventsLibrary)
+  implementation(projects.modules.eventsProcessorCore)
 
   implementation(libs.kotlinxSerialization.core)
   implementation(libs.kotlinxSerialization.json)
@@ -62,11 +63,13 @@ dependencies {
 //  implementation(libs.nimbusJoseJwt)
 
   implementation(libs.kafka.kotkaStreams)
+
+  implementation(libs.bundles.hoplite)
 }
 
 
 application {
-  mainClass.set("dev.adamko.kafkatorio.server.EventsServerKt")
+  mainClass.set("dev.adamko.kafkatorio.processor.syslog.SyslogMainKt")
 }
 
 
@@ -76,4 +79,10 @@ tasks.withType<KotlinCompile>().configureEach {
     "-opt-in=kotlinx.coroutines.FlowPreview",
     "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
   )
+}
+
+
+val runSyslogServer by tasks.registering {
+  group = rootProject.name
+  dependsOn(tasks.run)
 }

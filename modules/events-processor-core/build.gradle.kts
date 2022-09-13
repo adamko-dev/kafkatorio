@@ -4,15 +4,15 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   dev.adamko.kafkatorio.lang.`kotlin-jvm`
   kotlin("plugin.serialization")
-  application
+//  application
 }
 
 
-//description = "serves Kafkatorio content over the web"
+description = "Shared Kafkatorio processors functionality"
 
 val projectId: String by project.extra
 
-val kafkaStateDir: Directory = layout.projectDirectory.dir("kafka-state")
+val kafkaStateDir: Directory = layout.projectDirectory.dir(".state/kafka")
 
 
 dependencies {
@@ -37,12 +37,17 @@ dependencies {
   implementation(libs.simpleSyslogParser)
 
   implementation(libs.kafka.kotkaStreams)
+
+  implementation(libs.bundles.hoplite)
+
+  implementation(libs.ktorServer.authJwt)
+//  implementation(libs.nimbusJoseJwt)
 }
 
 
-application {
-  mainClass.set("dev.adamko.kafkatorio.server.EventsServerKt")
-}
+//application {
+//  mainClass.set("dev.adamko.kafkatorio.processor.admin.MainKt")
+//}
 
 
 tasks.withType<KotlinCompile>().configureEach {
@@ -51,4 +56,11 @@ tasks.withType<KotlinCompile>().configureEach {
     "-opt-in=kotlinx.coroutines.FlowPreview",
     "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
   )
+}
+
+
+val createKafkaTopics by tasks.registering(JavaExec::class) {
+  group = rootProject.name
+  classpath = sourceSets.main.get().runtimeClasspath
+  mainClass.set("dev.adamko.kafkatorio.processor.admin.MainKt")
 }

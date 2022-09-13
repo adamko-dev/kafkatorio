@@ -41,17 +41,17 @@ tasks.wrapper {
 }
 
 val startInfra by tasks.registering {
-  group = project.name
+  group = rootProject.name
 
   dependsOn(
 //    ":modules:infra-kafka-pipe:processRun",
-    runKafkaCluster
+//    runKafkaCluster
 //    ":modules:infra-kafka-connect:processRun",
   )
 }
 
 val runKafkatorio by tasks.registering {
-  group = project.name
+  group = rootProject.name
 
   dependsOn(
     ":modules:infra-factorio-client:processRestart",
@@ -60,44 +60,44 @@ val runKafkatorio by tasks.registering {
   )
 }
 
-val runEventsServer by tasks.registering {
-  group = project.name
+//val runEventsServer by tasks.registering {
+//  group = project.name
+//
+//  dependsOn(":modules:events-server:run")
+//}
 
-  dependsOn(":modules:events-server:run")
-}
+//val runWebMap by tasks.registering {
+//  group = project.name
+//
+//  dependsOn(":modules:web-map:browserDevelopmentRun")
+//}
 
-val runWebMap by tasks.registering {
-  group = project.name
-
-  dependsOn(":modules:web-map:browserDevelopmentRun")
-}
-
-
-val runKafkaCluster by tasks.registering {
-  group = project.name
-
-  dependsOn(
-    ":modules:infra-kafka-cluster:processRun",
-  )
-}
-
-
-val runFactorioServer by tasks.registering {
-  group = project.name
-
-  dependsOn(
-    ":modules:infra-factorio-server:processRun",
-  )
-}
+//
+//val runKafkaCluster by tasks.registering {
+//  group = project.name
+//
+//  dependsOn(
+//    ":modules:infra-kafka-cluster:processRun",
+//  )
+//}
 
 
-val runFactorioClient by tasks.registering {
-  group = project.name
+//val runFactorioServer by tasks.registering {
+//  group = project.name
+//
+//  dependsOn(
+//    ":modules:infra-factorio-server:processRun",
+//  )
+//}
 
-  dependsOn(
-    ":modules:infra-factorio-client:processRun",
-  )
-}
+
+//val runFactorioClient by tasks.registering {
+//  group = project.name
+//
+//  dependsOn(
+//    ":modules:infra-factorio-client:processRun",
+//  )
+//}
 
 
 apply(from = "$projectDir/kt52647.gradle.kts")

@@ -3,8 +3,10 @@ package dev.adamko.kafkatorio.webmap
 import dev.adamko.kafkatorio.schema.common.FactorioServerId
 import dev.adamko.kafkatorio.schema.common.ServerMapTileLayer
 import dev.adamko.kafkatorio.schema.common.ServerMapTilePngFilename
+import dev.adamko.kafkatorio.schema.packets.EventServerPacket
 import dev.adamko.kafkatorio.webmap.externals.TileOnLoadFn
 import dev.adamko.kafkatorio.webmap.externals.tileOnLoad
+import dev.adamko.kafkatorio.webmap.services.WebsocketService
 import io.kvision.maps.Maps
 import io.kvision.maps.Maps.Companion.L
 import io.kvision.maps.externals.leaflet.DoneCallback
@@ -18,8 +20,15 @@ import io.kvision.maps.externals.leaflet.layer.tile.TileLayer
 import io.kvision.utils.px
 import kotlinx.browser.document
 import kotlinx.browser.window
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.await
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.js.jso
 import org.w3c.dom.HTMLElement
@@ -35,6 +44,12 @@ import org.w3c.fetch.RequestMode
 class FactorioMap(
   private val serverId: FactorioServerId,
 ) {
+
+  private val coroutineScope: CoroutineScope = CoroutineScope(
+    Dispatchers.Default
+        + SupervisorJob(rootJob)
+        + CoroutineName("FactorioMap")
+  )
 
   val kvMap: Maps = Maps {
     minHeight = 800.px
@@ -90,6 +105,15 @@ class FactorioMap(
 
       playerIconsLayer.addTo(this)
     }
+
+
+    WebsocketService.packetsFlow
+      .filterIsInstance<EventServerPacket.ChunkTileSaved>()
+      .onEach { tileSavedEvent ->
+//        println("[packetsFlow] triggering tile refresh ${tileSavedEvent.filename.value}")
+//        siteStateStore.dispatch(SiteAction.EventServerUpdate(tileSavedEvent))
+          refreshUpdatedTilePng(tileSavedEvent.filename)
+      }.launchIn(coroutineScope)
   }
 
 

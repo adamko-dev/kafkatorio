@@ -10,11 +10,11 @@ plugins {
 }
 
 
-description = "serves Kafkatorio content over the web"
+description = "deprecated - this was split up into separate modules"
 
 val projectId: String by project.extra
 
-val kafkaStateDir: Directory = layout.projectDirectory.dir("kafka-state")
+val kafkaStateDir: Directory = layout.projectDirectory.dir(".state/kafka")
 
 
 dependencies {

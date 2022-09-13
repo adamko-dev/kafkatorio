@@ -58,13 +58,13 @@ object App : Application() {
 
     require("./css/kafkatorio.css")
 
-    WebsocketService.packetsFlow
-      .filterIsInstance<EventServerPacket.ChunkTileSaved>()
-      .onEach { tileSavedEvent ->
-//        println("[packetsFlow] triggering tile refresh ${tileSavedEvent.filename.value}")
-        siteStateStore.dispatch(SiteAction.EventServerUpdate(tileSavedEvent))
-//        reduxStore.map.refreshUpdatedTilePng(tileSavedEvent.filename)
-      }.launchIn(coroutineScope)
+//    WebsocketService.packetsFlow
+//      .filterIsInstance<EventServerPacket.ChunkTileSaved>()
+//      .onEach { tileSavedEvent ->
+////        println("[packetsFlow] triggering tile refresh ${tileSavedEvent.filename.value}")
+////        siteStateStore.dispatch(SiteAction.EventServerUpdate(tileSavedEvent))
+//        siteStateStore.getState().factorioGameState?.map?.refreshUpdatedTilePng(tileSavedEvent.filename)
+//      }.launchIn(coroutineScope)
   }
 
 

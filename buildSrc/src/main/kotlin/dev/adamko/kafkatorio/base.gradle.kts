@@ -1,7 +1,5 @@
 package dev.adamko.kafkatorio
 
-import org.gradle.api.internal.tasks.userinput.UserInputHandler
-import org.gradle.kotlin.dsl.support.serviceOf
 
 plugins {
   base

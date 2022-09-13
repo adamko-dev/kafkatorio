@@ -1,18 +1,30 @@
 rootProject.name = "kafkatorio"
 
+
+@Suppress("UnstableApiUsage")
+pluginManagement {
+  includeBuild("./gradle-plugins/settings-plugins/")
+}
+
+
+includeBuild("./gradle-plugins/builder-plugins/")
+includeBuild("./gradle-plugins/factorio-mod-manager/")
+
+
 include(
   ":modules:events-library",
 
   ":modules:events-mod",
 
   ":modules:events-processor-core",
-  ":modules:events-processor-entities",
-  ":modules:events-processor-packets",
-  ":modules:events-processor-tiles",
+//  ":modules:events-processor-entities",
+  ":modules:events-processors",
+//  ":modules:events-processor-tiles",
 
-  ":modules:events-server",
-  ":modules:events-server-api",
-  ":modules:events-server-core",
+
+//  ":modules:events-server",
+//  ":modules:events-server-core",
+  ":modules:events-server-web",
   ":modules:events-server-syslog",
 
   ":modules:infra-factorio-client",
@@ -29,9 +41,12 @@ include(
   ":modules:versions-platform",
 )
 
+
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
+
 apply(from = "./buildSrc/repositories.settings.gradle.kts")
+
 
 @Suppress("UnstableApiUsage") // Central declaration of repositories is an incubating feature
 dependencyResolutionManagement {
