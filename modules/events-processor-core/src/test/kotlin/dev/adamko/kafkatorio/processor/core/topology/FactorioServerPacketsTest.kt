@@ -4,6 +4,8 @@ import dev.adamko.kafkatorio.library.kxsBinary
 import dev.adamko.kafkatorio.schema.common.ColourHex
 import dev.adamko.kafkatorio.schema.common.FactorioServerId
 import dev.adamko.kafkatorio.schema.common.ServerMapChunkId
+import dev.adamko.kafkatorio.server.processor.topology.ServerMapChunkTiles
+import dev.adamko.kafkatorio.server.processor.topology.factorioServerPacketStream
 import dev.adamko.kotka.kxs.serde
 import io.kotest.core.spec.style.FunSpec
 import kotlin.time.Duration

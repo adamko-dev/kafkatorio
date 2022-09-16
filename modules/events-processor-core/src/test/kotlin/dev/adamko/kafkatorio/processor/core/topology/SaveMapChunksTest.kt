@@ -11,6 +11,8 @@ import dev.adamko.kafkatorio.schema.common.MapTilePosition
 import dev.adamko.kafkatorio.schema.common.ServerMapChunkId
 import dev.adamko.kafkatorio.schema.common.ServerMapTileLayer
 import dev.adamko.kafkatorio.schema.common.SurfaceIndex
+import dev.adamko.kafkatorio.server.processor.topology.ServerMapChunkTiles
+import dev.adamko.kafkatorio.server.processor.topology.saveMapTiles
 import dev.adamko.kotka.kxs.serde
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.property.Arb
@@ -81,8 +83,12 @@ class SaveMapChunksTest : FunSpec({
       val now = LocalTime.now().format(DateTimeFormatter.ISO_TIME).filter { it.isLetterOrDigit() }
       Path("build/test/save-map-chunks-${now}")
     }
-    private val topology = saveMapTiles(streamsBuilder, outputDir)
-    private val testDriver: TopologyTestDriver = TopologyTestDriver(topology)
+    private val testDriver: TopologyTestDriver
+
+    init {
+      saveMapTiles(streamsBuilder, outputDir)
+      testDriver = TopologyTestDriver(streamsBuilder.build())
+    }
 
     val groupedMapChunksInputTopic: TestInputTopic<ServerMapChunkId, ServerMapChunkTiles<ColourHex>> =
       testDriver.createInputTopic(

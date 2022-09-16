@@ -1,8 +1,8 @@
 package dev.adamko.kafkatorio.processor.core
 
+import dev.adamko.kafkatorio.processor.config.ApplicationProperties
+import dev.adamko.kafkatorio.processor.config.PortVal
 import dev.adamko.kafkatorio.schema.common.MaskedValue
-import dev.adamko.kafkatorio.server.config.ApplicationProperties
-import dev.adamko.kafkatorio.server.config.PortVal
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.nulls.shouldBeNull
 import io.kotest.matchers.nulls.shouldNotBeNull
