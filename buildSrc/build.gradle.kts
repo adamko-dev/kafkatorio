@@ -3,8 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   idea
   `kotlin-dsl`
-  kotlin("jvm") version "1.6.21"
-  kotlin("plugin.serialization") version "1.6.21"
+  kotlin("jvm") version  embeddedKotlinVersion
+  kotlin("plugin.serialization") version embeddedKotlinVersion
 }
 
 val gradleJvmTarget = "11"

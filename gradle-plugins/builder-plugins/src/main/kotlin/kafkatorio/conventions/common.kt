@@ -1,4 +1,4 @@
-package dev.adamko.kafkatorio
+package kafkatorio.conventions
 
 import io.kvision.gradle.KVisionExtension
 import org.gradle.api.Project

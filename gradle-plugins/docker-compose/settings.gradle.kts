@@ -9,7 +9,7 @@ plugins {
   id("kafkatorio.convention.settings.repositories")
 }
 
- dependencyResolutionManagement {
+dependencyResolutionManagement {
   versionCatalogs {
     create("libs") {
       from(files("../../gradle/libs.versions.toml"))

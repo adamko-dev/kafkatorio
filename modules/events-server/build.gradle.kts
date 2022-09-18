@@ -1,5 +1,5 @@
-import dev.adamko.kafkatorio.task.DockerEnvUpdateTask
-import dev.adamko.kafkatorio.task.KafkaConsumerGroupsTask
+import kafkatorio.tasks.DockerEnvUpdateTask
+import kafkatorio.tasks.KafkaConsumerGroupsTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 

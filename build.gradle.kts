@@ -1,9 +1,10 @@
-import dev.adamko.kafkatorio.gradle.excludeGeneratedGradleDsl
 import java.time.LocalDate
+import kafkatorio.extensions.excludeGeneratedGradleDsl
 
 plugins {
   idea
   base
+  id("kafkatorio.conventions.base")
 //  `project-report`
 //  `build-dashboard`
 }

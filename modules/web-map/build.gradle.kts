@@ -1,11 +1,10 @@
-import dev.adamko.kafkatorio.task.DockerEnvUpdateTask
+import kafkatorio.tasks.DockerEnvUpdateTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 
 plugins {
-  dev.adamko.kafkatorio.lang.`kotlin-js`
-//  dev.adamko.kafkatorio.lang.`kotlin-multiplatform`
+  id("kafkatorio.conventions.lang.kotlin-js")
   id("io.kvision")
   kotlin("plugin.serialization")
 }
@@ -35,9 +34,7 @@ kotlin {
             ),
             "/kafkatorio/ws" to mapOf(
               "target" to "ws://localhost:12080",
-//              "secure" to false,
               "ws" to true,
-//              "changeOrigin" to true,
             ),
           ),
 //          static = mutableListOf("$buildDir/processedResources/frontend/main")
@@ -53,15 +50,12 @@ kotlin {
         }
       }
     }
-//    compilations["main"].packageJson {
-//      this.devDependencies["webpack-dev-server"] = "4.9.1"
-//    }
   }
 
   sourceSets {
 
-    all {
-      languageSettings.apply {
+    configureEach {
+      languageSettings {
         optIn("kotlin.RequiresOptIn")
         optIn("kotlinx.serialization.ExperimentalSerializationApi")
       }
@@ -93,18 +87,6 @@ kotlin {
         kvision("kvision-redux")
         kvision("kvision-state-flow")
         kvision("kvision-routing-navigo-ng")
-
-//        implementation(devNpm("http-proxy-middleware", "^2.0.6"))
-//        implementation(dependencies.platform(devNpm("http-proxy-middleware", "^2.0.6")))
-
-//        implementation(dependencies.platform(npm("follow-redirects", "^1.14.8")))
-//        implementation(dependencies.platform(npm("nanoid", "^3.1.31")))
-//        implementation(dependencies.platform(npm("minimist", "^1.2.6")))
-//        implementation(dependencies.platform(npm("async", "^2.6.4")))
-//        implementation(dependencies.platform(npm("node-forge", "^1.3.0")))
-//        implementation(dependencies.platform(npm("socket.io", "^4.5.1")))
-//        implementation(dependencies.platform(devNpm("http-proxy-middleware", "^3.0.0-beta.0")))
-//        implementation(dependencies.platform(devNpm("webpack-dev-server", "4.9.1")))
       }
 
       resources.srcDir("src/main/web")
@@ -133,21 +115,6 @@ fun KotlinDependencyHandler.kvision(
   implementation("io.kvision:$module:${version.get()}", configure)
 }
 
-////// https://youtrack.jetbrains.com/issue/KT-42420
-//afterEvaluate {
-//  yarn {
-////    resolution("mocha", "9.2.2")
-////    resolution("follow-redirects", "1.14.8")
-////    resolution("nanoid", "3.1.31")
-////    resolution("minimist", "1.2.6")
-////    resolution("async", "2.6.4")
-////    resolution("node-forge", "1.3.0")
-////    resolution("socket.io", "^4.5.1")
-////    resolution("http-proxy-middleware", "^3.0.0-beta.0")
-//    resolution("webpack-dev-server", "4.9.1")
-//  }
-//}
-
 
 val dockerEnvUpdate by tasks.registering(DockerEnvUpdateTask::class) {
   dotEnvFile.set(layout.projectDirectory.file("docker/.env"))
@@ -155,6 +122,7 @@ val dockerEnvUpdate by tasks.registering(DockerEnvUpdateTask::class) {
   properties(
     "COMPOSE_PROJECT_NAME" to rootProject.name,
     "KAFKATORIO_VERSION" to project.version,
+    "REGISTRY_HOST" to "dcr.adamko.dev:5000",
   )
 }
 tasks.assemble { dependsOn(dockerEnvUpdate) }
@@ -175,11 +143,6 @@ val installThemeCss by tasks.registering(Copy::class) {
 
 tasks.matching { it.name == "processResources" }.configureEach {
   dependsOn(installThemeCss)
-}
-
-
-tasks.withType<io.kvision.gradle.tasks.KVConvertPoTask>().configureEach {
-  enabled = false
 }
 
 

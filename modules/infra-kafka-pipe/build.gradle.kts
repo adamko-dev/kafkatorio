@@ -1,7 +1,7 @@
-import dev.adamko.kafkatorio.task.DockerComposeExec
+import kafkatorio.tasks.DockerComposeExec
 
 plugins {
-  dev.adamko.kafkatorio.infra.`docker-compose`
+  id("kafkatorio.conventions.infra.docker-compose")
 }
 
 description = "Send events from a Factorio server to a Kafka topic "

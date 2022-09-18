@@ -1,7 +1,7 @@
-package dev.adamko.kafkatorio.task
+package kafkatorio.tasks
 
-import dev.adamko.kafkatorio.task.UpdatePackageJson.Companion.foldParseToJsonObject
-import dev.adamko.kafkatorio.task.UpdatePackageJson.Companion.parseToJsonObject
+import kafkatorio.tasks.UpdatePackageJson.Companion.foldParseToJsonObject
+import kafkatorio.tasks.UpdatePackageJson.Companion.parseToJsonObject
 import kotlinx.serialization.json.JsonObject
 import org.gradle.api.Task
 import org.gradle.api.internal.specs.ExplainingSpec

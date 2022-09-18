@@ -1,9 +1,9 @@
-package dev.adamko.kafkatorio.lang
+package kafkatorio.conventions.lang
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  id("dev.adamko.kafkatorio.base")
+  id("kafkatorio.conventions.base")
   kotlin("jvm")
 }
 

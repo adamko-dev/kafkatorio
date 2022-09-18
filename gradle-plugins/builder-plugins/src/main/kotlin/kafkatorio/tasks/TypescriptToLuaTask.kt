@@ -1,4 +1,4 @@
-package dev.adamko.kafkatorio.task
+package kafkatorio.tasks
 
 import com.github.gradle.node.npm.task.NpmTask
 import javax.inject.Inject

@@ -1,5 +1,5 @@
 plugins {
-  dev.adamko.kafkatorio.lang.`kotlin-jvm`
+  id("kafkatorio.conventions.lang.kotlin-jvm")
 }
 
 dependencies {

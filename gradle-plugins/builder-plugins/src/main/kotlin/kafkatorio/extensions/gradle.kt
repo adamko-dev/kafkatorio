@@ -1,4 +1,4 @@
-package dev.adamko.kafkatorio.gradle
+package kafkatorio.extensions
 
 import java.io.ByteArrayOutputStream
 import org.gradle.api.Project

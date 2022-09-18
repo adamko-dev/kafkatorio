@@ -12,6 +12,11 @@ includeBuild("./gradle-plugins/docker-compose/")
 includeBuild("./gradle-plugins/factorio-mod-manager/")
 
 
+plugins {
+  id("kafkatorio.convention.settings.repositories")
+}
+
+
 include(
   ":modules:events-library",
 
@@ -46,7 +51,7 @@ include(
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 
-apply(from = "./buildSrc/repositories.settings.gradle.kts")
+//apply(from = "./buildSrc/repositories.settings.gradle.kts")
 
 
 @Suppress("UnstableApiUsage") // Central declaration of repositories is an incubating feature

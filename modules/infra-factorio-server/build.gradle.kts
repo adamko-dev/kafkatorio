@@ -1,10 +1,10 @@
 import dev.adamko.kafkatorio.factoriomod.FactorioMod
-import dev.adamko.kafkatorio.gradle.asConsumer
-import dev.adamko.kafkatorio.gradle.factorioModAttributes
+import kafkatorio.distributions.asConsumer
+import kafkatorio.distributions.factorioModAttributes
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
-  dev.adamko.kafkatorio.infra.`docker-compose`
+  id("kafkatorio.conventions.infra.docker-compose")
 }
 
 

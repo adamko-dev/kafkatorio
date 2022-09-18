@@ -1,7 +1,10 @@
-package dev.adamko.kafkatorio.infra
+package kafkatorio.conventions.infra
+
+import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.registering
 
 plugins {
-  id("dev.adamko.kafkatorio.base")
+  id("kafkatorio.conventions.base")
 }
 
 val processRunnerTaskGroup: String by extra("processes")

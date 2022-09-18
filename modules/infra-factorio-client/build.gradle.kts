@@ -1,13 +1,13 @@
 import dev.adamko.kafkatorio.factoriomod.FactorioMod
-import dev.adamko.kafkatorio.gradle.asConsumer
-import dev.adamko.kafkatorio.gradle.factorioModAttributes
-import dev.adamko.kafkatorio.gradle.not
-import dev.adamko.kafkatorio.task.ProcessRunningSpec
+import kafkatorio.distributions.asConsumer
+import kafkatorio.distributions.factorioModAttributes
+import kafkatorio.extensions.not
+import kafkatorio.tasks.ProcessRunningSpec
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
-  dev.adamko.kafkatorio.infra.`process-runner`
+  id("kafkatorio.conventions.infra.process-runner")
 }
 
 description = "Start the Factorio game client"

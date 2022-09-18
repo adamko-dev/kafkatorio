@@ -1,7 +1,7 @@
-package dev.adamko.kafkatorio.lang
+package kafkatorio.conventions.lang
 
 //import dev.adamko.kafkatorio.Versions
-import dev.adamko.kafkatorio.relocateKotlinJsStore
+import kafkatorio.conventions.relocateKotlinJsStore
 //import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 //import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 //import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
@@ -12,7 +12,7 @@ import dev.adamko.kafkatorio.relocateKotlinJsStore
 
 plugins {
   kotlin("js")
-  id("dev.adamko.kafkatorio.base")
+  id("kafkatorio.conventions.base")
 }
 
 //dependencies {

@@ -1,4 +1,4 @@
-package dev.adamko.kafkatorio
+package kafkatorio.conventions
 
 
 plugins {

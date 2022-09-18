@@ -1,9 +1,9 @@
 import dev.adamko.kafkatorio.factoriomod.portal.FactorioModPublishTask
-import dev.adamko.kafkatorio.gradle.asConsumer
-import dev.adamko.kafkatorio.gradle.asProvider
-import dev.adamko.kafkatorio.gradle.factorioModAttributes
-import dev.adamko.kafkatorio.gradle.typescriptAttributes
-import dev.adamko.kafkatorio.task.TypescriptToLuaTask
+import kafkatorio.distributions.asConsumer
+import kafkatorio.distributions.asProvider
+import kafkatorio.distributions.factorioModAttributes
+import kafkatorio.distributions.typescriptAttributes
+import kafkatorio.tasks.TypescriptToLuaTask
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
 import net.swiftzer.semver.SemVer
@@ -12,7 +12,7 @@ import org.gradle.plugins.ide.idea.model.Module as IdeaImlModule
 import org.gradle.plugins.ide.idea.model.Path as IdeaImlPath
 
 plugins {
-  dev.adamko.kafkatorio.lang.node
+  id("kafkatorio.conventions.lang.node")
   distribution
 }
 

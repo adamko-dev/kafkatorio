@@ -1,7 +1,6 @@
-package dev.adamko.kafkatorio.task
+package kafkatorio.tasks
 
 import java.io.ByteArrayOutputStream
-import javax.inject.Inject
 import org.gradle.api.Task
 import org.gradle.api.internal.specs.ExplainingSpec
 import org.gradle.api.tasks.Exec

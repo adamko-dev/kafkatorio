@@ -1,12 +1,12 @@
-package dev.adamko.kafkatorio.infra
+package kafkatorio.conventions.infra
 
-import dev.adamko.kafkatorio.gradle.DOCKER_COMPOSE_TASK_GROUP
-import dev.adamko.kafkatorio.task.DockerEnvUpdateTask
+import kafkatorio.tasks.DockerEnvUpdateTask
+import kafkatorio.extensions.DOCKER_COMPOSE_TASK_GROUP
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
   base
-  id("dev.adamko.kafkatorio.infra.process-runner")
+  id("kafkatorio.conventions.infra.process-runner")
 }
 
 
@@ -55,6 +55,7 @@ val dockerEnvUpdate by tasks.registering(DockerEnvUpdateTask::class) {
   properties(
     "COMPOSE_PROJECT_NAME" to dockerComposeProjectName,
     "KAFKATORIO_VERSION" to project.version,
+    "REGISTRY_HOST" to providers.gradleProperty("dockerContainerRegistryHost"),
   )
 }
 

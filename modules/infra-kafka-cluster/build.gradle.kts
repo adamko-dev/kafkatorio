@@ -1,5 +1,5 @@
 plugins {
-  dev.adamko.kafkatorio.infra.`docker-compose`
+  id("kafkatorio.conventions.infra.docker-compose")
 }
 
 description = "Kafka cluster"

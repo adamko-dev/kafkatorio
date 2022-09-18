@@ -1,6 +1,6 @@
-package dev.adamko.kafkatorio.task
+package kafkatorio.tasks
 
-import dev.adamko.kafkatorio.gradle.filesChecksum
+import kafkatorio.extensions.filesChecksum
 import javax.inject.Inject
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty

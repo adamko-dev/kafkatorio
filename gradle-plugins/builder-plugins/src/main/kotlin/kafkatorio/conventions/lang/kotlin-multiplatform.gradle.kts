@@ -1,13 +1,13 @@
-package dev.adamko.kafkatorio.lang
+package kafkatorio.conventions.lang
 
-import dev.adamko.kafkatorio.relocateKotlinJsStore
+import kafkatorio.conventions.relocateKotlinJsStore
 //import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 //import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 //import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
 
 
 plugins {
-  id("dev.adamko.kafkatorio.base")
+  id("kafkatorio.conventions.base")
 //  id("dev.adamko.kafkatorio.lang.node")
   kotlin("multiplatform")
 //  id("io.kotest.multiplatform") // disabled because of https://github.com/kotest/kotest/issues/3141

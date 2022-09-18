@@ -4,6 +4,9 @@
 
 .state/
 
+# Docker .env files are generated from a Gradle task
+.env
+
 .idea/
 !.idea/icon.svg
 

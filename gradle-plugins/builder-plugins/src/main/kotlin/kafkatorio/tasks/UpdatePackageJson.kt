@@ -1,7 +1,7 @@
-package dev.adamko.kafkatorio.task
+package kafkatorio.tasks
 
 import com.github.gradle.node.NodePlugin
-import dev.adamko.kafkatorio.*
+import kafkatorio.*
 import java.io.File
 import javax.inject.Inject
 import kotlinx.serialization.encodeToString

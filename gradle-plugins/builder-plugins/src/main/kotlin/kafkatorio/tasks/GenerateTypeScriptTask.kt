@@ -1,4 +1,4 @@
-package dev.adamko.kafkatorio.task
+package kafkatorio.tasks
 
 import javax.inject.Inject
 import org.gradle.api.file.DirectoryProperty

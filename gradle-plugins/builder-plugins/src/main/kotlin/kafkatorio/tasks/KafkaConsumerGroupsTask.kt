@@ -1,6 +1,6 @@
-package dev.adamko.kafkatorio.task
+package kafkatorio.tasks
 
-import dev.adamko.kafkatorio.gradle.execCapture
+import kafkatorio.extensions.execCapture
 import org.gradle.api.DefaultTask
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.Input

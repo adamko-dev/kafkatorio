@@ -1,14 +1,14 @@
-package dev.adamko.kafkatorio.lang
+package kafkatorio.conventions.lang
 
 import com.github.gradle.node.npm.task.NpmInstallTask
-import dev.adamko.kafkatorio.Versions
-import dev.adamko.kafkatorio.task.UpdatePackageJson
+import kafkatorio.conventions.Versions
+import kafkatorio.tasks.UpdatePackageJson
 import kotlinx.serialization.json.put
 
 
 plugins {
   id("com.github.node-gradle.node")
-  id("dev.adamko.kafkatorio.base")
+  id("kafkatorio.conventions.base")
 }
 
 

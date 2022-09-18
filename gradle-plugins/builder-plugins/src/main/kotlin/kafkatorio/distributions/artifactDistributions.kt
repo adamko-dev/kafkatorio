@@ -1,4 +1,4 @@
-package dev.adamko.kafkatorio.gradle
+package kafkatorio.distributions
 
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Bundling

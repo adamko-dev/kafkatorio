@@ -1,7 +1,7 @@
-package dev.adamko.kafkatorio.task
+package kafkatorio.tasks
 
-import dev.adamko.kafkatorio.gradle.DOCKER_COMPOSE_TASK_GROUP
 import javax.inject.Inject
+import kafkatorio.extensions.DOCKER_COMPOSE_TASK_GROUP
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.model.ObjectFactory

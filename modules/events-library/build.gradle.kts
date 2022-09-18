@@ -1,13 +1,13 @@
-import dev.adamko.kafkatorio.gradle.asProvider
-import dev.adamko.kafkatorio.gradle.typescriptAttributes
-import dev.adamko.kafkatorio.task.GenerateTypeScriptTask
+import kafkatorio.distributions.asProvider
+import kafkatorio.distributions.typescriptAttributes
+import kafkatorio.tasks.GenerateTypeScriptTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 
 plugins {
-  dev.adamko.kafkatorio.lang.`kotlin-multiplatform`
+  id("kafkatorio.conventions.lang.kotlin-multiplatform")
   kotlin("plugin.serialization")
   distribution
 }
