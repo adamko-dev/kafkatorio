@@ -45,10 +45,8 @@ val dockerRemove by tasks.registering(Exec::class) {
 }
 
 
-afterEvaluate {
-  tasks.named("processRun") { dependsOn(dockerUp, dockerEnvUpdate) }
-  tasks.named("processKill") { dependsOn(dockerDown) }
-}
+tasks.matching { it.name == "processRun" }.configureEach { dependsOn(dockerUp, dockerEnvUpdate) }
+tasks.matching { it.name == "processKill" }.configureEach { dependsOn(dockerDown) }
 
 
 val dockerEnvUpdate by tasks.registering(DockerEnvUpdateTask::class) {

@@ -8,6 +8,7 @@ pluginManagement {
 
 
 includeBuild("./gradle-plugins/builder-plugins/")
+includeBuild("./gradle-plugins/docker-compose/")
 includeBuild("./gradle-plugins/factorio-mod-manager/")
 
 

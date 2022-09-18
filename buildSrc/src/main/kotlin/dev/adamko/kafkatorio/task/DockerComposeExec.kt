@@ -23,6 +23,7 @@ import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 @CacheableTask
+@Suppress("UnstableApiUsage")
 abstract class DockerComposeExec @Inject constructor(
   private val executor: ExecOperations,
   private val objects: ObjectFactory,
@@ -57,8 +58,9 @@ abstract class DockerComposeExec @Inject constructor(
     group = DOCKER_COMPOSE_GROUP
     logging.captureStandardOutput(LogLevel.LIFECYCLE)
 
-    super.onlyIf {
-      it is DockerComposeExec && it.dockerIsActive.getOrElse(false)
+    super.onlyIf { task ->
+      require(task is DockerComposeExec)
+      task.dockerIsActive.getOrElse(false)
     }
   }
 
