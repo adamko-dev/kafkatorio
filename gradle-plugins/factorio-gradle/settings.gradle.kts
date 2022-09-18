@@ -1,6 +1,6 @@
 @file:Suppress("UnstableApiUsage")
 
-rootProject.name = "factorio-mod-manager"
+rootProject.name = "factorio-gradle"
 
 pluginManagement {
   @Suppress("UnstableApiUsage")
