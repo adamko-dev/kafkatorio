@@ -8,7 +8,7 @@ pluginManagement {
 }
 
 plugins {
-  id("kafkatorio.convention.settings.repositories")
+  id("kafkatorio.conventions.settings.repositories")
 }
 
 dependencyResolutionManagement {

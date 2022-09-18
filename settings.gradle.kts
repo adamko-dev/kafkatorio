@@ -9,11 +9,11 @@ pluginManagement {
 
 includeBuild("./gradle-plugins/builder-plugins/")
 includeBuild("./gradle-plugins/docker-compose/")
-includeBuild("./gradle-plugins/factorio-mod-manager/")
+includeBuild("./gradle-plugins/factorio-gradle/")
 
 
 plugins {
-  id("kafkatorio.convention.settings.repositories")
+  id("kafkatorio.conventions.settings.repositories")
 }
 
 

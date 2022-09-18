@@ -1,4 +1,4 @@
-package kafkatorio.convention.settings
+package kafkatorio.conventions.settings
 
 @Suppress("UnstableApiUsage") // Central declaration of repositories is an incubating feature
 dependencyResolutionManagement {
