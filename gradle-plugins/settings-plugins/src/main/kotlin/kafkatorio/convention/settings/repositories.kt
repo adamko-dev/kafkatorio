@@ -75,3 +75,12 @@ fun RepositoryHandler.gitHub() {
     }
   }
 }
+
+
+fun RepositoryHandler.kotlinxHtml() {
+  maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven") {
+    mavenContent {
+      includeGroup("org.jetbrains.kotlinx")
+    }
+  }
+}

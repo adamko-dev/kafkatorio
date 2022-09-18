@@ -101,10 +101,10 @@ kotlin {
   jvmToolchain {
     (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(gradleJvmTarget))
   }
+}
 
-  kotlinDslPluginOptions {
-    jvmTarget.set(gradleJvmTarget)
-  }
+kotlinDslPluginOptions {
+  jvmTarget.set(gradleJvmTarget)
 }
 
 idea {
