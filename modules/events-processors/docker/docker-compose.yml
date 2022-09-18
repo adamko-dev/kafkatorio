@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+
+  events-server:
+    image: kafkatorio/events-server:${KAFKATORIO_VERSION}
+    container_name: events-server
+    restart: unless-stopped
+    build:
+      context: ..
+      dockerfile: ./docker/Dockerfile
+      args:
+        KAFKATORIO_VERSION: ${KAFKATORIO_VERSION}
+        DIST_DIR: "./build/distributions/"
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: "http://kafka:29092"
+      # KAFKA_STREAMS_STATE_DIR: ""
+      SERVER_PORT: "8080"
+      SOCKET_SERVER_PORT: "9002"
+    ports:
+      - "12080:8080" # http and ws
+      - "12034:9002" # syslog socket
+    networks:
+      - "kafka-nw"
+      - "kafkatorio-nw"
+      - "traefik-nw"
+#    labels:
+#      - "traefik.enable=true"
+
+networks:
+  kafka-nw:
+    name: "kafka-nw"
+    external: true
+  kafkatorio-nw:
+    name: "kafkatorio-nw"
+    external: true
+  traefik-nw:
+    name: "traefik-nw"
+    external: true
