@@ -33,6 +33,7 @@ abstract class GDCCommandTask @Inject constructor(
     val separatedArgs: List<String> = separatedArgs.get()
 
     executor.exec {
+      environment("BUILDKIT_PROGRESS", "plain")
       workingDir(this@GDCCommandTask.workingDir)
       commandLine(separatedArgs)
     }

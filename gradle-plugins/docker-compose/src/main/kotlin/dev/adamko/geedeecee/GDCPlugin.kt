@@ -46,6 +46,10 @@ abstract class GDCPlugin @Inject constructor(
     val dockerComposeBuild by target.tasks.registering(GDCCommandTask::class) {
       `docker-compose`("build")
     }
+    val dockerComposePush by target.tasks.registering(GDCCommandTask::class) {
+      dependsOn(dockerComposeBuild)
+      `docker-compose`("push")
+    }
     val dockerComposeRemove by target.tasks.registering(GDCCommandTask::class) {
       `docker-compose`("rm --stop -v -f")
     }
@@ -74,12 +78,13 @@ abstract class GDCPlugin @Inject constructor(
   private fun Project.createSettings(): GDCSettings =
     extensions.create<GDCSettings>(GDC_EXTENSION_NAME).apply {
       composeProjectName.convention(providers.provider { project.name })
-      composeProjectVersion.convention(providers.provider { project.name })
+      composeProjectVersion.convention(providers.provider { project.version.toString() })
       containerRegistryHost.convention(providers.gradleProperty("dockerContainerRegistryHost"))
       srcDir.convention(layout.projectDirectory.dir("docker"))
 
       dotEnv.put("COMPOSE_PROJECT_NAME", composeProjectName)
       dotEnv.put("PROJECT_VERSION", composeProjectVersion)
+      dotEnv.put("KAFKATORIO_VERSION", composeProjectVersion)
       dotEnv.put("REGISTRY_HOST", containerRegistryHost)
 
       enabled.convention(isDockerActive())
