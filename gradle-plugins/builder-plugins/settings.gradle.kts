@@ -24,7 +24,7 @@ include(
 
   ":modules:docker-compose",
   ":modules:factorio-mod",
-  ":modules:typescript",
+  ":modules:typescript-to-lua",
 )
 
 
