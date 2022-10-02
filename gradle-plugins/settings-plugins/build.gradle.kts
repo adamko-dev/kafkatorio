@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.support.expectedKotlinDslPluginsVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -11,6 +12,10 @@ dependencies {
   // This project should only be providing simple plugins for configuring Gradle without
   // dependencies. Try to avoid setting dependencies here, else the Gradle script classpath might
   // get polluted and messy.
+
+  implementation("org.gradle.kotlin:gradle-kotlin-dsl-plugins:$expectedKotlinDslPluginsVersion")
+//  implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${embeddedKotlinVersion}")
+  implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${libs.versions.kotlin.get()}")
 }
 
 kotlin {

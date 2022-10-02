@@ -1,18 +1,20 @@
+import kafkatorio.conventions.overrideKotlinLanguageVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  idea
-  `kotlin-dsl`
-  kotlin("jvm") version  embeddedKotlinVersion
-  kotlin("plugin.serialization") version embeddedKotlinVersion
+  id("kafkatorio.conventions.kotlin-dsl")
+//  idea
+//  `kotlin-dsl`
+//  kotlin("jvm") //version  "1.7.20" // embeddedKotlinVersion
+  kotlin("plugin.serialization") version  embeddedKotlinVersion
+//  kotlin("plugin.serialization") version "1.7.20"
 }
 
-val gradleJvmTarget = "11"
-val gradleKotlinTarget = "1.6"
+//val gradleJvmTarget = "11"
+//val gradleKotlinTarget = "1.6"
 
 
 dependencies {
-
   implementation(platform(libs.kotlin.bom))
   implementation("org.jetbrains.kotlin:kotlin-serialization")
   implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -72,9 +74,9 @@ dependencies {
 tasks.withType<KotlinCompile>().configureEach {
 
   kotlinOptions {
-    jvmTarget = gradleJvmTarget
-    apiVersion = gradleKotlinTarget
-    languageVersion = gradleKotlinTarget
+//    jvmTarget = gradleJvmTarget
+//    apiVersion = gradleKotlinTarget
+//    languageVersion = gradleKotlinTarget
   }
 
   kotlinOptions.freeCompilerArgs += listOf(
@@ -88,28 +90,29 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 
-afterEvaluate {
-  tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions {
-      apiVersion = gradleKotlinTarget
-      languageVersion = gradleKotlinTarget
-    }
-  }
-}
+overrideKotlinLanguageVersion("1.6")
+//afterEvaluate {
+//  tasks.withType<KotlinCompile>().configureEach {
+//    kotlinOptions {
+//      apiVersion = gradleKotlinTarget
+//      languageVersion = gradleKotlinTarget
+//    }
+//  }
+//}
 
-kotlin {
-  jvmToolchain {
-    (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(gradleJvmTarget))
-  }
-}
+//kotlin {
+//  jvmToolchain {
+//    (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(gradleJvmTarget))
+//  }
+//}
+//
+//kotlinDslPluginOptions {
+//  jvmTarget.set(gradleJvmTarget)
+//}
 
-kotlinDslPluginOptions {
-  jvmTarget.set(gradleJvmTarget)
-}
-
-idea {
-  module {
-    isDownloadSources = true
-    isDownloadJavadoc = true
-  }
-}
+//idea {
+//  module {
+//    isDownloadSources = true
+//    isDownloadJavadoc = true
+//  }
+//}

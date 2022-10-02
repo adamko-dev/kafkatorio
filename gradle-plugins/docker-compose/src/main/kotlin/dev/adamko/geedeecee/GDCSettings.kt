@@ -11,6 +11,12 @@ interface GDCSettings {
   @get:Input
   val composeProjectName: Property<String>
 
+  @get:Input
+  val composeProjectVersion: Property<String>
+
+  @get:Input
+  val containerRegistryHost: Property<String>
+
   @get:Internal
   val srcDir: DirectoryProperty
 

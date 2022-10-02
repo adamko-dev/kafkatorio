@@ -1,4 +1,4 @@
-package dev.adamko.factorio_gradle
+package dev.adamko.gradle.factorio
 
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty

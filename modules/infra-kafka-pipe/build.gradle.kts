@@ -1,23 +1,22 @@
-import kafkatorio.tasks.DockerComposeExec
+import dev.adamko.geedeecee.DockerComposeExec
 
 plugins {
-  id("kafkatorio.conventions.infra.docker-compose")
+  id("dev.adamko.geedeecee")
 }
 
 description = "Send events from a Factorio server to a Kafka topic "
 
 
-val dockerSrcDir: Directory by extra
+//val dockerSrcDir: Directory by extra
 
-tasks.dockerUp {
+tasks.dockerComposeUp {
   dependsOn(":modules:infra-kafka-cluster:dockerUp")
 }
 
 
 val dockerBuildKafkaPipe by tasks.registering(DockerComposeExec::class) {
-  dependsOn(tasks.dockerEnvUpdate)
 
-  dockerComposeDir.set(dockerSrcDir)
+  dockerComposeDir.set(geedeecee.srcDir)
   command.set("docker-compose build kafka-pipe")
 
 

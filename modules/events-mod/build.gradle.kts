@@ -1,8 +1,6 @@
-import dev.adamko.kafkatorio.factoriomod.portal.FactorioModPublishTask
-import kafkatorio.distributions.asConsumer
-import kafkatorio.distributions.asProvider
-import kafkatorio.distributions.factorioModAttributes
-import kafkatorio.distributions.typescriptAttributes
+import dev.adamko.gradle.factorio.mod_portal.FactorioModPublishTask
+import dev.adamko.gradle.factorio.typescriptAttributes
+import dev.adamko.gradle.factorio.factorioModAttributes
 import kafkatorio.tasks.TypescriptToLuaTask
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
@@ -13,6 +11,7 @@ import org.gradle.plugins.ide.idea.model.Path as IdeaImlPath
 
 plugins {
   id("kafkatorio.conventions.lang.node")
+  id("dev.adamko.factorio-mod")
   distribution
 }
 

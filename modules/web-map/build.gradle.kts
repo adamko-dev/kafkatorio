@@ -1,4 +1,3 @@
-import kafkatorio.tasks.DockerEnvUpdateTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
@@ -7,6 +6,7 @@ plugins {
   id("kafkatorio.conventions.lang.kotlin-js")
   id("io.kvision")
   kotlin("plugin.serialization")
+  id("dev.adamko.geedeecee")
 }
 
 
@@ -115,17 +115,18 @@ fun KotlinDependencyHandler.kvision(
   implementation("io.kvision:$module:${version.get()}", configure)
 }
 
+geedeecee {
+  srcDir.set(layout.projectDirectory.dir("docker"))
+}
 
-val dockerEnvUpdate by tasks.registering(DockerEnvUpdateTask::class) {
-  dotEnvFile.set(layout.projectDirectory.file("docker/.env"))
-
+tasks.dockerComposeEnvUpdate {
   properties(
-    "COMPOSE_PROJECT_NAME" to rootProject.name,
     "KAFKATORIO_VERSION" to project.version,
     "REGISTRY_HOST" to "dcr.adamko.dev:5000",
   )
 }
-tasks.assemble { dependsOn(dockerEnvUpdate) }
+
+tasks.assemble { dependsOn(tasks.dockerComposeEnvUpdate) }
 
 
 val installThemeCss by tasks.registering(Copy::class) {

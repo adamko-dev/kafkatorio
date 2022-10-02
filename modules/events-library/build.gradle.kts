@@ -1,5 +1,3 @@
-import kafkatorio.distributions.asProvider
-import kafkatorio.distributions.typescriptAttributes
 import kafkatorio.tasks.GenerateTypeScriptTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
@@ -8,6 +6,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("kafkatorio.conventions.lang.kotlin-multiplatform")
+  id("dev.adamko.factorio-mod") // only needed for 'attributes' - need to split up the mod?
   kotlin("plugin.serialization")
   distribution
 }
@@ -28,8 +27,10 @@ kotlin {
         jvmTarget = "11"
       }
     }
-    testRuns["test"].executionTask.configure {
-      useJUnitPlatform()
+    testRuns.configureEach {
+      executionTask.configure {
+        useJUnitPlatform()
+      }
     }
   }
 

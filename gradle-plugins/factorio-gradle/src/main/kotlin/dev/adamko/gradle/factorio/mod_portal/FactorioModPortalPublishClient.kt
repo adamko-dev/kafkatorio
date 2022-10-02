@@ -1,4 +1,4 @@
-package dev.adamko.kafkatorio.factoriomod.portal
+package dev.adamko.gradle.factorio.mod_portal
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO

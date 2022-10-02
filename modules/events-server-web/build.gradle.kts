@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("kafkatorio.conventions.lang.kotlin-jvm")
+  id("dev.adamko.geedeecee")
   kotlin("plugin.serialization")
   application
 }

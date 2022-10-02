@@ -1,21 +1,22 @@
-import dev.adamko.kafkatorio.factoriomod.FactorioMod
-import kafkatorio.distributions.asConsumer
-import kafkatorio.distributions.factorioModAttributes
-import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
+import dev.adamko.gradle.factorio.FactorioModPlugin
 
 plugins {
-  id("kafkatorio.conventions.infra.docker-compose")
+  id("dev.adamko.geedeecee")
+  id("dev.adamko.factorio-mod")
+  idea
 }
 
 
-val dockerSrcDir: Directory by extra
-val factorioServerDataDir: Directory = dockerSrcDir.dir("factorio-server")
+//val dockerSrcDir: Directory by extra
+//val factorioServerDataDir: Directory = dockerSrcDir.dir("factorio-server")
+val factorioServerDataDir: DirectoryProperty = objects.directoryProperty()
+  .convention(geedeecee.srcDir.dir("factorio-server"))
 
 
-val factorioMod: Configuration by configurations.creating {
-  asConsumer()
-  factorioModAttributes(objects)
-}
+//val factorioMod: Configuration by configurations.creating {
+//  asConsumer()
+//  factorioModAttributes(objects)
+//}
 
 
 dependencies {
@@ -25,13 +26,14 @@ dependencies {
 
 val deployModToLocalServer by tasks.registering(Copy::class) {
   description = "Copy the mod to the Factorio Docker server"
-  group = FactorioMod.TASK_GROUP
+  group = FactorioModPlugin.TASK_GROUP
 
   dependsOn(factorioMod)
 
-  from(
-    provider { factorioMod.incoming.artifacts.artifactFiles.files }
-  )
+//  from(
+//    provider { factorioMod.incoming.artifacts.artifactFiles.files }
+//  )
+  from(configurations.factorioMod.map { it.incoming.artifacts.artifactFiles.files })
   into(factorioServerDataDir.dir("mods"))
 
   doLast {
@@ -40,12 +42,12 @@ val deployModToLocalServer by tasks.registering(Copy::class) {
 }
 
 
-tasks.dockerDown {
-  commandLine = parseSpaceSeparatedArgs(""" docker-compose stop """)
-}
+//tasks.dockerComposeDown {
+//  commandLine = parseSpaceSeparatedArgs(""" docker-compose stop """)
+//}
 
 
-tasks.dockerUp {
+tasks.dockerComposeUp {
   dependsOn(
     deployModToLocalServer,
     ":modules:infra-kafka-cluster:processRun",
@@ -56,7 +58,7 @@ tasks.dockerUp {
 val kafkatorioServerToken: String by project
 
 
-tasks.dockerEnvUpdate {
+tasks.dockerComposeEnvUpdate {
   properties(
     "FACTORIO_VERSION" to libs.versions.factorio.get(),
     "KAFKATORIO_TOKEN" to kafkatorioServerToken,
@@ -64,8 +66,8 @@ tasks.dockerEnvUpdate {
 }
 
 
-tasks.register(FactorioMod.PUBLISH_MOD_LOCAL_TASK_NAME) {
-  group = FactorioMod.TASK_GROUP
+tasks.register(FactorioModPlugin.PUBLISH_MOD_LOCAL_TASK_NAME) {
+  group = FactorioModPlugin.TASK_GROUP
   dependsOn(deployModToLocalServer)
 }
 
@@ -79,5 +81,5 @@ idea {
 val runFactorioServer by tasks.registering {
   group = rootProject.name
 
-  dependsOn(tasks.processRun)
+  dependsOn(tasks.dockerComposeUp)
 }

@@ -1,9 +1,11 @@
+import kafkatorio.conventions.overrideKotlinLanguageVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  `kotlin-dsl`
-  kotlin("jvm") version embeddedKotlinVersion
+  id("kafkatorio.conventions.kotlin-dsl")
+  kotlin("plugin.serialization") version embeddedKotlinVersion
 }
+
 
 dependencies {
   implementation(platform(libs.kotlin.bom))
@@ -32,20 +34,42 @@ dependencies {
 }
 
 
-val gradleJvmTarget = "11"
+//val gradleJvmTarget = 11
+//
+//kotlin {
+//  jvmToolchain(gradleJvmTarget)
+//}
+//
+//kotlinDslPluginOptions {
+//  jvmTarget.set("$gradleJvmTarget")
+//}
+//
+//tasks.withType<KotlinCompile>().configureEach {
+//  kotlinOptions {
+//    jvmTarget = "$gradleJvmTarget"
+//  }
+//}
 
-kotlin {
-  jvmToolchain {
-    (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(gradleJvmTarget))
+gradlePlugin {
+  plugins {
+    create("factorioMod") {
+      displayName = "Factorio Mod"
+      id = "dev.adamko.factorio-mod"
+      implementationClass = "dev.adamko.gradle.factorio.FactorioModPlugin"
+    }
   }
 }
 
-kotlinDslPluginOptions {
-  jvmTarget.set(gradleJvmTarget)
-}
 
-tasks.withType<KotlinCompile>().configureEach {
-  kotlinOptions {
-    jvmTarget = gradleJvmTarget
-  }
-}
+overrideKotlinLanguageVersion("1.6")
+
+//val gradleKotlinTarget = "1.7"
+//
+//afterEvaluate {
+//  tasks.withType<KotlinCompile>().configureEach {
+//    kotlinOptions {
+//      apiVersion = gradleKotlinTarget
+//      languageVersion = gradleKotlinTarget
+//    }
+//  }
+//}

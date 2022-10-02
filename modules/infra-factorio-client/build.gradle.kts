@@ -1,6 +1,5 @@
-import dev.adamko.kafkatorio.factoriomod.FactorioMod
-import kafkatorio.distributions.asConsumer
-import kafkatorio.distributions.factorioModAttributes
+import dev.adamko.gradle.factorio.FactorioModPlugin
+import dev.adamko.gradle.factorio.factorioModAttributes
 import kafkatorio.extensions.not
 import kafkatorio.tasks.ProcessRunningSpec
 import org.gradle.kotlin.dsl.support.serviceOf
@@ -8,6 +7,7 @@ import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
 plugins {
   id("kafkatorio.conventions.infra.process-runner")
+  id("dev.adamko.factorio-mod")
 }
 
 description = "Start the Factorio game client"
@@ -26,10 +26,10 @@ val steamExe: RegularFileProperty = objects.fileProperty().apply {
   }
 }
 
-val factorioMod: Configuration by configurations.creating {
-  asConsumer()
-  factorioModAttributes(objects)
-}
+//val factorioMod: Configuration by configurations.creating {
+//  asConsumer()
+//  factorioModAttributes(objects)
+//}
 
 dependencies {
   factorioMod(projects.modules.eventsMod)
@@ -39,7 +39,7 @@ dependencies {
 //<editor-fold desc="Mod deployment tasks">
 val deployModToLocalClient by tasks.registering(Copy::class) {
   description = "Copy the mod to the Factorio client"
-  group = FactorioMod.TASK_GROUP
+  group = FactorioModPlugin.TASK_GROUP
 
   val clientModsDirectory123 = clientModsDirectory
 
@@ -61,7 +61,7 @@ fun ExecOperations.isFactorioRunning(): Spec<Task> = ProcessRunningSpec(this, "f
 
 val clientLaunch by tasks.registering(Exec::class) {
   description = "Run local Factorio Steam game client"
-  group = FactorioMod.TASK_GROUP
+  group = FactorioModPlugin.TASK_GROUP
 
   val steamExe123 = steamExe
   val clientModsDirectory444 = clientModsDirectory
@@ -83,7 +83,7 @@ val clientLaunch by tasks.registering(Exec::class) {
 
 val clientKill by tasks.registering(Exec::class) {
   description = "Stop the local Factorio Steam game client"
-  group = FactorioMod.TASK_GROUP
+  group = FactorioModPlugin.TASK_GROUP
 
   onlyIf(serviceOf<ExecOperations>().isFactorioRunning())
 
@@ -93,8 +93,8 @@ val clientKill by tasks.registering(Exec::class) {
 //</editor-fold>
 
 
-tasks.register(FactorioMod.PUBLISH_MOD_LOCAL_TASK_NAME) {
-  group = FactorioMod.TASK_GROUP
+tasks.register(FactorioModPlugin.PUBLISH_MOD_LOCAL_TASK_NAME) {
+  group = FactorioModPlugin.TASK_GROUP
   dependsOn(deployModToLocalClient)
 }
 

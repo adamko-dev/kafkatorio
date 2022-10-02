@@ -1,8 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  kotlin("jvm") version embeddedKotlinVersion
-  `kotlin-dsl`
+  id("kafkatorio.conventions.kotlin-dsl")
+//  kotlin("jvm") version embeddedKotlinVersion
+//  `kotlin-dsl`
   `java-gradle-plugin`
 }
 
@@ -13,17 +14,17 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable")
 }
 
-kotlin {
-  jvmToolchain {
-    (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(gradleJvmTarget))
-  }
-}
-
-tasks.withType<KotlinCompile>().configureEach {
-  kotlinOptions {
-    jvmTarget = gradleJvmTarget
-  }
-}
+//kotlin {
+//  jvmToolchain {
+//    (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(gradleJvmTarget))
+//  }
+//}
+//
+//tasks.withType<KotlinCompile>().configureEach {
+//  kotlinOptions {
+//    jvmTarget = gradleJvmTarget
+//  }
+//}
 
 gradlePlugin {
   plugins {

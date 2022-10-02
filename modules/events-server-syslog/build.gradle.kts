@@ -3,12 +3,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("kafkatorio.conventions.lang.kotlin-jvm")
+  id("dev.adamko.geedeecee")
   kotlin("plugin.serialization")
   application
 }
 
 
-description = "Consumes Syslog Kafkatorio packets and sends them to Kafka"
+description = "Provides a Syslog server that receives Kafkatorio packets and forwards them to Kafka"
 
 val projectId: String by project.extra
 

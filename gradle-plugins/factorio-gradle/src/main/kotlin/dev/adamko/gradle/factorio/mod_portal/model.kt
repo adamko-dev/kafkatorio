@@ -1,4 +1,4 @@
-package dev.adamko.kafkatorio.factoriomod.portal
+package dev.adamko.gradle.factorio.mod_portal
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

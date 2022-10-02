@@ -1,8 +1,8 @@
-package kafkatorio.tasks
+package dev.adamko.geedeecee
 
-import kafkatorio.extensions.filesChecksum
 import javax.inject.Inject
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.logging.LogLevel
@@ -20,7 +20,15 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
 import org.gradle.process.ExecOperations
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.incremental.md5
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
+
+
+// look into using 'build context' for up-to-date check
+// https://stackoverflow.com/questions/38946683/how-to-test-dockerignore-file
+// https://github.com/pwaller/docker-show-context
+// https://snippets.khromov.se/see-which-files-are-included-in-your-docker-build-context/
+
 
 @CacheableTask
 @Suppress("UnstableApiUsage")
@@ -77,5 +85,12 @@ abstract class DockerComposeExec @Inject constructor(
 
   companion object {
     const val DOCKER_COMPOSE_GROUP: String = "docker-compose"
+
+
+    private fun Directory.filesChecksum(): Long = asFileTree
+      .files
+      .map { it.readBytes() + it.absolutePath.toByteArray() }
+      .fold(byteArrayOf()) { acc, bytes -> acc + bytes }
+      .md5()
   }
 }

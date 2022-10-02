@@ -1,10 +1,14 @@
 plugins {
-  id("kafkatorio.conventions.infra.docker-compose")
+  id("dev.adamko.geedeecee")
 }
 
 description = "Kafka cluster"
 
-tasks.dockerEnvUpdate {
+geedeecee {
+  srcDir.set(layout.projectDirectory.dir("src"))
+}
+
+tasks.dockerComposeEnvUpdate {
   properties(
     "GRAFANA_VERSION" to libs.versions.grafana,
     "PROMETHEUS_VERSION" to libs.versions.prometheus,
@@ -31,5 +35,5 @@ tasks.dockerEnvUpdate {
 val runKafkaCluster by tasks.registering {
   group = rootProject.name
 
-  dependsOn(tasks.processRun)
+  dependsOn(tasks.dockerComposeUp)
 }

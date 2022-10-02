@@ -16,3 +16,16 @@ dependencyResolutionManagement {
     }
   }
 }
+
+include(
+  ":modules:common-lib",
+
+  ":modules:build-conventions",
+
+  ":modules:docker-compose",
+  ":modules:factorio-mod",
+  ":modules:typescript",
+)
+
+
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
