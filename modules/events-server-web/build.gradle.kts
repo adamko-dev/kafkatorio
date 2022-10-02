@@ -90,3 +90,7 @@ val runEventsWebServer by tasks.registering {
 
   dependsOn(tasks.run)
 }
+
+tasks.dockerComposeBuild {
+  dependsOn(tasks.distTar)
+}
