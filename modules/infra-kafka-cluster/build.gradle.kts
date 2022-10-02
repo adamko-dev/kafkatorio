@@ -9,15 +9,16 @@ geedeecee {
 }
 
 tasks.dockerComposeEnvUpdate {
-  properties(
-    "GRAFANA_VERSION" to libs.versions.grafana,
-    "PROMETHEUS_VERSION" to libs.versions.prometheus,
-    "KAFKA_VERSION" to libs.versions.kafka,
-    "KAFKA_DL_URL" to libs.versions.kafka.map { ver ->
+  envProperties {
+    put("GRAFANA_VERSION", libs.versions.grafana)
+    put("PROMETHEUS_VERSION", libs.versions.prometheus)
+    put("KAFKA_VERSION", libs.versions.kafka)
+    put("KAFKA_DL_URL", libs.versions.kafka.map { ver ->
       "https://dlcdn.apache.org/kafka/$ver/kafka_2.13-$ver.tgz"
-    }
+    })
+  }
 
-    // Limit JVM Heap Size
+  // Limit JVM Heap Size
 //    "KAFKA_BROKER_HEAP_OPTS" to "-XX:MaxRAMPercentage=70.0",
 //    "KAFKA_CONNECT_HEAP_OPTS" to "-XX:MaxRAMPercentage=70.0",
 //    "SCHEMA_REGISTRY_HEAP_OPTS" to "-XX:MaxRAMPercentage=70.0",
@@ -29,7 +30,7 @@ tasks.dockerComposeEnvUpdate {
 //    "KAFKA_CONNECT_MEM_LIMIT" to "512m",
 //    "KAFKA_KSQL_MEM_LIMIT" to "256m",
 //    "SCHEMA_REGISTRY_MEM_LIMIT" to "256m",
-  )
+//  )
 }
 
 val runKafkaCluster by tasks.registering {

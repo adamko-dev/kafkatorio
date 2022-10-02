@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
-
+import dev.adamko.geedeecee.DockerEnvUpdateTask.Companion.put
 
 plugins {
   id("kafkatorio.conventions.lang.kotlin-js")
@@ -120,10 +120,10 @@ geedeecee {
 }
 
 tasks.dockerComposeEnvUpdate {
-  properties(
-    "KAFKATORIO_VERSION" to project.version,
-    "REGISTRY_HOST" to "dcr.adamko.dev:5000",
-  )
+  envProperties {
+    put("KAFKATORIO_VERSION" to project.version.toString())
+    put("REGISTRY_HOST" to "dcr.adamko.dev:5000")
+  }
 }
 
 tasks.assemble { dependsOn(tasks.dockerComposeEnvUpdate) }

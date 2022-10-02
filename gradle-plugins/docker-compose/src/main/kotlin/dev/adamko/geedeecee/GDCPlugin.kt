@@ -26,6 +26,7 @@ abstract class GDCPlugin @Inject constructor(
     val dockerComposeEnvUpdate by target.tasks.registering(DockerEnvUpdateTask::class) {
       dotEnvFile.set(gdcSettings.srcDir.file(".env"))
 
+      envProperties.convention(gdcSettings.dotEnv)
 //      properties(
 //        "COMPOSE_PROJECT_NAME" to gdcSettings.composeProjectName,
 //        "KAFKATORIO_VERSION" to gdcSettings.composeProjectVersion,
