@@ -3,7 +3,7 @@ version: "3.9"
 services:
 
   kafkatorio-web-map:
-    image: ${REGISTRY_HOST}/adamko-dev/kafkatorio-web-map:${KAFKATORIO_VERSION}
+    image: ${REGISTRY_HOST}/dev.adamko.kafkatorio/web-map:${KAFKATORIO_VERSION}
     container_name: kafkatorio-web-map
     restart: unless-stopped
     build:

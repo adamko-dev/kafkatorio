@@ -3,7 +3,7 @@ version: "3.9"
 services:
 
   events-server:
-    image: kafkatorio/events-server:${KAFKATORIO_VERSION}
+    image: ${REGISTRY_HOST}/dev.adamko.kafkatorio/events-processors:${KAFKATORIO_VERSION}
     container_name: events-server
     restart: unless-stopped
     build:
