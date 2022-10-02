@@ -13,7 +13,7 @@ dependencies {
 
 kotlin {
   jvmToolchain {
-    (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(gradleJvmTarget))
+    languageVersion.set(JavaLanguageVersion.of(gradleJvmTarget))
   }
 }
 
