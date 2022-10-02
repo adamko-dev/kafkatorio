@@ -28,7 +28,7 @@ fun Configuration.asConsumer() {
 
 fun Configuration.factorioModAttributes(objects: ObjectFactory): Configuration =
   attributes {
-    attribute(USAGE_ATTRIBUTE, objects.named("factorio"))
+    attribute(USAGE_ATTRIBUTE, objects.named("dev.adamko.factorio"))
     attribute(CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
     attribute(LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.CLASSES_AND_RESOURCES))
     attribute(BUNDLING_ATTRIBUTE, objects.named(Bundling.EMBEDDED))
@@ -37,7 +37,7 @@ fun Configuration.factorioModAttributes(objects: ObjectFactory): Configuration =
 
 fun Configuration.typescriptAttributes(objects: ObjectFactory): Configuration =
   attributes {
-    attribute(USAGE_ATTRIBUTE, objects.named("typescript"))
+    attribute(USAGE_ATTRIBUTE, objects.named("dev.adamko.typescript"))
     attribute(CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
     attribute(LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.OBJECTS))
     attribute(BUNDLING_ATTRIBUTE, objects.named(Bundling.EXTERNAL))
