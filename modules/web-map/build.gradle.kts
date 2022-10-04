@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
-import dev.adamko.geedeecee.DockerEnvUpdateTask.Companion.put
+
 
 plugins {
   id("kafkatorio.conventions.lang.kotlin-js")
@@ -75,18 +75,18 @@ kotlin {
         implementation(libs.kotlinx.nodejs)
         implementation(libs.kotlinx.html)
 
-        kvision("kvision")
-        kvision("kvision-bootstrap")
-        kvision("kvision-bootstrap-css")
-        kvision("kvision-bootstrap-icons")
-        kvision("kvision-fontawesome")
-        kvision("kvision-state")
-        kvision("kvision-chart")
-        kvision("kvision-maps")
-        kvision("kvision-rest")
-        kvision("kvision-redux")
-        kvision("kvision-state-flow")
-        kvision("kvision-routing-navigo-ng")
+        implementation(kvision())
+        implementation(kvision("bootstrap"))
+        implementation(kvision("bootstrap-css"))
+        implementation(kvision("bootstrap-icons"))
+        implementation(kvision("fontawesome"))
+        implementation(kvision("state"))
+        implementation(kvision("chart"))
+        implementation(kvision("maps"))
+        implementation(kvision("rest"))
+        implementation(kvision("redux"))
+        implementation(kvision("state-flow"))
+        implementation(kvision("routing-navigo-ng"))
       }
 
       resources.srcDir("src/main/web")
@@ -97,7 +97,7 @@ kotlin {
       dependencies {
         implementation(kotlin("test"))
 
-        kvision("kvision-testutils")
+        implementation(kvision("testutils"))
         //        implementation(npm("karma", "^6.3.16"))
       }
     }
@@ -105,28 +105,14 @@ kotlin {
 }
 
 
+@Suppress("UnusedReceiverParameter") // just for scoping - this function doesn't need to be used everywhere
 fun KotlinDependencyHandler.kvision(
-  module: String,
+  module: String? = null,
   version: Provider<String> = libs.versions.kvision,
-  configure: ExternalModuleDependency.() -> Unit = {
-//    isChanging = true
-  }
-) {
-  implementation("io.kvision:$module:${version.get()}", configure)
+): String {
+  val prefixedModule = if (module == null) "kvision" else "kvision-$module"
+  return "io.kvision:$prefixedModule:${version.get()}"
 }
-
-geedeecee {
-  srcDir.set(layout.projectDirectory.dir("docker"))
-}
-
-tasks.dockerComposeEnvUpdate {
-  envProperties {
-    put("KAFKATORIO_VERSION" to project.version.toString())
-    put("REGISTRY_HOST" to "dcr.adamko.dev:5000")
-  }
-}
-
-tasks.assemble { dependsOn(tasks.dockerComposeEnvUpdate) }
 
 
 val installThemeCss by tasks.registering(Copy::class) {

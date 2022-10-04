@@ -87,3 +87,7 @@ val runSyslogServer by tasks.registering {
   group = rootProject.name
   dependsOn(tasks.run)
 }
+
+tasks.dockerComposeBuild {
+  dependsOn(tasks.distTar)
+}

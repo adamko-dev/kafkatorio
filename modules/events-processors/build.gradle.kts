@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("kafkatorio.conventions.lang.kotlin-jvm")
+  id("dev.adamko.geedeecee")
   kotlin("plugin.serialization")
   application
 }
@@ -75,7 +76,6 @@ tasks.withType<KotlinCompile>().configureEach {
 //}
 
 tasks.named("run") {
-
   val kafkaStateDir: Directory = layout.projectDirectory.dir(".state/kafka/")
 
   doFirst {
@@ -88,4 +88,8 @@ val runEventsProcessors by tasks.registering {
   group = rootProject.name
 
   dependsOn(tasks.run)
+}
+
+tasks.dockerComposeBuild {
+  dependsOn(tasks.distTar)
 }
