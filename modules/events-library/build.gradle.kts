@@ -2,11 +2,12 @@ import kafkatorio.tasks.GenerateTypeScriptTask
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import dev.adamko.gradle.factorio.typescriptAttributes
 
 
 plugins {
   id("kafkatorio.conventions.lang.kotlin-multiplatform")
-  id("dev.adamko.factorio-mod") // only needed for 'attributes' - need to split up the mod?
+  id("dev.adamko.factorio-mod") apply false // only needed for 'attributes' - need to split up the plugin?
   kotlin("plugin.serialization")
   distribution
 }

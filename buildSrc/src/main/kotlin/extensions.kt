@@ -18,8 +18,8 @@ fun Configuration.asConsumer() {
   isCanBeResolved = true
   isCanBeConsumed = false
 }
-
-fun Configuration.typescriptAttributes(objects: ObjectFactory): Configuration =
-  attributes {
-    attribute(Usage.USAGE_ATTRIBUTE, objects.named("dev.adamko.gradle.factorio.typescriptFiles"))
-  }
+//
+//fun Configuration.typescriptAttributes(objects: ObjectFactory): Configuration =
+//  attributes {
+//    attribute(Usage.USAGE_ATTRIBUTE, objects.named("dev.adamko.gradle.factorio.typescriptFiles"))
+//  }
