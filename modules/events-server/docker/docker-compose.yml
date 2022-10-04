@@ -3,8 +3,8 @@ version: "3.9"
 services:
 
   events-server:
-    image: ${REGISTRY_HOST}/dev.adamko.kafkatorio/events-server:${KAFKATORIO_VERSION}
-    container_name: events-server
+    image: ${REGISTRY_HOST}/${APP_GROUP}/${APP_NAME}:${KAFKATORIO_VERSION}
+    container_name: ${APP_NAME}
     restart: unless-stopped
     build:
       context: ..
@@ -12,6 +12,7 @@ services:
       args:
         KAFKATORIO_VERSION: ${KAFKATORIO_VERSION}
         DIST_DIR: "./build/distributions/"
+        APP_NAME: ${APP_NAME}
     environment:
       KAFKA_BOOTSTRAP_SERVERS: "http://kafka:29092"
       # KAFKA_STREAMS_STATE_DIR: ""

@@ -16,6 +16,7 @@ tasks.dockerComposeEnvUpdate {
     put("KAFKA_DL_URL", libs.versions.kafka.map { ver ->
       "https://dlcdn.apache.org/kafka/$ver/kafka_2.13-$ver.tgz"
     })
+    put("APP_NAME", "kafka-kraft")
   }
 
   // Limit JVM Heap Size

@@ -3,6 +3,7 @@
 FROM eclipse-temurin:11-jdk-jammy
 ARG KAFKATORIO_VERSION=0.5.1
 ARG DIST_DIR="../build/distributions/"
+ARG APP_NAME="events-server-web"
 
 WORKDIR /app
 

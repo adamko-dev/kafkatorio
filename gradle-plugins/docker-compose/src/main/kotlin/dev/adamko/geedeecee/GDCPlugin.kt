@@ -83,6 +83,8 @@ abstract class GDCPlugin @Inject constructor(
       srcDir.convention(layout.projectDirectory.dir("docker"))
 
       dotEnv.put("COMPOSE_PROJECT_NAME", composeProjectName)
+      dotEnv.put("APP_NAME", providers.provider { project.name })
+      dotEnv.put("APP_GROUP", providers.provider { project.group.toString() })
       dotEnv.put("PROJECT_VERSION", composeProjectVersion)
       dotEnv.put("KAFKATORIO_VERSION", composeProjectVersion)
       dotEnv.put("REGISTRY_HOST", containerRegistryHost)

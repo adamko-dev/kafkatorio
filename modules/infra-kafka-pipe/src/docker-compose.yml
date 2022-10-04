@@ -2,11 +2,13 @@ version: "3.9"
 
 services:
   kafka-pipe:
-    image: ${REGISTRY_HOST}/dev.adamko.kafkatorio/kafka-pipe/${KAFKATORIO_VERSION}
-    container_name: "kafka-pipe"
+    image: ${REGISTRY_HOST}/${APP_GROUP}/${APP_NAME}:${KAFKATORIO_VERSION}
+    container_name: ${APP_NAME}
     build:
       dockerfile: "kafka-pipe.Dockerfile"
       context: "."
+      args:
+        APP_NAME: ${APP_NAME}
     restart: "unless-stopped"
     privileged: true
     networks:

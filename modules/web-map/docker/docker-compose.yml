@@ -3,12 +3,14 @@ version: "3.9"
 services:
 
   kafkatorio-web-map:
-    image: ${REGISTRY_HOST}/dev.adamko.kafkatorio/web-map:${KAFKATORIO_VERSION}
-    container_name: kafkatorio-web-map
+    image: ${REGISTRY_HOST}/${APP_GROUP}/${APP_NAME}:${KAFKATORIO_VERSION}
+    container_name: ${APP_NAME}
     restart: unless-stopped
     build:
       context: ".."
       dockerfile: ./docker/Dockerfile
+      args:
+        APP_NAME: ${APP_NAME}
     ports:
       - "12081:80"
     networks:
