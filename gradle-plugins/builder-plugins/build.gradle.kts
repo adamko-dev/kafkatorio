@@ -25,14 +25,23 @@ dependencies {
   implementation(platform(libs.kotest.bom))
   implementation("io.kotest:kotest-framework-multiplatform-plugin-gradle")
 
-  implementation("io.kvision:io.kvision.gradle.plugin:${libs.versions.kvision.get()}")
+  implementation(libs.gradlePlugin.kvision)
 
-  implementation("net.swiftzer.semver:semver:${libs.versions.semver.get()}")
+  implementation(libs.semver)
 
   implementation(platform(libs.okio.bom))
   implementation(libs.okio.core)
 
   implementation(libs.kotlinx.cli)
+}
+
+
+tasks.withType<KotlinCompile>().configureEach {
+  kotlinOptions.freeCompilerArgs += listOf(
+    "-opt-in=kotlin.ExperimentalStdlibApi",
+    "-opt-in=kotlin.time.ExperimentalTime",
+    "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
+  )
 }
 
 //val gradleJvmTarget = "11"
