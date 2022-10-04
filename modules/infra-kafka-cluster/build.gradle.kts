@@ -1,4 +1,5 @@
 plugins {
+  id("kafkatorio.conventions.base")
   id("dev.adamko.geedeecee")
 }
 

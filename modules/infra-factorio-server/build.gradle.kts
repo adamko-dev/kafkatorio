@@ -1,9 +1,15 @@
 import dev.adamko.gradle.factorio.FactorioModPlugin
 
 plugins {
+  id("kafkatorio.conventions.base")
   id("dev.adamko.geedeecee")
   id("dev.adamko.factorio-mod")
   idea
+}
+
+
+geedeecee {
+  srcDir.set(layout.projectDirectory.dir("src"))
 }
 
 
@@ -62,8 +68,8 @@ tasks.dockerComposeEnvUpdate {
   envProperties.put("FACTORIO_VERSION", libs.versions.factorio)
   envProperties.put("KAFKATORIO_TOKEN", kafkatorioServerToken)
   envProperties {
-    put("FACTORIO_VERSION" , libs.versions.factorio)
-    put("KAFKATORIO_TOKEN" , kafkatorioServerToken)
+    put("FACTORIO_VERSION", libs.versions.factorio)
+    put("KAFKATORIO_TOKEN", kafkatorioServerToken)
   }
 }
 

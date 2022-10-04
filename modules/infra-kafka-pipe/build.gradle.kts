@@ -1,6 +1,7 @@
 import dev.adamko.geedeecee.DockerComposeExec
 
 plugins {
+  id("kafkatorio.conventions.base")
   id("dev.adamko.geedeecee")
 }
 
