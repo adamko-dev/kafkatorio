@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 FROM docker:dind-rootless
 
 ENV FACTORIO_SERVER_CONTAINER_NAME="factorio-server"

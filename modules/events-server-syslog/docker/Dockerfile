@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 FROM openjdk:11
 ARG KAFKATORIO_VERSION
 ARG DIST_DIR="../build/distributions/"

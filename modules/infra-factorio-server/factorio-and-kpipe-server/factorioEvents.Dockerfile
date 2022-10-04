@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 ARG factorioVersion=1.1.42
 
 
