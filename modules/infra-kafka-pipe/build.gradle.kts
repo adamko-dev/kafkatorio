@@ -7,6 +7,10 @@ plugins {
 description = "Send events from a Factorio server to a Kafka topic "
 
 
+geedeecee {
+  srcDir.set(layout.projectDirectory.dir("src"))
+}
+
 //val dockerSrcDir: Directory by extra
 
 tasks.dockerComposeUp {

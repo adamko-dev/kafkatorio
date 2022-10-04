@@ -57,6 +57,10 @@ abstract class GDCPlugin @Inject constructor(
     dockerComposeUp.configure { dependsOn(dockerComposeBuild) }
     dockerComposeRemove.configure { dependsOn(dockerComposeDown) }
 
+    target.tasks.withType<DockerComposeExec>().configureEach {
+      dependsOn(dockerComposeEnvUpdate)
+    }
+
     target.tasks.withType<GDCCommandTask>().configureEach {
       workingDir.convention(gdcSettings.srcDir)
       dependsOn(dockerComposeEnvUpdate)
