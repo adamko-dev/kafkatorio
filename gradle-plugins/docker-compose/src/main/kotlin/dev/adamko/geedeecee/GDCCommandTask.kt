@@ -2,9 +2,11 @@ package dev.adamko.geedeecee
 
 import javax.inject.Inject
 import org.gradle.api.DefaultTask
+import org.gradle.api.Task
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.TaskAction
@@ -15,18 +17,25 @@ abstract class GDCCommandTask @Inject constructor(
   private val executor: ExecOperations
 ) : DefaultTask() {
 
-  init {
-    super.setGroup(GDCPlugin.GCD_TASK_GROUP)
-    description = "Run a docker-compose command."
-
-    logging.captureStandardOutput(LogLevel.LIFECYCLE)
-  }
-
   @get:InputDirectory
   abstract val workingDir: DirectoryProperty
 
   @get:Input
   abstract val separatedArgs: ListProperty<String>
+
+  @get:Input
+  abstract val dockerActive: Property<Boolean>
+
+  init {
+    super.setGroup(GDCPlugin.GCD_TASK_GROUP)
+    description = "Run a docker-compose command."
+
+    enabledIf {
+      it.dockerActive.orNull == true
+    }
+
+    logging.captureStandardOutput(LogLevel.LIFECYCLE)
+  }
 
   @TaskAction
   fun dockerCompose() {
@@ -44,5 +53,14 @@ abstract class GDCCommandTask @Inject constructor(
     separatedArgs.addAll(
       parseSpaceSeparatedArgs("docker-compose $args")
     )
+  }
+
+  companion object {
+    private inline fun <reified T: Task> T.enabledIf(crossinline spec: (T) -> Boolean) {
+      onlyIf {
+        require(it is T)
+        spec(it)
+      }
+    }
   }
 }

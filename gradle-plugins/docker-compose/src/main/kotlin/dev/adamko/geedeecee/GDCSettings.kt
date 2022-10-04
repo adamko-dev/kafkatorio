@@ -24,7 +24,7 @@ interface GDCSettings {
   val dotEnv: MapProperty<String, String>
 
   @get:Input
-  val enabled: Property<Boolean>
+  val dockerActive: Property<Boolean>
 
 //  @Suppress("PropertyName", "FunctionName")
 //  abstract class DotEnv(

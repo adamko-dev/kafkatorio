@@ -60,6 +60,7 @@ abstract class GDCPlugin @Inject constructor(
     target.tasks.withType<GDCCommandTask>().configureEach {
       workingDir.convention(gdcSettings.srcDir)
       dependsOn(dockerComposeEnvUpdate)
+      dockerActive.set(gdcSettings.dockerActive)
     }
 
     val assembleTasks = target.tasks.matching { LifecycleBasePlugin.ASSEMBLE_TASK_NAME == it.name }
@@ -89,7 +90,7 @@ abstract class GDCPlugin @Inject constructor(
       dotEnv.put("KAFKATORIO_VERSION", composeProjectVersion)
       dotEnv.put("REGISTRY_HOST", containerRegistryHost)
 
-      enabled.convention(isDockerActive())
+      dockerActive.convention(isDockerActive())
     }
 
 
