@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
 
-  events-server:
+  events-processors:
     image: ${REGISTRY_HOST}/${APP_GROUP}/${APP_NAME}:${KAFKATORIO_VERSION}
     container_name: ${APP_NAME}
     restart: unless-stopped

@@ -138,3 +138,7 @@ val runWebMap by tasks.registering {
 
   dependsOn(tasks.matching { it.name == "browserDevelopmentRun" })
 }
+
+tasks.dockerComposeBuild {
+  dependsOn(tasks.zip)
+}

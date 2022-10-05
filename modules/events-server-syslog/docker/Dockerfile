@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM openjdk:11
+FROM eclipse-temurin:11-jdk-jammy
 ARG KAFKATORIO_VERSION
 ARG DIST_DIR="../build/distributions/"
 ARG APP_NAME="events-server-syslog"

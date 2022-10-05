@@ -3,24 +3,18 @@
 FROM eclipse-temurin:11-jdk-jammy
 ARG KAFKATORIO_VERSION=0.5.1
 ARG DIST_DIR="../build/distributions/"
-ARG APP_NAME="events-server-web"
+ARG APP_NAME="events-processors"
 
 WORKDIR /app
-
-ENV WEB_SERVER_PORT=8080
-EXPOSE $WEB_SERVER_PORT
-
-ENV SOCKET_SERVER_PORT=9002
-EXPOSE $SOCKET_SERVER_PORT
 
 ENV SERVER_DATA_DIR="/app/data"
 ENV KAFKA_STREAMS_STATE_DIR="/app/state/kafka"
 VOLUME ${SERVER_DATA_DIR} \
        ${KAFKA_STREAMS_STATE_DIR}
 
-COPY ${DIST_DIR}/events-server-${KAFKATORIO_VERSION}.tar events-server.tar
+COPY ${DIST_DIR}/${APP_NAME}-${KAFKATORIO_VERSION}.tar ${APP_NAME}.tar
 
-RUN tar -xf events-server.tar --strip-components=1 \
- && rm events-server.tar
+RUN tar -xf ${APP_NAME}.tar --strip-components=1 \
+ && rm ${APP_NAME}.tar
 
-ENTRYPOINT /app/bin/events-server
+ENTRYPOINT /app/bin/${APP_NAME}
