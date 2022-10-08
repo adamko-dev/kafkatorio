@@ -14,8 +14,12 @@ dependencies {
   // get polluted and messy.
 
   implementation("org.gradle.kotlin:gradle-kotlin-dsl-plugins:$expectedKotlinDslPluginsVersion")
-//  implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${embeddedKotlinVersion}")
   implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${libs.versions.kotlin.get()}")
+
+  implementation(platform(libs.kotlin.bom))
+  implementation("org.jetbrains.kotlin:kotlin-serialization")
+
+  implementation(platform(libs.kotlinx.coroutines.bom))
 }
 
 kotlin {

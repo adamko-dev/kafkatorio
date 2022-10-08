@@ -3,10 +3,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("kafkatorio.conventions.kotlin-dsl")
+  id("kafkatorio.conventions.kotlin-serialization")
 //  idea
 //  `kotlin-dsl`
 //  kotlin("jvm") //version  "1.7.20" // embeddedKotlinVersion
-  kotlin("plugin.serialization") version  embeddedKotlinVersion
+//  kotlin("plugin.serialization") // version  embeddedKotlinVersion
 //  kotlin("plugin.serialization") version "1.7.20"
 }
 

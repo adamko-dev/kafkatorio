@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("kafkatorio.conventions.kotlin-dsl")
-  kotlin("plugin.serialization") version embeddedKotlinVersion
+  id("kafkatorio.conventions.kotlin-serialization")
 }
 
 
@@ -61,7 +61,7 @@ gradlePlugin {
 }
 
 
-overrideKotlinLanguageVersion("1.6")
+overrideKotlinLanguageVersion("1.7")
 
 //val gradleKotlinTarget = "1.7"
 //
@@ -73,3 +73,13 @@ overrideKotlinLanguageVersion("1.6")
 //    }
 //  }
 //}
+
+
+tasks.withType<KotlinCompile>().configureEach {
+  kotlinOptions.freeCompilerArgs += listOf(
+    "-opt-in=kotlin.RequiresOptIn",
+    "-opt-in=kotlin.ExperimentalStdlibApi",
+    "-opt-in=kotlin.time.ExperimentalTime",
+    "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+  )
+}
