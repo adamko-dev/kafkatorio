@@ -20,6 +20,7 @@ COPY ${DIST_DIR}/${APP_NAME}-${KAFKATORIO_VERSION}.tar ${APP_NAME}.tar
 
 RUN tar -xf ${APP_NAME}.tar --strip-components=1 \
  && rm ${APP_NAME}.tar \
- && chmod +x /app/bin/${APP_NAME}
+ && cp /app/bin/${APP_NAME} /app/bin/run \
+ && chmod 775 /app/bin/run
 
-ENTRYPOINT /app/bin/${APP_NAME}
+ENTRYPOINT /app/bin/run
