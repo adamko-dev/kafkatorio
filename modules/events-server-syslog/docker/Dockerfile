@@ -19,6 +19,7 @@ VOLUME ${SERVER_DATA_DIR} \
 COPY ${DIST_DIR}/${APP_NAME}-${KAFKATORIO_VERSION}.tar ${APP_NAME}.tar
 
 RUN tar -xf ${APP_NAME}.tar --strip-components=1 \
- && rm ${APP_NAME}.tar
+ && rm ${APP_NAME}.tar \
+ && chmod +x /app/bin/${APP_NAME}
 
 ENTRYPOINT /app/bin/${APP_NAME}
