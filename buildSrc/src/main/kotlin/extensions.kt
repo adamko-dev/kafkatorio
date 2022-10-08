@@ -1,7 +1,6 @@
+import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.attributes.Usage
-import org.gradle.api.model.ObjectFactory
-import org.gradle.kotlin.dsl.named
+import org.gradle.api.tasks.TaskCollection
 
 // to be moved into gradle-plugins/builder-plugins...
 
@@ -23,3 +22,7 @@ fun Configuration.asConsumer() {
 //  attributes {
 //    attribute(Usage.USAGE_ATTRIBUTE, objects.named("dev.adamko.gradle.factorio.typescriptFiles"))
 //  }
+
+
+fun <T : Task> TaskCollection<T>.withName(name: String): TaskCollection<T> =
+  matching { it.name == name }

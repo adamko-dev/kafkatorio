@@ -128,7 +128,7 @@ val installThemeCss by tasks.registering(Copy::class) {
 }
 
 
-tasks.matching { it.name == "processResources" }.configureEach {
+tasks.withName("processResources").configureEach {
   dependsOn(installThemeCss)
 }
 
@@ -136,8 +136,15 @@ tasks.matching { it.name == "processResources" }.configureEach {
 val runWebMap by tasks.registering {
   group = rootProject.name
 
-  dependsOn(tasks.matching { it.name == "browserDevelopmentRun" })
+  dependsOn(tasks.withName("browserDevelopmentRun"))
+
 }
+
+
+tasks.zip {
+  dependsOn(tasks.withName("browserDistribution"))
+}
+
 
 tasks.dockerComposeBuild {
   dependsOn(tasks.zip)
