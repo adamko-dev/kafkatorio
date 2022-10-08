@@ -13,8 +13,9 @@ import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.StreamsConfig
 
+internal val appProps = ApplicationProperties.load()
+
 suspend fun main(): Unit = coroutineScope {
-  val appProps = ApplicationProperties.load()
   val wsServer = WebmapWebsocketServer()
 
   launch {
@@ -45,10 +46,13 @@ private suspend fun websocketBroadcaster(wsServer: WebmapWebsocketServer) {
   val topology = builder.build()
 
   launchTopology(
-    "websocketBroadcaster", topology, mapOf(
+    id = "websocketBroadcaster",
+    topology = topology,
+    additionalProperties = mapOf(
       StreamsConfig.COMMIT_INTERVAL_MS_CONFIG to "${1.seconds.inWholeMilliseconds}",
-      StreamsConfig.producerPrefix(ProducerConfig.LINGER_MS_CONFIG) to "${1.milliseconds.inWholeMilliseconds}"
-    )
+      StreamsConfig.producerPrefix(ProducerConfig.LINGER_MS_CONFIG) to "${1.milliseconds.inWholeMilliseconds}",
+    ),
+    appProps = appProps,
   )
 }
 
@@ -57,5 +61,9 @@ private suspend fun saveTiles(
 ) {
   val builder = StreamsBuilder()
   saveMapTiles(builder, appProps.serverDataDir)
-  launchTopology("saveTiles", builder.build())
+  launchTopology(
+    id = "saveTiles",
+    topology = builder.build(),
+    appProps = appProps
+  )
 }

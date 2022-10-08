@@ -9,7 +9,7 @@ import dev.adamko.kafkatorio.schema.common.FactorioServerToken
 import dev.adamko.kafkatorio.schema.common.MaskedValue
 import java.nio.file.Path
 
-val appProps = ApplicationProperties.load()
+internal val appProps = ApplicationProperties.load()
 
 data class ApplicationProperties(
   val webPort: PortVal,
