@@ -82,7 +82,7 @@ abstract class GDCPlugin @Inject constructor(
 
   private fun Project.createSettings(): GDCSettings =
     extensions.create<GDCSettings>(GDC_EXTENSION_NAME).apply {
-      composeProjectName.convention(providers.provider { project.name })
+      composeProjectName.convention(providers.provider { rootProject.name })
       composeProjectVersion.convention(providers.provider { project.version.toString() })
       containerRegistryHost.convention(providers.gradleProperty("dockerContainerRegistryHost"))
       srcDir.convention(layout.projectDirectory.dir("docker"))
