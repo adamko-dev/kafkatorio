@@ -1,5 +1,6 @@
 package dev.adamko.kafkatorio.processors
 
+import dev.adamko.kafkatorio.processor.config.ApplicationProperties
 import dev.adamko.kafkatorio.processor.core.launchTopology
 import dev.adamko.kafkatorio.schema.common.FactorioServerId
 import dev.adamko.kafkatorio.schema.common.PrototypeHashCode
@@ -22,6 +23,7 @@ suspend fun groupEntitiesMapChunks(
   layer: ServerMapTileLayer,
   colouredUpdatesStreamTopic: String,
   colouredChunkStateTopic: String,
+  appProps: ApplicationProperties = ApplicationProperties.load(),
 ) {
   val builder = StreamsBuilder()
 
@@ -50,5 +52,5 @@ suspend fun groupEntitiesMapChunks(
     colouredChunkStateTopic,
   )
 
-  launchTopology("groupTilesMapChunks.${layer.dir}", topology)
+  launchTopology("groupTilesMapChunks.${layer.dir}", topology, appProps = appProps)
 }

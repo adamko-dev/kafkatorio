@@ -10,6 +10,9 @@ import kotlinx.coroutines.launch
 
 
 suspend fun main(): Unit = coroutineScope {
+
+  createTopics()
+
   launch {
     splitPackets()
   }

@@ -1,5 +1,6 @@
 package dev.adamko.kafkatorio.processors
 
+import dev.adamko.kafkatorio.processor.config.ApplicationProperties
 import dev.adamko.kafkatorio.processor.core.launchTopology
 import dev.adamko.kafkatorio.schema.common.FactorioServerId
 import dev.adamko.kafkatorio.schema.common.ServerMapTileLayer
@@ -11,7 +12,9 @@ import org.apache.kafka.streams.kstream.KStream
 
 
 /** Terrain tiles */
-suspend fun groupTilesMapChunks() {
+suspend fun groupTilesMapChunks(
+  appProps: ApplicationProperties = ApplicationProperties.load(),
+) {
   val builder = StreamsBuilder()
 
   val protosStream: KStream<FactorioServerId, PrototypesUpdate> =
@@ -19,5 +22,9 @@ suspend fun groupTilesMapChunks() {
 
   val topology = colourMapChunks(builder, protosStream)
 
-  launchTopology("groupTilesMapChunks.${ServerMapTileLayer.TERRAIN.dir}", topology)
+  launchTopology(
+    id = "groupTilesMapChunks.${ServerMapTileLayer.TERRAIN.dir}",
+    topology = topology,
+    appProps = appProps
+  )
 }

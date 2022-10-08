@@ -18,12 +18,12 @@ import org.apache.kafka.streams.Topology
 import org.apache.kafka.streams.TopologyDescription
 
 
-private val appProps = ApplicationProperties.load()
 
 suspend fun launchTopology(
   id: String,
   topology: Topology,
   additionalProperties: Map<String, String> = mapOf(),
+  appProps: ApplicationProperties,
 ): Unit = coroutineScope {
 
   val props: Properties = appProps.kafkaStreamsConfig.toProperties()
