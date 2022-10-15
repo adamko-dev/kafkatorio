@@ -18,5 +18,10 @@ tasks.withType<WriteProperties>().configureEach {
 
 
 tasks.withType<AbstractArchiveTask>().configureEach {
-  exclude("**/.secret.*")
+  exclude(
+    "**/.secret.*",
+    "**/.env",
+  )
+  isPreserveFileTimestamps = false
+  isReproducibleFileOrder = true
 }
