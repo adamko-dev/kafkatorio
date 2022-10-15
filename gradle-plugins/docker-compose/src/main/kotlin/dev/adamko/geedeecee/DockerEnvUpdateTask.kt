@@ -16,6 +16,9 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
 
+/**
+ * (Based on [org.gradle.api.tasks.WriteProperties], but updated to use [MapProperty])
+ */
 @CacheableTask
 abstract class DockerEnvUpdateTask @Inject constructor(
 ) : DefaultTask() {
