@@ -7,6 +7,7 @@ import com.github.palindromicity.syslog.NilPolicy
 import com.github.palindromicity.syslog.SyslogParser
 import com.github.palindromicity.syslog.SyslogParserBuilder
 import com.github.palindromicity.syslog.SyslogSpecification
+import com.github.palindromicity.syslog.dsl.ParseException
 import dev.adamko.kafkatorio.processor.config.ApplicationProperties
 import io.ktor.network.selector.SelectorManager
 import io.ktor.network.sockets.Socket
@@ -83,16 +84,23 @@ class SyslogSocketServer(
           "received 'null' line from ${socket.description()}"
         }
 
-        val syslog = SyslogMsg(syslogParser.parseLine(line))
-        _messages.emit(syslog)
+        try {
+          val syslog = SyslogMsg(syslogParser.parseLine(line))
+          _messages.emit(syslog)
+        } catch (ex: ParseException) {
+          log("ignoring non-syslog message: $line")
+        }
 
         yield()
       }
     } catch (e: Throwable) {
-      if (e is CancellationException) throw e
-      log("closing socket ${socket.description()}, cause: ${e::class.java.name} ${e.message}")
-      e.printStackTrace()
       withContext(Dispatchers.IO) { socket.close() }
+      if (e is CancellationException) {
+        throw e
+      } else {
+        log("closing socket ${socket.description()}, cause: ${e::class.java.name} ${e.message}")
+        e.printStackTrace()
+      }
     }
   }
 

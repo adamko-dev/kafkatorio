@@ -2,11 +2,11 @@ package dev.adamko.kafkatorio.processor.syslog
 
 import com.github.palindromicity.syslog.dsl.SyslogFieldKeys
 import dev.adamko.kafkatorio.processor.config.ApplicationProperties
+import dev.adamko.kafkatorio.processor.config.TOPIC_SRC_SERVER_LOG
+import dev.adamko.kafkatorio.processor.config.TOPIC_SRC_SERVER_LOG_DLQ
 import dev.adamko.kafkatorio.processor.core.Authenticator
 import dev.adamko.kafkatorio.processor.syslog.config.jsonMapper
 import dev.adamko.kafkatorio.schema.common.FactorioServerId
-import dev.adamko.kafkatorio.processor.config.TOPIC_SRC_SERVER_LOG
-import dev.adamko.kafkatorio.processor.config.TOPIC_SRC_SERVER_LOG_DLQ
 import dev.adamko.kotka.kxs.kafkaSerializer
 import java.util.Properties
 import kotlin.coroutines.coroutineContext
@@ -56,6 +56,8 @@ class KafkatorioPacketKafkaProducer(
 
   suspend fun launch() {
     coroutineContext.job.invokeOnCompletion {
+      val cause = if (it != null) "(cause: ${it::class.java.name} ${it.message})" else ""
+      log("Closing $cause")
       this@KafkatorioPacketKafkaProducer.close()
     }
 
