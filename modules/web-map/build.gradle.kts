@@ -1,3 +1,4 @@
+import io.kvision.gradle.KVisionPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
@@ -115,7 +116,8 @@ fun KotlinDependencyHandler.kvision(
 }
 
 
-val installThemeCss by tasks.registering(Copy::class) {
+val installBootstrapThemeCss by tasks.registering(Copy::class) {
+  group = KVisionPlugin.KVISION_TASK_GROUP
   val bootswatchThemeMinCss = resources.text.fromUri(
     libs.versions.npm.bootswatch.map { bootswatch ->
       "https://cdn.jsdelivr.net/npm/bootswatch@$bootswatch/dist/darkly/bootstrap.min.css"
@@ -129,7 +131,7 @@ val installThemeCss by tasks.registering(Copy::class) {
 
 
 tasks.withName("processResources").configureEach {
-  dependsOn(installThemeCss)
+  dependsOn(installBootstrapThemeCss)
 }
 
 
