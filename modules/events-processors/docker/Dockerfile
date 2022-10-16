@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 FROM eclipse-temurin:11-jdk-jammy
-ARG KAFKATORIO_VERSION=0.5.1
+ARG KAFKATORIO_VERSION
 ARG DIST_DIR="../build/distributions/"
 ARG APP_NAME="events-processors"
 
