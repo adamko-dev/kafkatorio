@@ -28,10 +28,24 @@ export class KafkatorioPacketEmitter {
   private static emitPacket<T extends KafkatorioPacket>(packet: T) {
     const data = game.table_to_json(packet)
     // print(`KafkatorioPacket::: ${data}`)
-    const encoded = game.encode_string(data)
-    print(`KafkatorioPacket encoded::: ${encoded}`)
-    // rcon.print(`KafkatorioPacket: ${data}`)
+    const encodedData = game.encode_string(data)
+    if (encodedData != null) {
+      print(`KafkatorioPacket encoded::: ${encodedData}`)
+      // rcon.print(`KafkatorioPacket: ${data}`)
+      // this.appendToFile(encodedData)
+    }
   }
+
+  // private static appendToFile(encodedData: string) {
+  //   // change log files every hour:
+  //   const perHour = game.tick / (60 * 60 * 60)
+  //   game.write_file(
+  //       `kafkatorio/packets_${perHour}.txt`,
+  //       `${encodedData}\n`,
+  //       true,
+  //       0, // server only
+  //   )
+  // }
 
 }
 
