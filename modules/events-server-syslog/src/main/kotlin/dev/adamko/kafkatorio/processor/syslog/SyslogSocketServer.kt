@@ -16,12 +16,12 @@ import io.ktor.utils.io.readUTF8Line
 import java.util.EnumSet
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
 
@@ -56,52 +56,46 @@ class SyslogSocketServer(
     get() = _messages.asSharedFlow()
 
 
-  suspend fun start(): Unit = coroutineScope {
+  suspend fun start(): Unit = withContext(Dispatchers.IO) {
     log("started listening: ${serverSocketTcp.localAddress}")
 
     while (isActive) {
       val socket: Socket = serverSocketTcp.accept()
-      log("new socket ${socket.description()}")
-
       launch {
-        val channel = socket.openReadChannel()
-        try {
-          while (socket.socketContext.isActive && !channel.isClosedForRead) {
-            val line = runCatching {
-              channel.readUTF8Line()
-            }.fold(
-              onSuccess = { line ->
-                if (line == null) {
-                  log("received 'null' from ${socket.description()} - closing connection")
-                  socket.close()
-                }
-                // log("received '$line' from ${socket.description()}")
-                line
-              },
-              onFailure = { ex ->
-                if (ex is CancellationException) throw ex
-
-                log("reading line from socket failed ${socket.description()}, cause: $ex")
-                null
-              },
-            )
-            if (line != null) {
-              val syslog = SyslogMsg(syslogParser.parseLine(line))
-              _messages.emit(syslog)
-            }
-            yield()
-          }
-        } catch (e: Exception) {
-          if (e is CancellationException) throw e
-          log("closing socket ${socket.description()}, cause: ${e::class.java.name} ${e.message}")
-          e.printStackTrace()
-          withContext(Dispatchers.IO) { socket.close() }
-        }
+        log("new socket ${socket.description()}")
+        handleConnection(socket)
       }
-
       yield()
     }
   }
+
+
+  private suspend fun handleConnection(
+    socket: Socket
+  ) = supervisorScope {
+    try {
+      val channel = socket.openReadChannel()
+      while (socket.socketContext.isActive && !channel.isClosedForRead) {
+
+        val line = channel.readUTF8Line()
+
+        requireNotNull(line) {
+          "received 'null' line from ${socket.description()}"
+        }
+
+        val syslog = SyslogMsg(syslogParser.parseLine(line))
+        _messages.emit(syslog)
+
+        yield()
+      }
+    } catch (e: Throwable) {
+      if (e is CancellationException) throw e
+      log("closing socket ${socket.description()}, cause: ${e::class.java.name} ${e.message}")
+      e.printStackTrace()
+      withContext(Dispatchers.IO) { socket.close() }
+    }
+  }
+
 
   companion object {
     private fun log(msg: String) = println("[SyslogSocketServer] $msg")
