@@ -101,9 +101,26 @@ class KafkatorioPacketKafkaProducer(
     serverId: FactorioServerId,
     syslog: SyslogMsg,
   ) {
-    val kafkatorioMessage = syslog.message?.substringAfter(":::")
+    val syslogMessage = syslog.message?.trim()
 
-    val record = ProducerRecord<FactorioServerId, String>(
+    if (syslogMessage.isNullOrBlank()) {
+      // ignore blank messages
+      return
+    }
+
+    if (!syslogMessage.startsWith(KAFKATORIO_MESSAGE_TAG)) {
+      // ignore non-Kafkatorio message
+      return
+    }
+
+    val kafkatorioMessage = syslogMessage.substringAfter(KAFKATORIO_MESSAGE_TAG)
+
+    if (kafkatorioMessage.isBlank()) {
+      produceDlqMessage(syslog, "error - Kafkatorio message was blank $syslogMessage")
+      return
+    }
+
+    val record = ProducerRecord(
       TOPIC_SRC_SERVER_LOG,
       serverId,
       kafkatorioMessage,
@@ -136,6 +153,9 @@ class KafkatorioPacketKafkaProducer(
 
 
   companion object {
+    private const val KAFKATORIO_MESSAGE_TAG = "KafkatorioPacket:::"
+
+
     private fun log(msg: String) = println("[KafkatorioPacketKafkaProducer] $msg")
 
 

@@ -26,8 +26,7 @@ import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.kstream.KStream
 
 
-private const val PACKET_TAG = "KafkatorioPacket:::"
-private const val PACKET_ENCODED_TAG = "${PACKET_TAG}encoded:"
+private const val ENCODED_TAG = "encoded:"
 
 
 fun factorioServerPacketStream(
@@ -43,7 +42,7 @@ fun factorioServerPacketStream(
     )
   ).mapValues("decode-packets") { _: FactorioServerId, value: String? ->
 
-    val packet = decodeKafkatorioPacket(value)
+    val packet = decodeKafkatorioPacket(value?.trim())
 
     if (packet.data is KafkatorioPacketDataError) {
       println("error parsing $TOPIC_SRC_SERVER_LOG message: $packet")
@@ -73,20 +72,16 @@ fun splitFactorioServerPacketStream(
 
 private fun decodeKafkatorioPacket(value: String?): KafkatorioPacket = try {
   when {
-    value.isNullOrBlank()                      ->
+    value.isNullOrBlank() ->
       createErrorPacket(message = "null/blank message", rawValue = value)
 
-    value.substringAfter(PACKET_TAG).isBlank() ->
-      createErrorPacket(message = "missing '$PACKET_TAG'", rawValue = value)
-
-    else                                       -> {
-      val packetJson = if (PACKET_ENCODED_TAG in value) {
-        val encodedValue = value.substringAfter(PACKET_ENCODED_TAG)
+    else                  -> {
+      val packetJson = if (value.startsWith(ENCODED_TAG)) {
+        val encodedValue = value.substringAfter(ENCODED_TAG)
         decodeFactorioEncodedString(encodedValue)
       } else {
-        value.substringAfter(PACKET_TAG)
+        value
       }
-
       jsonMapper.decodeFromString(KafkatorioPacket.serializer(), packetJson)
     }
   }
