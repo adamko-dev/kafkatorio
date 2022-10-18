@@ -10,7 +10,6 @@ import dev.adamko.kafkatorio.schema.common.FactorioServerId
 import dev.adamko.kotka.kxs.kafkaSerializer
 import java.util.Properties
 import kotlin.coroutines.coroutineContext
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.onEach
@@ -57,44 +56,41 @@ class KafkatorioPacketKafkaProducer(
   suspend fun launch() {
     coroutineContext.job.invokeOnCompletion {
       val cause = if (it != null) "(cause: ${it::class.java.name} ${it.message})" else ""
-      log("Closing $cause")
+      log("Closing KafkatorioPacketKafkaProducer $cause")
       this@KafkatorioPacketKafkaProducer.close()
     }
 
     syslogServer.messages
       .filter {
         (it.message ?: "").run {
-          startsWith("KafkatorioPacket:::") || startsWith("KafkatorioPacket encoded:::")
+          startsWith("KafkatorioPacket:::")
         }
       }.onEach { syslog ->
-        runCatching {
-          getFactorioServerId(syslog)
-        }.fold(
-          onSuccess = { serverId -> produceMessage(serverId, syslog) },
-          onFailure = { ex ->
-            produceDlqMessage(syslog, "${ex::class.java.name}: ${ex.message}")
-
-            if (ex is CancellationException) throw ex
-          }
-        )
+        val serverId = getFactorioServerId(syslog)
+        if (serverId != null) {
+          produceMessage(serverId, syslog)
+        }
       }.collect()
   }
 
 
-  private fun getFactorioServerId(syslog: SyslogMsg): FactorioServerId {
+  private fun getFactorioServerId(syslog: SyslogMsg): FactorioServerId? {
     val token = syslog.headerAppName
     if (token.isNullOrBlank()) {
-      error("no token in syslog message. msg: ${syslog.src}")
+      produceDlqMessage(syslog, "no token in syslog message. msg: ${syslog.src}")
+      return null
     }
 
     val serverToken = authenticator.verifyJwt(token)
     if (serverToken.isNullOrBlank()) {
-      error("could not decode token $token. msg: ${syslog.src}")
+      produceDlqMessage(syslog, "could not decode token $token. msg: ${syslog.src}")
+      return null
     }
 
     val serverId = appProps.kafkatorioServers[serverToken]
     if (serverId.isNullOrBlank()) {
-      error("no server ID for token $serverToken. msg: ${syslog.src}")
+      produceDlqMessage(syslog, "no server ID for token $serverToken. msg: ${syslog.src}")
+      return null
     }
 
     return serverId
