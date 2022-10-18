@@ -20,7 +20,7 @@ scrimage              = "4.0.32"        # https://github.com/sksamuel/scrimage/r
 semver                = "1.2.0"         # https://github.com/swiftzer/semver/releases
 slf4j                 = "1.7.36"
 
-kotlinx-serialization = "1.4.1"         # https://github.com/Kotlin/kotlinx.serialization/releases
+kotlinx-serialization = "1.4.0"         # https://github.com/Kotlin/kotlinx.serialization/releases
 kxs-charleskornKaml   = "0.44.0"
 kxs-mamoeYamlkt       = "0.12.0"
 kxs-kxsTsGen          = "0.2.1"
@@ -117,8 +117,9 @@ kotlinxSerialization-mamoeYamlkt     = { group = "net.mamoe.yamlkt",     name = 
 kotlinxSerialization-kxsTsGen        = { group = "com.github.adamko-dev.kotlinx-serialization-typescript-generator",  name = "kxs-ts-gen-core", version.ref = "kxs-kxsTsGen"        }
 
 
-kotlinx-coroutines-bom         = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-bom",        version.ref = "kotlinx-coroutines" }
-kotlinx-coroutines-core        = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core"        }
+kotlinx-coroutines-bom         = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-bom",  version.ref = "kotlinx-coroutines" }
+kotlinx-coroutines-core        = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core"  }
+kotlinx-coroutines-jdk8        = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8"  }
 
 kotlinx-html                   = { group = "org.jetbrains.kotlinx", name = "kotlinx-html",                  version.ref = "kotlinx-html"   }
 kotlinx-nodejs                 = { group = "org.jetbrains.kotlinx", name = "kotlinx-nodejs",                version.ref = "kotlinx-nodejs" }
