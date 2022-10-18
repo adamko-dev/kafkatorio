@@ -1,12 +1,12 @@
 package dev.adamko.kafkatorio.server.processor.topology
 
+import dev.adamko.kafkatorio.processor.config.TOPIC_SRC_SERVER_LOG
+import dev.adamko.kafkatorio.processor.config.jsonMapper
+import dev.adamko.kafkatorio.processor.config.topicName
 import dev.adamko.kafkatorio.schema.common.FactorioServerId
 import dev.adamko.kafkatorio.schema.common.Tick
 import dev.adamko.kafkatorio.schema.packets.KafkatorioPacket
 import dev.adamko.kafkatorio.schema.packets.KafkatorioPacketDataError
-import dev.adamko.kafkatorio.processor.config.TOPIC_SRC_SERVER_LOG
-import dev.adamko.kafkatorio.processor.config.jsonMapper
-import dev.adamko.kafkatorio.processor.config.topicName
 import dev.adamko.kotka.extensions.component1
 import dev.adamko.kotka.extensions.component2
 import dev.adamko.kotka.extensions.consumedAs
@@ -26,6 +26,10 @@ import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.kstream.KStream
 
 
+private const val PACKET_TAG = "KafkatorioPacket:::"
+private const val PACKET_ENCODED_TAG = "${PACKET_TAG}encoded:"
+
+
 fun factorioServerPacketStream(
   builder: StreamsBuilder = StreamsBuilder(),
 ): KStream<FactorioServerId, KafkatorioPacket> {
@@ -39,21 +43,7 @@ fun factorioServerPacketStream(
     )
   ).mapValues("decode-packets") { _: FactorioServerId, value: String? ->
 
-    val packet = try {
-      val decoded = decodeFactorioEncodedString(value!!)
-      jsonMapper.decodeFromString(KafkatorioPacket.serializer(), decoded)
-    } catch (e: Exception) {
-      if (e is CancellationException) throw e
-
-      KafkatorioPacket(
-        modVersion = "unknown",
-        tick = Tick(0u),
-        data = KafkatorioPacketDataError(
-          exception = e,
-          rawValue = value,
-        )
-      )
-    }
+    val packet = decodeKafkatorioPacket(value)
 
     if (packet.data is KafkatorioPacketDataError) {
       println("error parsing $TOPIC_SRC_SERVER_LOG message: $packet")
@@ -81,6 +71,31 @@ fun splitFactorioServerPacketStream(
 }
 
 
+private fun decodeKafkatorioPacket(value: String?): KafkatorioPacket = try {
+  when {
+    value.isNullOrBlank()                      ->
+      createErrorPacket(message = "null/blank message", rawValue = value)
+
+    value.substringAfter(PACKET_TAG).isBlank() ->
+      createErrorPacket(message = "missing '$PACKET_TAG'", rawValue = value)
+
+    else                                       -> {
+      val packetJson = if (PACKET_ENCODED_TAG in value) {
+        val encodedValue = value.substringAfter(PACKET_ENCODED_TAG)
+        decodeFactorioEncodedString(encodedValue)
+      } else {
+        value.substringAfter(PACKET_TAG)
+      }
+
+      jsonMapper.decodeFromString(KafkatorioPacket.serializer(), packetJson)
+    }
+  }
+} catch (ex: Exception) {
+  if (ex is CancellationException) throw ex
+  errorPacket(exception = ex, rawValue = value)
+}
+
+
 /**
  * Factorio `game.encode_string` zlib encodes a string, then base64's it. Here we do the reverse.
  */
@@ -93,4 +108,32 @@ private fun decodeFactorioEncodedString(
     .inflate(Inflater())
     .buffer()
     .readString(Charsets.UTF_8)
+}
+
+
+private fun createErrorPacket(
+  message: String,
+  rawValue: String?,
+): KafkatorioPacket =
+  KafkatorioPacket(
+    modVersion = "unknown",
+    tick = Tick(0u),
+    data = KafkatorioPacketDataError(
+      message = message,
+      rawValue = rawValue,
+    )
+  )
+
+
+private fun errorPacket(
+  exception: Exception,
+  rawValue: String?,
+): KafkatorioPacket {
+  val message = """
+${exception::class.qualifiedName} ${exception.message}
+
+${exception.stackTraceToString()}
+""".trimIndent()
+
+  return createErrorPacket(message, rawValue)
 }

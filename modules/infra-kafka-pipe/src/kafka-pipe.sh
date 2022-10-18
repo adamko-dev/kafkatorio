@@ -17,7 +17,7 @@ KEY="${INSTANCE_ID:-none}"
 
 while :; do
   docker logs --tail 0 -f "$FACTORIO_SERVER_CONTAINER_NAME" |
-    sed -n -e 's/^KafkatorioPacket encoded::: //p' |
+    sed -n -e 's/^KafkatorioPacket::://p' |
     kcat -P \
       -b "$KAFKA_HOST" \
       -t kafkatorio.src.server-log \

@@ -27,11 +27,19 @@ export class KafkatorioPacketEmitter {
   /** Emit a serialised KafkatorioPacket */
   private static emitPacket<T extends KafkatorioPacket>(packet: T) {
     const data = game.table_to_json(packet)
-    // print(`KafkatorioPacket::: ${data}`)
+
+    if (data.trim().length <= 0) {
+      print(`[error] table_to_json returned empty string for packet:${packet}`)
+      return
+    }
+
     const encodedData = game.encode_string(data)
-    if (encodedData != null) {
-      print(`KafkatorioPacket encoded::: ${encodedData}`)
-      // rcon.print(`KafkatorioPacket: ${data}`)
+
+    if (encodedData == null || encodedData.trim().length <= 0) {
+      print(`[error] could not encode packet`)
+      print(`KafkatorioPacket:::${data}`)
+    } else {
+      print(`KafkatorioPacket:::encoded:${encodedData}`)
       // this.appendToFile(encodedData)
     }
   }
