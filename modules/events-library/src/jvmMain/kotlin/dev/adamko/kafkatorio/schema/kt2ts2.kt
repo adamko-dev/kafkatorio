@@ -19,6 +19,7 @@ import org.intellij.lang.annotations.Language
 
 
 fun main(args: Array<String>) {
+  val outputFilename = args.firstOrNull()
 
   val config = KxsTsConfig(
     typeAliasTyping = BrandTyping
@@ -38,7 +39,7 @@ fun main(args: Array<String>) {
 //  )
 
   gen2.descriptorOverrides += mapOf(
-//@formatter:off
+    //@formatter:off
     Float .serializer().descriptor to TsTypeAlias(TsElementId("kotlin.Float" ), TsTypeRef.Literal(TsLiteral.Custom("float" ), false)),
     Double.serializer().descriptor to TsTypeAlias(TsElementId("kotlin.Double"), TsTypeRef.Literal(TsLiteral.Custom("double"), false)),
     Int   .serializer().descriptor to TsTypeAlias(TsElementId("kotlin.Int"   ), TsTypeRef.Literal(TsLiteral.Custom("int"   ), false)),
@@ -51,19 +52,18 @@ fun main(args: Array<String>) {
     PlayerIndex.serializer().descriptor to TsTypeAlias(TsElementId("PlayerIndex" ), TsTypeRef.Literal(TsLiteral.Custom("PlayerIndex"), false)),
     SurfaceIndex.serializer().descriptor to TsTypeAlias(TsElementId("SurfaceIndex" ), TsTypeRef.Literal(TsLiteral.Custom("SurfaceIndex"), false)),
     UnitNumber.serializer().descriptor to TsTypeAlias(TsElementId("UnitNumber" ), TsTypeRef.Literal(TsLiteral.Custom("UnitNumber"), false)),
-//@formatter:on
+    //@formatter:on
   )
 
   val definitions = gen2.generate(
     KafkatorioPacket.serializer(),
-//    KafkatorioKeyedPacketKey2.serializer(),
   )
 
 
-  when (val filename = args.firstOrNull()) {
+  when (outputFilename) {
     null -> println(definitions)
     else -> {
-      val outPath = Path(filename)
+      val outPath = Path(outputFilename)
       outPath.createDirectories()
       val outFile = outPath.resolve("kafkatorio-schema.ts").toFile()
       outFile.printWriter().use {
