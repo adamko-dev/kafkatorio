@@ -45,7 +45,7 @@ val deployModToLocalClient by tasks.registering(Copy::class) {
 
   onlyIf { clientModsDirectory123.orNull?.asFile?.exists() == true }
 
-  from(factorioMod)
+  from(configurations.factorioMod.map { it.incoming.artifactView { lenient(true) }.files })
   into(clientModsDirectory)
 
   doLast {

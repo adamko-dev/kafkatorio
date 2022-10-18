@@ -34,12 +34,12 @@ val deployModToLocalServer by tasks.registering(Copy::class) {
   description = "Copy the mod to the Factorio Docker server"
   group = FactorioModPlugin.TASK_GROUP
 
-  dependsOn(factorioMod)
+  dependsOn(configurations.factorioMod)
 
 //  from(
 //    provider { factorioMod.incoming.artifacts.artifactFiles.files }
 //  )
-  from(configurations.factorioMod.map { it.incoming.artifacts.artifactFiles.files })
+  from(configurations.factorioMod.map { it.incoming.artifactView { lenient(true) }.files })
   into(factorioServerDataDir.dir("mods"))
 
   doLast {
