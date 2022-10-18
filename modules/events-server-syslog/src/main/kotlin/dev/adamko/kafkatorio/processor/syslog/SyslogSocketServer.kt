@@ -73,19 +73,18 @@ class SyslogSocketServer(
 
   private suspend fun handleConnection(
     socket: Socket
-  ) = supervisorScope {
+  ): Unit = supervisorScope {
     try {
       val channel = socket.openReadChannel()
       while (socket.socketContext.isActive && !channel.isClosedForRead) {
 
         val line = channel.readUTF8Line()
 
-        requireNotNull(line) {
-          "received 'null' line from ${socket.description()}"
-        }
+        requireNotNull(line) { "received 'null' line from ${socket.description()}" }
 
         try {
-          val syslog = SyslogMsg(syslogParser.parseLine(line))
+          val messageContents = syslogParser.parseLine(line)
+          val syslog = SyslogMsg(messageContents)
           _messages.emit(syslog)
         } catch (ex: ParseException) {
           log("ignoring non-syslog message: $line")
@@ -93,13 +92,13 @@ class SyslogSocketServer(
 
         yield()
       }
-    } catch (e: Throwable) {
+    } catch (ex: Throwable) {
       withContext(Dispatchers.IO) { socket.close() }
-      if (e is CancellationException) {
-        throw e
+      if (ex is CancellationException) {
+        throw ex
       } else {
-        log("closing socket ${socket.description()}, cause: ${e::class.java.name} ${e.message}")
-        e.printStackTrace()
+        log("closing socket ${socket.description()}, cause: ${ex::class.qualifiedName} ${ex.message}")
+        ex.printStackTrace()
       }
     }
   }
