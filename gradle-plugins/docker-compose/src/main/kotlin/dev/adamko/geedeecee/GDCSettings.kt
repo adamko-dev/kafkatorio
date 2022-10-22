@@ -26,6 +26,11 @@ interface GDCSettings {
   @get:Input
   val dockerActive: Property<Boolean>
 
+  @get:Input
+  val dockerBuildContextDir: DirectoryProperty
+
+  val stateDir: DirectoryProperty
+
 //  @Suppress("PropertyName", "FunctionName")
 //  abstract class DotEnv(
 //    private val dotEnv: MapProperty<String, String>,

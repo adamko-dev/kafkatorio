@@ -80,12 +80,12 @@ fun Directory.filesChecksum(): Long = asFileTree
 
 
 /** Drop the first [count] directories from the path */
-fun FileCopyDetails.dropDirectories(count: Int): RelativePath =
-  RelativePath(true, *relativePath.segments.drop(count).toTypedArray())
+fun RelativePath.dropDirectories(count: Int): RelativePath =
+  RelativePath(true, *segments.drop(count).toTypedArray())
 
 
 /** Drop the first directory from the path */
-fun FileCopyDetails.dropDirectory(): RelativePath =
+fun RelativePath.dropDirectory(): RelativePath =
   dropDirectories(1)
 
 

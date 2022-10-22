@@ -1,5 +1,6 @@
-package dev.adamko.geedeecee
+package dev.adamko.geedeecee.tasks
 
+import dev.adamko.geedeecee.GDCPlugin
 import java.io.File
 import java.nio.charset.Charset
 import java.util.Properties

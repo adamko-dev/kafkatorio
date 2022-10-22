@@ -1,12 +1,19 @@
 package dev.adamko.geedeecee
 
+import dev.adamko.geedeecee.tasks.DockerContextFilesPreparation
+import dev.adamko.geedeecee.tasks.DockerEnvUpdateTask
+import dev.adamko.geedeecee.tasks.GDCCommandTask
 import javax.inject.Inject
-import org.gradle.api.*
-import org.gradle.api.file.ProjectLayout
-import org.gradle.api.logging.*
-import org.gradle.api.provider.*
-import org.gradle.api.tasks.*
-import org.gradle.kotlin.dsl.*
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
+import org.gradle.kotlin.dsl.apply
+import org.gradle.kotlin.dsl.create
+import org.gradle.kotlin.dsl.getValue
+import org.gradle.kotlin.dsl.provideDelegate
+import org.gradle.kotlin.dsl.registering
+import org.gradle.kotlin.dsl.withType
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
@@ -14,7 +21,6 @@ import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 @Suppress("UnstableApiUsage")
 abstract class GDCPlugin @Inject constructor(
   private val providers: ProviderFactory,
-  private val layout: ProjectLayout,
 ) : Plugin<Project> {
 
 
@@ -34,6 +40,14 @@ abstract class GDCPlugin @Inject constructor(
 //      )
     }
 
+    val dockerContextPrepareFiles by target.tasks.registering(DockerContextFilesPreparation::class) {
+      into(gdcSettings.dockerBuildContextDir)
+      includeEmptyDirs = false
+//      dockerContextDir.set(gdcSettings.dockerBuildContextDir)
+//      copySpec.convention(target.copySpec())
+//      copySpec = Action {  }
+    }
+
     val dockerComposeUp by target.tasks.registering(GDCCommandTask::class) {
       `docker-compose`("up -d")
     }
@@ -45,6 +59,7 @@ abstract class GDCPlugin @Inject constructor(
     }
     val dockerComposeBuild by target.tasks.registering(GDCCommandTask::class) {
       `docker-compose`("build")
+      cacheable.set(true)
     }
     val dockerComposePush by target.tasks.registering(GDCCommandTask::class) {
       dependsOn(dockerComposeBuild)
@@ -57,14 +72,21 @@ abstract class GDCPlugin @Inject constructor(
     dockerComposeUp.configure { dependsOn(dockerComposeBuild) }
     dockerComposeRemove.configure { dependsOn(dockerComposeDown) }
 
-    target.tasks.withType<DockerComposeExec>().configureEach {
-      dependsOn(dockerComposeEnvUpdate)
-    }
+//    target.tasks.withType<DockerComposeExec>().configureEach {
+//      dependsOn(dockerComposeEnvUpdate)
+//      dockerIsActive.set(isDockerActive())
+//      stateFile.set(temporaryDir.resolve("docker-state.md5"))
+//    }
 
     target.tasks.withType<GDCCommandTask>().configureEach {
-      workingDir.convention(gdcSettings.srcDir)
       dependsOn(dockerComposeEnvUpdate)
+      dependsOn(dockerContextPrepareFiles)
+
+      workingDir.convention(gdcSettings.srcDir)
       dockerActive.set(gdcSettings.dockerActive)
+      stateFile.set(
+        gdcSettings.stateDir.file(workingDir.map { "dc_state${name.hashCode()}${it.asFile.hashCode()}.md5" })
+      )
     }
 
     val assembleTasks = target.tasks.matching { LifecycleBasePlugin.ASSEMBLE_TASK_NAME == it.name }
@@ -76,7 +98,6 @@ abstract class GDCPlugin @Inject constructor(
     dockerComposeUp.configure {
       dependsOn(assembleTasks)
     }
-
   }
 
 
@@ -86,6 +107,8 @@ abstract class GDCPlugin @Inject constructor(
       composeProjectVersion.convention(providers.provider { project.version.toString() })
       containerRegistryHost.convention(providers.gradleProperty("dockerContainerRegistryHost"))
       srcDir.convention(layout.projectDirectory.dir("docker"))
+      dockerBuildContextDir.convention(srcDir.dir("build"))
+      stateDir.convention(layout.buildDirectory.dir("geedeecee/state/"))
 
       dotEnv.put("COMPOSE_PROJECT_NAME", composeProjectName)
       dotEnv.put("APP_NAME", providers.provider { project.name })
