@@ -4,7 +4,6 @@ import dev.adamko.kafkatorio.processor.config.ApplicationProperties
 import java.util.Properties
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
-import kotlin.io.path.Path
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
@@ -16,7 +15,6 @@ import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.StreamsConfig
 import org.apache.kafka.streams.Topology
 import org.apache.kafka.streams.TopologyDescription
-
 
 
 suspend fun launchTopology(
@@ -58,7 +56,7 @@ suspend fun launchTopology(
         streams.close()
       }
 
-      printTopologyDescription(appId, topology)
+      printTopologyDescription(appId, topology, appProps)
       streams.start()
       println("launched Topology $appId")
     }
@@ -68,21 +66,27 @@ suspend fun launchTopology(
 }
 
 
-private fun printTopologyDescription(appId: String, topology: Topology) {
+private fun printTopologyDescription(
+  appId: String,
+  topology: Topology,
+  appProps: ApplicationProperties,
+) {
   val description: TopologyDescription = topology.describe()
 
-  val descFile = Path("./build/$appId.txt").toFile().apply {
-    parentFile.mkdirs()
-    if (!exists()) createNewFile()
-    writeText(description.toString())
-  }
+  val descFile = appProps.serverDataDir
+    .resolve("kafka-streams/$appId.txt")
+    .toFile().apply {
+      parentFile.mkdirs()
+      if (!exists()) createNewFile()
+      writeText(description.toString())
+    }
 
   println(
     """
-        |----------------
-        |$appId - ${descFile.canonicalPath}
-        |$description
-        |----------------
-      """.trimMargin()
+      |----------------
+      |$appId - ${descFile.canonicalPath}
+      |$description
+      |----------------
+    """.trimMargin()
   )
 }

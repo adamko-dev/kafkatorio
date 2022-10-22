@@ -35,7 +35,7 @@ data class ApplicationProperties(
         .addEnvironmentSource()
         .addResourceOrFileSource(
           resourceOrFile = "${System.getProperty("user.home")}/.secret.kafkatorio-config.yml",
-          optional = true
+          optional = true,
         )
         .addResourceOrFileSource("/.secret.config.yml", optional = true)
         .addResourceOrFileSource("/config.yml", optional = false)
