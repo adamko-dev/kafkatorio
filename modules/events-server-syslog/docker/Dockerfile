@@ -5,7 +5,7 @@ ARG KAFKATORIO_VERSION
 ARG APP_FILES="build/"
 ARG USER_NAME="container_user"
 ARG USER_UID=1000
-ARG USER_GID=$USER_ID
+ARG USER_GID=$USER_UID
 
 
 ENV SERVER_DATA_DIR="/app/data" \
@@ -24,12 +24,12 @@ VOLUME ${SERVER_DATA_DIR} \
 COPY ${APP_FILES} /app/
 
 
-RUN groupadd --gid $USER_GID $USERNAME \
-    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+RUN groupadd --gid $USER_GID $USER_NAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USER_NAME \
     && chown -R $USER_UID:$USER_GID /app/
 
 
-USER $USER_ID:$USER_GID
+USER $USER_UID:$USER_GID
 
 
 ENTRYPOINT /app/bin/run
