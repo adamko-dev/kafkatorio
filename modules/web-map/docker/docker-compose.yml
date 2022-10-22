@@ -7,10 +7,11 @@ services:
     container_name: ${APP_NAME}
     restart: unless-stopped
     build:
-      context: ".."
-      dockerfile: ./docker/Dockerfile
+      context: .
+      dockerfile: Dockerfile
       args:
-        APP_NAME: ${APP_NAME}
+        KAFKATORIO_VERSION: ${KAFKATORIO_VERSION}
+        APP_FILES: "./build/"
     ports:
       - "12081:80"
     networks:

@@ -7,12 +7,11 @@ services:
     container_name: ${APP_NAME}
     restart: unless-stopped
     build:
-      context: ..
-      dockerfile: ./docker/Dockerfile
+      context: .
+      dockerfile: Dockerfile
       args:
         KAFKATORIO_VERSION: ${KAFKATORIO_VERSION}
-        DIST_DIR: "./build/distributions/"
-        APP_NAME: ${APP_NAME}
+        APP_FILES: "./build/"
     environment:
       KAFKA_BOOTSTRAP_SERVERS: "http://kafka:29092"
       # KAFKA_STREAMS_STATE_DIR: ""

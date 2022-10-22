@@ -1,3 +1,4 @@
+import kafkatorio.extensions.dropDirectory
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -90,6 +91,15 @@ val runEventsProcessors by tasks.registering {
   dependsOn(tasks.run)
 }
 
-tasks.dockerComposeBuild {
-  dependsOn(tasks.distTar)
+
+tasks.dockerContextPrepareFiles {
+  from(zipTree(tasks.distZip.flatMap { it.archiveFile })) {
+    eachFile {
+      relativePath = relativePath.dropDirectory()
+
+      if (!isDirectory && relativePath.pathString.matches("""bin\/.+""".toRegex())) {
+        name = name.replace(file.nameWithoutExtension, "run")
+      }
+    }
+  }
 }

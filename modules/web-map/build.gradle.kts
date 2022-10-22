@@ -148,6 +148,6 @@ tasks.zip {
 }
 
 
-tasks.dockerComposeBuild {
-  dependsOn(tasks.zip)
+tasks.dockerContextPrepareFiles {
+  from(zipTree(tasks.zip.flatMap { it.archiveFile }))
 }

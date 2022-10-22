@@ -1,9 +1,10 @@
 # syntax=docker/dockerfile:1
 
 FROM nginx
+ARG APP_FILES="build/"
 
 EXPOSE 80
 
-COPY ./docker/nginx.conf /etc/nginx/nginx.conf
+COPY ./nginx.conf /etc/nginx/nginx.conf
 
-COPY ./build/distributions /usr/share/nginx/html
+COPY $APP_FILES /usr/share/nginx/html
