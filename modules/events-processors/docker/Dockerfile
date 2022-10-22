@@ -12,10 +12,6 @@ ENV SERVER_DATA_DIR="/app/data" \
     KAFKA_STREAMS_STATE_DIR="/app/state/kafka"
 
 
-VOLUME ${SERVER_DATA_DIR} \
-       ${KAFKA_STREAMS_STATE_DIR}
-
-
 COPY ${APP_FILES} /app/
 
 
