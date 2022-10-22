@@ -144,7 +144,8 @@ val runWebMap by tasks.registering {
 
 
 tasks.zip {
-  dependsOn(tasks.withName("browserDistribution"))
+  dependsOn(tasks.withName("browserWebpack"))
+  from(layout.buildDirectory.dir("distributions"))
 }
 
 
