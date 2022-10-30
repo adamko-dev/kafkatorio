@@ -1,5 +1,6 @@
 import java.time.LocalDate
 import kafkatorio.extensions.excludeGeneratedGradleDsl
+import kafkatorio.extensions.initIdeProjectLogo
 
 plugins {
   idea
@@ -52,3 +53,5 @@ val runKafkatorio by tasks.registering {
 }
 
 apply(from = "$projectDir/kt52647.gradle.kts")
+
+initIdeProjectLogo()
