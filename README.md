@@ -60,5 +60,5 @@ events-server-)web-map: WebSocket updates<br/>(e.g. player movement)
 
 ## License
 
-While this project is under development, [no license](https://choosealicense.com/no-permission/)
-is provided.
+Because I care about sharing improvements, Kafkatorio is licensed under the  
+[**GNU General Public License v3.0**](https://choosealicense.com/licenses/gpl-3.0/).

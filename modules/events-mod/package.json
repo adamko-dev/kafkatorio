@@ -16,7 +16,7 @@
     "typed-factorio": "1.8.1",
     "typescript": "4.8.4"
   },
-  "license": "UNLICENSED",
+  "license": "GPL-3.0-only",
   "peerDependencies": {},
   "optionalDependencies": {},
   "bundledDependencies": []
