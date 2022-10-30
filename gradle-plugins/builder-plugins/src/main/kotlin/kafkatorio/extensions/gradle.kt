@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.Directory
-import org.gradle.api.file.FileCopyDetails
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RelativePath
 import org.gradle.api.plugins.JavaPlugin
@@ -37,19 +36,20 @@ operator fun <T> Spec<T>.not(): NotSpec<T> = NotSpec(this)
 
 /** exclude generated Gradle code, so it doesn't clog up search results */
 fun IdeaModule.excludeGeneratedGradleDsl(layout: ProjectLayout) {
+
+  val generatedSrcDirs = listOf(
+    "kotlin-dsl-accessors",
+    "kotlin-dsl-external-plugin-spec-builders",
+    "kotlin-dsl-plugins",
+  )
+
   excludeDirs.addAll(
-    layout.files(
-      "buildSrc/build/generated-sources/kotlin-dsl-accessors",
-      "buildSrc/build/generated-sources/kotlin-dsl-accessors/kotlin",
-      "buildSrc/build/generated-sources/kotlin-dsl-accessors/kotlin/gradle",
-      "buildSrc/build/generated-sources/kotlin-dsl-external-plugin-spec-builders",
-      "buildSrc/build/generated-sources/kotlin-dsl-external-plugin-spec-builders/kotlin",
-      "buildSrc/build/generated-sources/kotlin-dsl-external-plugin-spec-builders/kotlin/gradle",
-      "buildSrc/build/generated-sources/kotlin-dsl-plugins",
-      "buildSrc/build/generated-sources/kotlin-dsl-plugins/kotlin",
-      "buildSrc/build/generated-sources/kotlin-dsl-plugins/kotlin/dev",
-      "buildSrc/build/pluginUnderTestMetadata",
-    )
+    layout.projectDirectory.asFile.walk()
+      .filter { it.isDirectory }
+      .filter { it.parentFile.name in generatedSrcDirs }
+      .flatMap { file ->
+        file.walk().maxDepth(1).filter { it.isDirectory }.toList()
+      }
   )
 }
 
