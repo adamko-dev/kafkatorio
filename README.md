@@ -2,21 +2,29 @@
 
 [Kafkatorio](https://github.com/adamko-dev/kafkatorio) is a platform used for creating
 [Factorio](https://www.factorio.com/) mods that require communication with an external server.
-It was created to explore the possibilities of using [Apache Kafka](https://kafka.apache.org/)
-to process updates from a Factorio server.
 
-Kafkatorio receives updates from a Factorio server, processes them, and exposes them over a REST
-and WebSocket APIs.
+Development is ongoing.
 
-Development is ongoing. At present the only application is a
-[live-view web map](https://factorio.adamko.dev), that shows the current status of a Factorio
-server, and any connected players. Other usage possibilities include exposing live metrics, and
-inter-server communication.
+At present Kafkatorio is used to create a [live-view web map](https://factorio.adamko.dev), that
+shows the current status of a Factorio server, and any connected players.
+
+However, Kafkatorio can be used for more than this. It has the potential to export metrics, and
+allow for inter-server communication.
+
+Kafkatorio was created to explore the possibilities of using
+[Apache Kafka](https://kafka.apache.org/) to process updates from a Factorio server.
+
+### Running
+
+[Instructions for running a Kafkatorio instance are available in the docs](./docs/guide.md).
 
 ### Overview
 
 This is a brief overview of how Kafkatorio gathers data, processes it, and uses it to create the
 live web-map.
+
+Kafkatorio receives updates from a Factorio server, processes them, and exposes them over a REST
+and WebSocket APIs.
 
 1. The Kafkatorio game mod, [`events-mod`](./modules/events-mod), collects event data, de-bouncing
    and grouping events, and converts them to JSON packets
