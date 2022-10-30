@@ -1,3 +1,6 @@
+[![Mod Portal](https://img.shields.io/badge/dynamic/json?label=Mod%20Portal&query=%24.releases%5B-1%3A%5D.version&url=https%3A%2F%2Fmods.factorio.com%2Fapi%2Fmods%2Fkafkatorio-events&style=flat-square&color=%23600401)](https://mods.factorio.com/mod/kafkatorio-events)
+[![Factorio Version](https://img.shields.io/badge/dynamic/json?label=Factorio%20Version&query=%24.releases%5B-1%3A%5D.info_json.factorio_version&url=https%3A%2F%2Fmods.factorio.com%2Fapi%2Fmods%2Fkafkatorio-events&style=flat-square&color=%23d7cdf6)](https://mods.factorio.com/mod/kafkatorio-events)
+
 # Kafkatorio
 
 [Kafkatorio](https://github.com/adamko-dev/kafkatorio) is a platform used for creating
