@@ -38,7 +38,6 @@ kotlin {
               "ws" to true,
             ),
           ),
-//          static = mutableListOf("$buildDir/processedResources/frontend/main")
           static = mutableListOf("$buildDir/processedResources/js/main")
         )
       }
@@ -139,7 +138,6 @@ val runWebMap by tasks.registering {
   group = rootProject.name
 
   dependsOn(tasks.withName("browserDevelopmentRun"))
-
 }
 
 

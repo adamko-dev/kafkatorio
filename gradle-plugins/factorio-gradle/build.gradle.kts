@@ -33,23 +33,6 @@ dependencies {
   implementation(libs.ktorSerialization.kotlinxJson)
 }
 
-
-//val gradleJvmTarget = 11
-//
-//kotlin {
-//  jvmToolchain(gradleJvmTarget)
-//}
-//
-//kotlinDslPluginOptions {
-//  jvmTarget.set("$gradleJvmTarget")
-//}
-//
-//tasks.withType<KotlinCompile>().configureEach {
-//  kotlinOptions {
-//    jvmTarget = "$gradleJvmTarget"
-//  }
-//}
-
 gradlePlugin {
   plugins {
     create("factorioMod") {
@@ -60,20 +43,7 @@ gradlePlugin {
   }
 }
 
-
-overrideKotlinLanguageVersion("1.7")
-
-//val gradleKotlinTarget = "1.7"
-//
-//afterEvaluate {
-//  tasks.withType<KotlinCompile>().configureEach {
-//    kotlinOptions {
-//      apiVersion = gradleKotlinTarget
-//      languageVersion = gradleKotlinTarget
-//    }
-//  }
-//}
-
+overrideKotlinLanguageVersion("1.7") // required for Kotlinx Serialization
 
 tasks.withType<KotlinCompile>().configureEach {
   kotlinOptions.freeCompilerArgs += listOf(

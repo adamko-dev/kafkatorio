@@ -8,6 +8,8 @@ plugins {
 
 val gradleJvmTarget = "11"
 
+description = "Provide Gradle settings plugins, used to configure base Gradle behaviour"
+
 dependencies {
   // This project should only be providing simple plugins for configuring Gradle without
   // dependencies. Try to avoid setting dependencies here, else the Gradle script classpath might

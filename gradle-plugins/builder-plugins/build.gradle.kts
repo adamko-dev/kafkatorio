@@ -2,8 +2,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("kafkatorio.conventions.kotlin-dsl")
-//  `kotlin-dsl`
-//  kotlin("jvm") version embeddedKotlinVersion
 }
 
 dependencies {
@@ -43,21 +41,3 @@ tasks.withType<KotlinCompile>().configureEach {
     "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
   )
 }
-
-//val gradleJvmTarget = "11"
-//
-//kotlin {
-//  jvmToolchain {
-//    (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(gradleJvmTarget))
-//  }
-//}
-//
-//kotlinDslPluginOptions {
-//  jvmTarget.set(gradleJvmTarget)
-//}
-//
-//tasks.withType<KotlinCompile>().configureEach {
-//  kotlinOptions {
-//    jvmTarget = gradleJvmTarget
-//  }
-//}

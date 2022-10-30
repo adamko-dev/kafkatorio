@@ -14,14 +14,11 @@ abstract class FactorioModPlugin @Inject constructor(
   override fun apply(target: Project) {
     target.createSettings()
 
-
     val factorioModConfiguration =
       target.configurations.register(FACTORIO_GRADLE_CONFIGURATION_NAME) {
         asConsumer()
         factorioModAttributes(objects)
       }
-
-
   }
 
   private fun Project.createSettings(): FactorioModSettings {
