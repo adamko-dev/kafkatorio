@@ -15,21 +15,8 @@ inter-server communication.
 
 ### Overview
 
-```mermaid
-sequenceDiagram
-
-Factorio multiplayer server->>events-mod: in-game events
-Note over events-mod: converts events to packets
-events-mod->>logs processor: packets logged to console
-logs processor->>Kafka: publishes packets<br/>(Requires API key!)
-
-Kafka->>events-server: 
-
-Note over events-server: Packets are processed
-
-events-server->>web-map: Web map tiles (REST API)
-events-server-)web-map: WebSocket updates<br/>(e.g. player movement)
-```
+This is a brief overview of how Kafkatorio gathers data, processes it, and uses it to create the
+live web-map.
 
 1. The Kafkatorio game mod, [`events-mod`](./modules/events-mod), collects event data, de-bouncing
    and grouping events, and converts them to JSON packets
@@ -46,6 +33,22 @@ events-server-)web-map: WebSocket updates<br/>(e.g. player movement)
    updates (for example, when a player's location has changed).
 5. The `web-map` uses Leaflet/JS to display the map, using the tiles and WebSocket messages from
    `events-server`
+
+```mermaid
+sequenceDiagram
+
+Factorio multiplayer server->>events-mod: in-game events
+Note over events-mod: converts events to packets
+events-mod->>logs processor: packets logged to console
+logs processor->>Kafka: publishes packets<br/>(Requires API key!)
+
+Kafka->>events-server: 
+
+Note over events-server: Packets are processed
+
+events-server->>web-map: Web map tiles (REST API)
+events-server-)web-map: WebSocket updates<br/>(e.g. player movement)
+```
 
 ## License
 

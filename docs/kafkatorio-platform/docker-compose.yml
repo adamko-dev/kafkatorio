@@ -1,0 +1,140 @@
+version: "3.9"
+
+services:
+
+  ## Factorio game server that players will connect to
+  factorio-server:
+    image: factoriotools/factorio:${FACTORIO_VERSION}
+    container_name: "factorio-server"
+    restart: unless-stopped
+    profiles: [ "factorio", "kafkatorio" ]
+    networks:
+      - kafkatorio-infra-nw
+    ports:
+      - "34198:34197/udp" # factorio
+      - "27016:27015/tcp" # rcon
+    volumes:
+      - "./factorio-server:/factorio"
+    logging:
+      # set up syslog, so logs can be forwarded to Kafkatorio
+      driver: syslog
+      options:
+        syslog-address: ${SYSLOG_ADDRESS}
+        syslog-format: "rfc5424"
+        # set the tag to be a JWT, containing the server short-ID
+        tag: ${KAFKATORIO_TOKEN}
+
+
+  ## Kafkatorio Web Map host
+  web-map:
+    image: ${REGISTRY_HOST}/dev.adamko.kafkatorio/web-map:${KAFKATORIO_VERSION}
+    container_name: web-map
+    profiles: [ "infra", "kafkatorio" ]
+    restart: unless-stopped
+    networks:
+      - kafkatorio-infra-nw
+
+
+  ## Process Kafkatorio events
+  events-processors:
+    image: ${REGISTRY_HOST}/dev.adamko.kafkatorio/events-processors:${KAFKATORIO_VERSION}
+    container_name: events-processors
+    restart: unless-stopped
+    profiles: [ "infra", "kafkatorio" ]
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: "kafka:29092"
+    networks:
+      - kafkatorio-infra-nw
+    depends_on:
+      - infra-kafka
+    secrets:
+      - source: kafkatorio_config
+        target: /.secret.config.yml
+
+
+  ## Receives packets from the Factorio Server, forwarded via Docker syslog-plugin
+  events-server-syslog:
+    image: ${REGISTRY_HOST}/dev.adamko.kafkatorio/events-server-syslog:${KAFKATORIO_VERSION}
+    container_name: events-server-syslog
+    restart: unless-stopped
+    profiles: [ "infra", "kafkatorio" ]
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: "kafka:29092"
+      SOCKET_SERVER_HOST: "0.0.0.0"
+      SOCKET_SERVER_PORT: "9002"
+    ports:
+      - "12035:9002" # syslog socket
+    networks:
+      - kafkatorio-infra-nw
+    depends_on:
+      - infra-kafka
+      - events-processors
+    secrets:
+      - source: kafkatorio_config
+        target: /.secret.config.yml
+
+
+  ## Hosts map-tiles and forwards websocket messages to the web-map browsers
+  events-server-web:
+    image: ${REGISTRY_HOST}/dev.adamko.kafkatorio/events-server-web:${KAFKATORIO_VERSION}
+    container_name: events-server-web
+    restart: unless-stopped
+    profiles: [ "infra", "kafkatorio" ]
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: "kafka:29092"
+      WEB_SERVER_PORT: "80"
+    ports:
+      - "12080:80" # http and ws
+    networks:
+      - kafkatorio-infra-nw
+    depends_on:
+      - infra-kafka
+      - events-processors
+    secrets:
+      - source: kafkatorio_config
+        target: /.secret.config.yml
+
+
+  ## An instance of Kafka
+  infra-kafka:
+    image: ${REGISTRY_HOST}/dev.adamko.kafkatorio/kafka-kraft:${KAFKATORIO_VERSION}
+    container_name: infra-kafka
+    restart: unless-stopped
+    profiles: [ "infra", "kafka" ]
+    networks:
+      kafkatorio-infra-nw:
+        aliases: [ kafka ]
+    volumes:
+      - "./config/kafka-server.properties:/kafka/server.properties"
+    ports:
+      # note: other Docker containers should use 29092
+      - "9092:9092"
+      - "9093:9093"
+
+
+  ## web-based GUI for Kafka
+  infra-kafka-ui:
+    image: provectuslabs/kafka-ui:v0.4.0
+    container_name: infra-kafka-ui
+    restart: unless-stopped
+    profiles: [ "infra", "kafka" ]
+    networks:
+      - kafkatorio-infra-nw
+    ports:
+      - "18090:8080"
+    depends_on:
+      - infra-kafka
+    environment:
+      KAFKA_CLUSTERS_0_NAME: "${COMPOSE_PROJECT_NAME}"
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka:29092"
+
+
+
+secrets:
+  kafkatorio_config:
+    file: ./.secret.kafkatorio-config.yml
+
+
+networks:
+  kafkatorio-infra-nw:
+  kafkatorio-game-nw:
