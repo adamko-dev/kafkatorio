@@ -6,13 +6,13 @@
 
 ## compilation ##
 jvm        = "11"
-kotlin     = "1.7.20"
+kotlin     = "1.7.22"
 
 ## libs ##
 camel-kafkaConnectors = "0.11.0"
 http4k                = "4.25.16.2"
 kafka                 = "3.3.1"         # https://kafka.apache.org/downloads
-kvision               = "5.16.2"        # https://github.com/rjaros/kvision/releases
+kvision               = "5.18.1"        # https://github.com/rjaros/kvision/releases
 log4j2                = "2.17.2"
 okio                  = "3.2.0"         # https://search.maven.org/artifact/com.squareup.okio/okio
 qosLogback            = "1.2.11"
@@ -25,7 +25,7 @@ kxs-charleskornKaml   = "0.44.0"
 kxs-mamoeYamlkt       = "0.12.0"
 kxs-kxsTsGen          = "0.2.1"
 
-kotlinJsWrappers      = "1.0.0-pre.413" # https://search.maven.org/artifact/org.jetbrains.kotlin-wrappers/kotlin-wrappers-bom
+kotlinJsWrappers      = "1.0.0-pre.456" # https://search.maven.org/artifact/org.jetbrains.kotlin-wrappers/kotlin-wrappers-bom
 
 kotlinx-cli           = "0.3.5"         # https://github.com/Kotlin/kotlinx-cli/releases
 kotlinx-coroutines    = "1.6.4"         # https://github.com/Kotlin/kotlinx.coroutines/releases
@@ -35,9 +35,9 @@ kotlinx-nodejs        = "0.0.7"
 
 kSvgDsl               = "v2.2.0"
 
-ktor                  = "2.1.2"         # https://github.com/ktorio/ktor/releases
+ktor                  = "2.1.3"         # https://github.com/ktorio/ktor/releases
 
-hoplite               = "2.6.5"         # https://github.com/sksamuel/hoplite/releases
+hoplite               = "2.7.0"         # https://github.com/sksamuel/hoplite/releases
 
 simpleSyslogParser    = "1.0.0"         # https://search.maven.org/artifact/com.github.palindromicity/simple-syslog
 
@@ -51,28 +51,28 @@ nimbusJoseJwt         = "9.25.6"        # https://search.maven.org/artifact/com.
 
 ## npm ##
 
-npm-luaTypes        = "2.13.0"   # https://www.npmjs.com/package/lua-types
-npm-typescriptToLua = "1.10.1"   # https://www.npmjs.com/package/typescript-to-lua
-npm-typedFactorio   = "1.9.0"    # https://github.com/GlassBricks/typed-factorio/blob/main/Changelog.md https://www.npmjs.com/package/typed-factorio
-npm-typescript      = "4.8.4"    # https://github.com/microsoft/TypeScript/releases
+npm-luaTypes        = "2.13.1"   # https://www.npmjs.com/package/lua-types
+npm-typescriptToLua = "1.11.1"   # https://www.npmjs.com/package/typescript-to-lua
+npm-typedFactorio   = "1.11.0"   # https://github.com/GlassBricks/typed-factorio/blob/main/Changelog.md https://www.npmjs.com/package/typed-factorio
+npm-typescript      = "4.9"      # https://github.com/microsoft/TypeScript/releases
 
 npm-bootswatch      = "5.2.2"    # https://www.jsdelivr.com/package/npm/bootswatch
 
 ## test ##
 junit      = "5.9.1"             # https://github.com/junit-team/junit5/releases
-kotest     = "5.5.2"             # https://github.com/kotest/kotest/releases
-mockk      = "1.13.2"            # https://github.com/mockk/mockk/releases/
+kotest     = "5.5.4"             # https://github.com/kotest/kotest/releases
+mockk      = "1.13.3"            # https://github.com/mockk/mockk/releases/
 
 
 ## infra ##
-factorio               = "1.1.70"    # https://www.factorio.com/download
+factorio               = "1.1.72"    # https://www.factorio.com/download
 confluent-kafkaConnect = "7.0.1"
 grafana                = "8.5.0"
 prometheus             = "v2.34.0"
 
 
 ## gradle plugins ##
-gradleNodePlugin = "3.4.0"        # https://github.com/node-gradle/gradle-node-plugin/releases
+gradleNodePlugin = "3.5.0"        # https://github.com/node-gradle/gradle-node-plugin/releases
 
 
 #########

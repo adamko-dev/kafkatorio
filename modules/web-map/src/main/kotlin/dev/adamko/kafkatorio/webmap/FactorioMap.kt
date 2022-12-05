@@ -18,6 +18,7 @@ import io.kvision.maps.externals.leaflet.geo.LatLng
 import io.kvision.maps.externals.leaflet.layer.LayerGroup
 import io.kvision.maps.externals.leaflet.layer.tile.TileLayer
 import io.kvision.utils.px
+import js.core.jso
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.CoroutineName
@@ -30,7 +31,6 @@ import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.js.jso
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.Image
 import org.w3c.dom.asList
