@@ -25,6 +25,7 @@ abstract class DockerEnvUpdateTask @Inject constructor(
 ) : DefaultTask() {
 
   @get:Input
+  @get:Optional
   abstract val envProperties: MapProperty<String, String>
 
   @get:Input
@@ -50,10 +51,11 @@ abstract class DockerEnvUpdateTask @Inject constructor(
     val comment: String = comment.orNull
       ?: " Do not edit manually. This file was created with task '$name'"
 
+    val envProperties = envProperties.getOrElse(emptyMap())
 
     dotEnvFile.writer(charset).use { writer ->
       val properties = Properties()
-      properties.putAll(envProperties.get())
+      properties.putAll(envProperties)
       properties.store(writer, comment)
     }
 

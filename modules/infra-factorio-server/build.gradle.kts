@@ -61,13 +61,15 @@ tasks.dockerComposeUp {
 }
 
 
-val kafkatorioServerToken: String by project
+val kafkatorioServerToken: String? by project
 
 
 tasks.dockerComposeEnvUpdate {
   envProperties {
     put("FACTORIO_VERSION", libs.versions.factorio)
-    put("KAFKATORIO_TOKEN", kafkatorioServerToken)
+    kafkatorioServerToken?.let { token ->
+      put("KAFKATORIO_TOKEN", token)
+    }
   }
 }
 
