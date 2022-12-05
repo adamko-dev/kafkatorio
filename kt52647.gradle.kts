@@ -1,4 +1,5 @@
 
+// git update-index --skip-worktree kt52647.gradle.kts
 
 val projectsMustBeConfiguringBuster by tasks.registering {
   val buildFile = layout.projectDirectory.file("kt52647.gradle.kts").asFile
