@@ -45,7 +45,7 @@ script.on_event(
                 for ____, event in ipairs(events) do
                     if isEventType(event, defines.events.on_chunk_generated) then
                         local eName = Converters.eventNameString(event.name)
-                        log((((("[on_tick:" .. tostring(event.tick)) .. "] dequed event ") .. eName) .. ", delay ") .. tostring(i))
+                        log((((("[on_tick:" .. tostring(event.tick)) .. "] dequeued event ") .. eName) .. ", delay ") .. tostring(i))
                         MapChunkUpdate:handleChunkGeneratedEvent(event, i)
                         i = i + 1
                     end
