@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
   implementation(platform(libs.kotlin.bom))
-  implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable")
+  implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:${libs.versions.kotlin.get()}")
 }
 
 gradlePlugin {
