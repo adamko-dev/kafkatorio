@@ -93,6 +93,7 @@ loggingCapabilities = { id = "dev.jacomet.logging-capabilities",            vers
 ## kotlin ##
 kotlin-bom = { group = "org.jetbrains.kotlin", name = "kotlin-bom", version.ref = "kotlin" }
 
+kotlin-embeddableCompiler = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable" }
 
 kotlinScripting-common            = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-common"             }
 kotlinScripting-jvm               = { group = "org.jetbrains.kotlin", name = "kotlin-scripting-jvm"                }

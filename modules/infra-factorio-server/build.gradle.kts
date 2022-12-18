@@ -3,7 +3,7 @@ import dev.adamko.gradle.factorio.FactorioModPlugin
 plugins {
   id("kafkatorio.conventions.base")
   id("dev.adamko.geedeecee")
-  id("dev.adamko.factorio-mod")
+  id("dev.adamko.factorio-mod-library")
   idea
 }
 

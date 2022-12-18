@@ -48,7 +48,9 @@ include(
 )
 
 
+//enableFeaturePreview(org.gradle.api.internal.FeaturePreviews.Feature.TYPESAFE_PROJECT_ACCESSORS.name)
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 
 
 //apply(from = "./buildSrc/repositories.settings.gradle.kts")

@@ -12,15 +12,15 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.kotlin.dsl.named
 
 
-fun Configuration.asProvider() {
-  isVisible = false
+fun Configuration.asProvider(visible: Boolean = false) {
+  isVisible = visible
   isCanBeResolved = false
   isCanBeConsumed = true
 }
 
 
-fun Configuration.asConsumer() {
-  isVisible = false
+fun Configuration.asConsumer(visible: Boolean = false) {
+  isVisible = visible
   isCanBeResolved = true
   isCanBeConsumed = false
 }

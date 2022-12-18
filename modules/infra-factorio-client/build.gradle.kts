@@ -18,13 +18,13 @@ val clientModsDirectory: DirectoryProperty = objects.directoryProperty().apply {
     set(modDir)
   }
 }
-val factorioGameId = "427520"
-val steamExe: RegularFileProperty = objects.fileProperty().apply {
-  val steam = File("""C:\Program Files (x86)\Steam\steam.exe""")
-  if (steam.exists()) {
-    set(steam)
-  }
-}
+//val factorioGameId = "427520"
+//val steamExe: RegularFileProperty = objects.fileProperty().apply {
+//  val steam = File("""C:\Program Files (x86)\Steam\steam.exe""")
+//  if (steam.exists()) {
+//    set(steam)
+//  }
+//}
 
 //val factorioMod: Configuration by configurations.creating {
 //  asConsumer()
@@ -37,21 +37,21 @@ dependencies {
 
 
 //<editor-fold desc="Mod deployment tasks">
-val deployModToLocalClient by tasks.registering(Copy::class) {
-  description = "Copy the mod to the Factorio client"
-  group = FactorioModPlugin.TASK_GROUP
-
-  val clientModsDirectory123 = clientModsDirectory
-
-  onlyIf { clientModsDirectory123.orNull?.asFile?.exists() == true }
-
-  from(configurations.factorioMod.map { it.incoming.artifactView { lenient(true) }.files })
-  into(clientModsDirectory)
-
-  doLast {
-    logger.lifecycle("Copying mod from ${source.files} to $destinationDir")
-  }
-}
+//val deployModToLocalClient by tasks.registering(Copy::class) {
+//  description = "Copy the mod to the Factorio client"
+//  group = FactorioModPlugin.TASK_GROUP
+//
+//  val clientModsDirectory123 = clientModsDirectory
+//
+//  onlyIf { clientModsDirectory123.orNull?.asFile?.exists() == true }
+//
+//  from(configurations.factorioMod.map { it.incoming.artifactView { lenient(true) }.files })
+//  into(clientModsDirectory)
+//
+//  doLast {
+//    logger.lifecycle("Copying mod from ${source.files} to $destinationDir")
+//  }
+//}
 //</editor-fold>
 
 
@@ -59,27 +59,27 @@ val deployModToLocalClient by tasks.registering(Copy::class) {
 fun ExecOperations.isFactorioRunning(): Spec<Task> = ProcessRunningSpec(this, "factorio.exe")
 
 
-val clientLaunch by tasks.registering(Exec::class) {
-  description = "Run local Factorio Steam game client"
-  group = FactorioModPlugin.TASK_GROUP
-
-  val steamExe123 = steamExe
-  val clientModsDirectory444 = clientModsDirectory
-
-  onlyIf(!serviceOf<ExecOperations>().isFactorioRunning())
-  onlyIf { steamExe123.orNull?.asFile?.exists() == true }
-  onlyIf { clientModsDirectory444.orNull?.asFile?.exists() == true }
-
-  dependsOn(deployModToLocalClient)
-  mustRunAfter(clientKill, ":modules:infra-factorio-server:processRun")
-
-  commandLine = parseSpaceSeparatedArgs(
-//    """explorer "steam://rungameid/$factorioGameId// --mp-connect localhost/" """ // not working
-//    """explorer "steam://run/$factorioGameId//--mp-connect localhost/" """ // works! But has annoying pop-up
-    """ ${steamExe.asFile.orNull?.canonicalPath} -applaunch $factorioGameId --mp-connect localhost --mod-directory ${clientModsDirectory.asFile.orNull?.canonicalPath}  """
-  )
-  doFirst { logger.lifecycle("Launching factorio.exe") }
-}
+//val clientLaunch by tasks.registering(Exec::class) {
+//  description = "Run local Factorio Steam game client"
+//  group = FactorioModPlugin.TASK_GROUP
+//
+//  val steamExe123 = steamExe
+//  val clientModsDirectory444 = clientModsDirectory
+//
+//  onlyIf(!serviceOf<ExecOperations>().isFactorioRunning())
+//  onlyIf { steamExe123.orNull?.asFile?.exists() == true }
+//  onlyIf { clientModsDirectory444.orNull?.asFile?.exists() == true }
+//
+//  dependsOn(deployModToLocalClient)
+//  mustRunAfter(clientKill, ":modules:infra-factorio-server:processRun")
+//
+//  commandLine = parseSpaceSeparatedArgs(
+////    """explorer "steam://rungameid/$factorioGameId// --mp-connect localhost/" """ // not working
+////    """explorer "steam://run/$factorioGameId//--mp-connect localhost/" """ // works! But has annoying pop-up
+//    """ ${steamExe.asFile.orNull?.canonicalPath} -applaunch $factorioGameId --mp-connect localhost --mod-directory ${clientModsDirectory.asFile.orNull?.canonicalPath}  """
+//  )
+//  doFirst { logger.lifecycle("Launching factorio.exe") }
+//}
 
 val clientKill by tasks.registering(Exec::class) {
   description = "Stop the local Factorio Steam game client"
@@ -95,14 +95,14 @@ val clientKill by tasks.registering(Exec::class) {
 
 tasks.register(FactorioModPlugin.PUBLISH_MOD_LOCAL_TASK_NAME) {
   group = FactorioModPlugin.TASK_GROUP
-  dependsOn(deployModToLocalClient)
+//  dependsOn(deployModToLocalClient)
 }
 
 
 tasks.processRun {
   dependsOn(
-    deployModToLocalClient,
-    clientLaunch,
+//    deployModToLocalClient,
+    tasks.launchFactorioClient,
   )
 }
 

@@ -1,38 +1,40 @@
 import dev.adamko.gradle.factorio.mod_portal.FactorioModPublishTask
 import dev.adamko.gradle.factorio.typescriptAttributes
-import dev.adamko.gradle.factorio.factorioModAttributes
-import kafkatorio.tasks.TypescriptToLuaTask
+import kafkatorio.tasks.TypeScriptToLuaTask
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
-import net.swiftzer.semver.SemVer
-import org.apache.tools.ant.filters.ReplaceTokens
-import org.gradle.plugins.ide.idea.model.Module as IdeaImlModule
-import org.gradle.plugins.ide.idea.model.Path as IdeaImlPath
 
 plugins {
   id("kafkatorio.conventions.lang.node")
   id("dev.adamko.factorio-mod")
   distribution
+  idea
 }
 
 description = "Sends in-game information to a server over the internet (requires additional setup)"
 
 
+factorioMod {
+  modName.set("kafkatorio-events")
+  modTitle.set("Kafkatorio Events")
+  modAuthor.set("adam@adamko.dev")
+  factorioCompatibility.set(libs.versions.factorio.map { it.substringBeforeLast(".") })
+}
+
 // Factorio required format is:
 // - filename: `mod-name_version.zip`
 // - zip contains one directory, `mod-name`
 //val modName: String by extra { "${rootProject.name}-events" }
-extra.set("modName", "kafkatorio-events")
-val modName = extra.get("modName") as String
+//extra.set("modName", "kafkatorio-events")
+//val modName = extra.get("modName") as String
 
-val modDescription: String by project.extra { project.description ?: "" }
-
-val distributionZipName: String by extra { "${modName}_${rootProject.version}.zip" }
+//val modDescription: String by project.extra { project.description ?: "" }
 
 // version of Factorio that the mod is compatible with (must only be "major.minor" - patch causes error)
-val modFactorioCompatibility: Provider<String> =
-  libs.versions.factorio.map { SemVer.parse(it).run { "$major.$minor" } }
+//val modFactorioCompatibility: Provider<String> =
+//  libs.versions.factorio.map { SemVer.parse(it).run { "$major.$minor" } }
 
+//rootProject.layout.projectDirectory.file("LICENSE")
 val licenseFile: RegularFile by rootProject.extra
 
 @Suppress("UNCHECKED_CAST")
@@ -42,13 +44,13 @@ val projectTokens: MapProperty<String, String> =
 //val projectTokens: MapProperty<String, String> by rootProject.extra
 
 val projectTokensX1 = projectTokens.apply {
-  put("mod.name", modName)
-  put("mod.title", "Kafkatorio Events")
-  put("mod.description", modDescription)
-  put("factorio.version", modFactorioCompatibility)
+  put("mod.name", factorioMod.modName)
+  put("mod.title", factorioMod.modTitle)
+  put("mod.description", factorioMod.modDescription)
+  put("factorio.version", factorioMod.factorioCompatibility)
 }
 
-val tsSrcDir: Directory = layout.projectDirectory.dir("src/main/typescript")
+//val tsSrcDir: Directory = layout.projectDirectory.dir("src/main/typescript")
 
 
 node {
@@ -68,7 +70,7 @@ dependencies {
 }
 
 
-val typescriptToLua by tasks.registering(TypescriptToLuaTask::class) {
+val typescriptToLua by tasks.registering(TypeScriptToLuaTask::class) {
   dependsOn(
     tasks.npmInstall,
     installEventsTsSchema,
@@ -77,20 +79,17 @@ val typescriptToLua by tasks.registering(TypescriptToLuaTask::class) {
 
   inputs.file(tasks.updatePackageJson.map { it.packageJsonFile })
 
-  sourceFiles.set(tsSrcDir)
+  sourceFiles.from(factorioMod.mainSources.typescript.sourceDirectories)
 
-  outputDirectory.set(layout.projectDirectory.dir("src/generated/lua"))
+  outputDirectory.set(factorioMod.mainSources.typescript.destinationDirectory)
 }
 
 
 val installEventsTsSchema by tasks.registering(Sync::class) {
-  description = "Fetch the latest shared data-model"
+  description = "Fetch the latest shared TypeScript data-model"
   group = project.name
 
   dependsOn(typescriptEventsSchema)
-
-  val outputDir = layout.projectDirectory.dir("src/main/typescript/generated/")
-  outputs.dir(outputDir)
 
   from(
     provider { typescriptEventsSchema }
@@ -107,60 +106,67 @@ val installEventsTsSchema by tasks.registering(Sync::class) {
 //    eachFile { relativePath = dropDirectory() }
     includeEmptyDirs = false
   }
-  into(outputDir)
+  into(layout.projectDirectory.dir("src/main/typescript/generated"))
 }
 
 
-val zipNameProvider = provider { distributionZipName }
+//val zipNameProvider = provider { distributionZipName }
 
 tasks.distZip {
-  val projectTokensXX22 = projectTokensX1
+//  val projectTokensXX22 = projectTokensX1
 
-  inputs.property("zipNameProvider", zipNameProvider)
-  inputs.property("projectTokens", projectTokensXX22)
-
-  archiveFileName.set(zipNameProvider)
+//  inputs.property("zipNameProvider", zipNameProvider)
+//  inputs.property("projectTokens", projectTokensXX22)
+  val distributionZipName = factorioMod.distributionZipName
+  archiveFileName.set(distributionZipName)
 }
-
 
 val publishModToPortal by tasks.registering(FactorioModPublishTask::class) {
   dependsOn(tasks.check)
 
   distributionZip.set(tasks.distZip.flatMap { it.archiveFile })
 
-  val projectModName = project.extra.get("modName") as String
-  modName.set(projectModName)
-  modVersion.set(project.version.toString())
+//  val projectModName = project.extra.get("modName") as String
+  modName.set(factorioMod.modName)
+  modVersion.set(factorioMod.modVersion)
+//  modVersion.set(project.version.toString())
 }
 
-
-distributions {
-  main {
-
-    distributionBaseName.set(modName)
-    val tokens333: MutableMap<String, String> = projectTokensX1.get()
-
-    contents {
-      from(layout.projectDirectory.dir("src/main/resources/mod-data")) {
-        include("**/**")
-      }
-      from(licenseFile)
-      from(typescriptToLua.map { it.outputDirectory })
-      filesNotMatching("**/*.png") {
-        // maybe make a bug report for projectTokensX1 causing null$null$null error?
-        // val tokens333: MutableMap<String, String> = projectTokensX1.get()
-        filter<ReplaceTokens>("tokens" to tokens333)
-      }
-      includeEmptyDirs = false
-      exclude {
-        // exclude empty files
-        it.file.run {
-          isFile && useLines { lines -> lines.all { line -> line.isBlank() } }
-        }
-      }
-    }
+tasks.assembleFactorioModContents {
+  modFiles.apply {
+    from(typescriptToLua.map { it.outputDirectory })
+    from(licenseFile)
   }
 }
+
+
+//distributions {
+//  main {
+//
+////    distributionBaseName.set(factorioMod.modName)
+//    val tokens333: MutableMap<String, String> = projectTokensX1.get()
+//
+//    contents {
+////      from(factorioMod.mainSources.resources) {
+////        include("**/**")
+////      }
+//      from(licenseFile)
+//      from(typescriptToLua.map { it.outputDirectory })
+//      filesNotMatching("**/*.png") {
+//        // maybe make a bug report for projectTokensX1 causing null$null$null error?
+//        // val tokens333: MutableMap<String, String> = projectTokensX1.get()
+//        filter<ReplaceTokens>("tokens" to tokens333)
+//      }
+////      includeEmptyDirs = false
+////      exclude {
+////        // exclude empty files
+////        it.file.run {
+////          isFile && useLines { lines -> lines.all { line -> line.isBlank() } }
+////        }
+////      }
+//    }
+//  }
+//}
 
 
 tasks.withType<Zip>().configureEach {
@@ -169,11 +175,11 @@ tasks.withType<Zip>().configureEach {
 }
 
 
-val factorioModProvider by configurations.registering {
-  asProvider()
-  factorioModAttributes(objects)
-  outgoing.artifact(tasks.distZip.flatMap { it.archiveFile })
-}
+//val factorioModProvider by configurations.registering {
+//  asProvider()
+//  factorioModAttributes(objects)
+//  outgoing.artifact(tasks.distZip.flatMap { it.archiveFile })
+//}
 
 
 val projectPackageJsonName: Provider<String> =
@@ -202,49 +208,51 @@ tasks.updatePackageJson {
 tasks.assemble { dependsOn(installEventsTsSchema, tasks.updatePackageJson) }
 
 
-val typescriptSrcDir: File = file("src/main/typescript")
-val luaSrcDir: File = file("src/generated/lua")
-val resourcesDir: File = file("src/main/resources")
-val typescriptTestSrcDir: File = file("src/test/typescript")
-val generatedSrcDir: File = file("src/generated")
-
-
-idea {
-  module {
-    sourceDirs.plusAssign(
-      listOf(
-        typescriptSrcDir,
-        luaSrcDir,
-      )
-    )
-//    sourceDirs = sourceDirs + file("src/main/lua")
-    resourceDirs = resourceDirs + resourcesDir
-    testSourceDirs = testSourceDirs + typescriptTestSrcDir
-
-    generatedSourceDirs = generatedSourceDirs + generatedSrcDir
-//    excludeDirs = excludeDirs + generatedSrcDir
-
-    iml {
-      whenMerged {
-        require(this is IdeaImlModule)
-
-        sourceDirs.plusAssign(
-          listOf(
-            typescriptSrcDir,
-            luaSrcDir,
-          )
-        )
-
-        generatedSourceFolders.plusAssign(
-          IdeaImlPath(luaSrcDir.toURI().toString())
-        )
-        resourceDirs = resourceDirs + resourcesDir
-        testSourceDirs = testSourceDirs + typescriptTestSrcDir
-//        excludeDirs = excludeDirs + generatedSrcDir
-      }
-    }
-  }
-}
+//val typescriptSrcDir: File = file("src/main/typescript")
+//val luaSrcDir: File = file("src/generated/lua")
+//val resourcesDir: File = file("src/main/resources")
+//val typescriptTestSrcDir: File = file("src/test/typescript")
+//val generatedSrcDir: File = file("src/generated")
+//
+//
+//idea {
+//  module {
+//    sourceDirs.plusAssign(
+//      listOf(
+//        typescriptSrcDir,
+//        luaSrcDir,
+//      )
+//    )
+////    sourceDirs = sourceDirs + file("src/main/lua")
+//    resourceDirs = resourceDirs + resourcesDir
+//    testSources.from(typescriptTestSrcDir)
+////    testSourceDirs = testSourceDirs + typescriptTestSrcDir
+//
+//    generatedSourceDirs = generatedSourceDirs + generatedSrcDir
+////    excludeDirs = excludeDirs + generatedSrcDir
+//
+//    iml {
+//      whenMerged {
+//        require(this is IdeaImlModule)
+//
+//        sourceDirs.plusAssign(
+//          listOf(
+//            typescriptSrcDir,
+//            luaSrcDir,
+//          )
+//        )
+//
+//        generatedSourceFolders.plusAssign(
+//          IdeaImlPath(luaSrcDir.toURI().toString())
+//        )
+//        resourceDirs = resourceDirs + resourcesDir
+//        testSources.from(typescriptTestSrcDir)
+////        testSourceDirs = testSourceDirs + typescriptTestSrcDir
+////        excludeDirs = excludeDirs + generatedSrcDir
+//      }
+//    }
+//  }
+//}
 
 
 // trying to get Gradle+idea to recognise the ts-src...
