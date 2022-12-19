@@ -67,6 +67,12 @@ abstract class LaunchFactorioClientTask @Inject constructor(
     val modsDirFlag = clientModsPath.map { """--mod-directory "$it"""" }.getOrElse("")
     val mpConnectFlag = serverConnectHost.map { "--mp-connect $it" }.getOrElse("")
 
+//  commandLine = parseSpaceSeparatedArgs(
+////    """explorer "steam://rungameid/$factorioGameId// --mp-connect localhost/" """ // not working
+////    """explorer "steam://run/$factorioGameId//--mp-connect localhost/" """ // works! But has annoying pop-up
+//    """ ${steamExe.asFile.orNull?.canonicalPath} -applaunch $factorioGameId --mp-connect localhost --mod-directory ${clientModsDirectory.asFile.orNull?.canonicalPath}  """
+//  )
+
     return """
       $steamExe --applaunch $factorioId $modsDirFlag $mpConnectFlag
     """.trimIndent()

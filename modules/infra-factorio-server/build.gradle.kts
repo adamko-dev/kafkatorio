@@ -12,18 +12,8 @@ geedeecee {
   srcDir.set(layout.projectDirectory.dir("src"))
 }
 
-
-//val dockerSrcDir: Directory by extra
-//val factorioServerDataDir: Directory = dockerSrcDir.dir("factorio-server")
 val factorioServerDataDir: DirectoryProperty = objects.directoryProperty()
   .convention(geedeecee.srcDir.dir("factorio-server"))
-
-
-//val factorioMod: Configuration by configurations.creating {
-//  asConsumer()
-//  factorioModAttributes(objects)
-//}
-
 
 dependencies {
   factorioMod(projects.modules.eventsMod)
