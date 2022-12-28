@@ -18,6 +18,7 @@ dependencies {
   implementation(platform(projects.modules.versionsPlatform))
 
   implementation(libs.kafka.streams)
+  implementation(kotlin("reflect"))
 
   testImplementation(libs.kafka.streamsTestUtils)
 

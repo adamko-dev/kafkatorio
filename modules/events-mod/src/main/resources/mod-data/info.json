@@ -1,9 +1,0 @@
-{
-  "name": "@mod.name@",
-  "version": "@project.version@",
-  "title": "@mod.title@",
-  "description": "@mod.description@",
-  "author": "@author.email@",
-  "factorio_version": "@factorio.version@",
-  "dependencies": []
-}

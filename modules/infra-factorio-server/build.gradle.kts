@@ -3,7 +3,7 @@ import dev.adamko.gradle.factorio.FactorioModPlugin
 plugins {
   id("kafkatorio.conventions.base")
   id("dev.adamko.geedeecee")
-  id("dev.adamko.factorio-mod")
+  id("dev.adamko.factorio-mod-library")
   idea
 }
 
@@ -12,18 +12,8 @@ geedeecee {
   srcDir.set(layout.projectDirectory.dir("src"))
 }
 
-
-//val dockerSrcDir: Directory by extra
-//val factorioServerDataDir: Directory = dockerSrcDir.dir("factorio-server")
 val factorioServerDataDir: DirectoryProperty = objects.directoryProperty()
   .convention(geedeecee.srcDir.dir("factorio-server"))
-
-
-//val factorioMod: Configuration by configurations.creating {
-//  asConsumer()
-//  factorioModAttributes(objects)
-//}
-
 
 dependencies {
   factorioMod(projects.modules.eventsMod)
@@ -61,13 +51,15 @@ tasks.dockerComposeUp {
 }
 
 
-val kafkatorioServerToken: String by project
+val kafkatorioServerToken: String? by project
 
 
 tasks.dockerComposeEnvUpdate {
   envProperties {
     put("FACTORIO_VERSION", libs.versions.factorio)
-    put("KAFKATORIO_TOKEN", kafkatorioServerToken)
+    kafkatorioServerToken?.let { token ->
+      put("KAFKATORIO_TOKEN", token)
+    }
   }
 }
 

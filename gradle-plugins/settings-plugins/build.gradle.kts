@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   `kotlin-dsl`
-  kotlin("jvm") version embeddedKotlinVersion
 }
 
 val gradleJvmTarget = "11"
@@ -18,15 +17,18 @@ dependencies {
   implementation("org.gradle.kotlin:gradle-kotlin-dsl-plugins:$expectedKotlinDslPluginsVersion")
   implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${libs.versions.kotlin.get()}")
 
+  // https://github.com/gradle/gradle/issues/22510
+  implementation("org.jetbrains.kotlin:kotlin-sam-with-receiver:${libs.versions.kotlin.get()}")
+
   implementation(platform(libs.kotlin.bom))
-  implementation("org.jetbrains.kotlin:kotlin-serialization")
+  implementation("org.jetbrains.kotlin:kotlin-serialization:${libs.versions.kotlin.get()}")
 
   implementation(platform(libs.kotlinx.coroutines.bom))
 }
 
 kotlin {
   jvmToolchain {
-    (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(gradleJvmTarget))
+    languageVersion.set(JavaLanguageVersion.of(gradleJvmTarget))
   }
 }
 

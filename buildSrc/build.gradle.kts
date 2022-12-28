@@ -17,9 +17,9 @@ plugins {
 
 dependencies {
   implementation(platform(libs.kotlin.bom))
-  implementation("org.jetbrains.kotlin:kotlin-serialization")
-  implementation("org.jetbrains.kotlin:kotlin-reflect")
-  implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable")
+  implementation("org.jetbrains.kotlin:kotlin-serialization:${libs.versions.kotlin.get()}")
+  implementation("org.jetbrains.kotlin:kotlin-reflect:${libs.versions.kotlin.get()}")
+  implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:${libs.versions.kotlin.get()}")
   implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${libs.versions.kotlin.get()}")
 
   implementation(platform(libs.kotlinx.coroutines.bom))

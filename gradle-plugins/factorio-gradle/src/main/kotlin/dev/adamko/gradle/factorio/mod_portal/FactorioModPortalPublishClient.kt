@@ -69,14 +69,13 @@ class FactorioModPortalPublishClient(
     client().useToRun {
       val initUploadResponse = initUpload()
 
-      val enteredVersion = userInputHandler
-        .askQuestion(
-          """
-            |Are you sure you want to publish $modName:$modVersion?
-            |Enter the version number to confirm:
-          """.trimMargin(),
-          "",
-        )
+      val enteredVersion = userInputHandler.askQuestion(
+        """
+          |Are you sure you want to publish $modName:$modVersion?
+          |Enter the version number to confirm:
+        """.trimMargin(),
+        "",
+      )
 
       val confirmed = enteredVersion.trim().equals(modVersion.trim(), ignoreCase = true)
 

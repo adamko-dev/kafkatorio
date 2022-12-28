@@ -40,7 +40,7 @@ script.on_event(defines.events.on_tick, (event: OnTickEvent) => {
         if (isEventType(event, defines.events.on_chunk_generated)) {
           let eName = Converters.eventNameString(event.name)
 
-          log(`[on_tick:${event.tick}] dequed event ${eName}, delay ${i}`)
+          log(`[on_tick:${event.tick}] dequeued event ${eName}, delay ${i}`)
           MapChunkUpdate.handleChunkGeneratedEvent(event, i)
           i += 1
         }

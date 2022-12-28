@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("org.gradle.kotlin.kotlin-dsl")
-  kotlin("jvm")
 }
 
 val gradleJvmTarget = 11
@@ -15,7 +14,7 @@ val gradleJvmTarget = 11
 
 kotlin {
   jvmToolchain {
-    (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(gradleJvmTarget))
+    languageVersion.set(JavaLanguageVersion.of(gradleJvmTarget))
   }
 }
 

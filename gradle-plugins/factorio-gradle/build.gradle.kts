@@ -31,6 +31,8 @@ dependencies {
   implementation(libs.ktorClient.cio)
   implementation(libs.ktorClient.resources)
   implementation(libs.ktorSerialization.kotlinxJson)
+
+  implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:${libs.versions.kotlin.get()}")
 }
 
 gradlePlugin {
@@ -39,6 +41,13 @@ gradlePlugin {
       displayName = "Factorio Mod"
       id = "dev.adamko.factorio-mod"
       implementationClass = "dev.adamko.gradle.factorio.FactorioModPlugin"
+    }
+  }
+  plugins {
+    create("factorioModLibrary") {
+      displayName = "Factorio Mod Library"
+      id = "dev.adamko.factorio-mod-library"
+      implementationClass = "dev.adamko.gradle.factorio.FactorioModLibraryPlugin"
     }
   }
 }

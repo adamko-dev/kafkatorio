@@ -7,7 +7,7 @@ import dev.adamko.gradle.factorio.typescriptAttributes
 
 plugins {
   id("kafkatorio.conventions.lang.kotlin-multiplatform")
-  id("dev.adamko.factorio-mod") apply false // only needed for 'attributes' - need to split up the plugin?
+  id("dev.adamko.factorio-mod-library") // only needed for 'attributes' - need to split up the plugin?
   kotlin("plugin.serialization")
   distribution
 }
