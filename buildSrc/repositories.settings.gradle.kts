@@ -60,9 +60,9 @@ fun RepositoryHandler.jitpack() {
 }
 
 
-fun RepositoryHandler.myMavenLocal(enabled: Boolean = true) {
+fun RepositoryHandler.myMavenLocal(enabled: Boolean = false) {
   if (enabled) {
-    logger.lifecycle("Maven local is enabled")
+    logger.warn("Maven local is enabled")
     mavenLocal {
       content {
 //        includeGroup("dev.adamko")

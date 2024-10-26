@@ -5,7 +5,7 @@ import dev.adamko.kafkatorio.schema.common.Tick
 import dev.adamko.kafkatorio.schema.packets.PlayerUpdate
 import io.kvision.maps.Maps
 import io.kvision.maps.externals.leaflet.layer.vector.CircleMarker
-import js.core.jso
+import js.objects.jso
 
 data class PlayerState(
   val index: PlayerIndex,

@@ -200,9 +200,6 @@ enum class ChunkSize(
   }
 
   companion object {
-    // cache values for better performance. KT-48872
-    val entries: Set<ChunkSize> = values().toSet()
-
     val MAX: ChunkSize = entries.maxByOrNull { it.lengthInTiles }!!
     val MIN: ChunkSize = entries.minByOrNull { it.lengthInTiles }!!
     val STANDARD: ChunkSize = entries.first { it.zoomLevel == 0 }

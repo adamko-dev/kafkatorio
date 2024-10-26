@@ -1,5 +1,4 @@
 import kafkatorio.extensions.dropDirectory
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("kafkatorio.conventions.lang.kotlin-jvm")
@@ -47,12 +46,14 @@ application {
 }
 
 
-tasks.withType<KotlinCompile>().configureEach {
-  kotlinOptions.freeCompilerArgs += listOf(
-    "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-    "-opt-in=kotlinx.coroutines.FlowPreview",
-    "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
-  )
+kotlin {
+  compilerOptions {
+    optIn.addAll(
+      "kotlinx.coroutines.ExperimentalCoroutinesApi",
+      "kotlinx.coroutines.FlowPreview",
+      "kotlinx.serialization.ExperimentalSerializationApi",
+    )
+  }
 }
 
 

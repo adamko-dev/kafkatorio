@@ -22,7 +22,7 @@ kotlin {
       binaries.executable()
 
       runTask {
-        outputFileName = "main.bundle.js"
+        mainOutputFileName = "main.bundle.js"
         sourceMaps = false
         devServer = KotlinWebpackConfig.DevServer(
           open = false,
@@ -38,11 +38,11 @@ kotlin {
               "ws" to true,
             ),
           ),
-          static = mutableListOf("$buildDir/processedResources/js/main")
+          static = mutableListOf("$projectDir/build/processedResources/js/main")
         )
       }
       webpackTask {
-        outputFileName = "main.bundle.js"
+        mainOutputFileName = "main.bundle.js"
       }
       testTask {
         useKarma {
@@ -62,7 +62,7 @@ kotlin {
     }
 
 
-    main {
+    jsMain {
       dependencies {
         implementation(dependencies.platform(projects.modules.versionsPlatform))
 
@@ -72,13 +72,12 @@ kotlin {
 
         implementation(libs.kotlinx.html)
 
-        implementation(libs.kotlinx.nodejs)
+//        implementation(libs.kotlinx.nodejs) // no longer available jcenter is down
         implementation(libs.kotlinx.html)
 
         implementation(kvision())
         implementation(kvision("bootstrap"))
-        implementation(kvision("bootstrap-css"))
-        implementation(kvision("bootstrap-icons"))
+        implementation(kvision("bootstrap"))
         implementation(kvision("fontawesome"))
         implementation(kvision("state"))
         implementation(kvision("chart"))
@@ -93,7 +92,7 @@ kotlin {
     }
 
 
-    test {
+    jsTest {
       dependencies {
         implementation(kotlin("test"))
 
@@ -141,12 +140,13 @@ val runWebMap by tasks.registering {
 }
 
 
-tasks.zip {
-  dependsOn(tasks.withName("browserWebpack"))
-  from(layout.buildDirectory.dir("distributions"))
-}
+//tasks.zip {
+//  dependsOn(tasks.withName("browserWebpack"))
+//  from(layout.buildDirectory.dir("distributions"))
+//}
 
 
-tasks.dockerContextPrepareFiles {
-  from(zipTree(tasks.zip.flatMap { it.archiveFile }))
-}
+//tasks.dockerContextPrepareFiles {
+//  from(zipTree(tasks.zip.flatMap { it.archiveFile }))
+//}
+//

@@ -1,6 +1,5 @@
 package dev.adamko.kafkatorio.webmap
 
-import io.kvision.BootstrapIconsModule
 import io.kvision.BootstrapModule
 import io.kvision.ChartModule
 import io.kvision.CoreModule
@@ -23,7 +22,7 @@ fun main() {
     module.hot,
     BootstrapModule,
 //    BootstrapCssModule,
-    BootstrapIconsModule,
+//    BootstrapIconsModule,
     FontAwesomeModule,
     ChartModule,
     CoreModule,

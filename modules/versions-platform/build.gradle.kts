@@ -15,9 +15,6 @@ dependencies {
   api(platform(libs.kotlinxSerialization.bom))
   api(platform(libs.kotlin.jsWrappers.bom))
 
-
-  api(platform(libs.http4k.bom))
-
   api(platform(libs.okio.bom))
 
   api(platform(libs.ktor.bom))

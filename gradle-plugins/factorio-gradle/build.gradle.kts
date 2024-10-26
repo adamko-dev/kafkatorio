@@ -1,6 +1,3 @@
-import kafkatorio.conventions.overrideKotlinLanguageVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
   id("kafkatorio.conventions.kotlin-dsl")
   id("kafkatorio.conventions.kotlin-serialization")
@@ -52,13 +49,12 @@ gradlePlugin {
   }
 }
 
-overrideKotlinLanguageVersion("1.7") // required for Kotlinx Serialization
-
-tasks.withType<KotlinCompile>().configureEach {
-  kotlinOptions.freeCompilerArgs += listOf(
-    "-opt-in=kotlin.RequiresOptIn",
-    "-opt-in=kotlin.ExperimentalStdlibApi",
-    "-opt-in=kotlin.time.ExperimentalTime",
-    "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-  )
+kotlin {
+  compilerOptions {
+    optIn.addAll(
+      "kotlin.ExperimentalStdlibApi",
+      "kotlin.time.ExperimentalTime",
+      "kotlinx.coroutines.ExperimentalCoroutinesApi",
+    )
+  }
 }

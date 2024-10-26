@@ -1,24 +1,15 @@
 package dev.adamko.gradle.factorio.mod_portal
 
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.request.forms.MultiPartFormDataContent
-import io.ktor.client.request.forms.formData
-import io.ktor.client.request.forms.submitForm
-import io.ktor.client.request.header
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.ContentType
-import io.ktor.http.Headers
-import io.ktor.http.HttpHeaders
-import io.ktor.http.Parameters
-import io.ktor.http.append
-import io.ktor.http.isSuccess
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.logging.*
+import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import java.io.File
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
@@ -69,17 +60,19 @@ class FactorioModPortalPublishClient(
     client().useToRun {
       val initUploadResponse = initUpload()
 
-      val enteredVersion = userInputHandler.askQuestion(
-        """
+      val confirmed = userInputHandler.askUser {
+        val enteredVersion = it.askQuestion(
+          """
           |Are you sure you want to publish $modName:$modVersion?
           |Enter the version number to confirm:
-        """.trimMargin(),
-        "",
-      )
+          """.trimMargin(),
+          "",
+        )
 
-      val confirmed = enteredVersion.trim().equals(modVersion.trim(), ignoreCase = true)
+        enteredVersion.trim().equals(modVersion.trim(), ignoreCase = true)
+      }
 
-      if (confirmed) {
+      if (confirmed.getOrElse(false)) {
         upload(initUploadResponse)
       } else {
         logger.lifecycle("aborting mod '$modName' upload")
@@ -104,7 +97,7 @@ class FactorioModPortalPublishClient(
     require(response.status.isSuccess()) { "init upload request failed" }
 
     return when (initUploadResponse) {
-      is Failure                    -> error(initUploadResponse)
+      is Failure ->                    error(initUploadResponse)
       is InitUploadResponse.Success -> initUploadResponse
     }
   }
