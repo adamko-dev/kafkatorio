@@ -52,7 +52,6 @@ dependencies {
 kotlin {
   compilerOptions {
     optIn.addAll(
-      //"kotlin.RequiresOptIn",
       "kotlin.ExperimentalStdlibApi",
       "kotlin.time.ExperimentalTime",
       //"kotlinx.coroutines.ExperimentalCoroutinesApi",

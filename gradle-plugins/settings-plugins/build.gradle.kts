@@ -4,7 +4,6 @@ import org.gradle.api.attributes.DocsType.DOCS_TYPE_ATTRIBUTE
 import org.gradle.api.attributes.DocsType.SOURCES
 import org.gradle.kotlin.dsl.support.expectedKotlinDslPluginsVersion
 import org.gradle.kotlin.dsl.support.serviceOf
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   `kotlin-dsl`
