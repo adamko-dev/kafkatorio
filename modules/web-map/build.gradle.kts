@@ -62,7 +62,7 @@ kotlin {
     }
 
 
-    main {
+    jsMain {
       dependencies {
         implementation(dependencies.platform(projects.modules.versionsPlatform))
 
@@ -77,8 +77,7 @@ kotlin {
 
         implementation(kvision())
         implementation(kvision("bootstrap"))
-        implementation(kvision("bootstrap-css"))
-        implementation(kvision("bootstrap-icons"))
+        implementation(kvision("bootstrap"))
         implementation(kvision("fontawesome"))
         implementation(kvision("state"))
         implementation(kvision("chart"))
@@ -93,7 +92,7 @@ kotlin {
     }
 
 
-    test {
+    jsTest {
       dependencies {
         implementation(kotlin("test"))
 
@@ -141,12 +140,13 @@ val runWebMap by tasks.registering {
 }
 
 
-tasks.zip {
-  dependsOn(tasks.withName("browserWebpack"))
-  from(layout.buildDirectory.dir("distributions"))
-}
+//tasks.zip {
+//  dependsOn(tasks.withName("browserWebpack"))
+//  from(layout.buildDirectory.dir("distributions"))
+//}
 
 
-tasks.dockerContextPrepareFiles {
-  from(zipTree(tasks.zip.flatMap { it.archiveFile }))
-}
+//tasks.dockerContextPrepareFiles {
+//  from(zipTree(tasks.zip.flatMap { it.archiveFile }))
+//}
+//

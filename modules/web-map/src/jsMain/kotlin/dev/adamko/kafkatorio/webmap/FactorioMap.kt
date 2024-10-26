@@ -18,7 +18,7 @@ import io.kvision.maps.externals.leaflet.geo.LatLng
 import io.kvision.maps.externals.leaflet.layer.LayerGroup
 import io.kvision.maps.externals.leaflet.layer.tile.TileLayer
 import io.kvision.utils.px
-import js.core.jso
+import js.objects.jso
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.CoroutineName
