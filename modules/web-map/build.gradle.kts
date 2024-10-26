@@ -72,7 +72,7 @@ kotlin {
 
         implementation(libs.kotlinx.html)
 
-        implementation(libs.kotlinx.nodejs)
+//        implementation(libs.kotlinx.nodejs) // no longer available jcenter is down
         implementation(libs.kotlinx.html)
 
         implementation(kvision())

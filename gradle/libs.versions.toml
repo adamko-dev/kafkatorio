@@ -114,8 +114,7 @@ kotlinxSerialization-jsonOkio   = { group = "org.jetbrains.kotlinx", name = "kot
 
 kotlinxSerialization-charleskornKaml = { group = "com.charleskorn.kaml", name = "kaml",            version.ref = "kxs-charleskornKaml" }
 kotlinxSerialization-mamoeYamlkt     = { group = "net.mamoe.yamlkt",     name = "yamlkt",          version.ref = "kxs-mamoeYamlkt"     }
-#kxs-kxsTsGen        = { group = "dev.adamko.kxstsgen",  name = "kxs-ts-gen-core", version.ref = "kxs-kxsTsGen"        }
-kotlinxSerialization-kxsTsGen        = { group = "com.github.adamko-dev.kotlinx-serialization-typescript-generator",  name = "kxs-ts-gen-core", version.ref = "kxs-kxsTsGen"        }
+kotlinxSerialization-kxsTsGen        = { module = "dev.adamko.kxstsgen:kxs-ts-gen-core", version.ref = "kxs-kxsTsGen"        }
 
 
 kotlinx-coroutines-bom         = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-bom",  version.ref = "kotlinx-coroutines" }
