@@ -4,7 +4,6 @@ import kafkatorio.extensions.initIdeProjectLogo
 
 plugins {
   idea
-  base
   id("kafkatorio.conventions.base")
 }
 
@@ -33,11 +32,6 @@ excludeProjectConfigurationDirs(
   )
 )
 
-tasks.wrapper {
-  gradleVersion = "7.6"
-  distributionType = Wrapper.DistributionType.BIN
-}
-
 val runKafkatorio by tasks.registering {
   group = rootProject.name
 
@@ -47,8 +41,6 @@ val runKafkatorio by tasks.registering {
     ":modules:infra-kafka-pipe:dockerUp",
   )
 }
-
-apply(from = "$projectDir/kt52647.gradle.kts")
 
 tasks.prepareKotlinBuildScriptModel {
   initIdeProjectLogo("docs/media/img/kafkatorio-logo.svg")

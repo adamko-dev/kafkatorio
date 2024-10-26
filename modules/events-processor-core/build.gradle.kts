@@ -1,6 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
-
 plugins {
   id("kafkatorio.conventions.lang.kotlin-jvm")
   kotlin("plugin.serialization")
@@ -44,18 +41,18 @@ dependencies {
 //  implementation(libs.nimbusJoseJwt)
 }
 
-
 //application {
 //  mainClass.set("dev.adamko.kafkatorio.processor.admin.MainKt")
 //}
 
-
-tasks.withType<KotlinCompile>().configureEach {
-  kotlinOptions.freeCompilerArgs += listOf(
-    "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-    "-opt-in=kotlinx.coroutines.FlowPreview",
-    "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
-  )
+kotlin {
+  compilerOptions {
+    optIn.addAll(
+      "kotlinx.coroutines.ExperimentalCoroutinesApi",
+      "kotlinx.coroutines.FlowPreview",
+      "kotlinx.serialization.ExperimentalSerializationApi",
+    )
+  }
 }
 
 

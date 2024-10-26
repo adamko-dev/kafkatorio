@@ -1,19 +1,7 @@
-import kafkatorio.conventions.overrideKotlinLanguageVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
   id("kafkatorio.conventions.kotlin-dsl")
   id("kafkatorio.conventions.kotlin-serialization")
-//  idea
-//  `kotlin-dsl`
-//  kotlin("jvm") //version  "1.7.20" // embeddedKotlinVersion
-//  kotlin("plugin.serialization") // version  embeddedKotlinVersion
-//  kotlin("plugin.serialization") version "1.7.20"
 }
-
-//val gradleJvmTarget = "11"
-//val gradleKotlinTarget = "1.6"
-
 
 dependencies {
   implementation(platform(libs.kotlin.bom))
@@ -56,64 +44,19 @@ dependencies {
   implementation(libs.ktorClient.resources)
   implementation(libs.ktorSerialization.kotlinxJson)
 
-  // https://github.com/avast/gradle-docker-compose-plugin
-//  implementation("com.avast.gradle:gradle-docker-compose-plugin:${Versions.gradleDockerComposePlugin}")
-
   // https://github.com/gradle/gradle/issues/15383#issuecomment-779893192
   // https://youtrack.jetbrains.com/issue/IDEA-262280#focus=Comments-27-5397040.0-0
 //  implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
 }
 
-
-//tasks.compileKotlin {
-//  kotlinOptions {
-//    // needed by IntelliJ? Even though below does the same?
-//    languageVersion = "1.6"
-//  }
-//}
-
-tasks.withType<KotlinCompile>().configureEach {
-
-  kotlinOptions {
-//    jvmTarget = gradleJvmTarget
-//    apiVersion = gradleKotlinTarget
-//    languageVersion = gradleKotlinTarget
+kotlin {
+  compilerOptions {
+    optIn.addAll(
+      //"kotlin.RequiresOptIn",
+      "kotlin.ExperimentalStdlibApi",
+      "kotlin.time.ExperimentalTime",
+      //"kotlinx.coroutines.ExperimentalCoroutinesApi",
+      "kotlinx.serialization.ExperimentalSerializationApi",
+    )
   }
-
-  kotlinOptions.freeCompilerArgs += listOf(
-//    "-Xcontext-receivers",
-    "-opt-in=kotlin.RequiresOptIn",
-    "-opt-in=kotlin.ExperimentalStdlibApi",
-    "-opt-in=kotlin.time.ExperimentalTime",
-//    "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-    "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
-  )
 }
-
-
-overrideKotlinLanguageVersion("1.6")
-//afterEvaluate {
-//  tasks.withType<KotlinCompile>().configureEach {
-//    kotlinOptions {
-//      apiVersion = gradleKotlinTarget
-//      languageVersion = gradleKotlinTarget
-//    }
-//  }
-//}
-
-//kotlin {
-//  jvmToolchain {
-//    (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(gradleJvmTarget))
-//  }
-//}
-//
-//kotlinDslPluginOptions {
-//  jvmTarget.set(gradleJvmTarget)
-//}
-
-//idea {
-//  module {
-//    isDownloadSources = true
-//    isDownloadJavadoc = true
-//  }
-//}

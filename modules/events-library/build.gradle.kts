@@ -3,6 +3,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import dev.adamko.gradle.factorio.typescriptAttributes
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 
 plugins {
@@ -109,11 +111,11 @@ val jvmJar: TaskProvider<Jar> = tasks.named<Jar>(kotlin.jvm().artifactsTaskName)
 val kotlinMainRuntimeDependencies: Provider<FileCollection> =
   kotlinJvmMainCompilation.map { it.runtimeDependencyFiles }
 
-val kotlinMainCompileDependencies: Provider<FileCollection> =
-  kotlinJvmMainCompilation.map { it.compileDependencyFiles }
+//val kotlinMainCompileDependencies: Provider<FileCollection> =
+//  kotlinJvmMainCompilation.map { it.compileDependencyFiles }
 
-val kotlinMainCompileTask: Provider<KotlinCompile> =
-  kotlinJvmMainCompilation.map { it.compileKotlinTask }
+//val kotlinMainCompileTask: Provider<KotlinCompile> =
+//  kotlinJvmMainCompilation.map { it.compileKotlinTask }
 
 
 val generateTypeScript by tasks.registering(GenerateTypeScriptTask::class) {

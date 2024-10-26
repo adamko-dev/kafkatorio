@@ -22,7 +22,7 @@ kotlin {
       binaries.executable()
 
       runTask {
-        outputFileName = "main.bundle.js"
+        mainOutputFileName = "main.bundle.js"
         sourceMaps = false
         devServer = KotlinWebpackConfig.DevServer(
           open = false,
@@ -38,11 +38,11 @@ kotlin {
               "ws" to true,
             ),
           ),
-          static = mutableListOf("$buildDir/processedResources/js/main")
+          static = mutableListOf("$projectDir/build/processedResources/js/main")
         )
       }
       webpackTask {
-        outputFileName = "main.bundle.js"
+        mainOutputFileName = "main.bundle.js"
       }
       testTask {
         useKarma {

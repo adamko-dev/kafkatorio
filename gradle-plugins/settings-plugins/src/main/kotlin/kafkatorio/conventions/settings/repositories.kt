@@ -10,7 +10,7 @@ fun RepositoryHandler.jitpack() {
 }
 
 
-fun RepositoryHandler.myMavenLocal(enabled: Boolean = true) {
+fun RepositoryHandler.myMavenLocal(enabled: Boolean = false) {
   if (enabled) {
     println("Maven local is enabled")
     mavenLocal {

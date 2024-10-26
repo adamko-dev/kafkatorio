@@ -1,13 +1,13 @@
 package kafkatorio.conventions.lang
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
   id("kafkatorio.conventions.base")
   kotlin("jvm")
 }
 
-val projectKotlinTarget = "1.7"
+//val projectKotlinTarget = "1.7"
 val projectJvmTarget = "11"
 
 
@@ -22,37 +22,34 @@ dependencies {
   testImplementation("io.mockk:mockk")
 }
 
-
-tasks.withType<KotlinCompile>().configureEach {
-
-  kotlinOptions {
-    jvmTarget = projectJvmTarget
-    apiVersion = projectKotlinTarget
-    languageVersion = projectKotlinTarget
-  }
-
-  kotlinOptions.freeCompilerArgs += listOf(
-//    "-Xcontext-receivers",
-    "-opt-in=kotlin.RequiresOptIn",
-    "-opt-in=kotlin.ExperimentalStdlibApi",
-    "-opt-in=kotlin.time.ExperimentalTime",
-//    "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-//    "-opt-in=kotlinx.serialization.ExperimentalSerializationApi",
-  )
-}
-
-
-tasks.compileTestKotlin {
-  kotlinOptions.freeCompilerArgs += "-opt-in=io.kotest.common.ExperimentalKotest"
-}
-
-
 kotlin {
   jvmToolchain {
     languageVersion.set(JavaLanguageVersion.of(projectJvmTarget))
   }
+
+  compilerOptions {
+    jvmTarget = JvmTarget.fromTarget(projectJvmTarget)
+//    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.fromVersion(projectKotlinTarget)
+//    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.fromVersion(projectKotlinTarget)
+
+    optIn.addAll(
+      //"kotlin.RequiresOptIn",
+      "kotlin.ExperimentalStdlibApi",
+      "kotlin.time.ExperimentalTime",
+      //"kotlinx.coroutines.ExperimentalCoroutinesApi",
+      //"kotlinx.serialization.ExperimentalSerializationApi",
+    )
+  }
 }
 
+
+tasks.compileTestKotlin {
+  compilerOptions {
+    optIn.addAll(
+      "io.kotest.common.ExperimentalKotest",
+    )
+  }
+}
 
 tasks.withType<Test>().configureEach {
   useJUnitPlatform()
