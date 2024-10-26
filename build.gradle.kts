@@ -1,13 +1,11 @@
 import java.time.LocalDate
-import kafkatorio.extensions.excludeGeneratedGradleDsl
+import kafkatorio.extensions.excludeProjectConfigurationDirs
 import kafkatorio.extensions.initIdeProjectLogo
 
 plugins {
   idea
   base
   id("kafkatorio.conventions.base")
-//  `project-report`
-//  `build-dashboard`
 }
 
 group = "dev.adamko.kafkatorio"
@@ -24,18 +22,16 @@ val projectTokens: MapProperty<String, String> by extra {
   }
 }
 
-idea {
-  module {
-    isDownloadSources = true
-    isDownloadJavadoc = true
-    excludeGeneratedGradleDsl(layout)
-    excludeDirs = excludeDirs + layout.files(
-      ".idea",
-      "gradle/kotlin-js-store",
-      "gradle/wrapper",
-    )
-  }
-}
+excludeProjectConfigurationDirs(
+  idea,
+  dirsToExclude = setOf(
+    "gradle/kotlin-js-store",
+    "gradle/wrapper",
+    ".idea",
+    ".gradle",
+    "build",
+  )
+)
 
 tasks.wrapper {
   gradleVersion = "7.6"
@@ -54,4 +50,6 @@ val runKafkatorio by tasks.registering {
 
 apply(from = "$projectDir/kt52647.gradle.kts")
 
-initIdeProjectLogo()
+tasks.prepareKotlinBuildScriptModel {
+  initIdeProjectLogo("docs/media/img/kafkatorio-logo.svg")
+}

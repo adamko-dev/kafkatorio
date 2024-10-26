@@ -34,26 +34,6 @@ operator fun <T> Spec<T>.not(): NotSpec<T> = NotSpec(this)
 //
 
 
-/** exclude generated Gradle code, so it doesn't clog up search results */
-fun IdeaModule.excludeGeneratedGradleDsl(layout: ProjectLayout) {
-
-  val generatedSrcDirs = listOf(
-    "kotlin-dsl-accessors",
-    "kotlin-dsl-external-plugin-spec-builders",
-    "kotlin-dsl-plugins",
-  )
-
-  excludeDirs.addAll(
-    layout.projectDirectory.asFile.walk()
-      .filter { it.isDirectory }
-      .filter { it.parentFile.name in generatedSrcDirs }
-      .flatMap { file ->
-        file.walk().maxDepth(1).filter { it.isDirectory }.toList()
-      }
-  )
-}
-
-
 // https://stackoverflow.com/a/70317110/4161471
 fun Project.execCapture(spec: ExecSpec.() -> Unit): String {
   return ByteArrayOutputStream().use { outputStream ->
