@@ -10,7 +10,6 @@ kotlin     = "1.9.25"
 
 ## libs ##
 camel-kafkaConnectors = "0.11.0"
-http4k                = "4.25.16.2"
 kafka                 = "3.3.1"         # https://kafka.apache.org/downloads
 kvision               = "7.5.1"        # https://github.com/rjaros/kvision/releases
 #log4j2                = "2.17.2"
@@ -131,22 +130,6 @@ kSvgDsl = { group = "com.github.nwillc", name = "ksvg", version.ref = "kSvgDsl" 
 
 
 kotlin-jsWrappers-bom          = { group = "org.jetbrains.kotlin-wrappers", name = "kotlin-wrappers-bom",   version.ref = "kotlinJsWrappers" }
-
-
-## http4k ##
-http4k-bom            = { group = "org.http4k",  name = "http4k-bom",                          version.ref = "http4k" }
-http4k-core           = { group = "org.http4k",  name = "http4k-core"                                                 }
-http4k-contract       = { group = "org.http4k",  name = "http4k-contract"                                             }
-http4k-client-okhttp  = { group = "org.http4k",  name = "http4k-client-okhttp"                                        }
-http4k-client-ws      = { group = "org.http4k",  name = "http4k-client-websocket"                                     }
-http4k-server         = { group = "org.http4k",  name = "http4k-server-undertow"                                      }
-http4k-cloudnative    = { group = "org.http4k",  name = "http4k-cloudnative"                                          }
-#http4k-format-jackson-json    = { group = "org.http4k",  name = "http4k-format-jackson"                                       }
-#http4k-format-jackson-xml     = { group = "org.http4k",  name = "http4k-format-jackson-xml"                                   }
-#http4k-format-jackson-yaml    = { group = "org.http4k",  name = "http4k-format-jackson-yaml"                                  }
-http4k-format-kotlinx = { group = "org.http4k",  name = "http4k-format-kotlinx-serialization"                         }
-http4k-graphql        = { group = "org.http4k",  name = "http4k-graphql"                                              }
-
 
 ## ktor ##
 ktor-bom                      = { group = "io.ktor",  name = "ktor-bom", version.ref = "ktor"  }
@@ -272,11 +255,6 @@ kotest-runnerJunit5     = { module = "io.kotest:kotest-runner-junit5"      }
 
 kotestPlugin-embeddedCompiler = { group = "io.kotest",  name = "kotest-framework-multiplatform-plugin-embeddable-compiler" }
 kotestPlugin-multiplatform    = { group = "io.kotest",  name = "kotest-framework-multiplatform-plugin-gradle"              }
-
-## http4k ##
-http4k-test-chaos    = { group = "org.http4k",  name = "http4k-testing-chaos",     version.ref = "http4k"  }
-http4k-test-approval = { group = "org.http4k",  name = "http4k-testing-approval",  version.ref = "http4k"  }
-http4k-test-kotest   = { group = "org.http4k",  name = "http4k-testing-kotest",    version.ref = "http4k"  }
 
 ################
 ### plugins  ###
