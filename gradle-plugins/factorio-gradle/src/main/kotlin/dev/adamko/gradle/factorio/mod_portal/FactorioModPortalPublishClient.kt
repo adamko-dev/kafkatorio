@@ -65,7 +65,7 @@ class FactorioModPortalPublishClient(
           """
           |Are you sure you want to publish $modName:$modVersion?
           |Enter the version number to confirm:
-        """.trimMargin(),
+          """.trimMargin(),
           "",
         )
 
@@ -97,7 +97,7 @@ class FactorioModPortalPublishClient(
     require(response.status.isSuccess()) { "init upload request failed" }
 
     return when (initUploadResponse) {
-      is Failure -> error(initUploadResponse)
+      is Failure ->                    error(initUploadResponse)
       is InitUploadResponse.Success -> initUploadResponse
     }
   }
