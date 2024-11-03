@@ -69,7 +69,7 @@ internal abstract class IdeaExcludedDirectoriesSource :
       .walk()
       .onEnter { it.name !in doNotWalkDirs && it.parentFile.name !in generatedSrcDirs }
       .filter { it.isDirectory }
-      .filter { it.parentFile.name in generatedSrcDirs }
+      .filter { it.name in generatedSrcDirs }
       .flatMap { file ->
         file.walk().maxDepth(1).filter { it.isDirectory }.toList()
       }
