@@ -6,7 +6,9 @@ import org.gradle.api.artifacts.dsl.RepositoryHandler
 
 
 fun RepositoryHandler.jitpack() {
-  maven("https://jitpack.io")
+  maven("https://jitpack.io") {
+    name = "Jitpack"
+  }
 }
 
 
@@ -26,12 +28,14 @@ fun RepositoryHandler.myMavenLocal(enabled: Boolean = false) {
 
 fun RepositoryHandler.sonatypeSnapshot() {
   maven("https://oss.sonatype.org/content/repositories/snapshots") {
+    name = "Maven Central OSS Snapshots"
     mavenContent {
       snapshotsOnly()
       includeGroup("io.kotest")
     }
   }
   maven("https://s01.oss.sonatype.org/content/repositories/snapshots/") {
+    name = "Maven Central s01 Snapshots"
     mavenContent {
       snapshotsOnly()
       includeGroup("io.kotest")
@@ -43,7 +47,7 @@ fun RepositoryHandler.sonatypeSnapshot() {
 fun RepositoryHandler.nodeDistributions() {
   // Declare the Node.js download repository
   ivy("https://nodejs.org/dist/") {
-    name = "Node Distributions at $url"
+    name = "Node.js Distributions at $url"
     patternLayout { artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]") }
     metadataSources { artifact() }
     content { includeModule("org.nodejs", "node") }
@@ -65,20 +69,22 @@ fun RepositoryHandler.yarnDistributions() {
 // example: implementation("jmeter-gradle-plugin:jmeter-gradle-plugin:1.0.3@zip")
 fun RepositoryHandler.gitHub() {
   ivy("https://github.com/") {
+    name = "GitHub"
     patternLayout {
       artifact("/[organisation]/[module]/archive/[revision].[ext]")
     }
     metadataSources { artifact() }
 
-    content {
-      includeGroup("jmeter-gradle-plugin")
-    }
+//    content {
+//      includeGroup("jmeter-gradle-plugin")
+//    }
   }
 }
 
 
 fun RepositoryHandler.kotlinxHtml() {
   maven("https://maven.pkg.jetbrains.space/public/p/kotlinx-html/maven") {
+    name = "JetBrains Space Kotlinx HTML"
     mavenContent {
       includeGroup("org.jetbrains.kotlinx")
     }

@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 package dev.adamko.gradle.factorio
 
 import org.gradle.api.artifacts.Configuration
@@ -12,10 +14,18 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.kotlin.dsl.named
 
 
+fun Configuration.asDeclarable(visible: Boolean = false) {
+  isVisible = visible
+  isCanBeResolved = false
+  isCanBeConsumed = false
+  isCanBeDeclared = true
+}
+
 fun Configuration.asProvider(visible: Boolean = false) {
   isVisible = visible
   isCanBeResolved = false
   isCanBeConsumed = true
+  isCanBeDeclared = false
 }
 
 
@@ -23,6 +33,7 @@ fun Configuration.asConsumer(visible: Boolean = false) {
   isVisible = visible
   isCanBeResolved = true
   isCanBeConsumed = false
+  isCanBeDeclared = false
 }
 
 
