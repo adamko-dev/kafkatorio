@@ -19,7 +19,7 @@ scrimage              = "4.0.32"        # https://github.com/sksamuel/scrimage/r
 semver                = "1.2.0"         # https://github.com/swiftzer/semver/releases
 slf4j                 = "1.7.36"
 
-kotlinx-serialization = "1.4.0"         # https://github.com/Kotlin/kotlinx.serialization/releases
+kotlinx-serialization = "1.6.3"         # https://github.com/Kotlin/kotlinx.serialization/releases
 kxs-charleskornKaml   = "0.44.0"
 kxs-mamoeYamlkt       = "0.12.0"
 kxs-kxsTsGen          = "0.2.1"
@@ -34,7 +34,7 @@ kotlinx-nodejs        = "0.0.7"
 
 kSvgDsl               = "v2.2.0"
 
-ktor                  = "2.1.3"         # https://github.com/ktorio/ktor/releases
+ktor                  = "2.3.12"         # https://github.com/ktorio/ktor/releases
 
 hoplite               = "2.7.0"         # https://github.com/sksamuel/hoplite/releases
 
@@ -51,9 +51,9 @@ nimbusJoseJwt         = "9.25.6"        # https://search.maven.org/artifact/com.
 ## npm ##
 
 npm-luaTypes        = "2.13.1"   # https://www.npmjs.com/package/lua-types
-npm-typescriptToLua = "1.11.1"   # https://www.npmjs.com/package/typescript-to-lua
-npm-typedFactorio   = "1.11.0"   # https://github.com/GlassBricks/typed-factorio/blob/main/Changelog.md https://www.npmjs.com/package/typed-factorio
-npm-typescript      = "4.9"      # https://github.com/microsoft/TypeScript/releases
+npm-typescriptToLua = "1.27.1"   # https://www.npmjs.com/package/typescript-to-lua
+npm-typedFactorio   = "3.1.1"    # https://github.com/GlassBricks/typed-factorio/blob/main/Changelog.md https://www.npmjs.com/package/typed-factorio
+npm-typescript      = "5.6.2"    # https://github.com/microsoft/TypeScript/releases
 
 npm-bootswatch      = "5.2.2"    # https://www.jsdelivr.com/package/npm/bootswatch
 
@@ -64,14 +64,14 @@ mockk      = "1.13.3"            # https://github.com/mockk/mockk/releases/
 
 
 ## infra ##
-factorio               = "1.1.72"    # https://www.factorio.com/download
+factorio               = "2.0.14"    # https://www.factorio.com/download, https://hub.docker.com/r/factoriotools/factorio
 confluent-kafkaConnect = "7.0.1"
 grafana                = "8.5.0"
 prometheus             = "v2.34.0"
 
 
 ## gradle plugins ##
-gradleNodePlugin = "3.5.0"        # https://github.com/node-gradle/gradle-node-plugin/releases
+gradleNodePlugin = "7.1.0"        # https://github.com/node-gradle/gradle-node-plugin/releases
 
 node = "22.11.0"
 
@@ -179,10 +179,6 @@ ktorServer-testHost           = { group = "io.ktor",  name = "ktor-server-test-h
 ktorNetwork-core              = { group = "io.ktor",  name = "ktor-network"                    }
 ktorNetwork-tls               = { group = "io.ktor",  name = "ktor-network-tls"                }
 
-
-### jackson ##
-#jackson-bom     = { group = " com.fasterxml.jackson.module",  name = ":jackson-module-kotlin", version = "2.13.+"     }
-#jackson-kotlin     = { group = " com.fasterxml.jackson.module",  name = ":jackson-module-kotlin", version = "2.13.+"  }
 
 ## logging ##
 slf4j-api       = { group = "org.slf4j",             name = "slf4j-api",                 version.ref = "slf4j"      }
