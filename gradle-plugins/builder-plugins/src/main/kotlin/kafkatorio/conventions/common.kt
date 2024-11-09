@@ -6,12 +6,6 @@ import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.findByType
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
 
-
-object Versions {
-  const val node = "14.19.1"
-}
-
-
 /**
  * `kotlin-js` adds a directory in the root-dir for the Yarn lock.
  * That's a bit annoying. It's a little neater if it's in the

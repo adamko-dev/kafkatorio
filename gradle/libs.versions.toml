@@ -73,6 +73,7 @@ prometheus             = "v2.34.0"
 ## gradle plugins ##
 gradleNodePlugin = "3.5.0"        # https://github.com/node-gradle/gradle-node-plugin/releases
 
+node = "22.11.0"
 
 #########
 [plugins]

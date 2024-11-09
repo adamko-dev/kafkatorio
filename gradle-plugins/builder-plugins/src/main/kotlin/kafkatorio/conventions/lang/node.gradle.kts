@@ -1,7 +1,7 @@
 package kafkatorio.conventions.lang
 
 import com.github.gradle.node.npm.task.NpmInstallTask
-import kafkatorio.conventions.Versions
+import kafkatorio.conventions.BuildVersions
 import kafkatorio.tasks.UpdatePackageJson
 import kotlinx.serialization.json.put
 
@@ -14,7 +14,7 @@ plugins {
 
 node {
   download.set(true)
-  version.set(Versions.node)
+  version.set(BuildVersions.node)
 
   distBaseUrl.set(null as String?) // set by dependencyResolutionManagement
 }
