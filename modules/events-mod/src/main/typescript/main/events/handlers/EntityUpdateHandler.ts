@@ -8,6 +8,33 @@ import {
 } from "../../../generated/kafkatorio-schema";
 import {Converters} from "../converters";
 import EventDataCache from "../../emitting/EventDataCache";
+import {
+  LuaEntity,
+  LuaSurface,
+  OldTileAndPosition,
+  OnBuiltEntityEvent,
+  OnChunkGeneratedEvent,
+  OnEntityClonedEvent,
+  OnEntityDamagedEvent,
+  OnEntityDiedEvent,
+  OnEntityLogisticSlotChangedEvent,
+  OnEntityRenamedEvent,
+  OnEntitySettingsPastedEvent,
+  OnEntitySpawnedEvent,
+  OnPlayerMinedEntityEvent,
+  OnPlayerMinedTileEvent,
+  OnPlayerRepairedEntityEvent,
+  OnPlayerRotatedEntityEvent,
+  OnPostEntityDiedEvent,
+  OnPreEntitySettingsPastedEvent,
+  OnRobotBuiltEntityEvent,
+  OnRobotMinedEntityEvent,
+  OnRobotMinedTileEvent,
+  OnSelectedEntityChangedEvent,
+  OnTriggerCreatedEntityEvent,
+  SurfaceIndex
+} from "factorio:runtime";
+import {BoundingBoxStruct, MapPosition} from "factorio:prototype";
 
 
 export class EntityUpdatesHandler {
@@ -44,38 +71,38 @@ export class EntityUpdatesHandler {
       }
 
       EntityUpdatesHandler.throttleResourcesUpdate(
-          Converters.eventNameString(event.name),
-          event.tick as Tick,
-          event.surface_index,
-          chunkPos,
-          entities,
+        Converters.eventNameString(event.name),
+        event.tick as Tick,
+        event.surface_index,
+        chunkPos,
+        entities,
       )
     }
   }
 
 
   handleMinedEntityEvent(
-      event: OnPlayerMinedEntityEvent | OnRobotMinedEntityEvent,
+    event: OnPlayerMinedEntityEvent | OnRobotMinedEntityEvent,
   ) {
     EntityUpdatesHandler.throttleEntityUpdate(event, event.entity)
   }
 
 
   handleBuiltEntityEvent(
-      event: OnBuiltEntityEvent | OnRobotBuiltEntityEvent,
+    event: OnBuiltEntityEvent | OnRobotBuiltEntityEvent,
   ) {
-    EntityUpdatesHandler.throttleEntityUpdate(event, event.created_entity)
+    EntityUpdatesHandler.throttleEntityUpdate(event, event.entity)
   }
 
 
   handleChunkGeneratedEvent(event: OnChunkGeneratedEvent) {
     const entities = EntityUpdatesHandler.getAreaResourceEntities(event.surface, event.area)
     EntityUpdatesHandler.throttleResourcesUpdate(
-        Converters.eventNameString(event.name),
-        event.tick as Tick,
-        event.surface.index,
-        Converters.chunkPosition(event.position),
-        entities,
+      Converters.eventNameString(event.name),
+      event.tick as Tick,
+      event.surface.index,
+      Converters.chunkPosition(event.position),
+      entities,
     )
   }
 
@@ -105,28 +132,28 @@ export class EntityUpdatesHandler {
     }
 
     EventDataCache.throttle<KafkatorioPacketData.MapChunkEntityUpdate>(
-        entityUpdateKey,
-        KafkatorioPacketData.Type.MapChunkEntityUpdate,
-        data => {
+      entityUpdateKey,
+      KafkatorioPacketData.Type.MapChunkEntityUpdate,
+      data => {
 
-          data.events ??= {}
-          data.events[eventName] ??= []
-          data.events[eventName].push(event.tick)
+        data.events ??= {}
+        data.events[eventName] ??= []
+        data.events[eventName].push(event.tick)
 
-          data.entitiesXY ??= {}
-          data.entitiesXY[`${entity.position.x}`] ??= {}
-          data.entitiesXY[`${entity.position.x}`][`${entity.position.y}`] ??= entityUpdate
-        }
+        data.entitiesXY ??= {}
+        data.entitiesXY[`${entity.position.x}`] ??= {}
+        data.entitiesXY[`${entity.position.x}`][`${entity.position.y}`] ??= entityUpdate
+      }
     )
   }
 
 
   private static throttleResourcesUpdate(
-      eventName: EventName,
-      eventTick: Tick,
-      surfaceIndex: SurfaceIndex,
-      chunkPosition: MapChunkPosition,
-      entities: LuaEntity[],
+    eventName: EventName,
+    eventTick: Tick,
+    surfaceIndex: SurfaceIndex,
+    chunkPosition: MapChunkPosition,
+    entities: LuaEntity[],
   ) {
 
     // first group by prototype ID
@@ -149,27 +176,27 @@ export class EntityUpdatesHandler {
       }
 
       EventDataCache.throttle<KafkatorioPacketData.MapChunkResourceUpdate>(
-          entityUpdateKey,
-          KafkatorioPacketData.Type.MapChunkResourceUpdate,
-          data => {
+        entityUpdateKey,
+        KafkatorioPacketData.Type.MapChunkResourceUpdate,
+        data => {
 
-            data.events ??= {}
-            data.events[eventName] ??= []
-            data.events[eventName].push(eventTick)
+          data.events ??= {}
+          data.events[eventName] ??= []
+          data.events[eventName].push(eventTick)
 
-            for (const entity of resourceEntities) {
+          for (const entity of resourceEntities) {
 
-              data.amounts ??= {}
-              data.amounts[`${entity.position.x}`] ??= {}
-              data.amounts[`${entity.position.x}`][`${entity.position.y}`] = entity.amount
+            data.amounts ??= {}
+            data.amounts[`${entity.position.x}`] ??= {}
+            data.amounts[`${entity.position.x}`][`${entity.position.y}`] = entity.amount
 
-              if (entity.initial_amount != null) {
-                data.initialAmounts ??= {}
-                data.initialAmounts[`${entity.position.x}`] ??= {}
-                data.initialAmounts[`${entity.position.x}`][`${entity.position.y}`] = entity.initial_amount
-              }
+            if (entity.initial_amount != null) {
+              data.initialAmounts ??= {}
+              data.initialAmounts[`${entity.position.x}`] ??= {}
+              data.initialAmounts[`${entity.position.x}`][`${entity.position.y}`] = entity.initial_amount
             }
           }
+        }
       )
     }
   }
@@ -177,26 +204,26 @@ export class EntityUpdatesHandler {
 
   /** Get all resources on a tile-position */
   private static getTileResourceEntities(
-      surface: LuaSurface,
-      mapPosition: MapPosition,
+    surface: LuaSurface,
+    mapPosition: MapPosition,
   ): LuaEntity[] {
     return surface.find_entities_filtered({
-          position: mapPosition,
-          collision_mask: "resource-layer",
-        }
+        position: mapPosition,
+        collision_mask: "resource-layer",
+      }
     )
   }
 
 
   /** Get all resources within a map-area */
   private static getAreaResourceEntities(
-      surface: LuaSurface,
-      area: BoundingBoxTable,
+    surface: LuaSurface,
+    area: BoundingBoxStruct,
   ): LuaEntity[] {
     return surface.find_entities_filtered({
-          area: area,
-          collision_mask: "resource-layer",
-        }
+        area: area,
+        collision_mask: "resource-layer",
+      }
     )
   }
 }
@@ -207,26 +234,26 @@ export default EntityUpdates
 
 
 type EntityUpdateEvent =
-    | OnBuiltEntityEvent
+  | OnBuiltEntityEvent
 
-    | OnEntityClonedEvent
-    | OnEntityDamagedEvent
-    | OnEntityDestroyedEvent
-    | OnEntityDiedEvent
-    | OnEntityLogisticSlotChangedEvent
-    | OnEntityRenamedEvent
-    | OnEntitySettingsPastedEvent
-    | OnEntitySpawnedEvent
+  | OnEntityClonedEvent
+  | OnEntityDamagedEvent
+  // | OnEntityDestroyedEvent // TODO Why is OnEntityDestroyedEvent gone in 2.0?
+  | OnEntityDiedEvent
+  | OnEntityLogisticSlotChangedEvent
+  | OnEntityRenamedEvent
+  | OnEntitySettingsPastedEvent
+  | OnEntitySpawnedEvent
 
-    | OnPlayerMinedEntityEvent
-    | OnPlayerRepairedEntityEvent
-    | OnPlayerRotatedEntityEvent
+  | OnPlayerMinedEntityEvent
+  | OnPlayerRepairedEntityEvent
+  | OnPlayerRotatedEntityEvent
 
-    | OnRobotMinedEntityEvent
-    | OnRobotBuiltEntityEvent
+  | OnRobotMinedEntityEvent
+  | OnRobotBuiltEntityEvent
 
-    | OnPostEntityDiedEvent
-    | OnPreEntitySettingsPastedEvent
+  | OnPostEntityDiedEvent
+  | OnPreEntitySettingsPastedEvent
 
-    | OnSelectedEntityChangedEvent
-    | OnTriggerCreatedEntityEvent
+  | OnSelectedEntityChangedEvent
+  | OnTriggerCreatedEntityEvent

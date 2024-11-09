@@ -1,11 +1,13 @@
+import { EventData, int, uint } from "factorio:runtime"
+
 export class EventDataQueueManager {
 
   static init(force?: boolean) {
 
     const isAnythingUndefined = global.store == undefined ||
-                                global.size == undefined ||
-                                global.head == undefined ||
-                                global.tail == undefined
+      global.size == undefined ||
+      global.head == undefined ||
+      global.tail == undefined
 
     log(`Initialising EventDataQueueManager globals (force=${force}, isAnythingUndefined=${isAnythingUndefined})`)
 

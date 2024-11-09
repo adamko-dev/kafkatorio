@@ -1,6 +1,7 @@
 import {initGlobal} from "../global-init";
 import {emitPrototypes} from "./prototypeUpdates";
 import ConfigurationUpdates from "./handlers/ConfigurationUpdateHandler";
+import {ConfigurationChangedData} from "factorio:runtime";
 
 
 script.on_configuration_changed((data: ConfigurationChangedData) => {

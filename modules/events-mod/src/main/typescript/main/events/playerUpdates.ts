@@ -2,6 +2,16 @@ import {Converters} from "./converters";
 import {ForceIndex, KafkatorioPacketData, PlayerUpdateKey} from "../../generated/kafkatorio-schema";
 import packetEmitter from "../emitting/PacketEmitter";
 import PlayerUpdates from "./handlers/PlayerUpdateHandler";
+import {
+  OnPlayerBannedEvent,
+  OnPlayerChangedPositionEvent,
+  OnPlayerChangedSurfaceEvent,
+  OnPlayerDiedEvent,
+  OnPlayerJoinedGameEvent,
+  OnPlayerKickedEvent,
+  OnPlayerRemovedEvent,
+  OnPrePlayerLeftGameEvent, uint
+} from "factorio:runtime";
 
 
 // function playerUpdateDebounce(playerIndex: uint, mutate: PlayerUpdater) {
@@ -17,58 +27,58 @@ import PlayerUpdates from "./handlers/PlayerUpdateHandler";
 
 script.on_event(defines.events.on_player_joined_game, (e: OnPlayerJoinedGameEvent) => {
   PlayerUpdates.playerUpdateThrottle(
-      e,
-      (player, data) => {
-        data.isAdmin = player.admin
-        data.characterUnitNumber = player.character?.unit_number ?? null
-        data.chatColour = Converters.mapColour(player.chat_color)
-        data.colour = Converters.mapColour(player.color)
-        data.forceIndex = player.force.index as ForceIndex
-        data.name = player.name
-        data.isShowOnMap = player.show_on_map
-        data.isSpectator = player.spectator
-        data.surfaceIndex = player.surface.index
-        data.tag = player.tag
-        Converters.playerOnlineInfo(player, data)
-      }
+    e,
+    (player, data) => {
+      data.isAdmin = player.admin
+      data.characterUnitNumber = player.character?.unit_number ?? null
+      data.chatColour = Converters.mapColour(player.chat_color)
+      data.colour = Converters.mapColour(player.color)
+      data.forceIndex = player.force.index as uint as ForceIndex
+      data.name = player.name
+      data.isShowOnMap = player.show_on_map
+      data.isSpectator = player.spectator
+      data.surfaceIndex = player.surface.index
+      data.tag = player.tag
+      Converters.playerOnlineInfo(player, data)
+    }
   )
 })
 
 
 script.on_event(defines.events.on_player_changed_position, (e: OnPlayerChangedPositionEvent) => {
   PlayerUpdates.playerUpdateThrottle(
-      e,
-      (player, data) => {
-        data.position = [player.position.x, player.position.y]
-      }
+    e,
+    (player, data) => {
+      data.position = [player.position.x, player.position.y]
+    }
   )
 })
 
 
 script.on_event(defines.events.on_player_changed_surface, (e: OnPlayerChangedSurfaceEvent) => {
   PlayerUpdates.playerUpdateThrottle(
-      e,
-      (player, data) => {
-        data.position = [player.position.x, player.position.y]
-        data.surfaceIndex = player.surface.index
-      }
+    e,
+    (player, data) => {
+      data.position = [player.position.x, player.position.y]
+      data.surfaceIndex = player.surface.index
+    }
   )
 })
 
 
 script.on_event(defines.events.on_player_died, (e: OnPlayerDiedEvent) => {
   PlayerUpdates.playerUpdateThrottle(
-      e,
-      (player, data) => {
-        data.ticksToRespawn = player.ticks_to_respawn ?? null
-        Converters.playerOnlineInfo(player, data)
-        if (e.cause != undefined) {
-          data.diedCause = {
-            unitNumber: e.cause.unit_number ?? null,
-            protoId: Converters.prototypeId(e.cause.type, e.cause.name),
-          }
+    e,
+    (player, data) => {
+      data.ticksToRespawn = player.ticks_to_respawn ?? null
+      Converters.playerOnlineInfo(player, data)
+      if (e.cause != undefined) {
+        data.diedCause = {
+          unitNumber: e.cause.unit_number ?? null,
+          protoId: Converters.prototypeId(e.cause.type, e.cause.name),
         }
       }
+    }
   )
 })
 
@@ -84,11 +94,11 @@ script.on_event(defines.events.on_player_unbanned, (event: OnPlayerBannedEvent) 
 script.on_event(defines.events.on_player_kicked, (event: OnPlayerKickedEvent) => {
   log(`on_player_kicked ${event.tick} ${event.name}`)
   PlayerUpdates.playerUpdateImmediate(
-      event,
-      (player, data) => {
-        data.kickedReason = event.reason ?? null
-        Converters.playerOnlineInfo(player, data)
-      }
+    event,
+    (player, data) => {
+      data.kickedReason = event.reason ?? null
+      Converters.playerOnlineInfo(player, data)
+    }
   )
 })
 
@@ -120,11 +130,11 @@ script.on_event(defines.events.on_pre_player_left_game, (event: OnPrePlayerLeftG
 script.on_event(defines.events.on_player_removed, (event: OnPlayerRemovedEvent) => {
   log(`on_player_removed ${event.tick} ${event.name}`)
   PlayerUpdates.playerUpdateImmediate(
-      event,
-      (player, data) => {
-        data.isRemoved = true
-        Converters.playerOnlineInfo(player, data)
-      }
+    event,
+    (player, data) => {
+      data.isRemoved = true
+      Converters.playerOnlineInfo(player, data)
+    }
   )
 })
 

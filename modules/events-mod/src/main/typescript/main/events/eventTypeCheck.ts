@@ -1,3 +1,4 @@
+import {CustomInputEvent, EventData, EventId} from "factorio:runtime";
 
 export function isEventType<ED extends EventData | CustomInputEvent>(
     eventData: EventData,

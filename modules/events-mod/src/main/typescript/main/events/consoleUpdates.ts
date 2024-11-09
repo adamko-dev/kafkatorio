@@ -1,5 +1,6 @@
 import {KafkatorioPacketData} from "../../generated/kafkatorio-schema";
 import KafkatorioPacketQueue from "../emitting/KafkatorioPacketQueue";
+import {OnConsoleChatEvent, OnConsoleCommandEvent} from "factorio:runtime";
 
 
 script.on_event(defines.events.on_console_chat, (event: OnConsoleChatEvent) => {

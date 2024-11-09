@@ -10,8 +10,10 @@
     "types": [
       "@typescript-to-lua/language-extensions",
       "lua-types/5.2",
+      //"typed-factorio",
+      "typed-factorio/settings",
+      "typed-factorio/prototype",
       "typed-factorio/runtime",
-      "typed-factorio/strict-index-types"
     ],
     "plugins": [
       {

@@ -1,4 +1,10 @@
 import EntityUpdates from "./handlers/EntityUpdateHandler";
+import {
+  OnBuiltEntityEvent,
+  OnPlayerMinedEntityEvent,
+  OnRobotBuiltEntityEvent,
+  OnRobotMinedEntityEvent
+} from "factorio:runtime";
 
 script.on_event(defines.events.on_built_entity, (e: OnBuiltEntityEvent) => {
   log(`on_built_entity ${e.tick}`)

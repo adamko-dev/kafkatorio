@@ -3,15 +3,22 @@ import dev.adamko.gradle.factorio.typescriptAttributes
 import kafkatorio.tasks.TypeScriptToLuaTask
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
+import org.gradle.api.tasks.PathSensitivity.RELATIVE
 
 plugins {
   id("kafkatorio.conventions.lang.node")
   id("dev.adamko.factorio-mod")
   distribution
-  idea
 }
 
-description = "Sends in-game information to a server over the internet (requires additional setup)"
+description = """
+    |The Kafkatorio Factorio mod.
+    |
+    |The Kafkatorio mod must be installed in a Factorio multiplayer server.
+    |It collects in-game information and emits it to a server over the internet.
+    |
+    |(Kafkatorio is a complicated mod that requires additional setup.)
+    """.trimMargin()
 
 
 factorioMod {
@@ -48,6 +55,8 @@ val typescriptToLua by tasks.registering(TypeScriptToLuaTask::class) {
   )
 
   inputs.file(tasks.updatePackageJson.map { it.packageJsonFile })
+    .withPropertyName("packageJsonFile")
+    .withPathSensitivity(RELATIVE)
 
   sourceFiles.from(factorioMod.mainSources.typescript.sourceDirectories)
 
@@ -108,13 +117,33 @@ val projectVersion: Provider<String> = providers.provider { "${project.version}"
 tasks.updatePackageJson {
 //  mustRunAfter(tasks.npmInstall)
 
+  val projectPackageJsonName = projectPackageJsonName
+  val nodeJsVersion = libs.versions.node
+  val luaTypesVersion = libs.versions.npm.luaTypes
+  val typescriptToLuaVersion = libs.versions.npm.typescriptToLua
+  val typedFactorioVersion = libs.versions.npm.typedFactorio
+  val typescriptVersion = libs.versions.npm.typescript
+
+  inputs.properties(
+    "projectPackageJsonName" to projectPackageJsonName,
+    "nodeJsVersion" to nodeJsVersion,
+    "luaTypesVersion" to luaTypesVersion,
+    "typescriptToLuaVersion" to typescriptToLuaVersion,
+    "typedFactorioVersion" to typedFactorioVersion,
+    "typescriptVersion" to typescriptVersion,
+  )
+
   updateExpectedJson {
+    put("_DO_NOT_MODIFY", "This file is managed by Gradle task $path")
     put("name", projectPackageJsonName.get())
+    putJsonObject("engines") {
+      put("node", "~${nodeJsVersion.get()}")
+    }
     putJsonObject("dependencies") {
-      put("lua-types", libs.versions.npm.luaTypes.get())
-      put("typescript-to-lua", libs.versions.npm.typescriptToLua.get())
-      put("typed-factorio", libs.versions.npm.typedFactorio.get())
-      put("typescript", libs.versions.npm.typescript.get())
+      put("lua-types", luaTypesVersion.get())
+      put("typescript-to-lua", typescriptToLuaVersion.get())
+      put("typed-factorio", typedFactorioVersion.get())
+      put("typescript", typescriptVersion.get())
     }
   }
 
@@ -122,7 +151,10 @@ tasks.updatePackageJson {
 }
 
 
-tasks.assemble { dependsOn(installEventsTsSchema, tasks.updatePackageJson) }
+tasks.assemble {
+  dependsOn(installEventsTsSchema)
+  dependsOn(tasks.updatePackageJson)
+}
 
 //val downloadFactorioApiDocs by tasks.registering {
 //  group = project.name

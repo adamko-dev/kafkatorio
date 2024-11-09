@@ -1,4 +1,5 @@
 import {KafkatorioPacketData} from "../../generated/kafkatorio-schema";
+import {int} from "factorio:runtime";
 
 
 /**

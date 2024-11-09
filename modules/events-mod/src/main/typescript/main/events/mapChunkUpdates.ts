@@ -1,20 +1,31 @@
 import EntityUpdates from "./handlers/EntityUpdateHandler";
 import MapChunkUpdate from "./handlers/MapChunkUpdateHandler";
+import {
+  OnChunkChartedEvent,
+  OnChunkDeletedEvent,
+  OnChunkGeneratedEvent,
+  OnPlayerBuiltTileEvent,
+  OnPlayerMinedTileEvent,
+  OnPreChunkDeletedEvent,
+  OnRobotBuiltTileEvent,
+  OnRobotMinedTileEvent,
+  ScriptRaisedSetTilesEvent
+} from "factorio:runtime";
 
 
 export type MapTileChangeEvent =
-    | OnPlayerBuiltTileEvent
-    | OnPlayerMinedTileEvent
-    | OnRobotBuiltTileEvent
-    | OnRobotMinedTileEvent
-    | ScriptRaisedSetTilesEvent
+  | OnPlayerBuiltTileEvent
+  | OnPlayerMinedTileEvent
+  | OnRobotBuiltTileEvent
+  | OnRobotMinedTileEvent
+  | ScriptRaisedSetTilesEvent
 
 
 export type MapChunkUpdateEvent =
-    | OnChunkChartedEvent
-    | OnChunkDeletedEvent
-    | OnChunkGeneratedEvent
-    | OnPreChunkDeletedEvent
+  | OnChunkChartedEvent
+  | OnChunkDeletedEvent
+  | OnChunkGeneratedEvent
+  | OnPreChunkDeletedEvent
 
 
 script.on_event(defines.events.on_chunk_generated, (e: OnChunkGeneratedEvent) => {

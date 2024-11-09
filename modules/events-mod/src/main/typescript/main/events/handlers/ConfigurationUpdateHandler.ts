@@ -6,6 +6,7 @@ import {
 import PacketEmitter from "../../emitting/PacketEmitter";
 import ConfigurationUpdate = KafkatorioPacketData.ConfigurationUpdate;
 import KafkatorioPacketQueue from "../../emitting/KafkatorioPacketQueue";
+import { ConfigurationChangedData } from "factorio:runtime";
 
 
 export class ConfigurationUpdateHandler {

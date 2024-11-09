@@ -7,6 +7,7 @@ import KafkatorioPacketQueue from "../emitting/KafkatorioPacketQueue";
 import PacketEmitter from "../emitting/PacketEmitter";
 import {KafkatorioPacketData} from "../../generated/kafkatorio-schema";
 import EventDataQueue from "../emitting/EventDataQueue";
+import {EventData, OnTickEvent} from "factorio:runtime";
 
 
 script.on_event(defines.events.on_tick, (event: OnTickEvent) => {

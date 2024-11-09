@@ -1,4 +1,22 @@
 import {DefinedEventName} from "../types";
+
+
+import * as f_rt from "factorio:runtime";
+import {
+  BoundingBox,
+  ChunkPosition,
+  CollisionMask,
+  LuaEntity,
+  LuaEntityPrototype,
+  LuaPlayer,
+  LuaSurface,
+  LuaTile,
+  LuaTilePrototype,
+  MapPosition,
+  OldTileAndPosition,
+  Tile
+} from "factorio:runtime";
+import {MapPositionStruct, TilePositionStruct} from "factorio:prototype";
 import {
   ChunkSize,
   Colour,
@@ -10,7 +28,7 @@ import {
   MapChunkPosition,
   MapEntityPosition,
   MinedProduct,
-  PrototypeId,
+  PrototypeId
 } from "../../generated/kafkatorio-schema";
 
 
@@ -29,7 +47,7 @@ export namespace Converters {
   }
 
 
-  export function mapColour(color: ColorTable): Colour {
+  export function mapColour(color: f_rt.Color): Colour {
     return [
       color.r ?? 0,
       color.g ?? 0,
@@ -40,10 +58,10 @@ export namespace Converters {
 
 
   export function convertPlacedTiles(
-      placedTile: LuaTilePrototype,
-      oldTiles: OldTileAndPosition[],
-  ): TileRead[] {
-    const converted: TileRead[] = []
+    placedTile: LuaTilePrototype,
+    oldTiles: OldTileAndPosition[],
+  ): Tile[] {
+    const converted: Tile[] = []
     for (const [, tile] of ipairs(oldTiles)) {
       converted[converted.length] = {
         position: {x: tile.position.x, y: tile.position.y},
@@ -55,10 +73,10 @@ export namespace Converters {
 
 
   export function convertRemovedTiles(
-      surface: LuaSurface,
-      oldTiles: OldTileAndPosition[],
-  ): TileRead[] {
-    const converted: TileRead[] = []
+    surface: LuaSurface,
+    oldTiles: OldTileAndPosition[],
+  ): LuaTile[] {
+    const converted: LuaTile[] = []
     for (const [, tile] of ipairs(oldTiles)) {
       converted[converted.length] = surface.get_tile(tile.position.x, tile.position.y)
     }
@@ -76,7 +94,7 @@ export namespace Converters {
 
 
   function convertEntityStatus(
-      status: defines.entity_status | undefined
+    status: defines.entity_status | undefined
   ): FactorioEntityStatus | null {
     if (status == undefined) {
       return null
@@ -96,22 +114,22 @@ export namespace Converters {
   }
 
 
-  export function tilePositionToChunkPosition(mapPosition: TilePositionTable): MapChunkPosition {
+  export function tilePositionToChunkPosition(mapPosition: TilePositionStruct): MapChunkPosition {
     return [floor(mapPosition.x / 32), floor(mapPosition.y / 32), ChunkSize.CHUNK_032]
   }
 
 
-  export function mapPositionToChunkPosition(mapPosition: MapPositionTable): MapChunkPosition {
+  export function mapPositionToChunkPosition(mapPosition: MapPositionStruct): MapChunkPosition {
     return [floor(mapPosition.x / 32), floor(mapPosition.y / 32), ChunkSize.CHUNK_032]
   }
 
 
-  export function entityPosition(position: MapPositionTable): MapEntityPosition {
+  export function entityPosition(position: MapPosition): MapEntityPosition {
     return [position.x, position.y];
   }
 
 
-  export function chunkPosition(position: ChunkPositionTable): MapChunkPosition {
+  export function chunkPosition(position: ChunkPosition): MapChunkPosition {
     return [position.x, position.y, ChunkSize.CHUNK_032]
   }
 
@@ -126,7 +144,7 @@ export namespace Converters {
 
 
   export function miningProperties(
-      properties: LuaEntityPrototype["mineable_properties"]
+    properties: LuaEntityPrototype["mineable_properties"]
   ): EntityMiningProperties {
 
     const products: MinedProduct[] = []

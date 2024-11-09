@@ -1,6 +1,7 @@
 import KafkatorioSettings from "../settings/KafkatorioSettings";
 import {KafkatorioKeyedPacketData} from "../types";
 import PacketEmitter from "./PacketEmitter";
+import {uint} from "factorio:runtime";
 
 
 declare const global: {
@@ -35,10 +36,10 @@ export class EventUpdatesManager {
    * be emitted more than once per {@link CacheEntry.expirationDurationTicks}.
    */
   public throttle<PACKET extends KafkatorioKeyedPacketData>(
-      key: PacketKey<PACKET>,
-      type: PacketType<PACKET>,
-      mutate: CacheDataMutator<PACKET>,
-      expirationDurationTicks?: uint,
+    key: PacketKey<PACKET>,
+    type: PacketType<PACKET>,
+    mutate: CacheDataMutator<PACKET>,
+    expirationDurationTicks?: uint,
   ) {
     this.update(key, type, mutate, false, expirationDurationTicks)
   }
@@ -49,24 +50,24 @@ export class EventUpdatesManager {
    * until there's an inactivity gap of {@link CacheEntry.expirationDurationTicks}.
    */
   public debounce<PACKET extends KafkatorioKeyedPacketData>(
-      key: PacketKey<PACKET>,
-      type: PacketType<PACKET>,
-      mutate: CacheDataMutator<PACKET>,
-      expirationDurationTicks?: uint,
+    key: PacketKey<PACKET>,
+    type: PacketType<PACKET>,
+    mutate: CacheDataMutator<PACKET>,
+    expirationDurationTicks?: uint,
   ) {
     this.update(key, type, mutate, true, expirationDurationTicks)
   }
 
 
   private update<PACKET extends KafkatorioKeyedPacketData>(
-      key: PacketKey<PACKET>,
-      type: PacketType<PACKET>,
-      mutate: CacheDataMutator<PACKET>,
-      resetLastUpdated: boolean,
-      expirationDurationTicks?: uint,
+    key: PacketKey<PACKET>,
+    type: PacketType<PACKET>,
+    mutate: CacheDataMutator<PACKET>,
+    resetLastUpdated: boolean,
+    expirationDurationTicks?: uint,
   ) {
     const entry: CacheEntry<PACKET> = this.getCacheEntry(key, type) ??
-                                      EventUpdatesManager.createCacheEntry(key, type)
+      EventUpdatesManager.createCacheEntry(key, type)
     mutate(entry.packet)
     if (resetLastUpdated) {
       entry.lastUpdatedTick = game.tick
@@ -86,9 +87,9 @@ export class EventUpdatesManager {
    * it's transmitted sooner.
    */
   public setExpiration<PACKET extends KafkatorioKeyedPacketData>(
-      key: PacketKey<PACKET>,
-      type: PacketType<PACKET>,
-      expirationDurationTicks: uint,
+    key: PacketKey<PACKET>,
+    type: PacketType<PACKET>,
+    expirationDurationTicks: uint,
   ) {
     const entry = this.getCacheEntry(key, type)
     if (entry != undefined) {
@@ -142,8 +143,8 @@ export class EventUpdatesManager {
 
 
   private getCacheEntry<PACKET extends KafkatorioKeyedPacketData>(
-      key: PacketKey<PACKET>,
-      type: PacketType<PACKET>,
+    key: PacketKey<PACKET>,
+    type: PacketType<PACKET>,
   ): CacheEntry<PACKET> | undefined {
     const hash = EventUpdatesManager.hashKey(key)
     if (!global.eventUpdatesManagerCache.has(hash)) {
@@ -160,8 +161,8 @@ export class EventUpdatesManager {
 
 
   private static createCacheEntry<PACKET extends KafkatorioKeyedPacketData>(
-      key: PacketKey<PACKET>,
-      type: PacketType<PACKET>,
+    key: PacketKey<PACKET>,
+    type: PacketType<PACKET>,
   ): CacheEntry<PACKET> {
     const data: PACKET = <PACKET>{
       type: type,
@@ -176,8 +177,8 @@ export class EventUpdatesManager {
 
   isExpired<TYPE extends KafkatorioKeyedPacketData>(entry: CacheEntry<TYPE>): boolean {
     const expiryDuration =
-        entry.expirationDurationTicks
-        ?? KafkatorioSettings.getEventCacheExpirationTicks(entry.packet)
+      entry.expirationDurationTicks
+      ?? KafkatorioSettings.getEventCacheExpirationTicks(entry.packet)
 
     if (expiryDuration == undefined) {
       return true
@@ -188,25 +189,25 @@ export class EventUpdatesManager {
 
 
   isEntryInstanceOf<PACKET extends KafkatorioKeyedPacketData>(
-      entry: CacheEntry<any> | undefined,
-      type: PacketType<PACKET>,
+    entry: CacheEntry<any> | undefined,
+    type: PacketType<PACKET>,
   ): entry is CacheEntry<PACKET> {
     return this.isDataInstanceOf(entry?.packet, type)
   }
 
 
   isDataInstanceOf<PACKET extends KafkatorioKeyedPacketData>(
-      packet: PACKET | undefined,
-      type: PacketType<PACKET>,
+    packet: PACKET | undefined,
+    type: PacketType<PACKET>,
   ): packet is PACKET {
     return packet != undefined && packet.type == type
   }
 
 
   private static hashKey<PACKET extends KafkatorioKeyedPacketData>(
-      key: PacketKey<PACKET>,
+    key: PacketKey<PACKET>,
   ): string {
-    return game.encode_string(game.table_to_json(key))!!
+    return helpers.encode_string(helpers.table_to_json(key))!!
   }
 
 }
@@ -230,8 +231,8 @@ class CacheEntry<PACKET extends KafkatorioKeyedPacketData> {
   packet: PACKET
 
   constructor(
-      packet: PACKET,
-      expirationDurationTicks?: uint,
+    packet: PACKET,
+    expirationDurationTicks?: uint,
   ) {
 
     this.packet = packet
