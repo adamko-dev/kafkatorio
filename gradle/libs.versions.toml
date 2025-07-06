@@ -63,7 +63,7 @@ mockk      = "1.13.3"            # https://github.com/mockk/mockk/releases/
 
 
 ## infra ##
-factorio               = "2.0.16"    # https://www.factorio.com/download, https://hub.docker.com/r/factoriotools/factorio
+factorio               = "2.0.55"    # https://www.factorio.com/download, https://hub.docker.com/r/factoriotools/factorio
 confluent-kafkaConnect = "7.0.1"
 grafana                = "8.5.0"
 prometheus             = "v2.34.0"

@@ -27,7 +27,8 @@ LABEL factorio.version=${FactorioVersion}
 LABEL factorio.linuxSha256=${FactorioLinuxSha256}
 
 ENV VERSION=${FactorioVersion} \
-    SHA256=${FactorioLinuxSha256}
+    SHA256=${FactorioLinuxSha256} \
+    ARCHIVE=factorio_headless_x64_$VERSION.tar.xz
 
 WORKDIR /src
 
@@ -40,12 +41,12 @@ RUN if [[ "${VERSION}" == "" ]]; then \
         && exit 1; \
     fi
 
-RUN archive="factorio_headless_x64_$VERSION.tar.xz" \
-    && curl -sSL "https://www.factorio.com/get-download/$VERSION/headless/linux64" -o "$archive" --retry 8 \
-    && echo "$SHA256 $archive" | sha256sum -c \
-    || (sha256sum "$archive" && file "$archive" && exit 1) \
-    && tar xf "$archive" \
-    && rm "$archive"
+RUN curl -sSL "https://www.factorio.com/get-download/$VERSION/headless/linux64" -o "$ARCHIVE" --retry 8
+
+RUN echo "$SHA256 $ARCHIVE" | sha256sum -c \
+    || (sha256sum "$ARCHIVE" && file "$ARCHIVE" && exit 1) \
+    && tar xf "$ARCHIVE" --strip-components=1 \
+    && rm "$ARCHIVE"
 
 
 # Download and unpack Box64 server archive
@@ -132,13 +133,12 @@ LABEL factorio.version=${FactorioVersion}
 ENV FactorioVersion=${FactorioVersion} \
     VERSION=${FactorioVersion}
 
-COPY --from=server-dl --chown=$USER --chmod=755 /src /factorio
-COPY --from=rcon-builder /src/rcon /bin/rcon
+COPY --chown=$PUID:$PGID --from=server-dl --chmod=755 /src /factorio
+COPY --chown=$PUID:$PGID --from=rcon-builder /src/rcon /bin/rcon
+COPY --chown=$PUID:$PGID ./files/*.sh /
+COPY --chown=$PUID:$PGID ./files/config.ini /factorio/config/
 
-COPY ./files/*.sh /
-COPY ./files/config.ini /factorio/config/
-
-RUN ls -la /factorio/config/
+#USER $USER
 
 VOLUME /factorio
 EXPOSE $PORT/udp $RCON_PORT/tcp

@@ -1,14 +1,18 @@
 services:
 
   factorio-server:
+    #container_name: "factorio-server"
     image: ${REGISTRY_HOST}/${APP_GROUP}/${APP_NAME}:${FACTORIO_VERSION}
+    ports:
+      - "34197:34197/udp" # factorio
+      - "27015:27015/tcp" # rcon
     build:
       dockerfile: "factorioServer.Dockerfile"
       context: "."
       target: "build"
       args:
         FactorioVersion: "${FACTORIO_VERSION}"
-        FactorioLinuxSha256: "f2069b4b746500d945eeb67ef7eda5e7aebe7fd0294c2af4e117af22a3bbaea3"
+        FactorioLinuxSha256: "ef12a54d1556ae1f84ff99edc23706d13b7ad41f1c02d74ca1dfadf9448fcbae"
 
   #  factorio-server:
 #    image: factoriotools/factorio:${FACTORIO_VERSION}

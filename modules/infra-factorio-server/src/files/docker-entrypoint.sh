@@ -16,11 +16,33 @@ mkdir -p "$MODS"
 mkdir -p "$SCENARIOS"
 mkdir -p "$SCRIPTOUTPUT"
 
-if [[ ! -f $CONFIG/rconpw ]]; then
-  # Generate a new RCON password if none exists
-  touch "$CONFIG/rconpw"
-  pwgen 15 1 >"$CONFIG/rconpw"
+if [[ ! -f "$CONFIG/rconpw" ]]; then
+  # Check if the directory is writable before attempting to touch the file
+  if [[ -w "$CONFIG" ]]; then
+    # Generate a new RCON password if none exists
+    if touch "$CONFIG/rconpw" 2>/dev/null; then
+      pwgen 15 1 >"$CONFIG/rconpw"
+    else
+      echo "Error: Failed to create '$CONFIG/rconpw'. Please ensure you have the correct write permissions."
+      actual_perms=$(find "$CONFIG" -prune -printf '%M\n')
+      echo "Actual directory permissions: $actual_perms"
+      echo "Expected permissions: Writable by the user."
+      exit 1
+    fi
+  else
+    echo "Error: Cannot write to directory '$CONFIG'. Check permissions."
+    actual_perms=$(find "$CONFIG" -prune -printf '%M\n')
+    echo "Actual directory permissions: $actual_perms"
+    echo "Expected permissions: Writable by the user."
+    exit 1
+  fi
+else
+  echo "File '$CONFIG/rconpw' already exists. No changes needed."
 fi
+
+ls -la /factorio/
+ls -la /factorio/data
+ls -la "$CONFIG"
 
 if [[ ! -f $CONFIG/server-settings.json ]]; then
   # Copy default settings if server-settings.json doesn't exist
