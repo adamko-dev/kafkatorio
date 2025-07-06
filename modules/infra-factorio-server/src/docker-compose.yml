@@ -1,7 +1,7 @@
 services:
 
   factorio-server:
-    #container_name: "factorio-server"
+    container_name: "factorio-server"
     image: ${REGISTRY_HOST}/${APP_GROUP}/${APP_NAME}:${FACTORIO_VERSION}
     ports:
       - "34197:34197/udp" # factorio
@@ -32,7 +32,7 @@ services:
 #    environment:
 #      PUID: ${FACTORIO_SERVER_USER_ID}
 #      PGID: ${FACTORIO_SERVER_GROUP_ID}
-#      USER: "Adam.Semenenko"
+#      USER: "adam"
 #      GROUP: "staff"
 #      #      GENERATE_NEW_SAVE: "true"
 #      #      PUID: "502"
