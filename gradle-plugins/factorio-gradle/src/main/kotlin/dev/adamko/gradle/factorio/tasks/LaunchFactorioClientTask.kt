@@ -49,9 +49,9 @@ abstract class LaunchFactorioClientTask @Inject constructor(
   fun launch() {
     val launchCommand =
       launchFactorioCommand.orNull ?: when (currentOs.orNull) {
-        FactorioModSettings.LocalDev.OS.WINDOWS           -> windowsCmd()
-        FactorioModSettings.LocalDev.OS.MAC_OS            -> macOSCmd()
-        null, FactorioModSettings.LocalDev.OS.UNSUPPORTED -> error("no can do, unsupported OS")
+        FactorioModSettings.LocalDev.OS.Windows           -> windowsCmd()
+        FactorioModSettings.LocalDev.OS.MacOS             -> macOSCmd()
+        null, FactorioModSettings.LocalDev.OS.Unsupported -> error("no can do, unsupported OS")
       }
 
     logger.lifecycle("Launching Factorio client\n > $launchCommand")

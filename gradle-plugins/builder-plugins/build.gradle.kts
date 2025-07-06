@@ -1,3 +1,8 @@
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createDirectories
+import kotlin.io.path.deleteRecursively
+import kotlin.io.path.writeText
+
 plugins {
   id("kafkatorio.conventions.kotlin-dsl")
 }
@@ -40,4 +45,35 @@ kotlin {
       "kotlinx.serialization.ExperimentalSerializationApi",
     )
   }
+}
+
+val generateBuildVersions by tasks.registering {
+  val nodeVersion = libs.versions.node
+
+  inputs.property("nodeVersion", nodeVersion)
+
+  //val buildVersionsKt = layout.buildDirectory.file("generated/BuildVersions.kt")
+  val outputDir = temporaryDir.toPath()
+  outputs.dir(outputDir.toFile())
+
+  @OptIn(ExperimentalPathApi::class)
+  doLast {
+    outputDir.apply {
+      deleteRecursively()
+      createDirectories()
+      resolve("BuildVersions.kt").writeText(
+        """
+        package kafkatorio.conventions
+        
+        internal object BuildVersions {
+          const val node = "${nodeVersion.get()}"
+        }
+        """.trimIndent()
+      )
+    }
+  }
+}
+
+kotlin.sourceSets.main {
+  kotlin.srcDir(generateBuildVersions)
 }

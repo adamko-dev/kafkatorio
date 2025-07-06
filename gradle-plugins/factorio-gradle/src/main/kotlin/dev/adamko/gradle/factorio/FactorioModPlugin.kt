@@ -1,10 +1,9 @@
 package dev.adamko.gradle.factorio
 
-import dev.adamko.gradle.factorio.tasks.AssembleFactorioModContents
-import dev.adamko.gradle.factorio.tasks.GenerateFactorioModInfoTask
-import dev.adamko.gradle.factorio.tasks.LaunchFactorioClientTask
-import dev.adamko.gradle.factorio.tasks.LocalPublishFactorioModTask
-import dev.adamko.gradle.factorio.tasks.PackageFactorioModTask
+import dev.adamko.gradle.factorio.internal.FactorioModConfigurations
+import dev.adamko.gradle.factorio.internal.configureDistribution
+import dev.adamko.gradle.factorio.internal.configureIdea
+import dev.adamko.gradle.factorio.tasks.*
 import javax.inject.Inject
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -13,8 +12,9 @@ import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.newInstance
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.register
 import org.slf4j.LoggerFactory
 
@@ -26,28 +26,24 @@ abstract class FactorioModPlugin @Inject constructor(
   private val files: FileSystemOperations,
 ) : Plugin<Project> {
 
-  internal val logger = LoggerFactory.getLogger(this::class.java)
+  override fun apply(project: Project) {
+    project.plugins.apply(FactorioModLibraryPlugin::class)
 
-  override fun apply(target: Project) {
+    val settings = project.extensions.create<FactorioModSettings>(FACTORIO_GRADLE_EXTENSION_NAME)
 
-    val settings = target.extensions.create<FactorioModSettings>(FACTORIO_GRADLE_EXTENSION_NAME)
-
-    val factorioModLibraryPlugin = objects.newInstance<FactorioModLibraryPlugin>()
-    factorioModLibraryPlugin.apply(target)
-    val factorioModConfigurations = factorioModLibraryPlugin.factorioModConfigurations
-      ?: error("Could not create Factorio Mod Configurations")
+    val factorioModConfigurations = project.extensions.getByType(FactorioModConfigurations::class)
 
     val context = PluginContext(
-      target,
+      project = project,
 
-      settings,
-      target.createTasks(),
-      factorioModConfigurations,
+      settings = settings,
+      tasks = createTasks(project),
+      configurations = factorioModConfigurations,
 
-      objects,
-      providers,
-      layout,
-      files,
+      objects = objects,
+      providers = providers,
+      layout = layout,
+      files = files,
     )
 
     context.configureModSettings()
@@ -56,10 +52,10 @@ abstract class FactorioModPlugin @Inject constructor(
 
     context.configureIdea()
 
-//    context.configureDistribution()
+    context.configureDistribution()
   }
 
-  private fun Project.createTasks(): PluginContext.Tasks {
+  private fun createTasks(project: Project): PluginContext.Tasks {
     return PluginContext.Tasks(
       launchFactorioClient = project.tasks.register<LaunchFactorioClientTask>("launchFactorioClient"),
       assembleModContents = project.tasks.register<AssembleFactorioModContents>("assembleFactorioModContents"),
@@ -95,14 +91,12 @@ abstract class FactorioModPlugin @Inject constructor(
   companion object {
     const val FACTORIO_GRADLE_EXTENSION_NAME = "factorioMod"
 
-    const val CONFIGURATION_NAME__FACTORIO_MOD = "factorioMod"
-    const val CONFIGURATION_NAME__FACTORIO_MOD_PROVIDER = "factorioModProvider"
-
     const val TASK_GROUP = "factorio mod"
 
-    /** Lifecycle task for publishing the mod locally */
-    const val PUBLISH_MOD_LOCAL_TASK_NAME = "publishModLocal"
+//    /** Lifecycle task for publishing the mod locally */
+//    const val PUBLISH_MOD_LOCAL_TASK_NAME = "publishModLocal"
 
-    const val PUBLISH_MOD_TASK_NAME = "publishMod"
+
+    //private val logger = LoggerFactory.getLogger(FactorioModPlugin::class.java)
   }
 }

@@ -1,5 +1,5 @@
 import dev.adamko.gradle.factorio.mod_portal.FactorioModPublishTask
-import dev.adamko.gradle.factorio.typescriptAttributes
+import dev.adamko.gradle.factorio.internal.typescriptAttributes
 import kafkatorio.tasks.TypeScriptToLuaTask
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
@@ -22,10 +22,10 @@ description = """
 
 
 factorioMod {
-  modName.set("kafkatorio-events")
-  modTitle.set("Kafkatorio Events")
-  modAuthor.set("adam@adamko.dev")
-  factorioCompatibility.set(libs.versions.factorio.map { it.substringBeforeLast(".") })
+  modName = "kafkatorio-events"
+  modTitle = "Kafkatorio Events"
+  modAuthor = "adam@adamko.dev"
+  factorioCompatibility = libs.versions.factorio.map { it.substringBeforeLast(".") }
 }
 
 val licenseFile: RegularFile by rootProject.extra
@@ -36,7 +36,7 @@ node {
 
 
 val typescriptEventsSchema: Configuration by configurations.creating {
-  description = "Fetch the TypeScript schema from the event-schema subproject"
+  description = "Fetch the TypeScript schema from the event-schema subproject."
   asConsumer()
   typescriptAttributes(objects)
 }
@@ -65,7 +65,7 @@ val typescriptToLua by tasks.registering(TypeScriptToLuaTask::class) {
 
 
 val installEventsTsSchema by tasks.registering(Sync::class) {
-  description = "Fetch the latest shared TypeScript data-model"
+  description = "Fetch the latest shared TypeScript data-model."
   group = project.name
 
   dependsOn(typescriptEventsSchema)
@@ -155,32 +155,3 @@ tasks.assemble {
   dependsOn(installEventsTsSchema)
   dependsOn(tasks.updatePackageJson)
 }
-
-//val downloadFactorioApiDocs by tasks.registering {
-//  group = project.name
-//
-//  val target = uri("https://lua-api.factorio.com/latest/runtime-api.json")
-//  val apiFilename = File(target.path).name
-//  val downloadedFile = file("$temporaryDir/$apiFilename")
-//
-//  val apiFile = layout.buildDirectory.file(apiFilename)
-//  outputs.file(apiFile)
-//
-//  doLast {
-//
-//    ant.invokeMethod(
-//      "get", mapOf(
-//        "src" to target,
-//        "dest" to downloadedFile,
-//        "verbose" to true,
-//      )
-//    )
-//
-//    val json = downloadedFile.readText()
-//    val prettyJson = JsonOutput.prettyPrint(json)
-//
-//    apiFile.get().asFile.writeText(prettyJson)
-//
-//    logger.lifecycle("Downloaded Factorio API json: $apiFile")
-//  }
-//}

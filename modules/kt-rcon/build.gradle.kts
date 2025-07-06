@@ -1,11 +1,24 @@
 plugins {
-  id("kafkatorio.conventions.lang.kotlin-jvm")
+  id("kafkatorio.conventions.lang.kotlin-multiplatform")
 }
 
-dependencies {
-  implementation(platform(projects.modules.versionsPlatform))
+kotlin {
+  linuxX64()
+  jvm()
 
-  implementation(libs.kotlinx.coroutines.core)
+  sourceSets {
+    commonMain {
+      dependencies {
+        implementation(project.dependencies.platform(projects.modules.versionsPlatform))
 
-  implementation("io.ktor:ktor-network")
+        implementation(libs.kotlinx.coroutines.core)
+
+//  implementation("io.ktor:ktor-network")
+      }
+    }
+
+    linuxMain {
+      languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
+    }
+  }
 }

@@ -1,19 +1,13 @@
 package kafkatorio.tasks
 
 import com.github.gradle.node.NodePlugin
-import kafkatorio.*
 import java.io.File
 import javax.inject.Inject
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonObjectBuilder
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
@@ -50,7 +44,7 @@ abstract class UpdatePackageJson @Inject constructor(
     val packageJsonFile = packageJsonFile.asFile.get()
     val expectedJsonUpdates: List<String> = expectedJsonUpdates.get().toList()
 
-    logger.lifecycle("updating package.json ${packageJsonFile.canonicalFile}")
+    logger.lifecycle("[$path] updating package.json ${packageJsonFile.canonicalFile}")
 
     val expectedJson = expectedJsonUpdates.fold(JsonObject(emptyMap())) { acc, update ->
       val updateJson = jsonMapper.parseToJsonElement(update).jsonObject
@@ -80,7 +74,11 @@ abstract class UpdatePackageJson @Inject constructor(
   }
 
 
-  /** Update [expectedJson] by merging [updateJsonProvider] with the existing value. */
+  /**
+   * Update [packageJsonFile] by merging [expectedJsonUpdate] with the existing value.
+   *
+   * Multiple updates will be applied in order, and stored in [expectedJsonUpdates].
+   */
   fun updateExpectedJson(
     expectedJsonUpdate: JsonObjectBuilder.() -> Unit
   ) {
@@ -103,8 +101,8 @@ abstract class UpdatePackageJson @Inject constructor(
       jsonMapper.parseToJsonElement(readText()).jsonObject
 
 
-    internal fun Property<String>.parseToJsonObject(): JsonObject =
-      jsonMapper.parseToJsonElement(get()).jsonObject
+    //internal fun Property<String>.parseToJsonObject(): JsonObject =
+    //  jsonMapper.parseToJsonElement(get()).jsonObject
 
 
     internal fun List<String>.foldParseToJsonObject(): JsonObject =

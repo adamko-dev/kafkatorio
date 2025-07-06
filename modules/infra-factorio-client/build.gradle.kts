@@ -11,7 +11,7 @@ plugins {
 description = "Manage the Factorio game client"
 
 val clientModsDirectory: DirectoryProperty = objects.directoryProperty().apply {
-  val modDir = File("""D:\Users\Adam\AppData\Roaming\Factorio\mods""")
+  val modDir = File("D:/Users/Adam/AppData/Roaming/Factorio/mods")
   if (modDir.exists()) {
     set(modDir)
   }
@@ -29,18 +29,19 @@ val clientKill by tasks.registering(Exec::class) {
   description = "Stop the local Factorio Steam game client"
   group = FactorioModPlugin.TASK_GROUP
 
-  onlyIf(serviceOf<ExecOperations>().isFactorioRunning())
+  val exec = serviceOf<ExecOperations>()
+
+  onlyIf(exec.isFactorioRunning())
 
   commandLine = parseSpaceSeparatedArgs(""" taskkill /im factorio.exe """)
   doFirst { logger.lifecycle("Killing factorio.exe") }
 }
 
 
-tasks.register(FactorioModPlugin.PUBLISH_MOD_LOCAL_TASK_NAME) {
-  group = FactorioModPlugin.TASK_GROUP
-//  dependsOn(deployModToLocalClient)
-}
-
+//tasks.register(FactorioModPlugin.PUBLISH_MOD_LOCAL_TASK_NAME) {
+//  group = FactorioModPlugin.TASK_GROUP
+////  dependsOn(deployModToLocalClient)
+//}
 
 tasks.processRun {
   dependsOn(

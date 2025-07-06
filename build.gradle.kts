@@ -37,8 +37,8 @@ val runKafkatorio by tasks.registering {
 
   dependsOn(
     ":modules:infra-factorio-client:processRestart",
-    ":modules:infra-factorio-server:processRestart",
-    ":modules:infra-kafka-pipe:dockerUp",
+    ":modules:infra-factorio-server:runFactorioServer",
+    ":modules:infra-kafka-pipe:dockerComposeUp",
   )
 }
 

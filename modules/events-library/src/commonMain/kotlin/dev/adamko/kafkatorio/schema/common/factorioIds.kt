@@ -76,6 +76,14 @@ data class EntityIdentifiersData(
 ) : EntityIdentifiers
 
 
+@Serializable
+@SerialName("kafkatorio.id.FactorioServerToken")
+data class FactorioServerData(
+  val id: FactorioServerId,
+  val description: String? = null,
+)
+
+
 /** Friendly identifier, used in URLs. Should be human-readable. */
 @Serializable
 @SerialName("kafkatorio.id.FactorioServerId")
@@ -84,13 +92,13 @@ value class FactorioServerId(val id: String) : CharSequence by id {
 
   init {
     require(id.isNotBlank()) { "require FactorioServerId is not blank: '$id'" }
-    require(id.matches(validIdRegex)) { "require FactorioServerId matches $validIdRegex: '$id'" }
+    //require(id.matches(validIdRegex)) { "require FactorioServerId matches $validIdRegex: '$id'" }
   }
 
   override fun toString(): String = id
 
   companion object {
-    val validIdRegex = Regex("""^[a-zA-Z0-9\-_]+""" + "\$")
+    private val validIdRegex = Regex("""^[a-zA-Z0-9\-_]+""" + "\$")
   }
 }
 
@@ -103,12 +111,12 @@ value class FactorioServerToken(private val id: String) : CharSequence by id {
 
   init {
     require(id.isNotBlank()) { "require FactorioServerToken is not blank: '$id'" }
-    require(id.matches(FactorioServerId.validIdRegex)) { "require FactorioServerToken matches ${validIdRegex}: '$id'" }
+    require(id.matches(validIdRegex)) { "require FactorioServerToken matches ${validIdRegex}: '$id'" }
   }
 
   override fun toString(): String = id
 
   companion object {
-    val validIdRegex = Regex("^[a-zA-Z0-9]+\$")
+    private val validIdRegex = Regex("""^[a-zA-Z0-9\-_]+""" + "\$")
   }
 }

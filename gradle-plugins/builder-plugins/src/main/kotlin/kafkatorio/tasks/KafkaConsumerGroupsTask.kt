@@ -1,11 +1,13 @@
 package kafkatorio.tasks
 
+import javax.inject.Inject
 import kafkatorio.extensions.execCapture
 import org.gradle.api.DefaultTask
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
+import org.gradle.process.ExecOperations
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
@@ -13,8 +15,12 @@ abstract class KafkaConsumerGroupsTask : DefaultTask() {
 
   @get:Input
   val bootstrapServer: String = "localhost:9092"
+
   @get:Input
   val kafkaDockerContainerName: String = "kafka"
+
+  @get:Inject
+  protected open val exec: ExecOperations = error("injected")
 
   @get:Internal
   protected val bootstrapArg = "--bootstrap-server $bootstrapServer"
@@ -70,7 +76,7 @@ abstract class KafkaConsumerGroupsTask : DefaultTask() {
   protected fun dockerExec(
     @Language("Shell Script")
     cmd: String
-  ): String = project.execCapture {
+  ): String = exec.execCapture {
     logging.captureStandardOutput(LogLevel.LIFECYCLE)
     commandLine = parseSpaceSeparatedArgs(""" docker exec $kafkaDockerContainerName $cmd """)
   }

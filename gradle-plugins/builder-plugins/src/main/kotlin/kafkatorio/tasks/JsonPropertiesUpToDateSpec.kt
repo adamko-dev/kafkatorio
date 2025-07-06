@@ -17,7 +17,7 @@ object JsonPropertiesUpToDateSpec : ExplainingSpec<Task> {
     val reason = whyUnsatisfied(element)
 
     if (reason != null) {
-      logger.lifecycle("JsonProperties not up to date:\n$reason")
+      logger.info("JsonProperties not up to date:\n$reason")
     }
 
     return reason == null

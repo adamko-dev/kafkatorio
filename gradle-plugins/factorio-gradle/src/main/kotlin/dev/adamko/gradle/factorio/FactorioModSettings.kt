@@ -1,20 +1,22 @@
 package dev.adamko.gradle.factorio
 
+import dev.adamko.gradle.factorio.internal.adding
 import javax.inject.Inject
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.kotlin.dsl.newInstance
 
 abstract class FactorioModSettings @Inject constructor(
-  internal val objects: ObjectFactory,
-  internal val providers: ProviderFactory,
-  internal val layout: ProjectLayout,
-) {
+  private val objects: ObjectFactory,
+  private val providers: ProviderFactory,
+  private val layout: ProjectLayout,
+) : ExtensionAware {
 
   abstract val modName: Property<String>
   abstract val modTitle: Property<String>
@@ -23,9 +25,20 @@ abstract class FactorioModSettings @Inject constructor(
   abstract val modVersion: Property<String>
   abstract val modDependencies: ListProperty<String>
 
-  // version of Factorio that the mod is compatible with (must only be "major.minor" - patch causes error)
+  /**
+   * The version of Factorio that the mod is compatible with,
+   * in the format `"$major.minor"`.
+   *
+   * Must only be "major.minor" - declaring a patch causes an error.
+   */
   abstract val factorioCompatibility: Property<String>
 
+  /**
+   * The filename of the zip file containing the compiled mod.
+   *
+   * The mod zip must be named in the pattern of `${modName}_{modVersion}.zip`,
+   * for example `test-mod-thing_0.0.1.zip`.
+   */
   abstract val distributionZipName: Property<String>
 
   val mainSources: FactorioModSourceSet.WithResources = objects.newInstance("Main")
@@ -41,29 +54,51 @@ abstract class FactorioModSettings @Inject constructor(
 
   abstract val factorioServerDataDirectory: DirectoryProperty
 
+  val localDev: LocalDev =
+    extensions.adding("localDev", objects.newInstance())
 
-  val localDev: LocalDev = objects.newInstance()
+  abstract class LocalDev : ExtensionAware {
+    abstract val currentOs: Property<OS>
 
-  fun localDev(configure: LocalDev.() -> Unit) {
-    localDev.configure()
-  }
+    /**
+     * Location of Steam executable, `steam.exe`, on Windows.
+     *
+     * Used to launch Steam.
+     */
+    abstract val windowsSteamExe: Property<String>
 
-  interface LocalDev {
-    val currentOs: Property<OS>
+    /**
+     * The Steam ID of Factorio.
+     *
+     * Each Steam game has an ID.
+     */
+    abstract val factorioSteamId: Property<String>
 
-    val windowsSteamExe: Property<String>
+    /**
+     * Hostname of the local Factorio server (e.g. `localhost`).
+     */
+    abstract val serverConnectHost: Property<String>
 
-    val factorioSteamId: Property<String>
+    /**
+     * The mod directory of a locally installed Factorio client.
+     */
+    abstract val clientModsDirectory: RegularFileProperty
 
-    val serverConnectHost: Property<String>
+    /**
+     * `~/Library/Application Support/` directory.
+     */
+    abstract val macApplicationSupportDir: RegularFileProperty
 
-    val clientModsDirectory: RegularFileProperty
-
-    val macApplicationSupportDir: RegularFileProperty
-
-    val macFactorioApp: RegularFileProperty
+    /**
+     * The location of locally installed Factorio game client executable.
+     */
+    abstract val macFactorioApp: RegularFileProperty
 
     /** Supported local dev OSes */
-    enum class OS { WINDOWS, MAC_OS, UNSUPPORTED }
+    enum class OS {
+      Windows,
+      MacOS,
+      Unsupported,
+    }
   }
 }

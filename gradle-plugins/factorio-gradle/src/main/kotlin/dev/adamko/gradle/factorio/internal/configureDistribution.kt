@@ -1,5 +1,6 @@
-package dev.adamko.gradle.factorio
+package dev.adamko.gradle.factorio.internal
 
+import dev.adamko.gradle.factorio.FactorioModPlugin
 import org.gradle.api.distribution.DistributionContainer
 import org.gradle.api.distribution.plugins.DistributionPlugin
 import org.gradle.api.tasks.bundling.Zip
@@ -38,5 +39,4 @@ internal fun FactorioModPlugin.PluginContext.configureDistribution() {
   configurations.factorioModProvider.configure {
     outgoing.artifact(distZipTask.flatMap { it.archiveFile })
   }
-
 }

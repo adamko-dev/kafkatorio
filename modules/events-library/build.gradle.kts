@@ -1,5 +1,6 @@
-import dev.adamko.gradle.factorio.typescriptAttributes
+import dev.adamko.gradle.factorio.internal.typescriptAttributes
 import kafkatorio.tasks.GenerateTypeScriptTask
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 
@@ -16,7 +17,6 @@ description = "shared data structures and utilities"
 
 
 kotlin {
-
   js(IR) {
     browser {}
     // this is a library - don't set binaries.executable()
@@ -34,21 +34,33 @@ kotlin {
     }
   }
 
+  @OptIn(ExperimentalKotlinGradlePluginApi::class)
+  compilerOptions {
+    optIn.addAll(
+      "kotlin.ExperimentalStdlibApi",
+      "kotlin.ExperimentalUnsignedTypes",
+//  "kotlin.RequiresOptIn" ,
+      "kotlin.js.ExperimentalJsExport",
+      "kotlin.time.ExperimentalTime",
+      "kotlinx.coroutines.FlowPreview",
+      "kotlinx.serialization.ExperimentalSerializationApi",
+    )
+  }
+
   sourceSets {
+//    configureEach {
+//      languageSettings.apply {
+//        optIn("kotlin.ExperimentalStdlibApi")
+//        optIn("kotlin.ExperimentalUnsignedTypes")
+//        optIn("kotlin.RequiresOptIn")
+//        optIn("kotlin.js.ExperimentalJsExport")
+//        optIn("kotlin.time.ExperimentalTime")
+//        optIn("kotlinx.coroutines.FlowPreview")
+//        optIn("kotlinx.serialization.ExperimentalSerializationApi")
+//      }
+//    }
 
-    configureEach {
-      languageSettings.apply {
-        optIn("kotlin.ExperimentalStdlibApi")
-        optIn("kotlin.ExperimentalUnsignedTypes")
-        optIn("kotlin.RequiresOptIn")
-        optIn("kotlin.js.ExperimentalJsExport")
-        optIn("kotlin.time.ExperimentalTime")
-        optIn("kotlinx.coroutines.FlowPreview")
-        optIn("kotlinx.serialization.ExperimentalSerializationApi")
-      }
-    }
-
-    val commonMain by getting {
+    commonMain {
       dependencies {
         implementation(dependencies.platform(projects.modules.versionsPlatform))
 
@@ -62,7 +74,7 @@ kotlin {
       }
     }
 
-    val commonTest by getting {
+    commonTest {
       dependencies {
         implementation(dependencies.platform(projects.modules.versionsPlatform))
 
@@ -76,7 +88,7 @@ kotlin {
       }
     }
 
-    val jvmMain by getting {
+    jvmMain {
       dependencies {
         implementation(dependencies.platform(projects.modules.versionsPlatform))
 
@@ -84,7 +96,7 @@ kotlin {
       }
     }
 
-    val jvmTest by getting {
+    jvmTest {
       dependencies {
         implementation(dependencies.platform(projects.modules.versionsPlatform))
 
@@ -92,7 +104,7 @@ kotlin {
       }
     }
 
-    val jsTest by getting {
+    jsTest {
       dependencies { }
     }
   }

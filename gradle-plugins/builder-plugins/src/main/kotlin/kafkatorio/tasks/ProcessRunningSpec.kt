@@ -16,15 +16,23 @@ class ProcessRunningSpec(
   override fun isSatisfiedBy(element: Task?): Boolean = whyUnsatisfied(element) == null
 
   override fun whyUnsatisfied(element: Task?): String? {
-    return when (element) {
-      null     -> "task is null"
-      !is Exec -> "task ${this::class.simpleName} is not ${Exec::class.simpleName}"
-      else     -> {
+    return when {
+      element == null                                         ->
+        "task is null"
+
+      element !is Exec                                        ->
+        "task ${this::class.simpleName} is not ${Exec::class.simpleName}"
+
+      "windows" !in System.getProperty("os.name").lowercase() ->
+        "Only Windows is supported"
+
+      else                                                    -> {
         return ByteArrayOutputStream().use { outputStream ->
 
           executor.exec {
             commandLine("tasklist") // Windows only for now...
             standardOutput = outputStream
+            isIgnoreExitValue = true
           }
 
           if (outputStream.toString().contains(process, ignoreCase)) {

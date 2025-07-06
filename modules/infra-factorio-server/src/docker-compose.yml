@@ -1,28 +1,46 @@
-version: "3.9"
-
 services:
 
   factorio-server:
-    image: factoriotools/factorio:${FACTORIO_VERSION}
-    container_name: "factorio-server"
-    restart: "no"
-    networks:
-      - "kafkatorio-nw"
-      - "traefik-nw"
-    labels:
-      - "traefik.enable=true"
-    ports:
-      - "34197:34197/udp" # factorio
-      - "27015:27015/tcp" # rcon
-    volumes:
-      - "./factorio-server:/factorio"
-    logging:
-      driver: syslog
-      options:
-        syslog-address: "tcp://host.docker.internal:12034" # pc
+    image: ${REGISTRY_HOST}/${APP_GROUP}/${APP_NAME}:${FACTORIO_VERSION}
+    build:
+      dockerfile: "factorioServer.Dockerfile"
+      context: "."
+      target: "build"
+      args:
+        FactorioVersion: "${FACTORIO_VERSION}"
+        FactorioLinuxSha256: "f2069b4b746500d945eeb67ef7eda5e7aebe7fd0294c2af4e117af22a3bbaea3"
+
+  #  factorio-server:
+#    image: factoriotools/factorio:${FACTORIO_VERSION}
+#    container_name: "factorio-server"
+#    restart: "no"
+#    networks:
+#      - "kafkatorio-nw"
+#      - "traefik-nw"
+#    labels:
+#      - "traefik.enable=true"
+#    ports:
+#      - "34197:34197/udp" # factorio
+#      - "27015:27015/tcp" # rcon
+#    volumes:
+#      - "./factorio-server:/factorio:rw,z"
+##    environment: {}
+#    environment:
+#      PUID: ${FACTORIO_SERVER_USER_ID}
+#      PGID: ${FACTORIO_SERVER_GROUP_ID}
+#      USER: "Adam.Semenenko"
+#      GROUP: "staff"
+#      #      GENERATE_NEW_SAVE: "true"
+#      #      PUID: "502"
+#      #      PGID: "20"
+#    user: "${FACTORIO_SERVER_USER_ID}:${FACTORIO_SERVER_GROUP_ID}"
+#    logging:
+#      driver: syslog
+#      options:
+#        #syslog-address: "tcp://host.docker.internal:12034" # pc
 #        syslog-address: "tcp://localhost:12034"  # nuc
-        syslog-format: "rfc5424"
-        tag: ${KAFKATORIO_TOKEN}
+#        syslog-format: "rfc5424"
+#        tag: ${KAFKATORIO_TOKEN}
 
   #    environment:
   #      RCON_PORT: 27715
@@ -32,6 +50,32 @@ services:
   #      - UPDATE_MODS_ON_START=true
   #      - USERNAME=FactorioUsername
   #      - TOKEN=FactorioToken
+
+#  factorio-server:
+#    #image: goofball222/factorio:${FACTORIO_VERSION}
+#    image: goofball222/factorio:experimental
+#    container_name: "factorio-server"
+#    restart: "no"
+#    volumes:
+#      - "/etc/localtime:/etc/localtime:ro"
+#      - "./factorio-server:/factorio"
+#    environment:
+#      - TZ=UTC
+#    networks:
+#      - "kafkatorio-nw"
+#      - "traefik-nw"
+#    labels:
+#      - "traefik.enable=true"
+#    ports:
+#      - "34197:34197/udp" # factorio
+#      - "27015:27015"     # rcon
+#    logging:
+#      driver: syslog
+#      options:
+#        #syslog-address: "tcp://host.docker.internal:12034" # pc
+#        syslog-address: "tcp://localhost:12034"  # nuc
+#        syslog-format: "rfc5424"
+#        tag: ${KAFKATORIO_TOKEN}
 
 networks:
   kafkatorio-nw:

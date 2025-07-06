@@ -1,4 +1,6 @@
+import dev.adamko.geedeecee.tasks.GDCCommandTask
 import dev.adamko.gradle.factorio.FactorioModPlugin
+import org.gradle.kotlin.dsl.support.serviceOf
 
 plugins {
   id("kafkatorio.conventions.base")
@@ -8,32 +10,71 @@ plugins {
 }
 
 
+//val factorioServerUserId = "845"
+//val factorioServerGroupId = "845"
+
 geedeecee {
-  srcDir.set(layout.projectDirectory.dir("src"))
+  srcDir = layout.projectDirectory.dir("src")
+
+//  val userHome = Path(System.getProperty("user.home"))
+//  val userUid = userHome.getAttribute("uid") as Int
+//  val userGid = userHome.getAttribute("gid") as Int
+//  int uid = Files.getAttribute(userHome, "unix:uid")
+
+  dotEnv {
+//    set("FACTORIO_SERVER_USER_ID", factorioServerUserId)
+//    set("FACTORIO_SERVER_GROUP_ID", factorioServerGroupId)
+    set("FACTORIO_SERVER_USER_ID", "502")
+    set("FACTORIO_SERVER_GROUP_ID", "20")
+  }
 }
 
-val factorioServerDataDir: DirectoryProperty = objects.directoryProperty()
-  .convention(geedeecee.srcDir.dir("factorio-server"))
+//abstract class CurrentUserUid : ValueSource<String, ValueSourceParameters.None> {
+//  override fun obtain(): String {
+//    val userHome = Path(System.getProperty("user.home"))
+//    val id = userHome.getAttribute("unix:uid") as Int
+//    return "$id"
+//  }
+//}
+//
+//abstract class CurrentUserGid : ValueSource<String, ValueSourceParameters.None> {
+//  override fun obtain(): String {
+//    val userHome = Path(System.getProperty("user.home"))
+//    val id = userHome.getAttribute("unix:gid") as Int
+//    return "$id"
+//  }
+//}
+
+val factorioServerDataDir = geedeecee.srcDir.dir("factorio-server").get()
+
 
 dependencies {
   factorioMod(projects.modules.eventsMod)
 }
 
 
-val deployModToLocalServer by tasks.registering(Copy::class) {
-  description = "Copy the mod to the Factorio Docker server"
+val deployModToLocalServer by tasks.registering {
+  description = "Copy the mod to the Factorio Docker server."
   group = FactorioModPlugin.TASK_GROUP
 
-  dependsOn(configurations.factorioMod)
+  val fs = serviceOf<FileSystemOperations>()
 
-//  from(
-//    provider { factorioMod.incoming.artifacts.artifactFiles.files }
-//  )
-  from(configurations.factorioMod.map { it.incoming.artifactView { lenient(true) }.files })
-  into(factorioServerDataDir.dir("mods"))
+  val sourceFiles = configurations.factorioModResolver.map { it.incoming.files }
+  val destinationDir = factorioServerDataDir.dir("mods")
+//
+//  val userId = factorioServerUserId
+//  val groupId = factorioServerGroupId
 
   doLast {
-    logger.lifecycle("Copying mods ${source.files} into $destinationDir")
+    logger.lifecycle("Copying ${sourceFiles.orNull?.count()} mods files:${sourceFiles.orNull?.files} into ${destinationDir.asFile}")
+
+    fs.copy {
+      from(sourceFiles)
+      into(destinationDir)
+//      filePermissions {
+//        group { read = true; write = true }
+//      }
+    }
   }
 }
 
@@ -42,32 +83,35 @@ val deployModToLocalServer by tasks.registering(Copy::class) {
 //  commandLine = parseSpaceSeparatedArgs(""" docker-compose stop """)
 //}
 
+tasks.dockerComposeBuild {
+//  dependsOn(deployModToLocalServer)
+}
 
 tasks.dockerComposeUp {
   dependsOn(
-    deployModToLocalServer,
-    ":modules:infra-kafka-cluster:processRun",
+//    deployModToLocalServer,
+    ":modules:infra-kafka-cluster:dockerComposeUp",
+    ":modules:events-server-syslog:dockerComposeUp",
   )
 }
 
 
-val kafkatorioServerToken: String? by project
+val kafkatorioServerToken = providers.gradleProperty("kafkatorio.server.token")
+  .orElse("missing")
 
 
 tasks.dockerComposeEnvUpdate {
   envProperties {
-    put("FACTORIO_VERSION", libs.versions.factorio)
-    kafkatorioServerToken?.let { token ->
-      put("KAFKATORIO_TOKEN", token)
-    }
+    set("FACTORIO_VERSION", libs.versions.factorio)
+    set("KAFKATORIO_TOKEN", kafkatorioServerToken)
   }
 }
 
 
-tasks.register(FactorioModPlugin.PUBLISH_MOD_LOCAL_TASK_NAME) {
-  group = FactorioModPlugin.TASK_GROUP
-  dependsOn(deployModToLocalServer)
-}
+//tasks.register(FactorioModPlugin.PUBLISH_MOD_LOCAL_TASK_NAME) {
+//  group = FactorioModPlugin.TASK_GROUP
+//  dependsOn(deployModToLocalServer)
+//}
 
 
 idea {
@@ -80,4 +124,13 @@ val runFactorioServer by tasks.registering {
   group = rootProject.name
 
   dependsOn(tasks.dockerComposeUp)
+}
+
+
+tasks.withType<GDCCommandTask>().configureEach {
+  workingDirFiles.setFrom(
+    geedeecee.srcDir.asFileTree.matching {
+      exclude("factorio-server/temp/**")
+    }
+  )
 }

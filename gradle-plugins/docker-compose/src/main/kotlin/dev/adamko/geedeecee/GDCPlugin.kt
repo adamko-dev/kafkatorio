@@ -1,76 +1,139 @@
 package dev.adamko.geedeecee
 
+import dev.adamko.geedeecee.internal.isSuccess
+import dev.adamko.geedeecee.internal.parseSpaceSeparatedArgs
 import dev.adamko.geedeecee.tasks.DockerContextFilesPreparation
 import dev.adamko.geedeecee.tasks.DockerEnvUpdateTask
 import dev.adamko.geedeecee.tasks.GDCCommandTask
 import javax.inject.Inject
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
-import org.gradle.kotlin.dsl.apply
-import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.getValue
-import org.gradle.kotlin.dsl.provideDelegate
-import org.gradle.kotlin.dsl.registering
-import org.gradle.kotlin.dsl.withType
+import org.gradle.kotlin.dsl.*
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
+import org.gradle.language.base.plugins.LifecycleBasePlugin.ASSEMBLE_TASK_NAME
 
 
-@Suppress("UnstableApiUsage")
 abstract class GDCPlugin @Inject constructor(
   private val providers: ProviderFactory,
+  private val layout: ProjectLayout,
 ) : Plugin<Project> {
 
+  override fun apply(project: Project) {
+    project.plugins.apply(LifecycleBasePlugin::class)
 
-  override fun apply(target: Project) {
-    target.plugins.apply(LifecycleBasePlugin::class)
+    val gdcSettings = createSettings(project)
 
-    val gdcSettings = target.createSettings()
+    val gdcTasks = GdcTasks(project, gdcSettings, providers)
 
-    val dockerComposeEnvUpdate by target.tasks.registering(DockerEnvUpdateTask::class) {
-      dotEnvFile.set(gdcSettings.srcDir.file(".env"))
+    configureLifecycleBasePlugin(project, gdcTasks)
+  }
 
-      envProperties.putAll(gdcSettings.dotEnv)
-//      properties(
-//        "COMPOSE_PROJECT_NAME" to gdcSettings.composeProjectName,
-//        "KAFKATORIO_VERSION" to gdcSettings.composeProjectVersion,
-//        "REGISTRY_HOST" to providers.gradleProperty("dockerContainerRegistryHost"),
-//      )
+
+  private fun createSettings(project: Project): GDCSettings =
+    project.extensions.create<GDCSettings>(GDC_EXTENSION_NAME).apply {
+      composeProjectName.convention(providers.provider { project.rootProject.name })
+      composeProjectVersion.convention(providers.provider { project.version.toString() })
+      containerRegistryHost.convention(
+        providers.gradleProperty("dockerContainerRegistryHost")
+//          .orElse("localhost")
+      )
+      srcDir.convention(layout.projectDirectory.dir("docker"))
+      dockerBuildContextDir.convention(srcDir.dir("build"))
+      stateDir.convention(layout.buildDirectory.dir("geedeecee/state/"))
+
+      dotEnv.convention("COMPOSE_PROJECT_NAME", composeProjectName)
+      dotEnv.convention("APP_NAME", providers.provider { project.name })
+      dotEnv.convention("APP_GROUP", providers.provider { project.group.toString() })
+      dotEnv.convention("PROJECT_VERSION", composeProjectVersion)
+      dotEnv.convention("KAFKATORIO_VERSION", composeProjectVersion)
+      dotEnv.convention("REGISTRY_HOST", containerRegistryHost)
+
+      dockerActive.convention(isDockerActive())
     }
 
-    val dockerContextPrepareFiles by target.tasks.registering(DockerContextFilesPreparation::class) {
+
+  private fun configureLifecycleBasePlugin(
+    project: Project,
+    gdcTasks: GdcTasks,
+  ) {
+    val assembleTask = project.tasks.named(ASSEMBLE_TASK_NAME)
+
+    assembleTask {
+      dependsOn(gdcTasks.dockerComposeEnvUpdate)
+    }
+
+    gdcTasks.dockerComposeUp.configure {
+      dependsOn(assembleTask)
+    }
+  }
+
+
+  @Suppress("UnstableApiUsage")
+  private fun isDockerActive(): Provider<Boolean> =
+    providers.exec {
+      commandLine = parseSpaceSeparatedArgs("docker info")
+      isIgnoreExitValue = true
+    }.result.isSuccess
+
+
+  private class GdcTasks(
+    project: Project,
+    private val gdcSettings: GDCSettings,
+    private val providers: ProviderFactory
+  ) {
+
+    val dockerComposeEnvUpdate by project.tasks.registering(DockerEnvUpdateTask::class) {
+      dotEnvFile.set(gdcSettings.srcDir.file(".env"))
+
+      envProperties.addConventions(gdcSettings.dotEnv)
+    }
+
+    val dockerContextPrepareFiles by project.tasks.registering(DockerContextFilesPreparation::class) {
       into(gdcSettings.dockerBuildContextDir)
       includeEmptyDirs = false
 //      dockerContextDir.set(gdcSettings.dockerBuildContextDir)
 //      copySpec.convention(target.copySpec())
-//      copySpec = Action {  }
     }
 
-    val dockerComposeUp by target.tasks.registering(GDCCommandTask::class) {
-      `docker-compose`("up -d")
+    val dockerComposeUp by project.tasks.registering(GDCCommandTask::class) {
+      doNotTrackState("Always run - state is managed by Docker")
+      `docker-compose`("up --detach")
     }
-    val dockerComposeDown by target.tasks.registering(GDCCommandTask::class) {
+
+    val dockerComposeDown by project.tasks.registering(GDCCommandTask::class) {
+      doNotTrackState("Always run - state is managed by Docker")
       `docker-compose`("down")
     }
-    val dockerComposeStop by target.tasks.registering(GDCCommandTask::class) {
+
+    @Suppress("unused")
+    private val dockerComposeStop by project.tasks.registering(GDCCommandTask::class) {
+      doNotTrackState("Always run - state is managed by Docker")
       `docker-compose`("stop")
     }
-    val dockerComposeBuild by target.tasks.registering(GDCCommandTask::class) {
+
+    val dockerComposeBuild by project.tasks.registering(GDCCommandTask::class) {
       `docker-compose`("build")
-      cacheable.set(true)
+      cacheable.convention(true)
     }
-    val dockerComposePush by target.tasks.registering(GDCCommandTask::class) {
+
+    @Suppress("unused")
+    val dockerComposePush by project.tasks.registering(GDCCommandTask::class) {
+      doNotTrackState("Always run - state is managed by Docker")
       dependsOn(dockerComposeBuild)
       `docker-compose`("push")
     }
-    val dockerComposeRemove by target.tasks.registering(GDCCommandTask::class) {
-      `docker-compose`("rm --stop -v -f")
+
+    val dockerComposeRemove by project.tasks.registering(GDCCommandTask::class) {
+      doNotTrackState("Always run - state is managed by Docker")
+      `docker-compose`("rm --stop --volumes --force")
     }
 
-    dockerComposeUp.configure { dependsOn(dockerComposeBuild) }
-    dockerComposeRemove.configure { dependsOn(dockerComposeDown) }
+    init {
+      dockerComposeUp.configure { dependsOn(dockerComposeBuild) }
+      dockerComposeRemove.configure { dependsOn(dockerComposeDown) }
 
 //    target.tasks.withType<DockerComposeExec>().configureEach {
 //      dependsOn(dockerComposeEnvUpdate)
@@ -78,61 +141,30 @@ abstract class GDCPlugin @Inject constructor(
 //      stateFile.set(temporaryDir.resolve("docker-state.md5"))
 //    }
 
-    target.tasks.withType<GDCCommandTask>().configureEach {
-      dependsOn(dockerComposeEnvUpdate)
-      dependsOn(dockerContextPrepareFiles)
+      project.tasks.withType<GDCCommandTask>().configureEach {
+        dependsOn(dockerComposeEnvUpdate)
+        dependsOn(dockerContextPrepareFiles)
 
-      workingDir.convention(gdcSettings.srcDir)
-      dockerActive.set(gdcSettings.dockerActive)
-      stateFile.set(
-        gdcSettings.stateDir.file(workingDir.map { "dc_state${name.hashCode()}${it.asFile.hashCode()}.md5" })
-      )
-    }
+        workingDir.convention(gdcSettings.srcDir)
+        workingDirFiles.from(workingDir)
+        dockerComposeExecutable.convention("docker-compose")
+        systemPath.convention(providers.environmentVariable("PATH"))
+        dockerActive.convention(gdcSettings.dockerActive)
 
-    val assembleTasks = target.tasks.matching { LifecycleBasePlugin.ASSEMBLE_TASK_NAME == it.name }
-
-    assembleTasks.configureEach {
-      dependsOn(dockerComposeEnvUpdate)
-    }
-
-    dockerComposeUp.configure {
-      dependsOn(assembleTasks)
+        val stateFileName = workingDir.map { workingDir ->
+          val workingDirHashCode = workingDir.asFile.hashCode()
+          "dc_state${name.hashCode()}${workingDirHashCode}.md5"
+        }
+        stateFile.convention(
+          gdcSettings.stateDir.file(stateFileName)
+        )
+      }
     }
   }
-
-
-  private fun Project.createSettings(): GDCSettings =
-    extensions.create<GDCSettings>(GDC_EXTENSION_NAME).apply {
-      composeProjectName.convention(providers.provider { rootProject.name })
-      composeProjectVersion.convention(providers.provider { project.version.toString() })
-      containerRegistryHost.convention(providers.gradleProperty("dockerContainerRegistryHost"))
-      srcDir.convention(layout.projectDirectory.dir("docker"))
-      dockerBuildContextDir.convention(srcDir.dir("build"))
-      stateDir.convention(layout.buildDirectory.dir("geedeecee/state/"))
-
-      dotEnv.put("COMPOSE_PROJECT_NAME", composeProjectName)
-      dotEnv.put("APP_NAME", providers.provider { project.name })
-      dotEnv.put("APP_GROUP", providers.provider { project.group.toString() })
-      dotEnv.put("PROJECT_VERSION", composeProjectVersion)
-      dotEnv.put("KAFKATORIO_VERSION", composeProjectVersion)
-      dotEnv.put("REGISTRY_HOST", containerRegistryHost)
-
-      dockerActive.convention(isDockerActive())
-    }
-
-
-  private fun isDockerActive(): Provider<Boolean> =
-    providers.exec {
-      commandLine = parseSpaceSeparatedArgs("docker info")
-      isIgnoreExitValue = true
-    }.result.map {
-      it.exitValue == 0
-    }
 
 
   companion object {
     const val GDC_EXTENSION_NAME = "geedeecee"
     const val GCD_TASK_GROUP = "docker-compose"
   }
-
 }

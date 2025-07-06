@@ -33,28 +33,29 @@ class FactorioModPortalPublishClient(
 
   private val logger: GradleLogger = GradleLogging.getLogger(this::class.java)
 
-  private fun client() = HttpClient(CIO) {
-    install(KtorLogging) {
-      logger = object : KtorLogger {
-        override fun log(message: String) {
-          this@FactorioModPortalPublishClient.logger.debug(message)
+  private fun client(): HttpClient =
+    HttpClient(CIO) {
+      install(KtorLogging) {
+        logger = object : KtorLogger {
+          override fun log(message: String) {
+            this@FactorioModPortalPublishClient.logger.debug(message)
+          }
         }
+        level = LogLevel.ALL
       }
-      level = LogLevel.ALL
+      install(ContentNegotiation) {
+        json(Json {
+          prettyPrint = false
+          isLenient = true
+        })
+      }
+      defaultRequest {
+        header(HttpHeaders.Authorization, "Bearer $portalApiKey")
+        port = 443
+      }
+      followRedirects = false
+      expectSuccess = false
     }
-    install(ContentNegotiation) {
-      json(Json {
-        prettyPrint = false
-        isLenient = true
-      })
-    }
-    defaultRequest {
-      header(HttpHeaders.Authorization, "Bearer $portalApiKey")
-      port = 443
-    }
-    followRedirects = false
-    expectSuccess = false
-  }
 
   fun uploadMod(): Unit = runBlocking {
     client().useToRun {
@@ -97,7 +98,7 @@ class FactorioModPortalPublishClient(
     require(response.status.isSuccess()) { "init upload request failed" }
 
     return when (initUploadResponse) {
-      is Failure ->                    error(initUploadResponse)
+      is Failure -> error(initUploadResponse)
       is InitUploadResponse.Success -> initUploadResponse
     }
   }

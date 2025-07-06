@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   kafka-pipe:
     image: ${REGISTRY_HOST}/${APP_GROUP}/${APP_NAME}:${KAFKATORIO_VERSION}

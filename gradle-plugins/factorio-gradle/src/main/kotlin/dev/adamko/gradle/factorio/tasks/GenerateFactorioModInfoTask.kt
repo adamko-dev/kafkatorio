@@ -1,7 +1,8 @@
 package dev.adamko.gradle.factorio.tasks
 
 import javax.inject.Inject
-import kotlinx.serialization.*
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
@@ -13,7 +14,6 @@ import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 
 abstract class GenerateFactorioModInfoTask @Inject constructor(
-
 ) : DefaultTask() {
 
   /**
@@ -25,45 +25,75 @@ abstract class GenerateFactorioModInfoTask @Inject constructor(
   abstract val modName: Property<String>
 
   /**
-   * Mandatory field. The display name of the mod, so it is not recommended to use someUgly_pRoGrAmMeR-name here. Can be overwritten with a locale entry in the mod-name category, using the internal mod name as the key.
+   * The display name of the mod, so it is not recommended to use `someUgly_pRoGrAmMeR-name` here.
+   * Mandatory field.
    *
-   * The game will reject a title field that is longer than 100 characters. However, this can be worked around by using the locale entry. The mod portal does not restrict mod title length.
+   * Can be overwritten with a locale entry in the mod-name category, using the internal mod name as the key.
+   *
+   * The game will reject a title field that is longer than 100 characters.
+   * However, this can be worked around by using the locale entry.
+   * The mod portal does not restrict mod title length.
    */
   @get:Input
   abstract val modTitle: Property<String>
 
   /**
-   * Optional field. A short description of what your mod does. This is all that people get to see in-game. Can be overwritten with a locale entry in the mod-description category, using the internal mod name as the key.
+   * A short description of what your mod does.
+   * Optional field.
+   *
+   * This is all that people get to see in-game.
+   * Can be overwritten with a locale entry in the mod-description category,
+   * using the internal mod name as the key.
    */
   @get:Input
   @get:Optional
   abstract val modDescription: Property<String>
 
   /**
-   * Optional field. Where the mod can be found on the internet. Note that the in-game mod browser shows the mod portal link additionally to this field. Please don't put "None" here, it makes the field on the mod portal website look ugly. Just leave the field empty if the mod doesn't have a website/forum thread/discord.
+   * Where the mod can be found on the internet.
+   * Optional field.
+   *
+   * Note that the in-game mod browser shows the mod portal link additionally to this field.
+   * Please don't put "None" here; it makes the field on the mod portal website look ugly.
+   * Just leave the field empty if the mod doesn't have a website/forum thread/discord.
    */
   @get:Input
   @get:Optional
   abstract val modHomepage: Property<String>
 
   /**
-   * Mandatory field. The author of the mod. This field does not have restrictions, it can also be a list of authors etc. The mod portal ignores this field, it will simply display the uploader's name as the author.
+   * The author of the mod.
+   * Mandatory field.
+   *
+   * This field does not have restrictions, it can also be a list of authors etc.
+   * The mod portal ignores this field, it will simply display the uploader's name as the author.
    */
   @get:Input
   abstract val modAuthor: Property<String>
 
   /**
-   * Mandatory field. Defines the version of the mod in the format `number.number.number` for `Major.Middle.Minor`, for example `0.6.4`. Each number can range from 0 to 65535.
+   * Mandatory field.
+   * Defines the version of the mod in the format `number.number.number` for `Major.Middle.Minor`, for example `0.6.4`.
+   * Each number can range from 0 to 65535.
    */
   @get:Input
   abstract val modVersion: Property<String>
 
   /**
-   *  Optional field in the format "major.minor". The Factorio version that this mod supports. This can only be one Factorio version, not multiple. However, it includes all .sub versions. While the field is optional, usually mods are developed for versions higher than the default 0.12, so the field has to be added anyway.
+   * Optional field in the format "major.minor".
    *
-   *   Adding a sub part, e.g. "0.18.27" will make the mod portal reject the mod and the game act weirdly. That means this shouldn't be done; use only the major and minor components "major.minor", for example "1.0".
+   * The Factorio version that this mod supports.
+   * This can only be one Factorio version, not multiple.
+   * However, it includes all subversions.
    *
-   *   Mods with the factorio_version "0.18" can also be loaded in 1.0 and the mod portal will return them when queried for factorio_version 1.0 mods.
+   * While the field is optional, usually mods are developed for versions higher than the default 0.12,
+   * so the field has to be added anyway.
+   *
+   * Adding a subpart, e.g. "0.18.27" will make the mod portal reject the mod and the game act weirdly.
+   * That means this shouldn't be done; use only the major and minor components "major.minor", for example "1.0".
+   *
+   * Mods with the factorio_version "0.18" can also be loaded in 1.0,
+   * and the mod portal will return them when queried for factorio_version 1.0 mods.
    */
   @get:Input
   @get:Optional
@@ -78,11 +108,14 @@ abstract class GenerateFactorioModInfoTask @Inject constructor(
    *
    * `"dependencies": ["mod-a", "? mod-c > 0.4.3", "! mod-g"]`
    *
-   * Each dependency is a string that consists of up to three parts: `<prefix> internal-mod-name <equality-operator version>`, for example `? some-mod-everyone-loves >= 4.2.0`.
+   * Each dependency is a string that consists of up to three parts:
+   * `<prefix> internal-mod-name <equality-operator version>`,
+   * for example `? some-mod-everyone-loves >= 4.2.0`.
    *
-   * The equality operator (`<`, `<=`, `=`, `>=` or `>`) combined with the version allows to define dependencies that require certain mod versions, but it is not required.
+   * The equality operator (`<`, `<=`, `=`, `>=` or `>`) combined with the version allows defining dependencies
+   * that require certain mod versions, but it is not required.
    *
-   * Incompatibility does not support versions; if incompatibility is used, version is ignored.
+   * Incompatibility does not support versions; if incompatibility is used, the version is ignored.
    *
    * The possible prefixes are:
    * * `!` for incompatibility

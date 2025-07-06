@@ -11,26 +11,31 @@
 Kafkatorio uses [Gradle](https://docs.gradle.org/current/userguide/getting_started.html) to
 build the project, and Docker Compose to create images.
 
-* `./gradlew build` - build and test the project
-* `./gradlew runKafkatorio` - run locally (if Docker is running, a Kafka instance will start)
-* `./gradlew dockerComposeBuild` - build, test, and create Kafkatorio Docker images
+* `./gradlew build` - build and test the project.
+* `./gradlew runKafkatorio` - run locally (if Docker is running, the task will start a Kafka instance.)
+  TODO document Traefik
+* `./gradlew dockerComposeBuild` - build, test, and create Kafkatorio Docker images.
 
 ### Server set up
 
 > See [./kafkatorio-platform/docker-compose.yml](kafkatorio-platform/docker-compose.yml) for a
 > complete example
 
-1. Copy the [kafkatorio-platform](./kafkatorio-platform) directory to your computer
+1. Copy the [kafkatorio-platform](./kafkatorio-platform) directory to your computer.
+
 2. Rename
    [`example.secret.kafkatorio-config.yml`](./kafkatorio-platform/example.secret.kafkatorio-config.yml)
-   to `.secret.kafkatorio-config.yml`
+   to `.secret.kafkatorio-config.yml`.
 
-   In it, define both
-    * a JWT secret password (a long alphanumeric string is best, you won't need to type this
-      password manually)
-    * a Factorio server, with a short-ID and a description.
-3. Rename [`example.env`](./kafkatorio-platform/example.env) to `.env`
-4. Create a JWT for your Factorio server, by going to https://jwt.io/
+   In it, define the required values:
+    * A JWT secret password.
+      A long alphanumeric string is best (you won't need to type this password manually).
+    * A Factorio server, with a short-ID and a description.
+      The ID is used in URLs, so should be short and easy to type.
+
+3. Rename [`example.env`](./kafkatorio-platform/example.env) to `.env`.
+
+4. Create a JWT for your Factorio server, by going to https://jwt.io/.
 
     * In 'PAYLOAD: DATA', set `sub` to your Factorio server's short ID.
       ```json
@@ -40,13 +45,14 @@ build the project, and Docker Compose to create images.
       }
       ```
       (`iat`, 'issued-at-time', should update automatically to be the current time.)
-    * Replace `your-256-bit-secret` with your JWT secret password
+    * Replace `your-256-bit-secret` with your JWT secret password.
 
    Copy the 'Encoded' token (it should start with `ey`).
 
-   In the `.env` file, set `KAFKATORIO_TOKEN` to equal the token.
-5. In `kafkatorio-platform`, start the docker containers
+   In the `.env` file, set `KAFKATORIO_TOKEN` to be the 'Encoded' token.
 
-   ```terminal
+5. In `kafkatorio-platform`, start the docker containers:
+
+   ```shell
    docker-compose up -d; docker-compose logs -f
    ```

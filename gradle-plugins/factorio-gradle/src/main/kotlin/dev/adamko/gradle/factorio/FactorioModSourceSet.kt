@@ -5,6 +5,11 @@ import org.gradle.api.Named
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.model.ObjectFactory
 
+/**
+ * Factorio sources.
+ *
+ * A FactorioModSourceSet represents a logical group of sources and resource files.
+ */
 abstract class FactorioModSourceSet @Inject constructor(
   private val named: String,
   objects: ObjectFactory,
@@ -25,12 +30,12 @@ abstract class FactorioModSourceSet @Inject constructor(
   override fun getName(): String = named
 
   abstract class WithResources @Inject constructor(
-    type: String,
+    name: String,
     objects: ObjectFactory,
-  ) : FactorioModSourceSet(type, objects) {
+  ) : FactorioModSourceSet(name, objects) {
 
     val resources: SourceDirectorySet = objects
-      .sourceDirectorySet("resources${type}", "$type resources")
+      .sourceDirectorySet("resources${name}", "$name resources")
       .apply {
         exclude("**/*.d.ts", "**/*.ts", "**/*.lua")
       }

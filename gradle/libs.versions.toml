@@ -9,7 +9,6 @@ jvm        = "11"
 kotlin     = "1.9.25"
 
 ## libs ##
-camel-kafkaConnectors = "0.11.0"
 kafka                 = "3.3.1"         # https://kafka.apache.org/downloads
 kvision               = "7.5.1"        # https://github.com/rjaros/kvision/releases
 #log4j2                = "2.17.2"
@@ -64,7 +63,7 @@ mockk      = "1.13.3"            # https://github.com/mockk/mockk/releases/
 
 
 ## infra ##
-factorio               = "2.0.14"    # https://www.factorio.com/download, https://hub.docker.com/r/factoriotools/factorio
+factorio               = "2.0.16"    # https://www.factorio.com/download, https://hub.docker.com/r/factoriotools/factorio
 confluent-kafkaConnect = "7.0.1"
 grafana                = "8.5.0"
 prometheus             = "v2.34.0"

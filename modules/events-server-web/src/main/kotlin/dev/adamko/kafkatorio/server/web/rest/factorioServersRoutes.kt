@@ -1,25 +1,18 @@
 package dev.adamko.kafkatorio.server.web.rest
 
-import dev.adamko.kafkatorio.schema.common.FactorioServerId
-import dev.adamko.kafkatorio.schema.common.PlayerIndex
-import dev.adamko.kafkatorio.schema.common.ServerMapTileLayer
-import dev.adamko.kafkatorio.schema.common.ServerMapTilePngFilename
-import dev.adamko.kafkatorio.schema.common.SurfaceIndex
 import dev.adamko.kafkatorio.processor.config.ApplicationProperties
+import dev.adamko.kafkatorio.schema.common.*
 import dev.adamko.kafkatorio.server.web.config.jsonMapper
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.content.EntityTagVersion
-import io.ktor.http.content.versions
-import io.ktor.resources.Resource
-import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.call
-import io.ktor.server.http.content.LastModifiedVersion
-import io.ktor.server.resources.get
-import io.ktor.server.response.respond
-import io.ktor.server.response.respondFile
-import io.ktor.server.routing.Routing
-import io.ktor.util.combineSafe
-import io.ktor.util.pipeline.PipelineContext
+import io.ktor.http.*
+import io.ktor.http.content.*
+import io.ktor.resources.*
+import io.ktor.server.application.*
+import io.ktor.server.http.content.*
+import io.ktor.server.resources.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import io.ktor.util.*
+import io.ktor.util.pipeline.*
 import kotlin.io.path.Path
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.encodeToJsonElement
@@ -30,7 +23,7 @@ internal fun Routing.factorioServersRoutes(
 ) {
 
   get<FactorioServers> {
-    val serverIds = appProps.kafkatorioServers.values.toSet().sortedBy { it.id }
+    val serverIds = appProps.kafkatorioServers.values.toSet().sortedBy { it.id.id }
     val serverIdsJson = jsonMapper.encodeToJsonElement(serverIds)
     call.respond(serverIdsJson)
   }

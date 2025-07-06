@@ -7,6 +7,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.PathSensitivity.RELATIVE
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 
@@ -17,7 +18,7 @@ abstract class TypeScriptToLuaTask @Inject constructor(
 
   @get:InputFiles
   @get:SkipWhenEmpty
-  @get:PathSensitive(PathSensitivity.RELATIVE)
+  @get:PathSensitive(RELATIVE)
   @get:NormalizeLineEndings
   @get:IgnoreEmptyDirectories
   abstract val sourceFiles: ConfigurableFileCollection

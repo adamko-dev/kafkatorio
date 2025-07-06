@@ -22,7 +22,7 @@ import java.nio.ByteOrder
  *
  * @param[type] See [PacketType]
  *
- * @param[body] The packet body field is a null-terminated string encoded in ASCII (i.e. ASCIIZ).
+ * @param[bodyRaw] The packet body field is a null-terminated string encoded in ASCII (i.e. ASCIIZ).
  * Depending on the packet type, it may contain either the RCON password for the server, the command
  * to be executed, or the server's response to a request.
  */

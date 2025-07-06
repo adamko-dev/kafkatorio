@@ -1,13 +1,11 @@
 import kafkatorio.extensions.dropDirectory
 
-
 plugins {
   id("kafkatorio.conventions.lang.kotlin-jvm")
   id("dev.adamko.geedeecee")
   kotlin("plugin.serialization")
   application
 }
-
 
 description = "Provides a Syslog server that receives Kafkatorio packets and forwards them to Kafka"
 
@@ -34,7 +32,7 @@ dependencies {
 
   implementation(libs.okio.core)
 
-  //<editor-fold desc="Ktor">
+  //region Ktor
   implementation(libs.ktorSerialization.kotlinxJson)
 
   with(libs.ktorServer) {
@@ -57,7 +55,7 @@ dependencies {
     implementation(core)
     implementation(tls)
   }
-  //</editor-fold>
+  //endregion
 
   implementation(libs.simpleSyslogParser)
 
@@ -93,9 +91,14 @@ tasks.dockerContextPrepareFiles {
     eachFile {
       relativePath = relativePath.dropDirectory()
 
+      // rename the `run_application.sh` files to just `run.sh`, to make the dockerfile reproducible.
       if (!isDirectory && relativePath.pathString.matches("""bin\/.+""".toRegex())) {
         name = name.replace(file.nameWithoutExtension, "run")
       }
     }
   }
 }
+
+//tasks.dockerComposeUp {
+//  doNotTrackState("adsada")
+//}

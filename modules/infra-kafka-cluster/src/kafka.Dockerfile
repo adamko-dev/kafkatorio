@@ -1,10 +1,14 @@
 # syntax=docker/dockerfile:1
 
-ARG KAFKA_DL_URL=https://dlcdn.apache.org/kafka/3.1.0/kafka_2.13-3.1.0.tgz
+ARG KAFKA_VERSION=3.1.0
+ARG KAFKA_DL_URL=https://dlcdn.apache.org/kafka/${KAFKA_VERSION}/kafka_2.13-${KAFKA_VERSION}.tgz
+ARG KAFKA_DL_ARCHIVE_URL=https://archive.apache.org/dist/kafka/${KAFKA_VERSION}/kafka_2.13-${KAFKA_VERSION}.tgz
 
 ## builder ##
 FROM debian:11-slim as Kafka-Download
+ARG KAFKA_VERSION
 ARG KAFKA_DL_URL
+ARG KAFKA_DL_ARCHIVE_URL
 
 WORKDIR /kafka
 
@@ -12,11 +16,17 @@ RUN apt-get update && apt-get install -y \
   curl \
   && rm -rf /var/lib/apt/lists/*
 
-RUN echo "Downloading Kafka from $KAFKA_DL_URL" \
- && curl "$KAFKA_DL_URL" | tar --strip-components=1 -xz \
+RUN echo "Trying to download Kafka from $KAFKA_DL_URL" \
+ && if curl --fail "$KAFKA_DL_URL" -o kafka.tgz; then \
+      echo "Primary download successful"; \
+    else \
+      echo "Primary download failed, trying $KAFKA_DL_ARCHIVE_URL" \
+      && curl --fail "$KAFKA_DL_ARCHIVE_URL" -o kafka.tgz; \
+    fi \
+ && tar --strip-components=1 -xz -f kafka.tgz \
+ && rm kafka.tgz \
  && echo "Finished Kafka download" \
  && ls -la
-
 
 ## Kafka ##
 # KRaft (aka KIP-500) mode Preview Release

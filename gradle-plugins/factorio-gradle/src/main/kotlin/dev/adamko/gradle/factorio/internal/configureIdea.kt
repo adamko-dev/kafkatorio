@@ -1,9 +1,11 @@
-package dev.adamko.gradle.factorio
+package dev.adamko.gradle.factorio.internal
 
+import dev.adamko.gradle.factorio.FactorioModPlugin
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.withType
 import org.gradle.plugins.ide.idea.IdeaPlugin
 import org.gradle.plugins.ide.idea.model.IdeaModel
+
 //import org.gradle.plugins.ide.idea.model.Module as IdeaModule
 
 internal fun FactorioModPlugin.PluginContext.configureIdea() {

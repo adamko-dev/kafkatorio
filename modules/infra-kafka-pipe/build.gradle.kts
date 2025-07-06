@@ -13,5 +13,5 @@ geedeecee {
 //val dockerSrcDir: Directory by extra
 
 tasks.dockerComposeUp {
-  dependsOn(":modules:infra-kafka-cluster:dockerUp")
+  dependsOn(":modules:infra-kafka-cluster:dockerComposeUp")
 }

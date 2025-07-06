@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.Directory
-import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RelativePath
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Provider
@@ -13,7 +12,7 @@ import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.application.CreateStartScripts
 import org.gradle.kotlin.dsl.register
-import org.gradle.plugins.ide.idea.model.IdeaModule
+import org.gradle.process.ExecOperations
 import org.gradle.process.ExecSpec
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.yarn.yarn
@@ -35,15 +34,13 @@ operator fun <T> Spec<T>.not(): NotSpec<T> = NotSpec(this)
 
 
 // https://stackoverflow.com/a/70317110/4161471
-fun Project.execCapture(spec: ExecSpec.() -> Unit): String {
-  return ByteArrayOutputStream().use { outputStream ->
+fun ExecOperations.execCapture(spec: ExecSpec.() -> Unit): String {
+  ByteArrayOutputStream().use { outputStream ->
     exec {
       this.spec()
       this.standardOutput = outputStream
     }
-    val output = outputStream.toString().trim()
-    logger.lifecycle(output)
-    output
+    return outputStream.toString().trim()
   }
 }
 

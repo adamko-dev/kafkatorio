@@ -1,15 +1,13 @@
+import org.gradle.api.initialization.resolve.RepositoriesMode.PREFER_SETTINGS
+
 rootProject.name = "kafkatorio"
 
-
-@Suppress("UnstableApiUsage")
 pluginManagement {
   includeBuild("./gradle-plugins/settings-plugins/")
+  includeBuild("./gradle-plugins/builder-plugins/")
+  includeBuild("./gradle-plugins/docker-compose/")
+  includeBuild("./gradle-plugins/factorio-gradle/")
 }
-
-
-includeBuild("./gradle-plugins/builder-plugins/")
-includeBuild("./gradle-plugins/docker-compose/")
-includeBuild("./gradle-plugins/factorio-gradle/")
 
 
 plugins {
@@ -48,15 +46,11 @@ include(
 )
 
 
-//enableFeaturePreview(org.gradle.api.internal.FeaturePreviews.Feature.TYPESAFE_PROJECT_ACCESSORS.name)
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 enableFeaturePreview("STABLE_CONFIGURATION_CACHE")
 
 
-//apply(from = "./buildSrc/repositories.settings.gradle.kts")
-
-
-@Suppress("UnstableApiUsage") // Central declaration of repositories is an incubating feature
 dependencyResolutionManagement {
-  repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+  @Suppress("UnstableApiUsage")
+  repositoriesMode = PREFER_SETTINGS
 }

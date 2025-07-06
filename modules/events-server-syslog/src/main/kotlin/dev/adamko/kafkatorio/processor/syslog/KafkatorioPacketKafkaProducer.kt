@@ -87,7 +87,8 @@ class KafkatorioPacketKafkaProducer(
       return null
     }
 
-    val serverId = appProps.kafkatorioServers[serverToken]
+    val serverData = appProps.kafkatorioServers[serverToken]
+    val serverId = serverData?.id
     if (serverId.isNullOrBlank()) {
       produceDlqMessage(syslog, "no server ID for token $serverToken. msg: ${syslog.src}")
       return null

@@ -1,5 +1,6 @@
 package dev.adamko.gradle.factorio
 
+import dev.adamko.gradle.factorio.internal.FactorioModConfigurations
 import javax.inject.Inject
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -18,31 +19,13 @@ abstract class FactorioModLibraryPlugin @Inject constructor(
 
   internal val logger = LoggerFactory.getLogger(this::class.java)
 
-  internal var factorioModConfigurations: FactorioModConfigurations? = null
-    private set
-
-  override fun apply(target: Project) {
-    factorioModConfigurations = target.createConfigurations()
-  }
-
-  private fun Project.createConfigurations(): FactorioModConfigurations {
-    return FactorioModConfigurations(
-      factorioMod = project.configurations.register(CONFIGURATION_NAME__FACTORIO_MOD) {
-        asConsumer()
-        factorioModAttributes(objects)
-      },
-
-      factorioModProvider = project.configurations.register(
-        CONFIGURATION_NAME__FACTORIO_MOD_PROVIDER
-      ) {
-        asProvider()
-        factorioModAttributes(objects)
-      },
+  override fun apply(project: Project) {
+    val factorioModConfigurations = FactorioModConfigurations(project)
+    project.extensions.add(
+      "factorioModConfigurations",
+      factorioModConfigurations,
     )
   }
 
-  companion object {
-    const val CONFIGURATION_NAME__FACTORIO_MOD = "factorioMod"
-    const val CONFIGURATION_NAME__FACTORIO_MOD_PROVIDER = "factorioModProvider"
-  }
+  companion object
 }

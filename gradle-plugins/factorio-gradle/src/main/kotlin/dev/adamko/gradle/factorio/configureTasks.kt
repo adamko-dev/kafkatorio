@@ -1,51 +1,51 @@
 package dev.adamko.gradle.factorio
 
-import dev.adamko.gradle.factorio.tasks.AssembleFactorioModContents
-import dev.adamko.gradle.factorio.tasks.GenerateFactorioModInfoTask
-import dev.adamko.gradle.factorio.tasks.LaunchFactorioClientTask
-import dev.adamko.gradle.factorio.tasks.LocalPublishFactorioModTask
-import dev.adamko.gradle.factorio.tasks.PackageFactorioModTask
+import dev.adamko.gradle.factorio.tasks.*
 import org.gradle.kotlin.dsl.withType
 
 internal fun FactorioModPlugin.PluginContext.configureTasks() {
 
   tasks.launchFactorioClient.configure {
+  }
 
-  }
   tasks.assembleModContents.configure {
-    modFiles.apply {
-      from(settings.mainSources.typescript.destinationDirectory)
-      from(tasks.generateModInfoJson)
-      from(settings.mainSources.resources)
-    }
+    modFiles
+      .from(settings.mainSources.typescript.destinationDirectory)
+      .from(tasks.generateModInfoJson)
+      .from(settings.mainSources.resources)
   }
+
   tasks.packageMod.configure {
     from(tasks.assembleModContents)
   }
+
   tasks.publishModToLocalClient.configure {
     dependsOn(tasks.packageMod)
   }
+
   tasks.generateModInfoJson.configure {
 
   }
 
-
   project.tasks.withType<LocalPublishFactorioModTask>().configureEach {
-    description = "Copy the mod to the Factorio client"
+    description = "Copy the mod to the Factorio client on the local machine."
     group = FactorioModPlugin.TASK_GROUP
 
-    onlyIf {
+    onlyIf("clientModDirectory exists") {
       require(it is LocalPublishFactorioModTask)
       it.clientModDirectory.asFile.get().exists()
     }
 
     modFiles.from(
-      configurations.factorioMod.map {
+      configurations.factorioModResolver.map {
         it.incoming
           .artifactView { lenient(true) }
           .files
       }
     )
+
+    modFiles.from(project.tasks.withType<PackageFactorioModTask>())
+    clientModDirectory.convention(layout.dir(settings.localDev.clientModsDirectory.asFile))
 
     doLast {
       logger.lifecycle("Published Factorio Mod to '${clientModDirectory.asFile.get()}'")
@@ -99,14 +99,6 @@ internal fun FactorioModPlugin.PluginContext.configureTasks() {
       }
     }
   }
-
-  project.tasks.withType<LocalPublishFactorioModTask>().configureEach {
-    description = "Launch local Factorio Steam game client"
-    group = FactorioModPlugin.TASK_GROUP
-
-    modFiles.from(project.tasks.withType<PackageFactorioModTask>())
-    clientModDirectory.convention(layout.dir(settings.localDev.clientModsDirectory.asFile))
-  }
 }
 
 
@@ -124,7 +116,7 @@ private fun FactorioModPlugin.PluginContext.configureLaunchFactorioClientTasks()
 //  val localDevMacFactorioApp = localDev.macFactorioApp
 
   project.tasks.withType<LaunchFactorioClientTask>().configureEach {
-    description = "Launch local Factorio Steam game client"
+    description = "Launch local Factorio Steam game client."
     group = FactorioModPlugin.TASK_GROUP
 
     currentOs.convention(localDev.currentOs)

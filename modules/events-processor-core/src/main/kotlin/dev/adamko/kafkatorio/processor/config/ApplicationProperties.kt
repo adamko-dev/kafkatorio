@@ -2,9 +2,10 @@ package dev.adamko.kafkatorio.processor.config
 
 import com.sksamuel.hoplite.ConfigLoaderBuilder
 import com.sksamuel.hoplite.addEnvironmentSource
+import com.sksamuel.hoplite.addFileSource
 import com.sksamuel.hoplite.addResourceOrFileSource
 import com.sksamuel.hoplite.sources.UserSettingsPropertySource
-import dev.adamko.kafkatorio.schema.common.FactorioServerId
+import dev.adamko.kafkatorio.schema.common.FactorioServerData
 import dev.adamko.kafkatorio.schema.common.FactorioServerToken
 import dev.adamko.kafkatorio.schema.common.MaskedValue
 import java.nio.file.Path
@@ -22,11 +23,11 @@ data class ApplicationProperties(
 
   val jwtSecret: MaskedValue,
 
-  val kafkatorioServers: Map<FactorioServerToken, FactorioServerId>
+  val kafkatorioServers: Map<FactorioServerToken, FactorioServerData>
 ) {
 
   companion object {
-    /** use Hoplite to load config from environment variables or properties files */
+    /** use Hoplite to load config from environment variables or properties files. */
     fun load(): ApplicationProperties =
       ConfigLoaderBuilder.default()
         .addDefaults()
@@ -39,6 +40,10 @@ data class ApplicationProperties(
         )
         .addResourceOrFileSource("/.secret.config.yml", optional = true)
         .addResourceOrFileSource("/config.yml", optional = false)
+
+        // Docker Compose secret:
+        .addFileSource("/run/secrets/kafkatorio-config.yml", optional = true)
+
         .addPropertySource(UserSettingsPropertySource)
         .build()
         .loadConfigOrThrow()

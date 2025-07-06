@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
 
   events-server-syslog:
@@ -25,6 +23,12 @@ services:
       - "traefik-nw"
 #    labels:
 #      - "traefik.enable=true"
+    secrets:
+      - "kafkatorio-config.yml"
+
+secrets:
+  "kafkatorio-config.yml":
+    file: ./.secret.config.yml
 
 networks:
   kafka-nw:

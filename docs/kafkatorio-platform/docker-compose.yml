@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
 
   ## Factorio game server that players will connect to

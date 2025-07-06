@@ -1,35 +1,46 @@
 package dev.adamko.geedeecee
 
+import dev.adamko.geedeecee.config.DotEnvContent
+import dev.adamko.geedeecee.internal.adding
+import javax.inject.Inject
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.provider.MapProperty
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
+import org.gradle.kotlin.dsl.newInstance
 
-interface GDCSettings {
+abstract class GDCSettings @Inject constructor(
+  objects: ObjectFactory
+) : ExtensionAware {
 
-  @get:Input
-  val composeProjectName: Property<String>
+  /**
+   * The project name used by Docker Compose.
+   *
+   * See https://docs.docker.com/compose/how-tos/project-name/
+   */
+  abstract val composeProjectName: Property<String>
 
-  @get:Input
-  val composeProjectVersion: Property<String>
+  abstract val composeProjectVersion: Property<String>
 
-  @get:Input
-  val containerRegistryHost: Property<String>
+  abstract val containerRegistryHost: Property<String>
 
-  @get:Internal
-  val srcDir: DirectoryProperty
+  /**
+   * Source directory of files that are used to run Docker Compose.
+   *
+   * The directory must contain the `docker-compose.yml` file.
+   *
+   * The contents of this directory will be used for up-to-date checks.
+   */
+  abstract val srcDir: DirectoryProperty
 
-  @get:Input
-  val dotEnv: MapProperty<String, String>
+  val dotEnv: DotEnvContent =
+    extensions.adding("dotEnv", objects.newInstance())
 
-  @get:Input
-  val dockerActive: Property<Boolean>
+  abstract val dockerActive: Property<Boolean>
 
-  @get:Input
-  val dockerBuildContextDir: DirectoryProperty
+  abstract val dockerBuildContextDir: DirectoryProperty
 
-  val stateDir: DirectoryProperty
+  abstract val stateDir: DirectoryProperty
 
 //  @Suppress("PropertyName", "FunctionName")
 //  abstract class DotEnv(

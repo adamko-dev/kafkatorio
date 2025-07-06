@@ -6,18 +6,21 @@ plugins {
 description = "Kafka cluster"
 
 geedeecee {
-  srcDir.set(layout.projectDirectory.dir("src"))
+  srcDir = layout.projectDirectory.dir("src")
 }
 
 tasks.dockerComposeEnvUpdate {
   envProperties {
-    put("GRAFANA_VERSION", libs.versions.grafana)
-    put("PROMETHEUS_VERSION", libs.versions.prometheus)
-    put("KAFKA_VERSION", libs.versions.kafka)
-    put("KAFKA_DL_URL", libs.versions.kafka.map { ver ->
+    APP_NAME = "kafka-kraft"
+    set("GRAFANA_VERSION", libs.versions.grafana)
+    set("PROMETHEUS_VERSION", libs.versions.prometheus)
+    set("KAFKA_VERSION", libs.versions.kafka)
+    set("KAFKA_DL_URL", libs.versions.kafka.map { ver ->
       "https://dlcdn.apache.org/kafka/$ver/kafka_2.13-$ver.tgz"
     })
-    put("APP_NAME", "kafka-kraft")
+    set("KAFKA_DL_ARCHIVE_URL", libs.versions.kafka.map { ver ->
+      "https://archive.apache.org/dist/kafka/$ver/kafka_2.13-$ver.tgz"
+    })
   }
 
   // Limit JVM Heap Size

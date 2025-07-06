@@ -9,5 +9,5 @@ import kotlinx.serialization.Serializable
 @SerialName("kafkatorio.common.MaskedValue")
 @JvmInline
 value class MaskedValue(val value: String) {
-  override fun toString(): String = "Secret(***)"
+  override fun toString(): String = "MaskedValue(***)"
 }
